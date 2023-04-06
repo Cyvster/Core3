@@ -38,7 +38,7 @@ ResourceSpawner::ResourceSpawner(ManagedReference<ZoneServer*> serv,
 
 	nameManager = processor->getNameManager();
 	objectManager = server->getObjectManager();
-	samplingMultiplier = 1; //should be 1 for normal use
+	samplingMultiplier = 10; //should be 1 for normal use
 
 	minimumPool = new MinimumPool(this);
 	fixedPool = new FixedPool(this);
@@ -116,9 +116,11 @@ void ResourceSpawner::setSpawningParameters(bool loadFromScript, const int dur, 
 		spawnThrottling = 10;
 
 	if (lowerGateOverride < 1)
-		lowerGateOverride = 1;
-	if (lowerGateOverride > 1000)
 		lowerGateOverride = 1000;
+	if (lowerGateOverride > 1)
+		lowerGateOverride = 1000;
+	
+	lowerGateOverride = 1000;
 }
 
 void ResourceSpawner::start() {
@@ -601,7 +603,7 @@ int ResourceSpawner::randomizeValue(int min, int max) {
 	if (min > lowerGateOverride)
 		min = lowerGateOverride;
 
-	int randomStat = System::random(max - min) + min;
+	int randomStat = 1000;
 
 	if (spawnThrottling < 90) {
 		int breakpoint = ((spawnThrottling * (max - min)) / 100) + min;
