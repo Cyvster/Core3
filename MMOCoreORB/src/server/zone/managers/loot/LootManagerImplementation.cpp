@@ -560,24 +560,24 @@ void LootManagerImplementation::setSkillMods(TangibleObject* object, const LootI
 	if (System::random(skillModChance / modSqr) == 0) {
 		// if it has a skillmod the name will be yellow
 		yellow = true;
-		int modCount = 1;
-		int roll = System::random(100);
+		int modCount = 6;
+		/*int roll = System::random(100);
 
 		if(roll > (100 - modSqr))
 			modCount += 2;
 
 		if(roll < (5 + modSqr))
-			modCount += 1;
+			modCount += 1;*/
 
 		for(int i = 0; i < modCount; ++i) {
 			//Mods can't be lower than -1 or greater than 25
-			int max = (int) Math::max(-1.f, Math::min(25.f, (float) round(0.1f * level + 3)));
-			int min = (int) Math::max(-1.f, Math::min(25.f, (float) round(0.075f * level - 1)));
+			int max = 25;//(int) Math::max(-1.f, Math::min(25.f, (float) round(0.1f * level + 3)));
+			int min = 25;//(int) Math::max(-1.f, Math::min(25.f, (float) round(0.075f * level - 1)));
 
 			int mod = System::random(max - min) + min;
 
 			if(mod == 0)
-				mod = 1;
+				mod = 25;
 
 			String modName = getRandomLootableMod( object->getGameObjectType() );
 			if( !modName.isEmpty() )
