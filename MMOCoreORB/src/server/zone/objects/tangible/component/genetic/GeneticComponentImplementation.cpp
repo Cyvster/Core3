@@ -100,6 +100,13 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	if (fortitude > 500) {
 		armorRating = 1;
 	}
+	if (fortitude > 750) {
+		armorRating = 2;
+	}
+	if (fortitude > 900) {
+		armorRating = 3;
+	}
+	
 	// min - max values
 	if (fortitude > 1000) {
 		fortitude = 1000;
@@ -159,10 +166,10 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	if (power < 0)
 		power = 1;
 	// max on resists
-	if (kinResist > 60)
-		kinResist = 60;
-	if (energyResist > 60)
-		energyResist = 60;
+	if (kinResist > 90)
+		kinResist = 90;
+	if (energyResist > 90)
+		energyResist = 90;
 	if (blastResist > 100)
 		blastResist = 100;
 	if (heatResist > 100)
@@ -189,20 +196,20 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	// Strength: har,dep
 	// Quickness: dex,dep
 
-	health = (hardiness * 15)    + (dexterity * 3);
-	action = (dexterity * 15)    + (intelligence * 3);
-	mind   = (intelligence * 15) + (hardiness * 3);
-	stamina = (dexterity*15)     + (endurance * 3);
-	willPower = (intelligence * 15) + (cleverness * 3);
-	constitution = (hardiness * 15)    + (fortitude * 3);
-	focus = (intelligence * 15) + (dependency * 3);
-	strength = (hardiness * 15)    + (dependency * 3);
-	quickness = (dexterity * 15)    + (dependency * 3);
+	health = (hardiness * 30)    + (dexterity * 3);
+	action = (dexterity * 30)    + (intelligence * 3);
+	mind   = (intelligence * 30) + (hardiness * 3);
+	stamina = (dexterity*30)     + (endurance * 3);
+	willPower = (intelligence * 30) + (cleverness * 3);
+	constitution = (hardiness * 30)    + (fortitude * 3);
+	focus = (intelligence * 30) + (dependency * 3);
+	strength = (hardiness * 30)    + (dependency * 3);
+	quickness = (dexterity * 30)    + (dependency * 3);
 	hit = 0.19 + (0.55 * ((float)cleverness/1000.0));
 	// dps of pet use to determien min and max value.
-	int dps = ceil((ceil(15.0 + (775.0 * ( ((float)power)/1000.0))))/3.5);
+	int dps = ceil((ceil(15.0 + (775.0 * ( ((float)power)/1000.0)))));
 	speed = 2.5-((ceil(((float)courage)/10)*10)/1000);
-	maxDam = round(((float)dps * speed) * 1.5);
+	maxDam = round(((float)dps * speed) * 3);
 	//minDam = round(((float)dps * speed) * 0.5);
   	// round maxDam down to the closest multiple of 5
 	maxDam = maxDam - (maxDam % 5);
