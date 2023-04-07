@@ -68,7 +68,7 @@ VillageCommunityCrafting = ScreenPlay:new {
 				quantity = "object/tangible/crafting/station/jedi_tool_crit_assembly_20.iff",
 				quality = "object/tangible/crafting/station/jedi_tool_crit_assembly_20.iff"
 			},
-			minIngredients = 10,
+			minIngredients = 1,
 			ingredientMinValue = 0,
 			ingredientMaxValue = 1000
 		},
@@ -153,7 +153,7 @@ VillageCommunityCrafting = ScreenPlay:new {
 				quantity = "object/tangible/crafting/station/jedi_tool_crit_experiment_20.iff",
 				quality = "object/tangible/crafting/station/jedi_tool_crit_experiment_20.iff"
 			},
-			minIngredients = 20,
+			minIngredients = 1,
 			ingredientMinValue = 0,
 			ingredientMaxValue = 1000
 		}
