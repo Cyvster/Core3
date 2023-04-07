@@ -651,7 +651,7 @@ void EntertainingSessionImplementation::doFlourish(int flourishNumber, bool gran
 		baseActionDrain = 0;
 
 	//float baseActionDrain = -40 + (getQuickness() / 37.5);
-	float flourishActionDrain = baseActionDrain / 2.0;
+	float flourishActionDrain = baseActionDrain / 10.0;
 
 	int actionDrain = (int)round((flourishActionDrain * 10 + 0.5) / 10.0); // Round to nearest dec for actual int cost
 
@@ -696,8 +696,8 @@ void EntertainingSessionImplementation::addEntertainerBuffDuration(CreatureObjec
 
 	buffDuration += duration;
 
-	if (buffDuration > (120.0f + (10.0f / 60.0f)) ) // 2 hrs 10 seconds
-		buffDuration = (120.0f + (10.0f / 60.0f)); // 2hrs 10 seconds
+	if (buffDuration > (60.0f + (10.0f / 60.0f)) ) // 2 hrs 10 seconds
+		buffDuration = (320.0f + (10.0f / 60.0f)); // 2hrs 10 seconds
 
 	setEntertainerBuffDuration(creature, performanceType, buffDuration);
 }
