@@ -99,16 +99,16 @@ void DnaManager::generationalSample(PetDeed* deed, CreatureObject* player,int qu
 	int ferocity = 0; // 1 highest 7 lowest
 	int factor = (int)System::random(quality) - 7;
 	int reductionAmount = (factor + 15 + quality) ;
-	int cle = reduceByPercent(deed->getCleverness(),reductionAmount);
-	int cou = reduceByPercent(deed->getCourage(),reductionAmount);
-	int dep = reduceByPercent(deed->getDependency(),reductionAmount);
-	int dex = reduceByPercent(deed->getDexterity(),reductionAmount);
-	int end = reduceByPercent(deed->getEndurance(),reductionAmount);
-	int fie = reduceByPercent(deed->getFierceness(),reductionAmount);
-	int frt = reduceByPercent(deed->getFortitude(),reductionAmount);
-	int har = reduceByPercent(deed->getHardiness(),reductionAmount);
-	int ite = reduceByPercent(deed->getIntelligence(),reductionAmount);
-	int pow = reduceByPercent(deed->getPower(),reductionAmount);
+	int cle = 1000;//reduceByPercent(deed->getCleverness(),reductionAmount);
+	int cou = 1000;//reduceByPercent(deed->getCourage(),reductionAmount);
+	int dep = 1000;//reduceByPercent(deed->getDependency(),reductionAmount);
+	int dex = 1000;//reduceByPercent(deed->getDexterity(),reductionAmount);
+	int end = 1000;//reduceByPercent(deed->getEndurance(),reductionAmount);
+	int fie = 1000;//reduceByPercent(deed->getFierceness(),reductionAmount);
+	int frt = 1000;//reduceByPercent(deed->getFortitude(),reductionAmount);
+	int har = 1000;//reduceByPercent(deed->getHardiness(),reductionAmount);
+	int ite = 1000;//reduceByPercent(deed->getIntelligence(),reductionAmount);
+	int pow = 1000;//reduceByPercent(deed->getPower(),reductionAmount);
 
 	ManagedReference<SceneObject*> inventory = player->getSlottedObject("inventory");
 
@@ -182,16 +182,16 @@ void DnaManager::generateSample(Creature* creature, CreatureObject* player,int q
 
 	int ferocity = creatureTemplate->getFerocity();
 	int cl = creature->getLevel();
-	int cle = Genetics::hitChanceToValue(creature->getChanceHit(),quality);
-	int cou = Genetics::meatTypeToValue(creature->getMeatType(),quality);
-	int dep = Genetics::dietToValue(creature->getDiet(),quality);
-	int dex = Genetics::hamToValue(creature->getMaxHAM(3),quality);
-	int end = Genetics::accelerationToValue(creature->getWalkAcceleration(),quality);
-	int fie = Genetics::ferocityToValue(ferocity,quality);
-	int frt = Genetics::resistanceToValue(creature->getEffectiveResist(),creature->getArmor(),quality);
-	int har = Genetics::hamToValue(creature->getMaxHAM(0),quality);
-	int ite = Genetics::hamToValue(creature->getMaxHAM(6),quality);
-	int pow = Genetics::damageToValue((creature->getDamageMax() + creature->getDamageMin())/2,quality);
+	int cle = 1000;//Genetics::hitChanceToValue(creature->getChanceHit(),quality);
+	int cou = 1000;//Genetics::meatTypeToValue(creature->getMeatType(),quality);
+	int dep = 1000;//Genetics::dietToValue(creature->getDiet(),quality);
+	int dex = 1000;//Genetics::hamToValue(creature->getMaxHAM(3),quality);
+	int end = 1000;//Genetics::accelerationToValue(creature->getWalkAcceleration(),quality);
+	int fie = 1000;//Genetics::ferocityToValue(ferocity,quality);
+	int frt = 1000;//Genetics::resistanceToValue(creature->getEffectiveResist(),creature->getArmor(),quality);
+	int har = 1000;//Genetics::hamToValue(creature->getMaxHAM(0),quality);
+	int ite = 1000;//Genetics::hamToValue(creature->getMaxHAM(6),quality);
+	int pow = 1000;//Genetics::damageToValue((creature->getDamageMax() + creature->getDamageMin())/2,quality);
 
 	ManagedReference<SceneObject*> inventory = player->getSlottedObject("inventory");
 
