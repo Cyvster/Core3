@@ -96,7 +96,7 @@ function FsReflex1:completeVillagerEscort(pPlayer)
 	
 	self:resetTasks(pPlayer)
 
-	if (count == 5) then
+	if (count == 1) then
 		CreatureObject(pPlayer):sendSystemMessage("@quest/force_sensitive/fs_reflex:msg_phase_01_quest_finished")
 		VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_enhanced_reflexes_survival")
 		QuestManager.completeQuest(pPlayer, QuestManager.quests.FS_REFLEX_RESCUE_QUEST_00)
