@@ -404,7 +404,7 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 
 	float currentFort = craftingValues->getCurrentValue("fortitude");
 	int armorValue = currentFort/500;
-	float currentEffective = (int)(((currentFort - (armorValue * 500)) / 50) * 5);
+	float currentEffective = 1;//(int)(((currentFort - (armorValue * 500)) / 50) * 5);
 
 	for (int i = 0; i < craftingValues->getTotalExperimentalAttributes(); ++i) {
 		String attribute = craftingValues->getAttribute(i);
