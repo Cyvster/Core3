@@ -907,7 +907,7 @@ void EntertainingSessionImplementation::activateEntertainerBuff(CreatureObject* 
 
 		Locker locker2(willBuff);
 		creature->addBuff(willBuff);
-		break;
+//		break;
 //		}
 //		case PerformanceType::DANCE:
 //		{
@@ -919,7 +919,7 @@ void EntertainingSessionImplementation::activateEntertainerBuff(CreatureObject* 
 
 		Locker locker(mindBuff);
 		creature->addBuff(mindBuff);
-		break;
+//		break;
 //		}
 //		}
 
