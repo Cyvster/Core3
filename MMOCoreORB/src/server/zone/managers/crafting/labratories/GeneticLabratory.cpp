@@ -274,7 +274,8 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	}
 
 	int armorValue = armorBase/500;
-	effectiveness = (int)(((armorBase - (armorValue * 500)) / 50) * 5);
+	//effectiveness = (int)(((armorBase - (armorValue * 500)) / 50) * 5);
+	int effectiveness = 1;
 
 	// Store off armor data
 	craftingValues->addExperimentalAttribute("dna_comp_armor_kinetic", "resists", spKinetic ? kineticMax : kineticMax < 0 ? -1 : effectiveness, kineticMax, 0, true, AttributesMap::OVERRIDECOMBINE);
