@@ -909,6 +909,7 @@ void EntertainingSessionImplementation::activateEntertainerBuff(CreatureObject* 
 
 			Locker locker2(willBuff);
 			creature->addBuff(willBuff);
+			locker.release();
 			
 			Locker locker(mindBuff);
 			creature->addBuff(mindBuff);
@@ -928,6 +929,7 @@ void EntertainingSessionImplementation::activateEntertainerBuff(CreatureObject* 
 			
 			Locker locker(mindBuff);
 			creature->addBuff(mindBuff);
+			locker.release();
 			
 			Locker locker(focusBuff);
 			creature->addBuff(focusBuff);
