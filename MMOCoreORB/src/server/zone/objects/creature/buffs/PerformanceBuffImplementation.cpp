@@ -20,31 +20,20 @@ void PerformanceBuffImplementation::activate(bool applyModifiers) {
 		setAttributeModifier(CreatureAttribute::FOCUS, focusStrength);
 		setAttributeModifier(CreatureAttribute::WILLPOWER, willStrength);
 		creature.get()->sendSystemMessage("@healing:performance_enhance_dance_mind_d");
-		creature.get()->sendSystemMessage("@healing:performance_enhance_music_focus_d");
-		creature.get()->sendSystemMessage("@healing:performance_enhance_music_willpower_d");
+
 
 	}
 	else if(type == PerformanceBuffType::MUSIC_FOCUS) {
 		int mindStrength = round(strength * (float)creature.get()->getBaseHAM(CreatureAttribute::MIND)) +1000;
 		int focusStrength = round(strength * (float)creature.get()->getBaseHAM(CreatureAttribute::FOCUS) +750);
-		int willStrength = round(strength * (float)creature.get()->getBaseHAM(CreatureAttribute::WILLPOWER)) +750;
 		setAttributeModifier(CreatureAttribute::MIND, mindStrength);
 		setAttributeModifier(CreatureAttribute::FOCUS, focusStrength);
-		setAttributeModifier(CreatureAttribute::WILLPOWER, willStrength);
-		creature.get()->sendSystemMessage("@healing:performance_enhance_dance_mind_d");
 		creature.get()->sendSystemMessage("@healing:performance_enhance_music_focus_d");
-		creature.get()->sendSystemMessage("@healing:performance_enhance_music_willpower_d");
 
 	}
 	else if(type == PerformanceBuffType::MUSIC_WILLPOWER) {
-		int mindStrength = round(strength * (float)creature.get()->getBaseHAM(CreatureAttribute::MIND)) +1000;
-		int focusStrength = round(strength * (float)creature.get()->getBaseHAM(CreatureAttribute::FOCUS) +750);
 		int willStrength = round(strength * (float)creature.get()->getBaseHAM(CreatureAttribute::WILLPOWER)) +750;
-		setAttributeModifier(CreatureAttribute::MIND, mindStrength);
-		setAttributeModifier(CreatureAttribute::FOCUS, focusStrength);
 		setAttributeModifier(CreatureAttribute::WILLPOWER, willStrength);
-		creature.get()->sendSystemMessage("@healing:performance_enhance_dance_mind_d");
-		creature.get()->sendSystemMessage("@healing:performance_enhance_music_focus_d");
 		creature.get()->sendSystemMessage("@healing:performance_enhance_music_willpower_d");
 	}
 
