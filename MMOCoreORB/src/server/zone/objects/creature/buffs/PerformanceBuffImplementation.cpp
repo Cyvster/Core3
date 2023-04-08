@@ -20,6 +20,8 @@ void PerformanceBuffImplementation::activate(bool applyModifiers) {
 		setAttributeModifier(CreatureAttribute::FOCUS, focusStrength);
 		setAttributeModifier(CreatureAttribute::WILLPOWER, willStrength);
 		creature.get()->sendSystemMessage("@healing:performance_enhance_dance_mind_d");
+		creature.get()->sendSystemMessage("@healing:performance_enhance_music_focus_d");
+		creature.get()->sendSystemMessage("@healing:performance_enhance_music_willpower_d");
 
 	}
 	else if(type == PerformanceBuffType::MUSIC_FOCUS) {
@@ -29,7 +31,9 @@ void PerformanceBuffImplementation::activate(bool applyModifiers) {
 		setAttributeModifier(CreatureAttribute::MIND, mindStrength);
 		setAttributeModifier(CreatureAttribute::FOCUS, focusStrength);
 		setAttributeModifier(CreatureAttribute::WILLPOWER, willStrength);
+		creature.get()->sendSystemMessage("@healing:performance_enhance_dance_mind_d");
 		creature.get()->sendSystemMessage("@healing:performance_enhance_music_focus_d");
+		creature.get()->sendSystemMessage("@healing:performance_enhance_music_willpower_d");
 
 	}
 	else if(type == PerformanceBuffType::MUSIC_WILLPOWER) {
@@ -39,6 +43,8 @@ void PerformanceBuffImplementation::activate(bool applyModifiers) {
 		setAttributeModifier(CreatureAttribute::MIND, mindStrength);
 		setAttributeModifier(CreatureAttribute::FOCUS, focusStrength);
 		setAttributeModifier(CreatureAttribute::WILLPOWER, willStrength);
+		creature.get()->sendSystemMessage("@healing:performance_enhance_dance_mind_d");
+		creature.get()->sendSystemMessage("@healing:performance_enhance_music_focus_d");
 		creature.get()->sendSystemMessage("@healing:performance_enhance_music_willpower_d");
 	}
 
