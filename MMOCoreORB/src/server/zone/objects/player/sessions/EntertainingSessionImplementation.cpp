@@ -196,7 +196,7 @@ void EntertainingSessionImplementation::addHealingXpGroup(int xp) {
 					String healxptype("entertainer_healing");
 
 					if (playerManager != nullptr)
-						playerManager->awardExperience(groupMember, healxptype, xp, true);
+						playerManager->awardExperience(groupMember, healxptype, (xp * 10), true);
 				}
 			}
 		} catch (Exception& e) {
