@@ -408,7 +408,7 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 	int armorValue = currentFort/1000;
 	float currentEffective = (int)(((currentFort - (armorValue * 1000)) / 50) * 5);
 	if (currentEffective == 0) {
-		currentEffective = 49;
+		currentEffective = 49.0f;
 		}
 
 	for (int i = 0; i < craftingValues->getTotalExperimentalAttributes(); ++i) {
