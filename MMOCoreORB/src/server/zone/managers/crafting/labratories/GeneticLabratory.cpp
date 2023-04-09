@@ -273,7 +273,7 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 		}
 	}
 
-	int armorValue = armorBase/500;
+	int armorValue = armorBase/1000;
 	effectiveness = (int)(((armorBase - (armorValue * 500)) / 50) * 5);
 	//effectiveness = 1;
 
@@ -403,7 +403,7 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 	craftingValues->recalculateValues(false);
 
 	float currentFort = craftingValues->getCurrentValue("fortitude");
-	int armorValue = currentFort/500;
+	int armorValue = currentFort/1000;
 	float currentEffective = (int)(((currentFort - (armorValue * 500)) / 50) * 5);
 
 	for (int i = 0; i < craftingValues->getTotalExperimentalAttributes(); ++i) {
