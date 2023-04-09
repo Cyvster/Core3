@@ -274,8 +274,10 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	}
 
 	int armorValue = armorBase/1000;
-	effectiveness = (int)(((armorBase - (armorValue * 500)) / 50) * 5);
-	//effectiveness = 1;
+	effectiveness = (int)(((armorBase - (armorValue * 1000)) / 50) * 5);
+	if (effectiveness == 0) {
+		effectiveness = 49
+		}
 
 	// Store off armor data
 	craftingValues->addExperimentalAttribute("dna_comp_armor_kinetic", "resists", spKinetic ? kineticMax : kineticMax < 0 ? -1 : effectiveness, kineticMax, 0, true, AttributesMap::OVERRIDECOMBINE);
@@ -404,7 +406,10 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 
 	float currentFort = craftingValues->getCurrentValue("fortitude");
 	int armorValue = currentFort/1000;
-	float currentEffective = (int)(((currentFort - (armorValue * 500)) / 50) * 5);
+	float currentEffective = (int)(((currentFort - (armorValue * 1000)) / 50) * 5);
+	if (currentEffective == 0) {
+		currentEffective = 49
+		}
 
 	for (int i = 0; i < craftingValues->getTotalExperimentalAttributes(); ++i) {
 		String attribute = craftingValues->getAttribute(i);
