@@ -104,6 +104,7 @@ void FactionManager::awardFactionStanding(CreatureObject* player, const String& 
 		return;
 
 	float gain = level * faction.getAdjustFactor();
+	gain = gain * 5.0f;
 	float lose = gain * 2;
 	bool gcw = false;
 
