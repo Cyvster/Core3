@@ -276,7 +276,7 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	int armorValue = armorBase/1000;
 	effectiveness = (int)(((armorBase - (armorValue * 1000)) / 50) * 5);
 	if (effectiveness == 0) {
-		effectiveness = 49
+		effectiveness = 49;
 		}
 
 	// Store off armor data
@@ -408,7 +408,7 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 	int armorValue = currentFort/1000;
 	float currentEffective = (int)(((currentFort - (armorValue * 1000)) / 50) * 5);
 	if (currentEffective == 0) {
-		currentEffective = 49
+		currentEffective = 49;
 		}
 
 	for (int i = 0; i < craftingValues->getTotalExperimentalAttributes(); ++i) {
