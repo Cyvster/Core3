@@ -184,8 +184,8 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	// 1 percent: (1000 - 0) / 100.0f;
 	float blastMax, energyMax, kineticMax,heatMax,coldMax,electricMax,acidMax,stunMax,saberMax;
 	blastMax = Genetics::resistanceFormula(phy,pro,men,psy,agr,SharedWeaponObjectTemplate::BLAST,100.0f);
-	kineticMax = Genetics::resistanceFormula(phy,pro,men,psy,agr,SharedWeaponObjectTemplate::KINETIC,60.0f);
-	energyMax = Genetics::resistanceFormula(phy,pro,men,psy,agr,SharedWeaponObjectTemplate::ENERGY,60.0f);
+	kineticMax = Genetics::resistanceFormula(phy,pro,men,psy,agr,SharedWeaponObjectTemplate::KINETIC,90.0f);
+	energyMax = Genetics::resistanceFormula(phy,pro,men,psy,agr,SharedWeaponObjectTemplate::ENERGY,90.0f);
 	heatMax = Genetics::resistanceFormula(phy,pro,men,psy,agr,SharedWeaponObjectTemplate::HEAT,100.0f);
 	coldMax = Genetics::resistanceFormula(phy,pro,men,psy,agr,SharedWeaponObjectTemplate::COLD,100.0f);
 	electricMax = Genetics::resistanceFormula(phy,pro,men,psy,agr,SharedWeaponObjectTemplate::ELECTRICITY,100.0f);
@@ -204,11 +204,11 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	}
 	if (kineticMax == 0) {
 		spKinetic = false;
-		kineticMax = 60;
+		kineticMax = 90;
 	}
 	if (energyMax == 0) {
 		spEnergy = false;
-		energyMax = 60;
+		energyMax = 90;
 	}
 	if (heatMax == 0) {
 		spHeat = false;
@@ -274,8 +274,8 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	}
 
 	int armorValue = armorBase/500;
-	//effectiveness = (int)(((armorBase - (armorValue * 500)) / 50) * 5);
-	effectiveness = 1;
+	effectiveness = (int)(((armorBase - (armorValue * 500)) / 50) * 5);
+	//effectiveness = 1;
 
 	// Store off armor data
 	craftingValues->addExperimentalAttribute("dna_comp_armor_kinetic", "resists", spKinetic ? kineticMax : kineticMax < 0 ? -1 : effectiveness, kineticMax, 0, true, AttributesMap::OVERRIDECOMBINE);
@@ -404,7 +404,7 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 
 	float currentFort = craftingValues->getCurrentValue("fortitude");
 	int armorValue = currentFort/500;
-	float currentEffective = 1;//(int)(((currentFort - (armorValue * 500)) / 50) * 5);
+	float currentEffective = (int)(((currentFort - (armorValue * 500)) / 50) * 5);
 
 	for (int i = 0; i < craftingValues->getTotalExperimentalAttributes(); ++i) {
 		String attribute = craftingValues->getAttribute(i);
