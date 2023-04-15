@@ -39,7 +39,7 @@ DraftSchematicObjectTemplate::DraftSchematicObjectTemplate() {
 	skillMods.setNoDuplicateInsertPlan();
 	skillMods.setNullValue(0);
 	labratory = 0;
-	factoryCrateSize = 1000;
+	factoryCrateSize = 100;
 }
 
 DraftSchematicObjectTemplate::~DraftSchematicObjectTemplate() {
@@ -76,7 +76,7 @@ void DraftSchematicObjectTemplate::parseVariableData(const String& varName, LuaO
 	} else if (varName == "factoryCrateType") {
 		factoryCrateType = Lua::getStringParameter(state);
 	} else if (varName == "factoryCrateSize") {
-		factoryCrateSize = 1000;//Lua::getIntParameter(state);
+		factoryCrateSize = 100;//Lua::getIntParameter(state);
 	} else if (varName == "isMagic") {
 		isMagic = Lua::getBooleanParameter(state);
 	} else if (varName == "assemblySkill") {
