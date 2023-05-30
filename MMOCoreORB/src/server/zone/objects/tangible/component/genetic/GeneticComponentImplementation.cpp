@@ -118,7 +118,7 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	}
 	
 	// min - max values
-	} else if (fortitude > 1000) {
+	else if (fortitude > 1000) {
 		fortitude = 1000;
 	} else if (fortitude < 0) {
 		fortitude = 1;
