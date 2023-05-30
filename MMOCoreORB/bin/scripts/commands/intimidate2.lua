@@ -49,6 +49,9 @@ Intimidate2Command = {
 	healthCostMultiplier = 0,
 	actionCostMultiplier = 0,
 	mindCostMultiplier = 0,
+	splashDamage = true,
+	areaAction = true,
+	areaRange = 16,
 	
 	accuracySkillMod = "intimidate",
 
@@ -60,7 +63,7 @@ Intimidate2Command = {
 		{},
 		100, 
 		0, 
-		120 
+		3600 
 	  )
 	},
 

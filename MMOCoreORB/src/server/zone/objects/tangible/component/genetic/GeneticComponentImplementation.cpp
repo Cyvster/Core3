@@ -109,6 +109,14 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	if (fortitude > 500) {
 		armorRating = 1;
 
+	}
+	if (fortitude > 750) {
+		armorRating = 2;
+	}
+	if (fortitude > 900) {
+		armorRating = 3;
+	}
+	
 	// min - max values
 	} else if (fortitude > 1000) {
 		fortitude = 1000;
@@ -171,10 +179,10 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	}
 
 	// max on resists
-	if (kinResist > 60)
-		kinResist = 60;
-	if (energyResist > 60)
-		energyResist = 60;
+	if (kinResist > 90)
+		kinResist = 90;
+	if (energyResist > 90)
+		energyResist = 90;
 	if (blastResist > 100)
 		blastResist = 100;
 	if (heatResist > 100)
@@ -202,6 +210,7 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	// Strength: har,dep
 	// Quickness: dex,dep
 
+
 	health = (hardiness * 15) + (dexterity * 3);
 	action = (dexterity * 15) + (intellect * 3);
 	mind = (intellect * 15) + (hardiness * 3);
@@ -220,6 +229,7 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	int dps = ceil((ceil(15.0 + (775.0 * ( ((float)power)/1000.0))))/3.5);
 	speed = 2.5-((ceil(((float)courage)/10)*10)/1000);
 	maxDam = round(((float)dps * speed) * 1.5);
+
 
 	//minDam = round(((float)dps * speed) * 0.5);
   	// round maxDam down to the closest multiple of 5

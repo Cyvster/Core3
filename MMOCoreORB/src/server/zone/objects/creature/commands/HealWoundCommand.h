@@ -347,8 +347,8 @@ public:
 		Locker locker(woundPack);
 		woundPack->decreaseUseCount();
 
-		if (creatureTarget != creature && !creatureTarget->isPet())
-			awardXp(creature, "medical", woundHealed); //No experience for healing yourself or pets.
+		//if (creatureTarget != creature && !creatureTarget->isPet())
+		awardXp(creature, "medical", (woundHealed * 5)); //No experience for healing yourself or pets.
 
 		doAnimations(creature, creatureTarget);
 
