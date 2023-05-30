@@ -361,6 +361,8 @@ void PlayerObjectImplementation::unload() {
 
 		creature->destroyObjectFromWorld(true);
 	} else if (creature->getSpaceZone() != nullptr) {
+		unloadShip();
+
 		String groundZoneName = launchPoint.getGoundZoneName();
 
 		Zone* newZone = getZoneServer()->getZone(groundZoneName);
@@ -376,8 +378,6 @@ void PlayerObjectImplementation::unload() {
 			creature->incrementMovementCounter();
 
 			savedTerrainName = groundZoneName;
-
-			unloadShip();
 			creature->destroyObjectFromWorld(true);
 		}
 	}
@@ -2026,7 +2026,7 @@ void PlayerObjectImplementation::logout(bool doLock) {
 			if (creature == nullptr)
 				return;
 
-			int isInSafeArea = creature->getSkillMod("private_safe_logout") || ConfigManager::instance()->getBool("Core3.Tweaks.PlayerObject.AlwaysSafeLogout", false);
+			int isInSafeArea = creature->getSkillMod("private_safe_logout") || ConfigManager::instance()->getBool("Core3.PlayerObject.AlwaysSafeLogout", false);
 
 			info("creating disconnect event: isInSafeArea=" + String::valueOf(isInSafeArea), true);
 
@@ -2222,7 +2222,7 @@ void PlayerObjectImplementation::setLinkDead(bool isSafeLogout) {
 
 	if(!isSafeLogout) {
 		info("went link dead");
-		logoutTimeStamp.addMiliTime(ConfigManager::instance()->getInt("Core3.Tweaks.PlayerObject.LinkDeadDelay", 3 * 60) * 1000); // 3 minutes if unsafe
+		logoutTimeStamp.addMiliTime(ConfigManager::instance()->getInt("Core3.PlayerObject.LinkDeadDelay", 3 * 60) * 1000); // 3 minutes if unsafe
 	}
 
 	setPlayerBit(PlayerBitmasks::LD, true);

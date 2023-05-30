@@ -5,17 +5,29 @@
 void ShipWeaponComponentImplementation::loadTemplateData(SharedObjectTemplate* templateData) {
 	ShipComponentImplementation::loadTemplateData(templateData);
 
-	auto shot = dynamic_cast<SharedTangibleObjectTemplate*>(templateData);
+	auto shot = dynamic_cast<ShipComponentTemplate*>(templateData);
 
 	if (shot != nullptr) {
-		maxDamage = shot->getWeaponMaxDamage();
-		minDamage = shot->getWeaponMinDamage();
+		const auto& attributeMap = shot->getAttributeMap();
 
-		shieldEffectiveness = shot->getWeaponShieldEffectiveness() * 0.1f;
-		armorEffectiveness = shot->getWeaponArmorEffectiveness() * 0.1f;
+		for (int i = 0; i < attributeMap.size(); ++i) {
+			const auto& attribute = attributeMap.elementAt(i).getKey();
+			float value = attributeMap.elementAt(i).getValue();
 
-		energyPerShot = shot->getEnergyPerShot();
-		refireRate = shot->getWeaponRefireRate() * 0.1f;
+			if (attribute == "maxDamage") {
+				maxDamage = value;
+			} else if (attribute == "minDamage") {
+				minDamage = value;
+			} else if (attribute == "shieldEffectiveness") {
+				shieldEffectiveness = value;
+			} else if (attribute == "armorEffectiveness") {
+				armorEffectiveness = value;
+			} else if (attribute == "energyPerShot") {
+				energyPerShot = value;
+			} else if (attribute == "refireRate") {
+				refireRate = value;
+			}
+		}
 	}
 }
 
@@ -62,51 +74,39 @@ void ShipWeaponComponentImplementation::fillAttributeList(AttributeListMessage* 
 void ShipWeaponComponentImplementation::install(CreatureObject* pilot, ShipObject* ship, int slot, bool notifyClient) {
 	ShipComponentImplementation::install(pilot, ship, slot, notifyClient);
 
-	DeltaMessage* ship1 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 1) : nullptr;
-	DeltaMessage* ship4 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 4) : nullptr;
-
+	auto deltaVector = notifyClient ? ship->getDeltaVector() : nullptr;
 	int command = DeltaMapCommands::ADD;
 
-	ship->setMaxDamage(slot, maxDamage, ship1, command);
-	ship->setMinDamage(slot, minDamage, ship1, command);
-	ship->setShieldEffectiveness(slot, shieldEffectiveness, ship1, command);
-	ship->setArmorEffectiveness(slot, armorEffectiveness, ship1, command);
-	ship->setEnergyPerShot(slot, energyPerShot, ship1, command);
-	ship->setRefireRate(slot, refireRate, ship1, command);
+	ship->setMaxDamage(slot, maxDamage, nullptr, command, deltaVector);
+	ship->setMinDamage(slot, minDamage, nullptr, command, deltaVector);
+	ship->setShieldEffectiveness(slot, shieldEffectiveness, nullptr, command, deltaVector);
+	ship->setArmorEffectiveness(slot, armorEffectiveness, nullptr, command, deltaVector);
+	ship->setEnergyPerShot(slot, energyPerShot, nullptr, command, deltaVector);
+	ship->setRefireRate(slot, refireRate, nullptr, command, deltaVector);
 
-	ship->setRefireEfficiency(slot, 1.f, ship4, command);
+	ship->setRefireEfficiency(slot, 1.f, nullptr, command, deltaVector);
 
-	if (notifyClient) {
-		ship1->close();
-		ship4->close();
-
-		pilot->sendMessage(ship1);
-		pilot->sendMessage(ship4);
+	if (deltaVector != nullptr) {
+		deltaVector->sendMessages(ship, pilot);
 	}
 }
 
 void ShipWeaponComponentImplementation::uninstall(CreatureObject* pilot, ShipObject* ship, int slot, bool notifyClient) {
 	ShipComponentImplementation::uninstall(pilot, ship, slot, notifyClient);
 
-	DeltaMessage* ship1 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 1) : nullptr;
-	DeltaMessage* ship4 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 4) : nullptr;
-
+	auto deltaVector = notifyClient ? ship->getDeltaVector() : nullptr;
 	int command = DeltaMapCommands::DROP;
 
-	ship->setMaxDamage(slot, 0.f, ship1, command);
-	ship->setMinDamage(slot, 0.f, ship1, command);
-	ship->setShieldEffectiveness(slot, 0.f, ship1, command);
-	ship->setArmorEffectiveness(slot, 0.f, ship1, command);
-	ship->setEnergyPerShot(slot, 0.f, ship1, command);
-	ship->setRefireRate(slot, 0.f, ship1, command);
+	ship->setMaxDamage(slot, 0.f, nullptr, command, deltaVector);
+	ship->setMinDamage(slot, 0.f, nullptr, command, deltaVector);
+	ship->setShieldEffectiveness(slot, 0.f, nullptr, command, deltaVector);
+	ship->setArmorEffectiveness(slot, 0.f, nullptr, command, deltaVector);
+	ship->setEnergyPerShot(slot, 0.f, nullptr, command, deltaVector);
+	ship->setRefireRate(slot, 0.f, nullptr, command, deltaVector);
 
-	ship->setRefireEfficiency(slot, 0.f, ship4, command);
+	ship->setRefireEfficiency(slot, 0.f, nullptr, command, deltaVector);
 
-	if (notifyClient) {
-		ship1->close();
-		ship4->close();
-
-		pilot->sendMessage(ship1);
-		pilot->sendMessage(ship4);
+	if (deltaVector != nullptr) {
+		deltaVector->sendMessages(ship, pilot);
 	}
 }

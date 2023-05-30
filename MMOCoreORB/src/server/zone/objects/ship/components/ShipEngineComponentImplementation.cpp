@@ -5,25 +5,36 @@
 void ShipEngineComponentImplementation::loadTemplateData(SharedObjectTemplate* templateData) {
 	ShipComponentImplementation::loadTemplateData(templateData);
 
-	auto shot = dynamic_cast<SharedTangibleObjectTemplate*>(templateData);
+	auto shot = dynamic_cast<ShipComponentTemplate*>(templateData);
 
 	if (shot != nullptr) {
-		float pitch = shot->getShipPitch() * Math::DEG2RAD;
-		float yaw = shot->getShipYaw() * Math::DEG2RAD;
-		float roll = shot->getShipRoll() * Math::DEG2RAD;
-		float speed = shot->getShipSpeed();
+		const auto& attributeMap = shot->getAttributeMap();
 
-		enginePitchAccelerationRate = pitch;
-		engineYawAccelerationRate = yaw;
-		engineRollAccelerationRate = roll;
+		for (int i = 0; i < attributeMap.size(); ++i) {
+			const auto& attribute = attributeMap.elementAt(i).getKey();
+			float value = attributeMap.elementAt(i).getValue();
 
-		enginePitchRateMaximum = pitch;
-		engineYawRateMaximum = yaw;
-		engineRollRateMaximum = roll;
+			if (attribute == "maxPitch") {
+				float pitch = value * Math::DEG2RAD;
 
-		engineAccelerationRate = speed * 0.8f;
-		engineDecelerationRate = speed * 0.6f;
-		engineSpeedMaximum = speed;
+				enginePitchAccelerationRate = pitch;
+				enginePitchRateMaximum = pitch;
+			} else if (attribute == "maxYaw") {
+				float yaw = value * Math::DEG2RAD;
+
+				engineYawAccelerationRate = yaw;
+				engineYawRateMaximum = yaw;
+			} else if (attribute == "maxRoll") {
+				float roll = value * Math::DEG2RAD;
+
+				engineRollAccelerationRate = roll;
+				engineRollRateMaximum = roll;
+			} else if (attribute == "maxSpeed") {
+				engineAccelerationRate = value * 0.8f;
+				engineDecelerationRate = value * 0.6f;
+				engineSpeedMaximum = value;
+			}
+		}
 	}
 }
 
@@ -73,69 +84,39 @@ void ShipEngineComponentImplementation::fillAttributeList(AttributeListMessage* 
 void ShipEngineComponentImplementation::install(CreatureObject* pilot, ShipObject* ship, int slot, bool notifyClient) {
 	ShipComponentImplementation::install(pilot, ship, slot, notifyClient);
 
-	DeltaMessage* ship1 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 1) : nullptr;
-	DeltaMessage* ship6 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 6) : nullptr;
+	auto deltaVector = notifyClient ? ship->getDeltaVector() : nullptr;
 
-	ship->setEngineMaxPitchRate(enginePitchRateMaximum, false, ship1);
-	ship->setEngineMaxYawRate(engineYawRateMaximum, false, ship1);
-	ship->setEngineMaxRollRate(engineRollRateMaximum, false, ship1);
-	ship->setEnginePitchRate(enginePitchAccelerationRate, false, ship1);
-	ship->setEngineYawRate(engineYawAccelerationRate, false, ship1);
-	ship->setEngineRollRate(engineRollAccelerationRate, false, ship1);
-	ship->setEngineAccelerationRate(engineAccelerationRate, false, ship1);
-	ship->setEngineDecelerationRate(engineDecelerationRate, false, ship1);
-	ship->setMaxSpeed(engineSpeedMaximum, false, ship1);
+	ship->setEnginePitchRate(enginePitchRateMaximum, false, nullptr, deltaVector);
+	ship->setEngineYawRate(engineYawRateMaximum, false, nullptr, deltaVector);
+	ship->setEngineRollRate(engineRollRateMaximum, false, nullptr, deltaVector);
+	ship->setEngineMaxSpeed(engineSpeedMaximum, false, nullptr, deltaVector);
 
-	ship->setMaxPitchRate(enginePitchRateMaximum, false, ship6);
-	ship->setMaxYawRate(engineYawRateMaximum, false, ship6);
-	ship->setMaxRollRate(engineRollRateMaximum, false, ship6);
-	ship->setCurrentPitchRate(enginePitchAccelerationRate, false, ship6);
-	ship->setCurrentYawRate(engineYawAccelerationRate, false, ship6);
-	ship->setCurrentRollRate(engineRollAccelerationRate, false, ship6);
-	ship->setShipAccelerationRate(engineAccelerationRate, false, ship6);
-	ship->setShipDecelerationRate(engineDecelerationRate, false, ship6);
-	ship->setCurrentSpeed(engineSpeedMaximum, false, ship6);
+	ship->setActualPitchRate(enginePitchRateMaximum, false, nullptr, deltaVector);
+	ship->setActualYawRate(engineYawRateMaximum, false, nullptr, deltaVector);
+	ship->setActualRollRate(engineRollRateMaximum, false, nullptr, deltaVector);
+	ship->setActualMaxSpeed(engineSpeedMaximum, false, nullptr, deltaVector);
 
-	if (notifyClient) {
-		ship1->close();
-		ship6->close();
-
-		pilot->sendMessage(ship1);
-		ship->broadcastMessage(ship6, true);
+	if (deltaVector != nullptr) {
+		deltaVector->sendMessages(ship, pilot);
 	}
 }
 
 void ShipEngineComponentImplementation::uninstall(CreatureObject* pilot, ShipObject* ship, int slot, bool notifyClient) {
 	ShipComponentImplementation::uninstall(pilot, ship, slot, notifyClient);
 
-	DeltaMessage* ship1 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 1) : nullptr;
-	DeltaMessage* ship6 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 6) : nullptr;
+	auto deltaVector = notifyClient ? ship->getDeltaVector() : nullptr;
 
-	ship->setEnginePitchRate(0.f, false, ship1);
-	ship->setEngineYawRate(0.f, false, ship1);
-	ship->setEngineRollRate(0.f, false, ship1);
-	ship->setEngineMaxPitchRate(0.f, false, ship1);
-	ship->setEngineMaxYawRate(0.f, false, ship1);
-	ship->setEngineMaxRollRate(0.f, false, ship1);
-	ship->setEngineAccelerationRate(0.f, false, ship1);
-	ship->setEngineDecelerationRate(0.f, false, ship1);
-	ship->setMaxSpeed(0.f, false);
+	ship->setEnginePitchRate(0.f, false, nullptr, deltaVector);
+	ship->setEngineYawRate(0.f, false, nullptr, deltaVector);
+	ship->setEngineRollRate(0.f, false, nullptr, deltaVector);
+	ship->setEngineMaxSpeed(0.f, false, nullptr, deltaVector);
 
-	ship->setMaxPitchRate(0.f, false, ship6);
-	ship->setMaxYawRate(0.f, false, ship6);
-	ship->setMaxRollRate(0.f, false, ship6);
-	ship->setCurrentPitchRate(0.f, false, ship6);
-	ship->setCurrentYawRate(0.f, false, ship6);
-	ship->setCurrentRollRate(0.f, false, ship6);
-	ship->setShipAccelerationRate(0.f, false, ship6);
-	ship->setShipDecelerationRate(0.f, false, ship6);
-	ship->setCurrentSpeed(0.f, false, ship6);
+	ship->setActualPitchRate(0.f, false, nullptr, deltaVector);
+	ship->setActualYawRate(0.f, false, nullptr, deltaVector);
+	ship->setActualRollRate(0.f, false, nullptr, deltaVector);
+	ship->setActualMaxSpeed(0.f, false, nullptr, deltaVector);
 
-	if (notifyClient) {
-		ship1->close();
-		ship6->close();
-
-		pilot->sendMessage(ship1);
-		ship->broadcastMessage(ship6, true);
+	if (deltaVector != nullptr) {
+		deltaVector->sendMessages(ship, pilot);
 	}
 }

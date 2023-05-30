@@ -5,11 +5,21 @@
 void ShipCapacitorComponentImplementation::loadTemplateData(SharedObjectTemplate* templateData) {
 	ShipComponentImplementation::loadTemplateData(templateData);
 
-	auto shot = dynamic_cast<SharedTangibleObjectTemplate*>(templateData);
+	auto shot = dynamic_cast<ShipComponentTemplate*>(templateData);
 
 	if (shot != nullptr) {
-		capacitorEnergy = shot->getShipMaxEnergy();
-		capacitorRechargeRate = shot->getShipRechargeRate();
+		const auto& attributeMap = shot->getAttributeMap();
+
+		for (int i = 0; i < attributeMap.size(); ++i) {
+			const auto& attribute = attributeMap.elementAt(i).getKey();
+			float value = attributeMap.elementAt(i).getValue();
+
+			if (attribute == "maxEnergy") {
+				capacitorEnergy = value;
+			} else if (attribute == "rechargeRate") {
+				capacitorRechargeRate = value;
+			}
+		}
 	}
 }
 
@@ -42,39 +52,29 @@ void ShipCapacitorComponentImplementation::fillAttributeList(AttributeListMessag
 void ShipCapacitorComponentImplementation::install(CreatureObject* pilot, ShipObject* ship, int slot, bool notifyClient) {
 	ShipComponentImplementation::install(pilot, ship, slot, notifyClient);
 
-	DeltaMessage* ship1 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 1) : nullptr;
-	DeltaMessage* ship4 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 4) : nullptr;
+	auto deltaVector = notifyClient ? ship->getDeltaVector() : nullptr;
 
-	ship->setCapacitorRechargeRate(capacitorRechargeRate, false, ship1);
-	ship->setCapacitorMaxEnergy(capacitorEnergy, false, ship1);
+	ship->setCapacitorRechargeRate(capacitorRechargeRate, false, nullptr, deltaVector);
+	ship->setCapacitorMaxEnergy(capacitorEnergy, false, nullptr, deltaVector);
 
-	ship->setCapacitorEnergy(capacitorEnergy, false, ship4);
+	ship->setCapacitorEnergy(capacitorEnergy, false, nullptr, deltaVector);
 
-	if (notifyClient) {
-		ship1->close();
-		ship4->close();
-
-		pilot->sendMessage(ship1);
-		pilot->sendMessage(ship4);
+	if (deltaVector != nullptr) {
+		deltaVector->sendMessages(ship, pilot);
 	}
 }
 
 void ShipCapacitorComponentImplementation::uninstall(CreatureObject* pilot, ShipObject* ship, int slot, bool notifyClient) {
 	ShipComponentImplementation::uninstall(pilot, ship, slot, notifyClient);
 
-	DeltaMessage* ship1 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 1) : nullptr;
-	DeltaMessage* ship4 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 4) : nullptr;
+	auto deltaVector = notifyClient ? ship->getDeltaVector() : nullptr;
 
-	ship->setCapacitorRechargeRate(0.f, false, ship1);
-	ship->setCapacitorMaxEnergy(0.f, false, ship1);
+	ship->setCapacitorRechargeRate(0.f, false, nullptr, deltaVector);
+	ship->setCapacitorMaxEnergy(0.f, false, nullptr, deltaVector);
 
-	ship->setCapacitorEnergy(0.f, false, ship4);
+	ship->setCapacitorEnergy(0.f, false, nullptr, deltaVector);
 
-	if (notifyClient) {
-		ship1->close();
-		ship4->close();
-
-		pilot->sendMessage(ship1);
-		pilot->sendMessage(ship4);
+	if (deltaVector != nullptr) {
+		deltaVector->sendMessages(ship, pilot);
 	}
 }

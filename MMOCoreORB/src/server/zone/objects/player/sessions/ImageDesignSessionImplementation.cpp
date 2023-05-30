@@ -18,6 +18,8 @@
 #include "server/zone/objects/player/PlayerObject.h"
 #include "server/zone/objects/transaction/TransactionLog.h"
 
+//#define DEBUG_ID
+
 void ImageDesignSessionImplementation::initializeTransientMembers() {
 	FacadeImplementation::initializeTransientMembers();
 }
@@ -79,17 +81,20 @@ void ImageDesignSessionImplementation::startImageDesign(CreatureObject* designer
 
 	designer->addActiveSession(SessionFacadeType::IMAGEDESIGN, _this.getReferenceUnsafeStaticCast());
 
-	String hairTemplate;
+	String holoemote;
+	PlayerObject* ghost = targetPlayer->getPlayerObject();
 
-	Reference<TangibleObject*> targetHair = targetPlayer->getSlottedObject("hair").castTo<TangibleObject*>();
+	if (ghost != nullptr) {
+		holoemote = ghost->getInstalledHoloEmote();
+	}
 
-	ImageDesignStartMessage* msg = new ImageDesignStartMessage(designer, designer, targetPlayer, designerTentID, hairTemplate);
+	ImageDesignStartMessage* msg = new ImageDesignStartMessage(designer, designer, targetPlayer, designerTentID, holoemote);
 	designer->sendMessage(msg);
 
 	if (designer != targetPlayer) {
 		targetPlayer->addActiveSession(SessionFacadeType::IMAGEDESIGN, _this.getReferenceUnsafeStaticCast());
 
-		ImageDesignStartMessage* msg2 = new ImageDesignStartMessage(targetPlayer, designer, targetPlayer, targetTentID, hairTemplate);
+		ImageDesignStartMessage* msg2 = new ImageDesignStartMessage(targetPlayer, designer, targetPlayer, targetTentID, holoemote);
 		targetPlayer->sendMessage(msg2);
 	}
 
@@ -97,6 +102,10 @@ void ImageDesignSessionImplementation::startImageDesign(CreatureObject* designer
 	targetCreature = targetPlayer;
 
 	idTimeoutEvent = new ImageDesignTimeoutEvent(_this.getReferenceUnsafeStaticCast());
+
+#ifdef DEBUG_ID
+	info(true) << "startImageDesign - for Target Player: " << targetPlayer->getFirstName() << " Target Tent ID = " <<  targetTentID << " Designer Tent ID = " << designerTentID << " Holoemote = " << holoemote;
+#endif
 }
 
 void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater, uint64 designer, uint64 targetPlayer, uint64 tent, int type, const ImageDesignData& data) {
@@ -105,6 +114,10 @@ void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater
 
 	if (strongReferenceTarget == nullptr || strongReferenceDesigner == nullptr)
 		return;
+
+#ifdef DEBUG_ID
+	info(true) << "---------- updateImageDesign called for Target Player: " << strongReferenceTarget->getFirstName() << " ----------";
+#endif
 
 	Locker locker(strongReferenceDesigner);
 	Locker clocker(strongReferenceTarget, strongReferenceDesigner);
@@ -118,10 +131,6 @@ void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater
 	else
 		targetObject = strongReferenceDesigner;
 
-	ImageDesignChangeMessage* message = new ImageDesignChangeMessage(targetObject->getObjectID(), designer, targetPlayer, tent, type);
-
-	imageDesignData.insertToMessage(message);
-
 	bool statMig = imageDesignData.isStatMigrationRequested();
 	bool designerAccepted = imageDesignData.isAcceptedByDesigner();
 
@@ -130,7 +139,9 @@ void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater
 		uint64 timeElapsed = sessionStartTime.miliDifference() / 1000;
 		int remainingTime = (4 * 60) - timeElapsed;
 
-		// info(true) << "start time elapsed = " << timeElapsed << " with remining time of " << remainingTime;
+#ifdef DEBUG_ID
+		info(true) << "updateImageDesign - start time elapsed = " << timeElapsed << " with remining time of " << remainingTime;
+#endif
 
 		// Only Break the session if the ID attempts to accept prior to the enough time being elapsed
 		if (designerAccepted && remainingTime > 0) {
@@ -178,9 +189,11 @@ void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater
 	}
 
 	if (commitChanges) {
-		int xpGranted = 0; // Minimum Image Design XP granted (base amount).
+#ifdef DEBUG_ID
+		info(true) << "updateImageDesign - COMMIT CHANGES.";
+#endif
 
-		String hairTemplate = imageDesignData.getHairTemplate();
+		int xpGranted = 0; // Minimum Image Design XP granted (base amount).
 
 		if (statMig && strongReferenceDesigner != strongReferenceTarget && strongReferenceDesigner->getParentRecursively(SceneObjectType::SALONBUILDING) && strongReferenceDesigner->getParentRecursively(SceneObjectType::SALONBUILDING)) {
 			ManagedReference<Facade*> facade = strongReferenceTarget->getActiveSession(SessionFacadeType::MIGRATESTATS);
@@ -189,6 +202,10 @@ void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater
 			if (session != nullptr) {
 				session->migrateStats();
 				xpGranted = 2000;
+
+#ifdef DEBUG_ID
+				info(true) << "updateImageDesign - Stats Migrated.";
+#endif
 			}
 		}
 
@@ -197,72 +214,104 @@ void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater
 
 		ImageDesignManager* imageDesignManager = ImageDesignManager::instance();
 
-		hairObject = strongReferenceTarget->getSlottedObject("hair").castTo<TangibleObject*>();
+		if (imageDesignManager == nullptr) {
+			cancelSession();
+			return;
+		}
 
+		ManagedReference<TangibleObject*> currentHair = hairObject = strongReferenceTarget->getSlottedObject("hair").castTo<TangibleObject*>();
+
+		// Session is updating hair style. Does not include color changes
 		if (type == 1) {
 			String oldCustomization;
 
-			if (hairObject != nullptr)
-				hairObject->getCustomizationString(oldCustomization);
+			// First destroy current hair.
+			if (currentHair != nullptr) {
+				hairObject = nullptr;
 
-			hairObject = imageDesignManager->createHairObject(strongReferenceDesigner, strongReferenceTarget, imageDesignData.getHairTemplate(),
-															  imageDesignData.getHairCustomizationString());
+				Locker hlock(currentHair);
+				currentHair->getCustomizationString(oldCustomization);
 
-			if (hairObject != nullptr) {
-				Locker hlocker(hairObject);
-				hairObject->setCustomizationString(oldCustomization);
-
-				strongReferenceDesigner->notifyObservers(ObserverEventType::IMAGEDESIGNHAIR, nullptr, 0);
+				currentHair->destroyObjectFromWorld(true);
+				currentHair->destroyObjectFromDatabase();
 			}
 
+			String hairTempString = imageDesignData.getHairTemplate();
+
+			// Create new hair for the player. Returns nullptr if the creature type can be bald and that is selected.
+			hairObject = imageDesignManager->createHairObject(strongReferenceDesigner, strongReferenceTarget, hairTempString, oldCustomization);
+
+			strongReferenceDesigner->notifyObservers(ObserverEventType::IMAGEDESIGNHAIR, nullptr, 0);
+
 			if (xpGranted < 100)
-				xpGranted = 100;
+					xpGranted = 100;
 		}
 
-		if (bodyAttributes->size() > 0) {
+		int bodyAttSize= bodyAttributes->size();
+		int colorAttSize = colorAttributes->size();
+
+#ifdef DEBUG_ID
+		info(true) << "updateImageDesign - Body Attributes Size = " << bodyAttSize << " Color Attributes = " << colorAttSize;
+#endif
+
+		if (bodyAttSize > 0) {
 			if (xpGranted < 300)
 				xpGranted = 300;
-			for (int i = 0; i < bodyAttributes->size(); ++i) {
+
+			for (int i = 0; i < bodyAttSize; ++i) {
 				VectorMapEntry<String, float>* entry = &bodyAttributes->elementAt(i);
 				imageDesignManager->updateCustomization(strongReferenceDesigner, entry->getKey(), entry->getValue(), strongReferenceTarget);
 			}
 		}
 
-		if (colorAttributes->size() > 0) {
+		if (colorAttSize > 0) {
 			if (xpGranted < 100)
 				xpGranted = 100;
-			for (int i = 0; i < colorAttributes->size(); ++i) {
+
+			for (int i = 0; i < colorAttSize; ++i) {
 				VectorMapEntry<String, uint32>* entry = &colorAttributes->elementAt(i);
 				imageDesignManager->updateColorCustomization(strongReferenceDesigner, entry->getKey(), entry->getValue(), hairObject, strongReferenceTarget);
 			}
 		}
 
-		imageDesignManager->updateHairObject(strongReferenceTarget, hairObject);
+		// apply hair changes
+		if (hairObject != nullptr)
+			imageDesignManager->updateHairObject(strongReferenceTarget, hairObject);
 
 		// Add holo emote
 		String holoemote = imageDesignData.getHoloEmote();
 		if (!holoemote.isEmpty()) {
 			PlayerObject* ghost = strongReferenceTarget->getPlayerObject();
-			ghost->setInstalledHoloEmote(holoemote); // Also resets number of uses available
 
-			strongReferenceTarget->sendSystemMessage("@image_designer:new_holoemote"); //"Congratulations! You have purchased a new Holo-Emote generator. Type '/holoemote help' for instructions."
+			if (ghost != nullptr) {
+				ghost->setInstalledHoloEmote(holoemote); // Also resets number of uses available
 
-			if (xpGranted < 100)
-				xpGranted = 100;
+				strongReferenceTarget->sendSystemMessage("@image_designer:new_holoemote"); //"Congratulations! You have purchased a new Holo-Emote generator. Type '/holoemote help' for instructions."
+
+				if (xpGranted < 100)
+					xpGranted = 100;
+			}
 		}
 
 		// Award XP.
 		PlayerManager* playerManager = strongReferenceDesigner->getZoneServer()->getPlayerManager();
 
 		if (playerManager != nullptr && xpGranted > 0) {
-			if (strongReferenceDesigner == strongReferenceTarget)
+			if (strongReferenceDesigner == strongReferenceTarget) {
 				xpGranted /= 2;
+
+			}
+
 			playerManager->awardExperience(strongReferenceDesigner, "imagedesigner", (xpGranted * 10), true);
+
 		}
 
 		// End the session
 		cancelSession();
 	}
+
+	ImageDesignChangeMessage* message = new ImageDesignChangeMessage(targetObject->getObjectID(), designer, targetPlayer, tent, type);
+	imageDesignData.insertToMessage(message);
 
 	targetObject->sendMessage(message);
 }

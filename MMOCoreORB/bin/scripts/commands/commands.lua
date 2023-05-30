@@ -15,7 +15,7 @@ end
 function DotEffect(t, dm, pl, h, p, c, s, d, pp, sp)
   return {
 	dotType = t,
-	defenderStateDefenseModifers = dm,
+	defenderStateDefenseModifiers = dm,
 	dotPool = pl,
 	dotDamageofHit = h,
 	dotPotency = p,
@@ -106,6 +106,7 @@ RunSlashCommandsFile("combatEscape.lua")
 RunSlashCommandsFile("combatModeCheck.lua")
 RunSlashCommandsFile("combatSpam.lua")
 RunSlashCommandsFile("combatTarget.lua")
+RunSlashCommandsFile("comm.lua")
 RunSlashCommandsFile("completeQuest.lua")
 RunSlashCommandsFile("conceal.lua")
 RunSlashCommandsFile("concealShot.lua")

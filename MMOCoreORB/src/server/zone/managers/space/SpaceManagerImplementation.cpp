@@ -12,6 +12,7 @@
 #include "conf/ConfigManager.h"
 #include "templates/datatables/DataTableIff.h"
 #include "templates/datatables/DataTableRow.h"
+#include "server/zone/managers/ship/ShipManager.h"
 
 void SpaceManagerImplementation::loadLuaConfig() {
 	String planetName = spacezone->getZoneName();
@@ -38,7 +39,19 @@ void SpaceManagerImplementation::loadLuaConfig() {
 			String templateFile = zoneObject.getStringField("templateFile");
 			//  info("Attempting to load: " + templateFile + " in " + spacezone->getZoneName(), true);
 
-			ManagedReference<SceneObject*> obj = ObjectManager::instance()->createObject(templateFile.hashCode(), 0, "");
+			auto shot = TemplateManager::instance()->getTemplate(templateFile.hashCode());
+			if (shot == nullptr) {
+				zoneObject.pop();
+				continue;
+			}
+
+			ManagedReference<SceneObject*> obj = nullptr;
+
+			if (shot->getGameObjectType() & SceneObjectType::SHIP) {
+				obj = ShipManager::instance()->createShip(templateFile, 0, true);
+			} else {
+				obj = ObjectManager::instance()->createObject(templateFile.hashCode(), 0, "");
+			}
 
 			if (obj != nullptr) {
 				Locker objLocker(obj);
@@ -63,6 +76,23 @@ void SpaceManagerImplementation::loadLuaConfig() {
 					spacezone->transferObject(obj, -1, true);
 
 				obj->createChildObjects();
+
+				if (obj->isSpaceStationObject()) {
+					auto ship = obj->asShipObject();
+
+					if (ship != nullptr) {
+						String faction = ship->getShipFaction();
+
+						if (faction == "" || !spaceStationMap.contains(faction)) {
+							faction = "neutral";
+						}
+
+						uint64 stationID = ship->getObjectID();
+						Vector3 stationPosition = ship->getPosition();
+
+						spaceStationMap.get(faction).put(stationID, stationPosition);
+					}
+				}
 
 				//   info("Object Added: " + obj->getObjectName() + ": " + String::valueOf(obj->getPositionX()) + " " + String::valueOf(obj->getPositionY()) + " " + String::valueOf(obj->getPositionZ()), true);
 			}
@@ -93,6 +123,14 @@ void SpaceManagerImplementation::loadLuaConfig() {
 }
 
 void SpaceManagerImplementation::initialize() {
+	VectorMap<uint64, Vector3> stationMap;
+	stationMap.setNoDuplicateInsertPlan();
+	stationMap.setNullValue(Vector3::ZERO);
+
+	spaceStationMap.put("rebel", stationMap);
+	spaceStationMap.put("neutral", stationMap);
+	spaceStationMap.put("imperial", stationMap);
+
 	info("loading space manager " + spacezone->getZoneName(), true);
 	loadLuaConfig();
 }
@@ -130,4 +168,40 @@ void SpaceManagerImplementation::start() {
 
 Vector3 SpaceManagerImplementation::getJtlLaunchLocationss() {
 	return jtlLaunchLocation;
+}
+
+Vector3 SpaceManagerImplementation::getClosestSpaceStationPosition(const Vector3& shipPosition, const String& shipFaction) {
+	uint64 objectID = getClosestSpaceStationObjectID(shipPosition, shipFaction);
+
+	if (objectID == 0) {
+		return shipPosition;
+	}
+
+	return spaceStationMap.get(shipFaction).get(objectID);
+}
+
+uint64 SpaceManagerImplementation::getClosestSpaceStationObjectID(const Vector3& shipPosition, const String& shipFaction) {
+	uint64 stationObjectID = 0;
+	float stationDistance = FLT_MAX;
+
+	for (int i = 0; i < spaceStationMap.size(); ++i) {
+		const auto& stationKey = spaceStationMap.elementAt(i).getKey();
+		const auto& stationMap = spaceStationMap.elementAt(i).getValue();
+
+		if (shipFaction != stationKey) {
+			continue;
+		}
+
+		for (int ii = 0; ii < stationMap.size(); ++ii) {
+			const auto& entryPosition = stationMap.elementAt(ii).getValue();
+			float sqrDistance = shipPosition.squaredDistanceTo(entryPosition);
+
+			if (stationDistance > sqrDistance) {
+				stationDistance = sqrDistance;
+				stationObjectID = stationMap.elementAt(ii).getKey();
+			}
+		}
+	}
+
+	return stationObjectID;
 }

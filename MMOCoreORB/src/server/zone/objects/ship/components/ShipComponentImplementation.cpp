@@ -6,25 +6,46 @@
 void ShipComponentImplementation::loadTemplateData(SharedObjectTemplate* templateData) {
 	ComponentImplementation::loadTemplateData(templateData);
 
-	auto shot = dynamic_cast<SharedTangibleObjectTemplate*>(templateData);
+	auto shot = dynamic_cast<ShipComponentTemplate*>(templateData);
 
 	if (shot != nullptr) {
-		hitpoints = shot->getShipHitpoints();
-		hitpointsMax = shot->getShipHitpoints();
+		const auto& attributeMap = shot->getAttributeMap();
 
-		armor = shot->getShipArmor();
-		armorMax = shot->getShipArmor();
+		for (int i = 0; i < attributeMap.size(); ++i) {
+			const auto& attribute = attributeMap.elementAt(i).getKey();
+			float value = attributeMap.elementAt(i).getValue();
 
-		energyCost = shot->getShipEnergyConsumption();
-		mass = shot->getShipMass();
+			if (attribute == "maximumHitpoints") {
+				hitpointsMax = value;
+				hitpoints = value;
+			} else if (attribute == "maximumArmorHitpoints") {
+				armorMax = value;
+				armor = value;
+			} else if (attribute == "efficiency") {
+				energyEfficiency = value;
+				efficiency = value;
+			} else if (attribute == "energyMaintenance") {
+				energyCost = value;
+			} else if (attribute == "mass") {
+				mass = value;
+			} else if (attribute == "reverseEngineeringLevel") {
+				reverseEngineeringLevel = value;
+			}
+		}
 
-		reverseEngineeringLevel = shot->getShipReverseEngineeringLevel();
+		const auto& dataName = shot->getComponentDataName();
+
+		if (dataName != "") {
+			componentDataName = dataName;
+		}
 	}
 
-	const auto componentData = ShipManager::instance()->getShipComponentFromTemplate(templateData->getFullTemplateString());
+	if (componentDataName == "") {
+		const auto componentData = ShipManager::instance()->getShipComponentFromTemplate(templateData->getFullTemplateString());
 
-	if (componentData != nullptr) {
-		componentDataName = componentData->getName();
+		if (componentData != nullptr) {
+			componentDataName = componentData->getName();
+		}
 	}
 }
 
@@ -94,83 +115,80 @@ void ShipComponentImplementation::removeComponentFlag(uint32 value) {
 }
 
 void ShipComponentImplementation::install(CreatureObject* pilot, ShipObject* ship, int slot, bool notifyClient) {
-	auto ship1 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 1) : nullptr;
-	auto ship3 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 3) : nullptr;
-	auto ship4 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 4) : nullptr;
-	auto ship6 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 6) : nullptr;
-
 	componentBitmask = 0;
 	componentShip = ship;
 	componentSlot = slot;
 
+	auto deltaVector = notifyClient ? ship->getDeltaVector() : nullptr;
 	uint8 command = DeltaMapCommands::ADD;
 
-	ship->setComponentName(slot, getDisplayedName(), ship1, command);
-	ship->setComponentMass(slot, mass, ship1, command);
-	ship->setEnergyEfficiency(slot, energyEfficiency, ship1, command);
-	ship->setEfficiency(slot, efficiency, ship1, command);
-	ship->setEnergyCost(slot, energyCost, ship1, command);
+	ship->setComponentName(slot, getDisplayedName(), nullptr, command, deltaVector);
+	ship->setComponentMass(slot, mass, nullptr, command, deltaVector);
+	ship->setEnergyEfficiency(slot, energyEfficiency, nullptr, command, deltaVector);
+	ship->setEfficiency(slot, efficiency, nullptr, command, deltaVector);
+	ship->setEnergyCost(slot, energyCost, nullptr, command, deltaVector);
 
-	ship->setComponentMaxHitpoints(slot, hitpointsMax, ship3, command);
-	ship->setComponentHitpoints(slot, hitpoints, ship3, command);
-	ship->setComponentArmor(slot, armor, ship3, command);
-	ship->setComponentMaxArmor(slot, armorMax, ship3, command);
-	ship->setComponentOptions(slot, componentBitmask, ship3, command);
+	ship->setComponentMaxHitpoints(slot, hitpointsMax, nullptr, command, deltaVector);
+	ship->setComponentHitpoints(slot, hitpoints, nullptr, command, deltaVector);
+	ship->setComponentArmor(slot, armor, nullptr, command, deltaVector);
+	ship->setComponentMaxArmor(slot, armorMax, nullptr, command, deltaVector);
+	ship->setComponentOptions(slot, componentBitmask, nullptr, command, deltaVector);
 
-	ship->setChassisMass(ship->calculateCurrentMass(), false, ship4);
+	ship->setChassisMass(ship->calculateCurrentMass(), false, nullptr, deltaVector);
 
-	ship->setComponentCRC(slot, getComponentDataName().hashCode(), ship6, command);
+	ship->setComponentCRC(slot, getAppearanceName(ship).hashCode(), nullptr, command, deltaVector);
 
-	if (notifyClient) {
-		ship1->close();
-		ship3->close();
-		ship4->close();
-		ship6->close();
-
-		pilot->sendMessage(ship1);
-		ship->broadcastMessage(ship3, true);
-		pilot->sendMessage(ship4);
-		ship->broadcastMessage(ship6, true);
+	if (deltaVector != nullptr) {
+		deltaVector->sendMessages(ship, pilot);
 	}
 }
 
 void ShipComponentImplementation::uninstall(CreatureObject* pilot, ShipObject* ship, int slot, bool notifyClient) {
-	auto ship1 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 1) : nullptr;
-	auto ship3 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 3) : nullptr;
-	auto ship4 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 4) : nullptr;
-	auto ship6 = notifyClient ? new DeltaMessage(ship->getObjectID(), 'SHIP', 6) : nullptr;
-
 	componentBitmask = 0;
 	componentShip = nullptr;
 	componentSlot = -1;
 
+	auto deltaVector = notifyClient ? ship->getDeltaVector() : nullptr;
 	int command = DeltaMapCommands::DROP;
 
-	ship->setComponentName(slot, "", ship1, command);
-	ship->setComponentMass(slot, 0.f, ship1, command);
-	ship->setEnergyEfficiency(slot, 0.f, ship1, command);
-	ship->setEfficiency(slot, 0.f, ship1, command);
-	ship->setEnergyCost(slot, 0.f, ship1, command);
+	ship->setComponentName(slot, "", nullptr, command, deltaVector);
+	ship->setComponentMass(slot, 0.f, nullptr, command, deltaVector);
+	ship->setEnergyEfficiency(slot, 0.f, nullptr, command, deltaVector);
+	ship->setEfficiency(slot, 0.f, nullptr, command, deltaVector);
+	ship->setEnergyCost(slot, 0.f, nullptr, command, deltaVector);
 
-	ship->setComponentMaxHitpoints(slot, 0.f, ship3, command);
-	ship->setComponentHitpoints(slot, 0.f, ship3, command);
-	ship->setComponentArmor(slot, 0.f, ship3, command);
-	ship->setComponentMaxArmor(slot, 0.f, ship3, command);
-	ship->setComponentOptions(slot, 0, ship3, command);
+	ship->setComponentMaxHitpoints(slot, 0.f, nullptr, command, deltaVector);
+	ship->setComponentHitpoints(slot, 0.f, nullptr, command, deltaVector);
+	ship->setComponentArmor(slot, 0.f, nullptr, command, deltaVector);
+	ship->setComponentMaxArmor(slot, 0.f, nullptr, command, deltaVector);
+	ship->setComponentOptions(slot, 0, nullptr, command, deltaVector);
 
-	ship->setChassisMass(ship->calculateCurrentMass(), false, ship4);
+	ship->setChassisMass(ship->calculateCurrentMass(), false, nullptr, deltaVector);
 
-	ship->setComponentCRC(slot, 0, ship6, command);
+	ship->setComponentCRC(slot, 0, nullptr, command, deltaVector);
 
-	if (notifyClient) {
-		ship1->close();
-		ship3->close();
-		ship4->close();
-		ship6->close();
-
-		pilot->sendMessage(ship1);
-		ship->broadcastMessage(ship3, true);
-		pilot->sendMessage(ship4);
-		ship->broadcastMessage(ship6, true);
+	if (deltaVector != nullptr) {
+		deltaVector->sendMessages(ship, pilot);
 	}
+}
+
+String ShipComponentImplementation::getAppearanceName(ShipObject* ship) {
+	auto data = ShipManager::instance()->getAppearanceData(ship->getShipName());
+	if (data == nullptr || data->contains(componentDataName)) {
+		return componentDataName;
+	}
+
+	if (reverseEngineeringLevel >= 7) {
+		auto advAppearance = data->getAdvancedAppearance(componentSlot);
+		if (advAppearance != "") {
+			return advAppearance;
+		}
+	}
+
+	auto defAppearance = data->getDefaultAppearance(componentSlot);
+	if (defAppearance != "") {
+		return defAppearance;
+	}
+
+	return componentDataName;
 }
