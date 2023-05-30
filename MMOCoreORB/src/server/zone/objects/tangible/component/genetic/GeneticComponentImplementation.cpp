@@ -211,24 +211,24 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	// Quickness: dex,dep
 
 
-	health = (hardiness * 15) + (dexterity * 3);
-	action = (dexterity * 15) + (intellect * 3);
-	mind = (intellect * 15) + (hardiness * 3);
+	health = (hardiness * 30) + (dexterity * 3);
+	action = (dexterity * 30) + (intellect * 3);
+	mind = (intellect * 30) + (hardiness * 3);
 
-	stamina = (dexterity * 15) + (endurance * 3);
-	willPower = (intellect * 15) + (cleverness * 3);
-	constitution = (hardiness * 15) + (fortitude * 3);
-	focus = (intellect * 15) + (dependability * 3);
-	strength = (hardiness * 15) + (dependability * 3);
-	quickness = (dexterity * 15) + (dependability * 3);
+	stamina = (dexterity * 30) + (endurance * 3);
+	willPower = (intellect * 30) + (cleverness * 3);
+	constitution = (hardiness * 30) + (fortitude * 3);
+	focus = (intellect * 30) + (dependability * 3);
+	strength = (hardiness * 30) + (dependability * 3);
+	quickness = (dexterity * 30) + (dependability * 3);
 
 	// toHit Calculation
 	hit = 0.19 + (cleverness / 1500.f);
 
 	// dps of pet use to determine min and max value.
-	int dps = ceil((ceil(15.0 + (775.0 * ( ((float)power)/1000.0))))/3.5);
+	int dps = ceil((ceil(15.0 + (775.0 * ( ((float)power)/1000.0)))));
 	speed = 2.5-((ceil(((float)courage)/10)*10)/1000);
-	maxDam = round(((float)dps * speed) * 1.5);
+	maxDam = round(((float)dps * speed) * 3);
 
 
 	//minDam = round(((float)dps * speed) * 0.5);
