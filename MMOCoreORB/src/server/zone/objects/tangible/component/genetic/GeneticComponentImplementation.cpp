@@ -360,11 +360,11 @@ void GeneticComponentImplementation::setSpecialResist(int type) {
 }
 
 int GeneticComponentImplementation::getEffectiveArmor() {
-	if (fortitude < 500)
-		return fortitude/50;
-	if (fortitude > 500)
-		return (fortitude-500)/50;
-	if (fortitude == 500)
-		return 0;
+	//if (fortitude < 500)
+	//	return fortitude/50;
+	//if (fortitude > 500)
+	//	return (fortitude-500)/50;
+	//if (fortitude == 500)
+	//	return 0;
 	return fortitude/50;
 }
