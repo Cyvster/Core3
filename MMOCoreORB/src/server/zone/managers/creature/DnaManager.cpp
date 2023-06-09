@@ -101,16 +101,16 @@ void DnaManager::generationalSample(PetDeed* deed, CreatureObject* player,int qu
 	int factor = (int)System::random(quality) - 7;
 
 	int reductionAmount = (factor + 15 + quality) ;
-	int cle = 1000;//reduceByPercent(deed->getCleverness(),reductionAmount);
-	int cou = 1000;//reduceByPercent(deed->getCourage(),reductionAmount);
-	int dep = 1000;//reduceByPercent(deed->getDependency(),reductionAmount);
-	int dex = 1000;//reduceByPercent(deed->getDexterity(),reductionAmount);
-	int end = 1000;//reduceByPercent(deed->getEndurance(),reductionAmount);
-	int fie = 1000;//reduceByPercent(deed->getFierceness(),reductionAmount);
-	int frt = 1000;//reduceByPercent(deed->getFortitude(),reductionAmount);
-	int har = 1000;//reduceByPercent(deed->getHardiness(),reductionAmount);
-	int ite = 1000;//reduceByPercent(deed->getIntelligence(),reductionAmount);
-	int pow = 1000;//reduceByPercent(deed->getPower(),reductionAmount);
+	int cle = 750;//reduceByPercent(deed->getCleverness(),reductionAmount);
+	int cou = 750;//reduceByPercent(deed->getCourage(),reductionAmount);
+	int dep = 750;//reduceByPercent(deed->getDependency(),reductionAmount);
+	int dex = 750;//reduceByPercent(deed->getDexterity(),reductionAmount);
+	int end = 750;//reduceByPercent(deed->getEndurance(),reductionAmount);
+	int fie = 750;//reduceByPercent(deed->getFierceness(),reductionAmount);
+	int frt = 750;//reduceByPercent(deed->getFortitude(),reductionAmount);
+	int har = 750;//reduceByPercent(deed->getHardiness(),reductionAmount);
+	int ite = 750;//reduceByPercent(deed->getIntelligence(),reductionAmount);
+	int pow = 750;//reduceByPercent(deed->getPower(),reductionAmount);
 
 	ManagedReference<SceneObject*> inventory = player->getSlottedObject("inventory");
 
