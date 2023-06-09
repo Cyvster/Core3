@@ -184,16 +184,16 @@ void DnaManager::generateSample(Creature* creature, CreatureObject* player,int q
 
 	int ferocity = creatureTemplate->getFerocity();
 	int cl = creature->getLevel();
-	int cle = 1000;//Genetics::hitChanceToValue(creature->getChanceHit(),quality);
-	int cou = 1000;//Genetics::meatTypeToValue(creature->getMeatType(),quality);
-	int dep = 1000;//Genetics::dietToValue(creature->getDiet(),quality);
-	int dex = 1000;//Genetics::hamToValue(creature->getMaxHAM(3),quality);
-	int end = 1000;//Genetics::accelerationToValue(creature->getWalkAcceleration(),quality);
-	int fie = 1000;//Genetics::ferocityToValue(ferocity,quality);
-	int frt = 1000;//Genetics::resistanceToValue(creature->getEffectiveResist(),creature->getArmor(),quality);
-	int har = 1000;//Genetics::hamToValue(creature->getMaxHAM(0),quality);
-	int ite = 1000;//Genetics::hamToValue(creature->getMaxHAM(6),quality);
-	int pow = 1000;//Genetics::damageToValue((creature->getDamageMax() + creature->getDamageMin())/2,quality);
+	int cle = 750;//Genetics::hitChanceToValue(creature->getChanceHit(),quality);
+	int cou = 750;//Genetics::meatTypeToValue(creature->getMeatType(),quality);
+	int dep = 750;//Genetics::dietToValue(creature->getDiet(),quality);
+	int dex = 750;//Genetics::hamToValue(creature->getMaxHAM(3),quality);
+	int end = 750;//Genetics::accelerationToValue(creature->getWalkAcceleration(),quality);
+	int fie = 750;//Genetics::ferocityToValue(ferocity,quality);
+	int frt = 750;//Genetics::resistanceToValue(creature->getEffectiveResist(),creature->getArmor(),quality);
+	int har = 750;//Genetics::hamToValue(creature->getMaxHAM(0),quality);
+	int ite = 750;//Genetics::hamToValue(creature->getMaxHAM(6),quality);
+	int pow = 750;//Genetics::damageToValue((creature->getDamageMax() + creature->getDamageMin())/2,quality);
 
 	ManagedReference<SceneObject*> inventory = player->getSlottedObject("inventory");
 
