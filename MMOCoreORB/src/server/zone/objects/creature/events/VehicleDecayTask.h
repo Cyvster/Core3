@@ -42,6 +42,9 @@ public:
 
 		if (decayRate == 0)
 			decayRate = 15;
+		
+		if (decayRate > 1)
+			decayRate = 1;
 
 		if (initialDecay) {
 			vehicle->inflictDamage(vehicle, 0, decayRate / 2, true);

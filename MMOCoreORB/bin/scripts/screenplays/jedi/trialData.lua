@@ -145,43 +145,43 @@ knightTrialQuests = {
 		trialName = "tusken_raider",
 		trialType = TRIAL_HUNT,
 		huntTarget = "tusken_raider",
-		huntGoal = 19
+		huntGoal = 1
 	},
 	{
 		trialName = "ancient_bull_rancor",
 		trialType = TRIAL_HUNT,
 		huntTarget = "ancient_bull_rancor",
-		huntGoal = 8
+		huntGoal = 1
 	},
 	{
 		trialName = "stintaril_prowler",
 		trialType = TRIAL_HUNT,
 		huntTarget = "stintaril_prowler",
-		huntGoal = 8
+		huntGoal = 1
 	},
 	{
 		trialName = "blurrg_raptor",
 		trialType = TRIAL_HUNT,
 		huntTarget = "blurrg_raptor",
-		huntGoal = 3
+		huntGoal = 1
 	},
 	{
 		trialName = "enraged_kimogila",
 		trialType = TRIAL_HUNT,
 		huntTarget = "enraged_kimogila",
-		huntGoal = 3
+		huntGoal = 1
 	},
 	{
 		trialName = "peko_peko_albatross",
 		trialType = TRIAL_HUNT,
 		huntTarget = "peko_peko_albatross",
-		huntGoal = 2
+		huntGoal = 1
 	},
 	{
 		trialName = "graul_marauder",
 		trialType = TRIAL_HUNT,
 		huntTarget = "graul_marauder",
-		huntGoal = 2
+		huntGoal = 1
 	},
 	{
 		trialName = "light_or_dark",
@@ -192,21 +192,21 @@ knightTrialQuests = {
 		trialType = TRIAL_HUNT_FACTION,
 		rebelTarget = "storm_commando",
 		imperialTarget = "rebel_commando",
-		huntGoal = 47
+		huntGoal = 1
 	},
 	{
 		trialName = "high_general",
 		trialType = TRIAL_HUNT_FACTION,
 		rebelTarget = "imperial_surface_marshal;imperial_high_general;imperial_general",
 		imperialTarget = "rebel_high_general;rebel_surface_marshal;rebel_general",
-		huntGoal = 22
+		huntGoal = 1
 	},
 	{
 		trialName = "corvette_officer",
 		trialType = TRIAL_HUNT_FACTION,
 		rebelTarget = "stormtrooper_novatrooper_elite_commander",
 		imperialTarget = "corvette_rebel_rear_admiral",
-		huntGoal = 4
+		huntGoal = 1
 	},
 	{
 		trialName = "geonosian_bunker_acklay",

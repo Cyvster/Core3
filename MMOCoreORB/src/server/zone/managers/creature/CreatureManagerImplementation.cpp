@@ -825,7 +825,7 @@ void CreatureManagerImplementation::droidHarvest(Creature* creature, CreatureObj
 		creatureHealth = "creature_quality_skinny";
 	}
 
-	float modifier = 1;
+	float modifier = 10;
 	int baseAmount = quantityExtracted;
 	if (owner->isGrouped()) {
 		modifier = owner->getGroup()->getGroupHarvestModifier(owner);
@@ -995,7 +995,7 @@ void CreatureManagerImplementation::harvest(Creature* creature, CreatureObject* 
 		creatureHealth = "creature_quality_skinny";
 	}
 
-	float modifier = 1;
+	float modifier = 10;
 	int baseAmount = quantityExtracted;
 
 	if (player->isGrouped()) {

@@ -81,7 +81,7 @@ function FsReflex2:completeSupplyFetch(pPlayer)
 		return
 	end
 
-	local count = self:getFetchCount(pPlayer) + 1
+	local count = self:getFetchCount(pPlayer) + 6
 
 	self:setFetchCount(pPlayer, count)
 
