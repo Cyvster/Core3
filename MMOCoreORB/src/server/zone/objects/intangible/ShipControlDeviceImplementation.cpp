@@ -12,13 +12,21 @@
 #include "server/zone/managers/player/PlayerManager.h"
 #include "server/zone/managers/collision/CollisionManager.h"
 #include "server/zone/objects/ship/ShipObject.h"
+#include "server/zone/objects/ship/PobShipObject.h"
+#include "server/zone/objects/intangible/tasks/LaunchShipTask.h"
+#include "server/zone/objects/intangible/tasks/StoreShipTask.h"
 #include "server/zone/managers/ship/ShipManager.h"
 #include "templates/params/creature/PlayerArrangement.h"
 #include "server/zone/managers/planet/PlanetManager.h"
 #include "server/zone/managers/stringid/StringIdManager.h"
 
 void ShipControlDeviceImplementation::setStoredLocationData(CreatureObject* player) {
-	auto ghost = player == nullptr ? nullptr : player->getPlayerObject().get();
+	// The control device needs to be locked as well as the player coming into this function
+
+	if (player == nullptr)
+		return;
+
+	auto ghost = player->getPlayerObject();
 
 	if (ghost == nullptr) {
 		return;
@@ -42,7 +50,7 @@ void ShipControlDeviceImplementation::setStoredLocationData(CreatureObject* play
 		return;
 	}
 
-	auto travelPoint = planetManager->getNearestPlanetTravelPoint(player->getWorldPosition(), FLT_MAX);
+	auto travelPoint = planetManager->getNearestPlanetTravelPoint(player->getWorldPosition(), 128.f);
 
 	if (travelPoint == nullptr) {
 		return;
@@ -69,38 +77,6 @@ Vector3 ShipControlDeviceImplementation::getStoredPosition(bool randomPosition) 
 	return storedPosition + random;
 }
 
-bool ShipControlDeviceImplementation::storeShip(CreatureObject* player) {
-	auto ship = controlledObject.get().castTo<ShipObject*>();
-
-	if (ship == nullptr) {
-		return false;
-	}
-
-	if (!ejectPlayers()) {
-		return false;
-	}
-
-	Locker sLock(ship);
-	ship->destroyObjectFromWorld(false);
-
-	ship->initializePosition(0,0,0);
-	ship->setDirection(1,0,0,0);
-	ship->setMovementCounter(0);
-
-	if (transferObject(ship, PlayerArrangement::RIDER, true) && !isShipLaunched()) {
-		ship->clearOptionBit(OptionBitmask::WINGS_OPEN, true);
-	}
-
-	updateStatus(isShipLaunched(), true);
-
-	if (player != nullptr) {
-		Locker cLock(player);
-		setStoredLocationData(player);
-	}
-
-	return isShipLaunched() ? false : true;
-}
-
 bool ShipControlDeviceImplementation::launchShip(CreatureObject* player, const String& zoneName, const Vector3& position) {
 	auto ship = controlledObject.get().castTo<ShipObject*>();
 
@@ -113,20 +89,23 @@ bool ShipControlDeviceImplementation::launchShip(CreatureObject* player, const S
 	if (zoneServer ==  nullptr)
 		return false;
 
-	auto spaceZone = zoneServer->getSpaceZone(zoneName);
+	Zone* zone = zoneServer->getZone(zoneName);
 
-	if (spaceZone == nullptr) {
+	if (zone == nullptr || !zone->isSpaceZone())
 		return false;
-	}
 
-	Locker sLock(ship);
-	ship->destroyObjectFromWorld(false);
+	SpaceZone* spaceZone = cast<SpaceZone*>(zone);
+
+	if (spaceZone == nullptr)
+		return false;
+
+	Locker sLock(ship, _this.getReferenceUnsafeStaticCast());
 
 	ship->initializePosition(position.getX(), position.getZ(), position.getY());
 	ship->setDirection(1,0,0,0);
 	ship->setMovementCounter(0);
 
-	if (spaceZone->transferObject(ship, -1, true) && isShipLaunched()) {
+	if (spaceZone->transferObject(ship, -1, true)) {
 		ship->setFactionStatus(player->getFactionStatus());
 		ship->setShipFaction(player->getFaction());
 		ship->scheduleRecovery();
@@ -136,63 +115,20 @@ bool ShipControlDeviceImplementation::launchShip(CreatureObject* player, const S
 		} else {
 			ship->clearOptionBit(OptionBitmask::INVULNERABLE, false);
 		}
+
+		updateStatus(true, true);
+
+		return true;
 	}
 
-	updateStatus(isShipLaunched(), true);
-	setStoredLocationData(player);
-
-	return isShipLaunched() ? true : false;
-}
-
-bool ShipControlDeviceImplementation::removePlayer(CreatureObject* player) {
-	auto zone = getZoneServer()->getZone(storedZoneName);
-
-	if (zone == nullptr) {
-		return false;
-	}
-
-	Locker sLock(player);
-	player->destroyObjectFromWorld(false);
-	player->switchZone(storedZoneName, storedPosition.getX(), storedPosition.getZ(), storedPosition.getY(), 0);
-
-	return player->getRootParent() == nullptr;
-}
-
-bool ShipControlDeviceImplementation::insertPlayer(CreatureObject* player) {
-	auto ship = controlledObject.get().castTo<ShipObject*>();
-
-	if (ship == nullptr) {
-		return false;
-	}
-
-	auto spaceZone = ship->getSpaceZone();
-
-	if (spaceZone == nullptr) {
-		return false;
-	}
-
-	Locker sLock(player);
-	player->destroyObjectFromWorld(false);
-
-	if (ship->getChassisCategory() == "pob") {
-		auto station = ship->getPilotChair().get();
-
-		if (station == nullptr) {
-			return false;
-		}
-
-		player->setState(CreatureState::PILOTINGPOBSHIP);
-		player->switchZone(spaceZone->getZoneName(), station->getPositionX(),station->getPositionZ(),station->getPositionY(), station->getObjectID());
-	} else {
-		player->setState(CreatureState::PILOTINGSHIP);
-		player->switchZone(spaceZone->getZoneName(), ship->getPositionX(),ship->getPositionZ(),ship->getPositionY(), ship->getObjectID());
-	}
-
-	return player->getRootParent() == ship;
+	return false;
 }
 
 void ShipControlDeviceImplementation::fillObjectMenuResponse(ObjectMenuResponse* menuResponse, CreatureObject* player) {
-	auto ghost = player == nullptr ? nullptr : player->getPlayerObject().get();
+	if (player == nullptr)
+		return;
+
+	auto ghost = player->getPlayerObject().get();
 
 	if (ghost == nullptr || !ghost->hasGodMode()) {
 		return;
@@ -235,6 +171,9 @@ void ShipControlDeviceImplementation::fillObjectMenuResponse(ObjectMenuResponse*
 }
 
 int ShipControlDeviceImplementation::handleObjectMenuSelect(CreatureObject* player, byte selectedID) {
+	if (player == nullptr)
+		return 0;
+
 	auto ship = controlledObject.get().castTo<ShipObject*>();
 
 	if (ship == nullptr) {
@@ -255,26 +194,32 @@ int ShipControlDeviceImplementation::handleObjectMenuSelect(CreatureObject* play
 				return 1;
 			}
 
-			removePlayer(player);
-			storeShip(player);
+			StoreShipTask* task = new StoreShipTask(player, _this.getReferenceUnsafeStaticCast(), storedZoneName, storedPosition);
+
+			if (task != nullptr)
+				task->execute();
 
 			return isShipLaunched() ? 1 : 0;
 		}
 	} else {
 		if (selectedID > LAUNCHSHIP) {
-			int zoneIndex = selectedID - LAUNCHSHIP - 1;
-			int zoneCount = zoneServer->getSpaceZoneCount();
+			int spaceZoneIndex = selectedID - LAUNCHSHIP - 1;
+			int spaceZoneCount = zoneServer->getSpaceZoneCount();
 
-			auto zone = (zoneIndex < zoneCount) ? zoneServer->getSpaceZone(zoneIndex) : nullptr;
+			auto zone = (spaceZoneIndex < spaceZoneCount) ? zoneServer->getSpaceZone(spaceZoneIndex) : nullptr;
 
 			if (zone == nullptr) {
 				return 1;
 			}
 
-			launchShip(player, zone->getZoneName(), player->getPosition());
-			insertPlayer(player);
+			Vector<uint64> dummyVec;
 
-			return isShipLaunched() ? 0 : 1;
+			LaunchShipTask* launchTask = new LaunchShipTask(player, _this.getReferenceUnsafeStaticCast(), dummyVec);
+
+			if (launchTask != nullptr)
+				launchTask->execute();
+
+			return 0;
 		}
 	}
 
@@ -289,7 +234,7 @@ bool ShipControlDeviceImplementation::canBeTradedTo(CreatureObject* player, Crea
 
 	ZoneServer* zoneServer = player->getZoneServer();
 
-	if (zoneServer != nullptr)
+	if (zoneServer == nullptr)
 		return false;
 
 	PlayerManager* playerManager = zoneServer->getPlayerManager();
@@ -330,75 +275,40 @@ bool ShipControlDeviceImplementation::canBeTradedTo(CreatureObject* player, Crea
 	return true;
 }
 
+int ShipControlDeviceImplementation::canBeDestroyed(CreatureObject* player) {
+	auto ship = controlledObject.get().castTo<ShipObject*>();
+
+	if (ship == nullptr)
+		return 1;
+
+	auto owner = ship->getOwner().get();
+
+	if (owner == nullptr)
+		return 1;
+
+	if (ship->isInOctTree()) {
+		owner->sendSystemMessage("You must land your ship before it can be destroyed.");
+		return 1;
+	}
+
+	if (ship->isPobShipObject()) {
+		auto pobShip = ship->asPobShipObject();
+
+		if (pobShip != nullptr && pobShip->getCurrentNumberOfPlayerItems() > 0) {
+			owner->sendSystemMessage("You must remove all of your items from your ship before it can be destroyed.");
+			return 1;
+		}
+	}
+
+	return IntangibleObjectImplementation::canBeDestroyed(player);
+}
+
+void ShipControlDeviceImplementation::destroyObjectFromDatabase(bool destroyContainedObjects) {
+	IntangibleObjectImplementation::destroyObjectFromDatabase(destroyContainedObjects);
+}
+
 bool ShipControlDeviceImplementation::isShipLaunched() {
 	auto object = getControlledObject();
 
 	return object != nullptr && object->isInOctTree();
-}
-
-void ShipControlDeviceImplementation::destroyObjectFromDatabase(bool destroyContainedObjects) {
-	auto ship = controlledObject.get().castTo<ShipObject*>();
-
-	if (ship != nullptr) {
-		if (!storeShip(ship->getOwner().get())) {
-			return;
-		}
-
-		Locker sLock(ship);
-		ship->destroyObjectFromDatabase(destroyContainedObjects);
-	}
-
-	ControlDeviceImplementation::destroyObjectFromDatabase(destroyContainedObjects);
-}
-
-bool ShipControlDeviceImplementation::ejectPlayers() {
-	auto ship = controlledObject.get().castTo<ShipObject*>();
-
-	if (ship == nullptr) {
-		return false;
-	}
-
-	auto chair = ship->getPilotChair().get();
-
-	if (chair != nullptr) {
-		ManagedReference<CreatureObject*> pilot = chair->getSlottedObject("ship_pilot_pob").castTo<CreatureObject*>();
-
-		if (pilot != nullptr && !removePlayer(pilot)) {
-			return false;
-		}
-	}
-
-	for (int i = 0; i < ship->getSlottedObjectsSize(); ++i) {
-		ManagedReference<CreatureObject*> object = ship->getSlottedObject(i).castTo<CreatureObject*>();
-
-		if (object != nullptr && !removePlayer(object)) {
-			return false;
-		}
-	}
-
-	for (int i = 0; i < ship->getContainerObjectsSize(); ++i) {
-		ManagedReference<CreatureObject*> object = ship->getContainerObject(i).castTo<CreatureObject*>();
-
-		if (object != nullptr && !removePlayer(object)) {
-			return false;
-		}
-	}
-
-	for (int i = 0; i < ship->getTotalCellNumber(); ++i) {
-		auto cell = ship->getCell(i);
-
-		if (cell == nullptr) {
-			continue;
-		}
-
-		for (int ii = 0; ii < cell->getContainerObjectsSize(); ++ii) {
-			ManagedReference<CreatureObject*> object = cell->getContainerObject(ii).castTo<CreatureObject*>();
-
-			if (object != nullptr && !removePlayer(object)) {
-				return false;
-			}
-		}
-	}
-
-	return true;
 }

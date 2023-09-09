@@ -39,6 +39,7 @@ include server.zone.objects.scene.variables.PendingTasksMap;
 include server.zone.objects.scene.SessionFacadeType;
 include server.zone.objects.scene.ObserverType;
 include templates.manager.PlanetMapCategory;
+include templates.manager.PlanetMapSubCategory;
 include templates.manager.TemplateManager;
 include templates.SharedObjectTemplate;
 include server.zone.objects.scene.components.ZoneComponent;
@@ -62,7 +63,9 @@ include server.metrics.Metrics;
 include engine.util.JSONSerializationType;
 include server.zone.objects.scene.variables.OrderedTaskExecutioner;
 import server.zone.objects.ship.ShipObject;
-import server.zone.objects.ship.SpaceStationObject;
+import server.zone.objects.ship.PobShipObject;
+import server.zone.objects.ship.ai.ShipAiAgent;
+import server.zone.objects.ship.ai.SpaceStationObject;
 
 @mock
 @json
@@ -343,12 +346,7 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	/**
 	 * Destroys the object from the world
 	 */
-	public abstract void destroyObjectFromWorld(boolean sendSelfDestroy) {
-		if (getSpaceZone() != null)
-			spaceZoneComponent.destroyObjectFromWorld(this, sendSelfDestroy);
-		else
-			zoneComponent.destroyObjectFromWorld(this, sendSelfDestroy);
-	}
+	public native abstract void destroyObjectFromWorld(boolean sendSelfDestroy);
 
 	/**
 	 * Removes object from zone without removing from parent. Should only be used for container unloading.
@@ -991,12 +989,12 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	public abstract native Zone getZone();
 
 	@mock
-	@dirty
-	public abstract native SpaceZone getSpaceZone();
-
-	@mock
 	@read
 	public abstract native Zone getZoneUnsafe();
+
+	@mock
+	@dirty
+	public abstract native SpaceZone getSpaceZone();
 
 	@read
 	public Zone getLocalZone() {
@@ -1007,6 +1005,25 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	public SpaceZone getLocalSpaceZone() {
 		return spaceZone.get();
 	}
+
+	@dirty
+	@local
+	@nativeStub
+	@virtualStub
+	public native abstract boolean isGroundZone();
+
+	@mock
+	@dirty
+	@local
+	@nativeStub
+	@virtualStub
+	public native abstract SpaceZone asSpaceZone();
+
+	@dirty
+	@local
+	@nativeStub
+	@virtualStub
+	public native abstract boolean isSpaceZone();
 
 	@local
 	@dereferenced
@@ -1567,6 +1584,19 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	@local
 	@nativeStub
 	@virtualStub
+	public native abstract boolean isShipAiAgent();
+
+	@mock
+	@dirty
+	@local
+	@nativeStub
+	@virtualStub
+	public native abstract ShipAiAgent asShipAiAgent();
+
+	@dirty
+	@local
+	@nativeStub
+	@virtualStub
 	public abstract native boolean isShipObject();
 
 	@mock
@@ -1588,6 +1618,19 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	@nativeStub
 	@virtualStub
 	public native abstract SpaceStationObject asSpaceStationObject();
+
+	@dirty
+	@local
+	@nativeStub
+	@virtualStub
+	public abstract native boolean isPobShipObject();
+
+	@mock
+	@dirty
+	@local
+	@nativeStub
+	@virtualStub
+	public native abstract PobShipObject asPobShipObject();
 
 	@dirty
 	public abstract boolean isCreature() {
@@ -2106,15 +2149,18 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 
 	@local
 	public void setPlanetMapCategory(final PlanetMapCategory pmc) {
-		if (!pmc)
+		if (pmc == null)
 			planetMapCategory = 0;
 		else
 			planetMapCategory = pmc.getCrc();
 	}
 
 	@local
-	public void setPlanetMapSubCategory(final PlanetMapCategory pmc)  {
-		planetMapSubCategory = pmc.getCrc();
+	public void setPlanetMapSubCategory(final PlanetMapSubCategory subPmc)  {
+		if (subPmc == null)
+			planetMapSubCategory = 0;
+		else
+			planetMapSubCategory = subPmc.getCrc();
 	}
 
 	@local
@@ -2126,9 +2172,9 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 
 	@local
 	@read
-	public final PlanetMapCategory getPlanetMapSubCategory() {
+	public final PlanetMapSubCategory getPlanetMapSubCategory() {
 		TemplateManager templateManager = TemplateManager.instance();
-		return templateManager.getPlanetMapCategoryByCrc(planetMapSubCategory);
+		return templateManager.getPlanetMapSubCategoryByCrc(planetMapSubCategory);
 	}
 
 	@local
@@ -2246,16 +2292,6 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 
 	@read
 	public native boolean isDataPad();
-
-	@dirty
-	public abstract boolean isGroundZone() {
-		return false;
-	}
-
-	@dirty
-	public abstract boolean isSpaceZone() {
-		return false;
-	}
 
 	@mock
 	@dirty

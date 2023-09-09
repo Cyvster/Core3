@@ -80,6 +80,7 @@
 #include "server/zone/objects/tangible/terminal/components/EnclaveTerminalMenuComponent.h"
 #include "server/zone/objects/tangible/terminal/components/DestructibleBuildingMenuComponent.h"
 #include "server/zone/objects/tangible/terminal/components/StructureTerminalMenuComponent.h"
+#include "server/zone/objects/tangible/terminal/components/ShipPermissionTerminalMenuComponent.h"
 #include "server/zone/objects/tangible/terminal/components/HQMenuComponent.h"
 #include "server/zone/objects/tangible/terminal/components/UplinkTerminalMenuComponent.h"
 #include "server/zone/objects/tangible/terminal/components/SecurityTerminalMenuComponent.h"
@@ -91,6 +92,7 @@
 #include "server/zone/objects/installation/components/MinefieldMenuComponent.h"
 #include "server/zone/ZoneContainerComponent.h"
 #include "server/zone/SpaceZoneContainerComponent.h"
+#include "server/zone/objects/ship/components/PobShipContainerComponent.h"
 #include "server/zone/objects/structure/components/StructureContainerComponent.h"
 #include "server/zone/objects/tangible/components/ElevatorMenuComponent.h"
 #include "server/zone/objects/tangible/components/ElevatorUpMenuComponent.h"
@@ -154,6 +156,7 @@
 #include "server/zone/objects/tangible/components/droid/DroidTrapModuleDataComponent.h"
 #include "server/zone/objects/tangible/components/droid/DroidHarvestModuleDataComponent.h"
 #include "server/zone/objects/tangible/components/droid/DroidPersonalityModuleDataComponent.h"
+#include "server/zone/objects/tangible/components/StarshipTextureKitObjectMenuComponent.h"
 
 ComponentManager::ComponentManager() {
 	components.put("ContainerComponent", new ContainerComponent());
@@ -223,9 +226,11 @@ ComponentManager::ComponentManager() {
 	components.put("MinefieldMenuComponent", new MinefieldMenuComponent());
 	components.put("InstallationObjectMenuComponent", new InstallationObjectMenuComponent());
 
+	components.put("ShipPermissionTerminalMenuComponent", new ShipPermissionTerminalMenuComponent());
 
 	components.put("HQMenuComponent", new HQMenuComponent());
 	components.put("ContainerObjectComponent", new ContainerObjectComponent());
+	components.put("PobShipContainerComponent", new PobShipContainerComponent());
 	components.put("StructureContainerComponent", new StructureContainerComponent());
 
 	components.put("VendorContainerComponent", new VendorContainerComponent());
@@ -351,4 +356,7 @@ ComponentManager::ComponentManager() {
 	dataObjectFactory.registerObject<DroidTrapModuleDataComponent>("DroidTrapModuleDataComponent");
 	dataObjectFactory.registerObject<DroidHarvestModuleDataComponent>("DroidHarvestModuleDataComponent");
 	dataObjectFactory.registerObject<DroidPersonalityModuleDataComponent>("DroidPersonalityModuleDataComponent");
+
+	//JtL component
+	components.put("StarshipTextureKitObjectMenuComponent", new StarshipTextureKitObjectMenuComponent());
 }

@@ -97,6 +97,7 @@
 #include "server/zone/managers/resource/ResourceManager.h"
 #include "server/zone/managers/gcw/observers/SquadObserver.h"
 #include "server/zone/managers/ship/ShipManager.h"
+#include "templates/params/ship/ShipFlags.h"
 #include "templates/params/creature/PlayerArrangement.h"
 
 int DirectorManager::DEBUG_MODE = 0;
@@ -600,6 +601,7 @@ void DirectorManager::initializeLuaEngine(Lua* luaEngine) {
 	luaEngine->setGlobalInt("PROTOTYPECREATED", ObserverEventType::PROTOTYPECREATED);
 	luaEngine->setGlobalInt("SLICED", ObserverEventType::SLICED);
 	luaEngine->setGlobalInt("ABILITYUSED", ObserverEventType::ABILITYUSED);
+	luaEngine->setGlobalInt("SPATIALCHAT", ObserverEventType::SPATIALCHAT);
 
 	luaEngine->setGlobalInt("UPRIGHT", CreaturePosture::UPRIGHT);
 	luaEngine->setGlobalInt("PRONE", CreaturePosture::PRONE);
@@ -607,9 +609,6 @@ void DirectorManager::initializeLuaEngine(Lua* luaEngine) {
 	luaEngine->setGlobalInt("KNOCKEDDOWN", CreaturePosture::KNOCKEDDOWN);
 	luaEngine->setGlobalInt("CROUCHED", CreaturePosture::CROUCHED);
 	luaEngine->setGlobalInt("LYINGDOWN", CreaturePosture::LYINGDOWN);
-	luaEngine->setGlobalInt("STATESITTINGONCHAIR", CreatureState::SITTINGONCHAIR);
-	luaEngine->setGlobalInt("PILOTINGSHIP", CreatureState::PILOTINGSHIP);
-	luaEngine->setGlobalLong("PILOTINGPOBSHIP", CreatureState::PILOTINGPOBSHIP);
 
 	//Player Arrangements
 	luaEngine->setGlobalLong("RIDER", PlayerArrangement::RIDER);
@@ -664,6 +663,12 @@ void DirectorManager::initializeLuaEngine(Lua* luaEngine) {
 	luaEngine->setGlobalInt("BLEEDING", CreatureState::BLEEDING);
 	luaEngine->setGlobalInt("PEACE", CreatureState::PEACE);
 
+	luaEngine->setGlobalLong("PILOTINGSHIP", CreatureState::PILOTINGSHIP);
+	luaEngine->setGlobalLong("SHIPOPERATIONS", CreatureState::SHIPOPERATIONS);
+	luaEngine->setGlobalLong("SHIPGUNNER", CreatureState::SHIPGUNNER);
+	luaEngine->setGlobalLong("SHIPINTERIOR", CreatureState::SHIPINTERIOR);
+	luaEngine->setGlobalLong("PILOTINGPOBSHIP", CreatureState::PILOTINGPOBSHIP);
+
 	luaEngine->setGlobalInt("NONE", CreatureFlag::NONE);
 	luaEngine->setGlobalInt("ATTACKABLE", CreatureFlag::ATTACKABLE);
 	luaEngine->setGlobalInt("AGGRESSIVE", CreatureFlag::AGGRESSIVE);
@@ -676,6 +681,7 @@ void DirectorManager::initializeLuaEngine(Lua* luaEngine) {
 	luaEngine->setGlobalInt("SCANNING_FOR_CONTRABAND", CreatureFlag::SCANNING_FOR_CONTRABAND);
 	luaEngine->setGlobalInt("IGNORE_FACTION_STANDING", CreatureFlag::IGNORE_FACTION_STANDING);
 
+	luaEngine->setGlobalInt("INSURED", OptionBitmask::INSURED);
 	luaEngine->setGlobalInt("CONVERSABLE", OptionBitmask::CONVERSE);
 	luaEngine->setGlobalInt("AIENABLED", OptionBitmask::AIENABLED);
 	luaEngine->setGlobalInt("INVULNERABLE", OptionBitmask::INVULNERABLE);
@@ -754,6 +760,10 @@ void DirectorManager::initializeLuaEngine(Lua* luaEngine) {
 	luaEngine->setGlobalInt("FIGHTERSHIP", ShipManager::FIGHTERSHIP);
 	luaEngine->setGlobalInt("POBSHIP", ShipManager::POBSHIP);
 	luaEngine->setGlobalInt("SPACESTATION", ShipManager::SPACESTATION);
+
+	// Ship Flags
+	luaEngine->setGlobalInt("SHIP_AI_ESCORT", ShipFlag::ESCORT);
+	luaEngine->setGlobalInt("SHIP_AI_FOLLOW", ShipFlag::FOLLOW);
 
 	// Badges
 	const auto badges = BadgeList::instance()->getMap();
@@ -3320,24 +3330,19 @@ int DirectorManager::getZoneByName(lua_State* L) {
 		return 0;
 	}
 
-	String zoneid = lua_tostring(L, -1);
+	auto zoneServer = ServerCore::getZoneServer();
 
-	if (zoneid.contains("space")) {
-		SpaceZone* zone = ServerCore::getZoneServer()->getSpaceZone(zoneid);
+	if (zoneServer == nullptr)
+		return 0;
 
-		if (zone == nullptr) {
-			lua_pushnil(L);
-		} else {
-			lua_pushlightuserdata(L, zone);
-		}
+	String zoneName = lua_tostring(L, -1);
+
+	Zone* zone = zoneServer->getZone(zoneName);
+
+	if (zone == nullptr) {
+		lua_pushnil(L);
 	} else {
-		Zone* zone = ServerCore::getZoneServer()->getZone(zoneid);
-
-		if (zone == nullptr) {
-			lua_pushnil(L);
-		} else {
-			lua_pushlightuserdata(L, zone);
-		}
+		lua_pushlightuserdata(L, zone);
 	}
 
 	return 1;
@@ -3387,7 +3392,7 @@ Vector3 DirectorManager::generateSpawnPoint(String zoneName, float x, float y, f
 
 		float newZ = zone->getHeight(newX, newY);
 
-		position = Vector3(newX, newY, newZ);
+		position.set(newX, newZ, newY);
 
 		found = forceSpawn == true || (zone->getPlanetManager()->isSpawningPermittedAt(position.getX(), position.getY(), extraNoBuildRadius) &&
 				!CollisionManager::checkSphereCollision(position, sphereCollision, zone));
@@ -3396,7 +3401,7 @@ Vector3 DirectorManager::generateSpawnPoint(String zoneName, float x, float y, f
 	}
 
 	if (!found) {
-		position = Vector3(0, 0, 0);
+		position.set(0, 0, 0);
 	}
 
 	return position;
@@ -4251,6 +4256,7 @@ int DirectorManager::getSpawnPointInArea(lua_State* L) {
 
 	String zoneName  = lua_tostring(L, -4);
 	Zone* zone = ServerCore::getZoneServer()->getZone(zoneName);
+
 	if (zone == nullptr) {
 		instance()-> error("Zone == nullptr in DirectorManager::getSpawnPointInArea (" + zoneName + ")");
 		ERROR_CODE = INCORRECT_ARGUMENTS;
@@ -4264,20 +4270,22 @@ int DirectorManager::getSpawnPointInArea(lua_State* L) {
 	Sphere sphere(Vector3(x, y, zone->getHeightNoCache(x, y)), radius);
 	Vector3 result;
 
-	if (PathFinderManager::instance()->getSpawnPointInArea(sphere, zone, result)) {
-		lua_newtable(L);
-		lua_pushnumber(L, result.getX());
-		lua_pushnumber(L, result.getZ());
-		lua_pushnumber(L, result.getY());
-		lua_rawseti(L, -4, 3);
-		lua_rawseti(L, -3, 2);
-		lua_rawseti(L, -2, 1);
-		return 1;
-	} else {
-		String err = "Unable to generate spawn point in DirectorManager::getSpawnPointInArea, x: " + String::valueOf(x) + ", y: " + String::valueOf(y) + ", zone: " + zoneName + ", radius: " + String::valueOf(radius);
-		printTraceError(L, err);
-		return 0;
+	for (int i = 0; i < SPAWNPOINTSEARCHATTEMPTS; i++) {
+		if (PathFinderManager::instance()->getSpawnPointInArea(sphere, zone, result)) {
+			lua_newtable(L);
+			lua_pushnumber(L, result.getX());
+			lua_pushnumber(L, result.getZ());
+			lua_pushnumber(L, result.getY());
+			lua_rawseti(L, -4, 3);
+			lua_rawseti(L, -3, 2);
+			lua_rawseti(L, -2, 1);
+
+			return 1;
+		}
 	}
+
+	instance()->debug() << "Unable to generate spawn point in DirectorManager::getSpawnPointInArea, x: " + String::valueOf(x) + ", y: " + String::valueOf(y) + ", zone: " + zoneName + ", radius: " + String::valueOf(radius);
+	return 0;
 }
 
 int DirectorManager::getPlayerByName(lua_State* L) {

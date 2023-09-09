@@ -24,6 +24,7 @@
 #include "server/zone/managers/auction/AuctionManager.h"
 #include "server/zone/managers/mission/MissionManager.h"
 #include "server/zone/managers/creature/AiMap.h"
+#include "server/zone/managers/space/SpaceAiMap.h"
 #include "server/zone/managers/creature/CreatureTemplateManager.h"
 #include "server/zone/managers/creature/DnaManager.h"
 #include "server/zone/managers/creature/PetManager.h"
@@ -145,6 +146,7 @@ void ZoneServerImplementation::initialize() {
 	creatureTemplateManager->loadTemplates();
 
 	AiMap::instance()->loadTemplates();
+	SpaceAiMap::instance()->loadTemplates();
 
 	dnaManager = DnaManager::instance();
 	dnaManager->loadSampleData();
@@ -188,8 +190,6 @@ void ZoneServerImplementation::initialize() {
 	petManager = new PetManager(_this.getReferenceUnsafeStaticCast());
 	petManager->initialize();
 
-	ShipManager::instance()->initialize();
-
 	startZones();
 	startSpaceZones();
 
@@ -202,22 +202,28 @@ void ZoneServerImplementation::initialize() {
 }
 
 void ZoneServerImplementation::startZones() {
-	info("Loading zones.");
+	info(true) << "Loading Ground Zones...";
 
 	auto enabledZones = configManager->getEnabledZones();
 
 	StructureManager* structureManager = StructureManager::instance();
 	structureManager->setZoneServer(_this.getReferenceUnsafeStaticCast());
 
-	for (int i = 0; i < enabledZones.size(); ++i) {
-		String zoneName = enabledZones.get(i);
+	int totalZones = enabledZones.size();
 
-		info("Loading zone " + zoneName + ".");
+	info(true) << "Total Enabled Ground Zones: " << totalZones;
+
+	for (int i = 0; i < totalZones; ++i) {
+		String zoneName = enabledZones.get(i);
 
 		Zone* zone = new Zone(processor, zoneName);
 		zone->createContainerComponent();
 		zone->initializePrivateData();
 		zone->deploy("Zone " + zoneName);
+
+		String displayName = zoneName.subString(0,1).toUpperCase() + zoneName.subString(1);
+
+		info(true) << "Ground Zone: " + displayName + " deployed.";
 
 		zones->put(zoneName, zone);
 	}
@@ -226,6 +232,7 @@ void ZoneServerImplementation::startZones() {
 
 	for (int i = 0; i < zones->size(); ++i) {
 		Zone* zone = zones->get(i);
+
 		if (zone != nullptr) {
 			ZoneLoadManagersTask* task = new ZoneLoadManagersTask(_this.getReferenceUnsafeStaticCast(), zone);
 			task->execute();
@@ -243,22 +250,26 @@ void ZoneServerImplementation::startZones() {
 }
 
 void ZoneServerImplementation::startSpaceZones() {
-	info(true) << "Starting Space Zones..";
+	info(true) << "Loading Space Zones...";
 
 	auto enabledSpaceZones = configManager->getEnabledSpaceZones();
 
-	for (int i = 0; i < enabledSpaceZones.size(); ++i) {
-		String spaceZoneName = enabledSpaceZones.get(i);
+	int totalZones = enabledSpaceZones.size();
 
-		info(true) << "Loading Space Zone: " << spaceZoneName << ".";
+	info(true) << "Total Enabled Space Zones: " << totalZones;
 
-		SpaceZone* spaceZone = new SpaceZone(processor, spaceZoneName);
+	for (int i = 0; i < totalZones; ++i) {
+		String zoneName = enabledSpaceZones.get(i);
+
+		SpaceZone* spaceZone = new SpaceZone(processor, zoneName);
 
 		spaceZone->createContainerComponent();
 		spaceZone->initializePrivateData();
-		spaceZone->deploy("SpaceZone " + spaceZoneName);
+		spaceZone->deploy("SpaceZone " + zoneName);
 
-		spaceZones->put(spaceZoneName, spaceZone);
+		info(true) << "Space Zone: " + zoneName + " deployed.";
+
+		spaceZones->put(zoneName, spaceZone);
 	}
 
 	for (int i = 0; i < spaceZones->size(); ++i) {
@@ -282,6 +293,9 @@ void ZoneServerImplementation::startSpaceZones() {
 
 void ZoneServerImplementation::startManagers() {
 	info("loading managers..");
+
+	// Load ship data
+	ShipManager::instance()->initialize();
 
 	radialManager = new RadialManager(_this.getReferenceUnsafeStaticCast());
 	radialManager->deploy("RadialManager");
@@ -307,6 +321,7 @@ void ZoneServerImplementation::startManagers() {
 
 	for (int i = 0; i < zones->size(); ++i) {
 		Zone* zone = zones->get(i);
+
 		if (zone != nullptr) {
 			zone->updateCityRegions();
 		}
@@ -508,6 +523,10 @@ void ZoneServerImplementation::clearZones() {
 	}
 
 	info("Space zones cleared...", true);
+}
+
+Zone* ZoneServerImplementation::getZone(const String& terrainName) const {
+	return terrainName.contains("space") ? spaceZones->get(terrainName) : zones->get(terrainName);
 }
 
 ZoneClientSession* ZoneServerImplementation::createConnection(Socket* sock, SocketAddress& addr) {

@@ -37,9 +37,7 @@ template<> bool CheckHasFollow::check(AiAgent* agent) const {
 }
 
 template<> bool CheckAggroDelayPast::check(AiAgent* agent) const {
-	Time* delay = agent->getAggroDelay();
-
-	return delay != nullptr && delay->isPast();
+	return agent->isAggroDelayPast();
 }
 
 template<> bool CheckFollowHasState::check(AiAgent* agent) const {
@@ -204,7 +202,13 @@ template<> bool CheckAttackInRange::check(AiAgent* agent) const {
 	float templatePadding = agent->getTemplateRadius() + followCopy->getTemplateRadius();
 	float maxRange = combatCommand->getRange();
 
-	if ((maxRange > 0 && !followCopy->isInRange(agent, maxRange)) || (maxRange <= 0 && !followCopy->isInRange(agent, agent->getWeapon()->getMaxRange() + templatePadding))) {
+	WeaponObject* currWeapon = agent->getCurrentWeapon();
+	float weapMaxRange = maxRange;
+
+	if (currWeapon != nullptr)
+		weapMaxRange = currWeapon->getMaxRange();
+
+	if ((maxRange > 0 && !followCopy->isInRange(agent, maxRange)) || (maxRange <= 0 && !followCopy->isInRange(agent, weapMaxRange + templatePadding))) {
 		return false;
 	}
 

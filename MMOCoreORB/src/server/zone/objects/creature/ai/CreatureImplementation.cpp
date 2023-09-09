@@ -184,16 +184,6 @@ void CreatureImplementation::fillAttributeList(AttributeListMessage* alm, Creatu
 	}
 }
 
-void CreatureImplementation::scheduleDespawn() {
-	if (getPendingTask("despawn") != nullptr)
-		return;
-
-	Reference<DespawnCreatureTask*> despawn = new DespawnCreatureTask(_this.getReferenceUnsafeStaticCast());
-	//despawn->schedule(300000); /// 5 minutes
-	//addPendingTask("despawn", despawn, 45000); /// 45 second
-	addPendingTask("despawn", despawn, 300000);
-}
-
 bool CreatureImplementation::hasOrganics() {
 	return ((getHideMax() + getBoneMax() + getMeatMax()) > 0);
 }
@@ -436,6 +426,8 @@ void CreatureImplementation::setPetLevel(int newLevel) {
 		return;
 	}
 
+	Creature* thisCreature = _this.getReferenceUnsafeStaticCast();
+
 	clearBuffs(false, false);
 
 	int baseLevel = getTemplateLevel();
@@ -443,22 +435,27 @@ void CreatureImplementation::setPetLevel(int newLevel) {
 	float minDmg = calculateAttackMinDamage(baseLevel);
 	float maxDmg = calculateAttackMaxDamage(baseLevel);
 
-	Reference<WeaponObject*> defaultWeapon = asAiAgent()->getDefaultWeapon();
-
 	float ratio = ((float)newLevel) / (float)baseLevel;
 	minDmg *= ratio;
 	maxDmg *= ratio;
 
-	if (primaryWeapon != nullptr && primaryWeapon != defaultWeapon) {
-		float mod = 1.f - 0.1f*float(primaryWeapon->getArmorPiercing());
+	ManagedReference<WeaponObject*> defaultWeap = getDefaultWeapon();
+	ManagedReference<WeaponObject*> primaryWeap = getPrimaryWeapon();
 
-		primaryWeapon->setMinDamage(minDmg * mod);
-		primaryWeapon->setMaxDamage(maxDmg * mod);
+	if (primaryWeap != nullptr && primaryWeap != defaultWeap) {
+		Locker primLock(primaryWeap, thisCreature);
+
+		float mod = 1.f - 0.1f*float(primaryWeap->getArmorPiercing());
+
+		primaryWeap->setMinDamage(minDmg * mod);
+		primaryWeap->setMaxDamage(maxDmg * mod);
 	}
 
-	if (defaultWeapon != nullptr) {
-		defaultWeapon->setMinDamage(minDmg);
-		defaultWeapon->setMaxDamage(maxDmg);
+	if (defaultWeap != nullptr) {
+		Locker defLock(defaultWeap, thisCreature);
+
+		defaultWeap->setMinDamage(minDmg);
+		defaultWeap->setMaxDamage(maxDmg);
 	}
 
 	int ham = 0;

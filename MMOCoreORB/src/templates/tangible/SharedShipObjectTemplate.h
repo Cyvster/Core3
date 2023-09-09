@@ -40,6 +40,12 @@ class SharedShipObjectTemplate : public SharedTangibleObjectTemplate {
 	StringParam shipDifficulty;
 	StringParam shipFaction;
 
+	VectorMap<String, Vector<Vector3>> sparkLocations;
+	VectorMap<String, Vector<Vector3>> launchLocations;
+
+	IntegerParam shipBitmask;
+	uint64 customShipAiMap;
+
 public:
 	SharedShipObjectTemplate() {
 
@@ -61,6 +67,14 @@ public:
 		return componentValues;
 	}
 
+	const VectorMap<String, Vector<Vector3>>& getSparkLocations() {
+		return sparkLocations;
+	}
+
+	const VectorMap<String, Vector<Vector3>>& getLaunchLocations() {
+		return launchLocations;
+	}
+
 	void readAttributeMap(LuaObject* templateData) {
 		auto attributes = templateData->getObjectField("attributes");
 
@@ -79,6 +93,74 @@ public:
 		}
 
 		attributes.pop();
+	}
+
+	void readPobData(LuaObject* templateData) {
+		// damage spark locations
+		auto sparkLocs = templateData->getObjectField("sparkLocations");
+
+		if (sparkLocs.isValidTable()) {
+			for (int i = 1; i <= sparkLocs.getTableSize(); ++i) {
+				auto cellTable = sparkLocs.getObjectAt(i);
+
+				if (cellTable.isValidTable()) {
+					String cellName = cellTable.getStringField("cellName");
+					Vector<Vector3> locations;
+
+					for (int k = 2; k <= cellTable.getTableSize(); ++k) {
+						auto coordinates = cellTable.getObjectAt(k);
+
+						if (coordinates.isValidTable()) {
+							Vector3 location;
+
+							location.setX(coordinates.getFloatField("x"));
+							location.setZ(coordinates.getFloatField("z"));
+							location.setY(coordinates.getFloatField("y"));
+
+							locations.add(location);
+						}
+						coordinates.pop();
+					}
+
+					sparkLocations.put(cellName, locations);
+				}
+				cellTable.pop();
+			}
+		}
+		sparkLocs.pop();
+
+		// player launch locations
+		auto launchLoc = templateData->getObjectField("launchPoints");
+
+		if (launchLoc.isValidTable()) {
+			for (int i = 1; i <= launchLoc.getTableSize(); ++i) {
+				auto cellTable = launchLoc.getObjectAt(i);
+
+				if (cellTable.isValidTable()) {
+					String cellName = cellTable.getStringField("cellName");
+					Vector<Vector3> locations;
+
+					for (int k = 1; k <= cellTable.getTableSize(); ++k) {
+						auto coordinates = cellTable.getObjectAt(k);
+
+						if (coordinates.isValidTable()) {
+							Vector3 location;
+
+							location.setX(coordinates.getFloatField("x"));
+							location.setZ(coordinates.getFloatField("z"));
+							location.setY(coordinates.getFloatField("y"));
+
+							locations.add(location);
+						}
+						coordinates.pop();
+					}
+
+					launchLocations.put(cellName, locations);
+				}
+				cellTable.pop();
+			}
+		}
+		launchLoc.pop();
 	}
 
 	void readObject(LuaObject* templateData) {
@@ -108,7 +190,17 @@ public:
 		conversationMobile = templateData->getStringField("conversationMobile");
 		conversationMessage = templateData->getStringField("conversationMessage");
 
+		shipBitmask = templateData->getIntField("shipBitmask");
+
+		if (!templateData->getStringField("customShipAiMap").isEmpty())
+			customShipAiMap = templateData->getStringField("customShipAiMap").hashCode();
+
 		readAttributeMap(templateData);
+
+		// SceneObjectType::POBSHIP
+		if (gameObjectType == 536870917) {
+			readPobData(templateData);
+		}
 
 		try {
 			const static char* components[] = { "reactor", "engine",  "shield_0", "shield_1", "armor_0", "armor_1", "capacitor", "booster", "droid_interface",
@@ -272,6 +364,14 @@ public:
 
 	inline int getChassisLevel() const {
 		return chassisLevel.get();
+	}
+
+	inline int getShipBitmask() const {
+		return shipBitmask;
+	}
+
+	inline uint64 getCustomShipAiMap() {
+		return customShipAiMap;
 	}
 
 	void parseVariableData(const String& varName, Chunk* data) {

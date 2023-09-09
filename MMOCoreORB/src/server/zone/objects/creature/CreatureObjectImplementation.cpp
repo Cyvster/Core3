@@ -152,6 +152,7 @@ void CreatureObjectImplementation::initializeMembers() {
 	moodID = 0;
 	performanceStartTime = 0;
 	performanceType = 0;
+	tradeTargetID = 0;
 
 	optionsBitmask = 0x80;
 
@@ -346,9 +347,8 @@ void CreatureObjectImplementation::sendToOwner(bool doClose) {
 void CreatureObjectImplementation::sendBaselinesTo(SceneObject* player) {
 	CreatureObject* thisPointer = asCreatureObject();
 	Zone* zone = getZoneUnsafe();
-	SpaceZone* spaceZone = getSpaceZone();
 
-	if (zone == nullptr && spaceZone == nullptr)
+	if (zone == nullptr)
 		return;
 
 	if (player == thisPointer) {
@@ -518,7 +518,7 @@ void CreatureObjectImplementation::setLevel(int level, bool randomHam) {
 	if (currentGroup != nullptr) {
 		Locker clocker(currentGroup, asCreatureObject());
 
-		currentGroup->calcGroupLevel();
+		currentGroup->calculateGroupLevel();
 	}
 }
 
@@ -1011,6 +1011,21 @@ bool CreatureObjectImplementation::clearState(uint64 state, bool notifyClient) {
 	} else {
 		return false;
 	}
+}
+
+void CreatureObjectImplementation::clearSpaceStates() {
+	if (hasState(CreatureState::PILOTINGSHIP))
+		clearState(CreatureState::PILOTINGSHIP);
+	if (hasState(CreatureState::SHIPOPERATIONS))
+		clearState(CreatureState::SHIPOPERATIONS);
+	if (hasState(CreatureState::SHIPOPERATIONS))
+		clearState(CreatureState::SHIPOPERATIONS);
+	if (hasState(CreatureState::SHIPGUNNER))
+		clearState(CreatureState::SHIPGUNNER);
+	if (hasState(CreatureState::SHIPINTERIOR))
+		clearState(CreatureState::SHIPINTERIOR);
+	if (hasState(CreatureState::PILOTINGPOBSHIP))
+		clearState(CreatureState::PILOTINGPOBSHIP);
 }
 
 void CreatureObjectImplementation::setHAM(int type, int value,
@@ -1778,10 +1793,12 @@ UnicodeString CreatureObjectImplementation::getCreatureName() const {
 	return getCustomObjectName();
 }
 
-void CreatureObjectImplementation::updateGroupInviterID(uint64 id,
-		bool notifyClient) {
+void CreatureObjectImplementation::updateGroupInviterID(uint64 id, bool notifyClient) {
 	groupInviterID = id;
 	++groupInviteCounter;
+
+	if (!notifyClient)
+		return;
 
 	CreatureObjectDeltaMessage6* delta = new CreatureObjectDeltaMessage6(asCreatureObject());
 	delta->updateInviterId();
@@ -1790,9 +1807,11 @@ void CreatureObjectImplementation::updateGroupInviterID(uint64 id,
 	broadcastMessage(delta, true);
 }
 
-void CreatureObjectImplementation::updateGroup(GroupObject* grp,
-		bool notifyClient) {
+void CreatureObjectImplementation::updateGroup(GroupObject* grp, bool notifyClient) {
 	group = grp;
+
+	if (!notifyClient)
+		return;
 
 	CreatureObjectDeltaMessage6* delta = new CreatureObjectDeltaMessage6(asCreatureObject());
 	delta->updateGroupID();
@@ -2204,8 +2223,7 @@ void CreatureObjectImplementation::notifyLoadFromDatabase() {
 	}
 
 	if (ghost->getSkillPoints() != totalSkillPointsWasted) {
-		error() << "skill points on load mismatch calculated: " << totalSkillPointsWasted
-		       << " found: " << ghost->getSkillPoints();
+		error() << "skill points on load mismatch calculated: " << totalSkillPointsWasted << " found: " << ghost->getSkillPoints();
 		ghost->setSkillPoints(totalSkillPointsWasted);
 	}
 
@@ -2213,7 +2231,7 @@ void CreatureObjectImplementation::notifyLoadFromDatabase() {
 
 	skillManager->updateXpLimits(ghost);
 
-	if (getZone() != nullptr || getSpaceZone() != nullptr)
+	if (getZone() != nullptr)
 		ghost->setLinkDead();
 }
 
@@ -2777,65 +2795,68 @@ void CreatureObjectImplementation::notifyPostureChange(int newPosture) {
 }
 
 void CreatureObjectImplementation::updateGroupMFDPositions() {
-	Reference<CreatureObject*> creo = asCreatureObject();
+	Reference<CreatureObject*> thisCreo = asCreatureObject();
 	auto group = this->group;
 
-	if (group != nullptr) {
-		GroupList* list = group->getGroupList();
-		if (list != nullptr) {
-			auto zone = getZone();
+	if (group == nullptr)
+		return;
 
-			if (zone == nullptr) {
-				return;
-			}
+	auto zone = getZone();
 
-			ClientMfdStatusUpdateMessage* msg = new ClientMfdStatusUpdateMessage(creo, zone->getZoneName());
+	if (zone == nullptr) {
+		return;
+	}
+
+	GroupList* groupList = group->getGroupList();
+
+	if (groupList == nullptr)
+		return;
+
+	ClientMfdStatusUpdateMessage* msg = new ClientMfdStatusUpdateMessage(thisCreo, zone->getZoneName());
+
+	if (msg == nullptr)
+		return;
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-			Reference<BasePacket*> pack = msg;
+	Reference<BasePacket*> pack = msg;
 #endif
 
-			for (int i = 0; i < list->size(); i++) {
+	CloseObjectsVector* creatureCloseObjects = (CloseObjectsVector*) getCloseObjects();
+	SortedVector<TreeEntry*> closeObjectsVector;
 
-				Reference<CreatureObject*> member = list->getSafe(i).get();
+	if (creatureCloseObjects == nullptr)
+		return;
 
-				if (member == nullptr || creo == member || !member->isPlayerCreature())
-					continue;
+	creatureCloseObjects->safeCopyReceiversTo(closeObjectsVector, CloseObjectsVector::CREOTYPE);
 
-				CloseObjectsVector* cev = (CloseObjectsVector*)member->getCloseObjects();
+	uint64 creoID = thisCreo->getObjectID();
 
-				if (cev == nullptr || cev->contains(creo.get()))
-					continue;
+	for (int i = 0; i < groupList->size(); i++) {
+		Reference<CreatureObject*> member = groupList->getSafe(i).get();
+
+		if (member == nullptr || creoID == member->getObjectID())
+			continue;
+
+		if (closeObjectsVector.contains(member))
+			continue;
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-				member->sendMessage(pack);
+		member->sendMessage(pack);
 #else
-				member->sendMessage(msg->clone());
+		member->sendMessage(msg->clone());
 #endif
-			}
+	}
 
 #ifndef LOCKFREE_BCLIENT_BUFFERS
-			delete msg;
+	delete msg;
 #endif
-		}
-	}
 }
 
 void CreatureObjectImplementation::notifySelfPositionUpdate() {
 	auto zone = getZoneUnsafe();
-	auto spaceZone = getSpaceZone();
-
-	bool zoneExist = false;
-	bool spaceZoneExist = false;
-
-	if (zone != nullptr)
-		zoneExist;
-	if (spaceZone != nullptr)
-		spaceZoneExist;
 
 	if (zone != nullptr && hasState(CreatureState::ONFIRE)) {
-		PlanetManager* planetManager =
-				zone->getPlanetManager();
+		PlanetManager* planetManager = zone->getPlanetManager();
 
 		if (planetManager != nullptr) {
 			TerrainManager* terrainManager = planetManager->getTerrainManager();
@@ -3748,16 +3769,19 @@ float CreatureObjectImplementation::calculateCostAdjustment(uint8 stat, float ba
 }
 
 Reference<WeaponObject*> CreatureObjectImplementation::getWeapon() {
-	Reference<WeaponObject*> retWeap = weapon;
-	if (retWeap == nullptr) {
-		retWeap = asCreatureObject()->getDefaultWeapon();
+	Reference<WeaponObject*> retWeapon = weapon;
+
+	if (isAiAgent()) {
+		retWeapon = asAiAgent()->getCurrentWeapon();
+	} else if (retWeapon == nullptr) {
+		retWeapon = getDefaultWeapon();
 	}
 
-	if (retWeap == nullptr) {
-		Logger::console.info(true) << __FILE__ << ":" << __LINE__ << ":" << __FUNCTION__ << ": " << *_this.getReferenceUnsafeStaticCast();
+	if (retWeapon == nullptr) {
+		info(true) << getDisplayedName() << " ID: " << getObjectID() << "  returning a null weapon - " << __FILE__ << ":" << __LINE__ << ":" << __FUNCTION__ << ": " << *_this.getReferenceUnsafeStaticCast();
 	}
 
-	return retWeap;
+	return retWeapon;
 }
 
 WeaponObject* CreatureObjectImplementation::getDefaultWeapon() {

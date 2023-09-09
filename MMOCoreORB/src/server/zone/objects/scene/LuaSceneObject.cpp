@@ -22,6 +22,7 @@ Luna<LuaSceneObject>::RegType LuaSceneObject::Register[] = {
 		{ "_setObject", &LuaSceneObject::_setObject },
 		{ "_getObject", &LuaSceneObject::_getObject },
 		{ "getParent", &LuaSceneObject::getParent },
+		{ "getRootParent", &LuaSceneObject::getRootParent },
 		{ "getObjectID", &LuaSceneObject::getObjectID },
 		{ "getPositionX", &LuaSceneObject::getPositionX },
 		{ "getPositionY", &LuaSceneObject::getPositionY },
@@ -208,12 +209,6 @@ int LuaSceneObject::getZoneName(lua_State* L) {
 		name = zone->getZoneName();
 	}
 
-	SpaceZone* spaceZone = realObject->getSpaceZone();
-
-	if (spaceZone != nullptr) {
-		name = spaceZone->getZoneName();
-	}
-
 	lua_pushstring(L, name.toCharArray());
 
 	return 1;
@@ -387,6 +382,19 @@ int LuaSceneObject::getParent(lua_State* L) {
 	return 1;
 }
 
+int LuaSceneObject::getRootParent(lua_State* L) {
+	SceneObject* obj = realObject->getRootParent();
+
+	if (obj == nullptr) {
+		lua_pushnil(L);
+	} else {
+		obj->_setUpdated(true);
+		lua_pushlightuserdata(L, obj);
+	}
+
+	return 1;
+}
+
 int LuaSceneObject::getContainerObject(lua_State* L) {
 	int idx = lua_tonumber(L, -1);
 
@@ -478,9 +486,11 @@ int LuaSceneObject::transferObject(lua_State* L) {
 	int containmentType = lua_tonumber(L, -2);
 	SceneObject* obj = (SceneObject*) lua_touserdata(L, -3);
 
-	realObject->transferObject(obj, containmentType, notifyClient);
+	bool transfer = realObject->transferObject(obj, containmentType, notifyClient);
 
-	return 0;
+	lua_pushboolean(L, transfer);
+
+	return 1;
 }
 
 /*int LuaSceneObject::removeObject(lua_State* L) {

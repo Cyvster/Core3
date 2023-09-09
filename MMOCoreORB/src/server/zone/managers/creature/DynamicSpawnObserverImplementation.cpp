@@ -16,22 +16,42 @@ int DynamicSpawnObserverImplementation::notifyObserverEvent(unsigned int eventTy
 		return 0;
 	}
 
-	Reference<AiAgent*> ai = cast<AiAgent*>(arg1);
 	Reference<SceneObject*> spawn = cast<SceneObject*>(observable);
 
-	if (ai == nullptr || spawn == nullptr)
+	if (spawn == nullptr)
+		return 1;
+
+	Reference<AiAgent*> agent = cast<AiAgent*>(arg1);
+
+	if (agent == nullptr)
 		return 0;
 
 	// Each creature should spawn 4 times
-	if (ai->getRespawnCounter() > 2) {
-		spawnedCreatures.removeElement(ai.get());
-		ai->setHomeObject(nullptr);
-		ai->resetRespawnCounter();
+	if (agent->getRespawnCounter() > 2) {
+		spawnedCreatures.removeElement(agent.get());
+
+		agent->setHomeObject(nullptr);
+		agent->resetRespawnCounter();
+
+		// Remove Squad observer from herding creatures
+		if (agent->isMonster()) {
+			SortedVector<ManagedReference<Observer* > > observers = agent->getObservers(ObserverEventType::SQUAD);
+
+			for (int i = observers.size() - 1; i >= 0; --i) {
+				ManagedReference<SquadObserver*> squadObserver = cast<SquadObserver*>(observers.get(i).get());
+
+				if (squadObserver != nullptr) {
+					agent->dropObserver(ObserverEventType::SQUAD, squadObserver);
+				}
+			}
+		}
 
 		// Despawn dynamic lair if all the creatures have spawned 4 times
 		if (spawnedCreatures.isEmpty()) {
-			Reference<Task*> task = new DespawnDynamicSpawnTask(spawn);
-			task->schedule(60000);
+			Reference<DespawnDynamicSpawnTask*> task = new DespawnDynamicSpawnTask(spawn);
+
+			if (task != nullptr)
+				task->schedule(60000);
 
 			return 1;
 		}
@@ -44,14 +64,14 @@ int DynamicSpawnObserverImplementation::notifyObserverEvent(unsigned int eventTy
 	if (zone == nullptr)
 		return 0;
 
-	int level = ai->getLevel();
+	int level = agent->getLevel();
 
-	if (ai->isCreature()) {
-		Creature* creature = ai.castTo<Creature*>();
+	if (agent->isCreature()) {
+		Creature* creature = agent.castTo<Creature*>();
 		level = creature->getAdultLevel();
 	}
 
-	Reference<Task*> task = new RespawnCreatureTask(ai.get(), zone, level);
+	Reference<Task*> task = new RespawnCreatureTask(agent.get(), zone, level);
 	task->schedule((60 + (level * 2)) * 1000);
 
 	return 0;
@@ -145,45 +165,47 @@ void DynamicSpawnObserverImplementation::spawnInitialMobiles(SceneObject* buildi
 				spawnedCreatures.add(creo);
 
 				// Here we will setup creatures to move in herds
-				if (j == 0 && herdLeader == nullptr && creatureTemplate->isHerd()) {
-					herdLeader = agent;
-					squadObserver = new SquadObserver();
+				if (agent->isMonster()) {
+					if (j == 0 && herdLeader == nullptr && creatureTemplate->isHerd()) {
+						herdLeader = agent;
+						squadObserver = new SquadObserver();
 
-					if (squadObserver != nullptr) {
+						if (squadObserver != nullptr) {
+							squadObserver->addMember(agent);
+							agent->registerObserver(ObserverEventType::SQUAD, squadObserver);
+
+							//info(true) << "Herd Leader " << agent->getDisplayedName() << " " << agent->getObjectID() << " set";
+						}
+					} else if (herdLeader != nullptr && squadObserver != nullptr) {
 						squadObserver->addMember(agent);
 						agent->registerObserver(ObserverEventType::SQUAD, squadObserver);
 
-						//info(true) << "Herd Leader " << agent->getDisplayedName() << " " << agent->getObjectID() << " set";
+						Locker adultLock(herdLeader, agent);
+
+						agent->addCreatureFlag(CreatureFlag::FOLLOW);
+						agent->addCreatureFlag(CreatureFlag::SQUAD);
+
+						agent->setFollowObject(herdLeader);
+						agent->setMovementState(AiAgent::FOLLOWING);
+
+						agent->setAITemplate();
+						agent->clearPatrolPoints();
+
+						// Double the template radius to account for both creatures
+						float templateRad = agent->getTemplateRadius() * 2.f;
+						float x = templateRad + System::random((j * 3));
+						float y = (-2.f * templateRad * j);
+
+						// Random chance to shift mobs to left side of leader
+						if (System::random(100) > 50)
+							x *= -1.f;
+
+						Vector3 formationOffset(x, y, 0);
+
+						agent->writeBlackboard("formationOffset", formationOffset);
+
+						//info(true) << "Agent " << agent->getDisplayedName() << " - " << agent->getObjectID() << " following leader: " << herdLeader->getDisplayedName() << " - " << herdLeader->getObjectID() << " Offset: " << formationOffset.toString() << " Template Radius: " << templateRad;
 					}
-				} else if (herdLeader != nullptr && squadObserver != nullptr && agent->isMonster()) {
-					squadObserver->addMember(agent);
-					agent->registerObserver(ObserverEventType::SQUAD, squadObserver);
-
-					Locker adultLock(herdLeader, agent);
-
-					agent->addCreatureFlag(CreatureFlag::FOLLOW);
-					agent->addCreatureFlag(CreatureFlag::SQUAD);
-
-					agent->setFollowObject(herdLeader);
-					agent->setMovementState(AiAgent::FOLLOWING);
-
-					agent->setAITemplate();
-					agent->clearPatrolPoints();
-
-					// Double the template radius to account for both creatures
-					float templateRad = agent->getTemplateRadius() * 2.f;
-					float x = templateRad + System::random((j * 3));
-					float y = (-2.f * templateRad * j);
-
-					// Random chance to shift mobs to left side of leader
-					if (System::random(100) > 50)
-						x *= -1.f;
-
-					Vector3 formationOffset(x, y, 0);
-
-					agent->writeBlackboard("formationOffset", formationOffset);
-
-					//info(true) << "Agent " << agent->getDisplayedName() << " - " << agent->getObjectID() << " following leader: " << herdLeader->getDisplayedName() << " - " << herdLeader->getObjectID() << " Offset: " << formationOffset.toString() << " Template Radius: " << templateRad;
 				}
 			}
 		}

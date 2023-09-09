@@ -15,33 +15,25 @@
 #include "server/zone/objects/ship/ComponentSlots.h"
 #include "server/zone/objects/intangible/ShipControlDevice.h"
 #include "server/zone/objects/ship/ShipAppearanceData.h"
-
-class ShipChassisData;
+#include "server/zone/objects/ship/ShipCollisionData.h"
+#include "server/zone/objects/ship/ShipMissileData.h"
+#include "server/zone/objects/ship/ShipCountermeasureData.h"
 
 class ShipManager : public Singleton<ShipManager>, public Object, public Logger {
-	/*class ProjectileThread : public Thread {
-		void run() {
-			while (true) {
-				Logger::console.info(true) << "projectile thread ran";
-
-				ShipManager::instance()->checkProjectiles();
-				Thread::sleep(1000);
-			}
-		}
-	};*/
-
+protected:
 	HashTable<uint32, Reference<ShipComponentData*>> shipComponents;
 	HashTable<String, ShipComponentData*> shipComponentTemplateNames;
 	HashTable<String, Reference<ShipAppearanceData*>> shipAppearanceData;
 	HashTable<uint32, Reference<ShipProjectileData*>> shipProjectileData;
 	HashTable<String, ShipProjectileData*> shipProjectiletTemplateNames;
+	HashTable<String, Reference<ShipCollisionData*>> shipCollisionData;
+	HashTable<String, Reference<ShipChassisData*>> chassisData;
+
+	HashTable<uint32, Reference<ShipMissileData*>> missileData;
+	HashTable<uint32, Reference<ShipCountermeasureData*>> countermeasureData;
+
 	VectorMap<String, Vector3> hyperspaceLocations;
 	VectorMap<String, String> hyperspaceZones;
-	VectorMap<String, const ShipChassisData*> chassisData;
-	VectorMap<String, String> componentFolders;
-	Mutex projectileMutex;
-
-	//ProjectileThread* projectileThread;
 
 	void checkProjectiles();
 	void loadShipComponentData();
@@ -49,8 +41,8 @@ class ShipManager : public Singleton<ShipManager>, public Object, public Logger 
 	void loadShipChassisData();
 	void loadHyperspaceLocations();
 	void loadShipAppearanceData();
-
-	bool doComponentDamage(ShipObject* ship, const Vector3& collisionPoint, const Vector3& direction, float& damage, int& slot, float& previous, float& current) const;
+	void loadShipMissileData();
+	void loadShipCountermeasureData();
 
 public:
 	enum {
@@ -67,8 +59,6 @@ public:
 	};
 
 	void initialize();
-
-	static void notifyShipHit(ShipObject* target, const Vector3& localDir, int type, float curHealth, float prevHealth);
 
 	bool hyperspaceLocationExists(const String& name) const {
 		return hyperspaceLocations.contains(name) && hyperspaceZones.contains(name);
@@ -94,15 +84,15 @@ public:
 		return shipComponents.get(hash);
 	}
 
-	ShipComponentData* getShipComponentFromTemplate(String templateName) {
+	const ShipComponentData* getShipComponentFromTemplate(const String& templateName) const {
 		return shipComponentTemplateNames.get(templateName);
 	}
 
-	ShipProjectileData* getProjectileData(uint32 hash) {
+	const ShipProjectileData* getProjectileData(uint32 hash) const {
 		return shipProjectileData.get(hash);
 	}
 
-	const ShipChassisData* getChassisData(String shipName) {
+	const ShipChassisData* getChassisData(const String& shipName) const {
 		return chassisData.get(shipName);
 	}
 
@@ -110,67 +100,32 @@ public:
 		return shipAppearanceData.get(shipName);
 	}
 
-	class ShipProjectile : public Object {
-	protected:
-		ManagedReference<ShipObject*> ship;
-		uint8 weaponIndex;
-		uint8 projectileType;
-		uint8 componentIndex;
-		uint64 lastUpdate;
-		Vector3 startPosition;
-		Vector3 position;
-		Vector3 direction;
-		float speed;
-		float range;
-		float rangeSq;
+	const ShipCollisionData* getCollisionData(ShipObject* ship) {
+		auto name = ship->getShipName();
+		auto collisionData = shipCollisionData.get(name);
 
-	public:
-		ShipProjectile(Reference<ShipObject*> ship, uint8 weapon, uint8 projectile, uint8 component, Vector3 start, Vector3 end, float projectileSpeed, float projectileRange, long time) {
-			this->ship = ship;
-			weaponIndex = weapon;
-			projectileType = projectile;
-			componentIndex = component;
-			startPosition = position = start;
-			direction = end;
-			speed = projectileSpeed;
-			range = projectileRange;
-			rangeSq = range * range;
-			lastUpdate = time;
+		if (collisionData == nullptr) {
+			auto chassisData = getChassisData(name);
+			auto shipTemplate = ship->getObjectTemplate();
+
+			if (shipTemplate != nullptr && chassisData != nullptr) {
+				collisionData = new ShipCollisionData(shipTemplate, chassisData);
+				shipCollisionData.put(name, collisionData);
+			}
 		}
 
-		float peekDelta() {
-			return (System::getMiliTime() - lastUpdate) / 1000.0f;
-		}
+		return collisionData;
+	}
 
-		float getDelta() {
-			uint64 current = System::getMiliTime();
-			uint64 temp = lastUpdate;
+	const ShipMissileData* getMissileData(uint32 ammoType) const {
+		return missileData.get(ammoType);
+	}
 
-			lastUpdate = current;
-			return (current - temp) / 1000.0f;
-		}
-
-		ManagedReference<ShipObject*>& getShip() {
-			return ship;
-		}
-
-		friend class ShipManager;
-	};
-
-	void addProjectile(ShipProjectile* projectile) {
-		Locker locker(&projectileMutex);
-		projectiles.add(projectile);
+	const ShipCountermeasureData* getCountermeasureData(uint32 ammoType) const {
+		return countermeasureData.get(ammoType);
 	}
 
 private:
-	Vector<ShipProjectile*> projectiles;
-
-	bool applyDamage(const ShipProjectile* projectile, Reference<ShipObject*>& ship, const Vector3& collisionPoint, const Vector<ManagedReference<SceneObject*>>& collidedObject) const;
-
-	bool damageComponent(ShipObject* ship, float& damage, int closestSlot, const Vector3& direction) const;
-
-	void loadAiShipComponentData(ShipObject* ship);
-
 	void loadShipComponentObjects(ShipObject* ship);
 
 	ShipControlDevice* createShipControlDevice(ShipObject* ship);
@@ -180,29 +135,26 @@ public:
 
 	void createPlayerShip(CreatureObject* owner, const String& shipName, bool loadComponents = true);
 
-	String componentSlotToString(int slot) {
-		switch (slot) {
-			case Components::REACTOR: return "reactor";
-			case Components::ENGINE: return "engine";
-			case Components::SHIELD0: return "shield_0";
-			case Components::SHIELD1: return "shield_1";
-			case Components::ARMOR0: return "armor_0";
-			case Components::ARMOR1: return "armor_1";
-			case Components::CAPACITOR: return "capacitor";
-			case Components::BOOSTER: return "booster";
-			case Components::DROID_INTERFACE: return "droid_interface";
-			case Components::BRIDGE: return "bridge";
-			case Components::HANGAR: return "hangar";
-			case Components::TARGETING_STATION: return "targeting_station";
-			default: {
-				if (slot >= Components::WEAPON_START && slot <= 99) {
-					return "weapon_" + String::valueOf(slot - Components::WEAPON_START);
-				} else {
-					return "";
-				}
-			}
-		}
-	}
+	/**
+	 * Sends a sui list box containing information about the structure.
+	 * @param creature The creature receiving the report.
+	 * @param pobShip The pobShip the report is about.
+	 */
+	void reportPobShipStatus(CreatureObject* creature, PobShipObject* pobShip, SceneObject* terminal);
+
+	/**
+	 * Sends a Sui prompt to the player asking if they wish to delete all the items in their ship.
+	 * @param creature The player receiving the prompt.
+	 * @param pobShip The POB ship that will have all items deleted.
+	 */
+	void promptDeleteAllItems(CreatureObject* creature, PobShipObject* pobShip);
+
+	/**
+	 * Sends a Sui prompt to the player asking if they want to move the first item in the pob ship to their feet.
+	 * @param creature The creature who the item will be moved to.
+	 * @param pobShip The structure which holds the items.
+	 */
+	void promptFindLostItems(CreatureObject* creature, PobShipObject* pobShip);
 };
 
 

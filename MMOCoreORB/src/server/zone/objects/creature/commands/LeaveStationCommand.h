@@ -6,6 +6,7 @@
 #define LEAVESTATION_H_
 
 #include "QueueCommand.h"
+#include "server/zone/objects/cell/CellObject.h"
 
 class LeaveStationCommand : public QueueCommand {
 public:
@@ -14,32 +15,41 @@ public:
 	}
 
 	int doQueueCommand(CreatureObject* creature, const uint64& target, const UnicodeString& arguments) const {
-		if (!checkStateMask(creature))
-			return INVALIDSTATE;
-
-		if (!checkInvalidLocomotions(creature))
-			return INVALIDLOCOMOTION;
-
-		SceneObject* rootParent = creature->getRootParent();
-
-		if (rootParent == nullptr)
+		if (!creature->isInShipStation())
 			return GENERALERROR;
 
-		Locker clock(rootParent, creature);
+		SceneObject* parent = creature->getParent().get();
 
-		rootParent->transferObject(creature, -1, true);
+		if (parent == nullptr)
+			return GENERALERROR;
 
-		//TODO: MODIFY? - H
+		ManagedReference<SceneObject*> cellParent = parent->getParent().get();
+
+		if (cellParent == nullptr || !cellParent->isCellObject())
+			return GENERALERROR;
+
+		CellObject* cell = cast<CellObject*>(cellParent.get());
+
+		if (cell == nullptr)
+			return GENERALERROR;
+
+		Vector3 position = parent->getPosition();
+
+		creature->setPosition(position.getX(), position.getZ(), position.getY());
+
+		if (!cell->transferObject(creature, -1, true)) {
+			return GENERALERROR;
+		}
+
+		// Clear station state
 		if (creature->hasState(CreatureState::PILOTINGPOBSHIP))
 			creature->clearState(CreatureState::PILOTINGPOBSHIP);
-		if (creature->hasState(CreatureState::PILOTINGSHIP))
-			creature->clearState(CreatureState::PILOTINGSHIP);
-		if (creature->hasState(CreatureState::SHIPOPERATIONS))
+		else if (creature->hasState(CreatureState::SHIPOPERATIONS))
 			creature->clearState(CreatureState::SHIPOPERATIONS);
-		if (creature->hasState(CreatureState::SHIPOPERATIONS))
-			creature->clearState(CreatureState::SHIPOPERATIONS);
-		if (creature->hasState(CreatureState::SHIPGUNNER))
+		else if (creature->hasState(CreatureState::SHIPGUNNER))
 			creature->clearState(CreatureState::SHIPGUNNER);
+		else if (creature->hasState(CreatureState::SHIPOPERATIONS))
+			creature->clearState(CreatureState::SHIPOPERATIONS);
 
 		return SUCCESS;
 	}

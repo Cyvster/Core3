@@ -5,7 +5,6 @@
 
 package server.zone.objects.ship;
 
-import engine.log.Logger;
 import system.lang.Time;
 import server.zone.objects.tangible.TangibleObject;
 import server.zone.objects.ship.components.ShipComponent;
@@ -13,6 +12,7 @@ import server.zone.objects.ship.events.ShipRecoveryEvent;
 include server.zone.objects.scene.SceneObject;
 include server.zone.objects.creature.CreatureObject;
 include server.zone.CloseObjectsVector;
+include engine.log.Logger;
 include system.lang.UnicodeString;
 include server.zone.packets.DeltaMessage;
 include server.zone.objects.scene.variables.DeltaAutoVariable;
@@ -22,14 +22,20 @@ include server.zone.objects.scene.variables.DeltaVectorMap;
 include server.zone.objects.scene.variables.DeltaBitArray;
 include server.zone.objects.manufactureschematic.craftingvalues.CraftingValues;
 include templates.SharedObjectTemplate;
-include server.zone.objects.cell.CellObject;
+include templates.tangible.SharedShipObjectTemplate;
 include system.util.VectorMap;
 include system.lang.ref.Reference;
 include server.zone.objects.ship.ShipDeltaVector;
+include server.zone.objects.ship.ShipTargetVector;
+include engine.util.u3d.Vector3;
+include engine.util.u3d.Quaternion;
+include engine.util.u3d.Matrix4;
 
 class ShipObject extends TangibleObject {
 	public static final int HYPERSPACE_DELAY = 40;
 	public static final int NAVIGATOR_DELAY = 20;
+
+	public static final int COMM_MAX_DISTANCE = 500;
 	public static final int SPACESTATION_COMM_MAX_DISTANCE = 1000;
 	public static final int CONVO_DELAY = 60;
 
@@ -40,21 +46,20 @@ class ShipObject extends TangibleObject {
 	public unsigned long controlDeviceID;
 
 	@dereferenced
-	protected VectorMap<string, CellObject> cellNameMap;
-
-	@dereferenced
-	protected VectorMap<unsigned int, CellObject> cells;
-
-	@dereferenced
 	protected transient Reference<ShipRecoveryEvent> shipRecoveryEvent;
 
 	@dereferenced
 	protected transient Reference<ShipDeltaVector> shipDeltaVector;
 
+	@dereferenced
+	protected transient Reference<ShipTargetVector> shipTargetVector;
+
 	protected int totalCellNumber;
 
 	@weakReference
 	protected CreatureObject owner;
+
+	unsigned long ownerID;
 
 	@weakReference
 	protected SceneObject pilotChair;
@@ -68,10 +73,10 @@ class ShipObject extends TangibleObject {
 	@dereferenced
 	protected Time hyperspaceTime;
 
-	protected boolean hasWings;
+	@dereferenced
+	protected transient Time lastDamageReceived;
 
-	@preLocked
-	public native void createChildObjects();
+	protected boolean hasWings;
 
 	@dereferenced
 	protected string conversationTemplate;
@@ -89,6 +94,13 @@ class ShipObject extends TangibleObject {
 	protected string chassisCategory;
 
 	protected int chassisLevel;
+
+	protected unsigned long syncTime;
+
+	protected float boundingRadius;
+
+	@dereferenced
+	protected Matrix4 rotationMatrix;
 
 	// DeltaAutoVariable template <class K, class V, int BaselineName, uint8 DeltaType, int DeltaIndex>
 
@@ -397,14 +409,7 @@ class ShipObject extends TangibleObject {
 		totalCellNumber = 0;
 	}
 
-	/**
-	 * Sends the contained non slotted objects to the specified player
-	 * @pre { this object is locked }
-	 * @post { this object is locked, player received the container objects }
-	 * @param player SceneObject that will receive the objects
-	 */
-	@dirty
-	public native void sendContainerObjectsTo(SceneObject player, boolean forceLoad);
+	public native void notifyLoadFromDatabase();
 
 	@dirty
 	public native abstract void sendSlottedObjectsTo(SceneObject player);
@@ -431,8 +436,7 @@ class ShipObject extends TangibleObject {
 	public native void sendTo(SceneObject player, boolean doClose, boolean forceLoadContainer = true);
 	public native void sendBaselinesTo(SceneObject player);
 
-	public native void storeShip(CreatureObject player);
-
+	public native void notifyObjectInsertedToZone(SceneObject object);
 	public native int notifyObjectInsertedToChild(SceneObject object, SceneObject child, SceneObject oldParent);
 	public native int notifyObjectRemovedFromChild(SceneObject object, SceneObject child);
 
@@ -711,6 +715,14 @@ class ShipObject extends TangibleObject {
 	// 6:19
 	@local
 	public void setShipFaction(@dereferenced final string value, boolean notifyClient = true, DeltaMessage delta = null, ShipDeltaVector vector = null) {
+		if (value == "rebel") {
+			super.setFaction(0x16148850);
+		} else if (value == "imperial") {
+			super.setFaction(0xDB4ACC54);
+		} else {
+			super.setFaction(0);
+		}
+
 		shipFaction.update(value, notifyClient, this, delta, vector);
 	}
 
@@ -1291,36 +1303,9 @@ class ShipObject extends TangibleObject {
 		hasWings = value;
 	}
 
-	@dirty
-	public float getCurrentArmor() {
-		return componentCurrentArmor.get(4) + componentCurrentArmor.get(5);
-	}
-
-	@dirty
-	public float getMaxCurrentArmor() {
-		return componentMaxArmor.get(4) + componentMaxArmor.get(5);
-	}
-
-	@local
-	public native void damageArmor(float damage, DeltaMessage delta);
-
 	@local
 	public DeltaBitArray getTargetableBitfield() {
 		return componentTargetableBitfield;
-	}
-
-	@dirty
-	public CellObject getCell(int idx) {
-		return cells.get(idx);
-	}
-
-	@dirty
-	public CellObject getCell(final string name) {
-		return cellNameMap.get(name);
-	}
-
-	public int getTotalCellNumber() {
-		return totalCellNumber;
 	}
 
 	public native float getActualSpeed();
@@ -1335,12 +1320,17 @@ class ShipObject extends TangibleObject {
 		return componentEnergyEfficiency.get(slot);
 	}
 
-	public void setOwner(CreatureObject obj) {
-		owner = obj;
+	public float getComponentEfficiency(int slot) {
+		return componentEfficiency.get(slot);
 	}
 
-	public void setPilotChair(SceneObject obj) {
-		pilotChair = obj;
+	public void setOwner(CreatureObject object) {
+		owner = object;
+		ownerID = object.getObjectID();
+	}
+
+	public void setPilotChair(SceneObject object) {
+		pilotChair = object;
 	}
 
 	public void setComponentTargetable(int slot, boolean targetable) {
@@ -1364,10 +1354,18 @@ class ShipObject extends TangibleObject {
 		return owner;
 	}
 
+	public unsigned long getOwnerID() {
+		return ownerID;
+	}
+
 	@weakReference
 	public SceneObject getPilotChair() {
 		return pilotChair;
 	}
+
+	public native void installAmmo(CreatureObject owner, SceneObject component, int slot, boolean notifyClient = false);
+
+	public native void uninstallAmmo(CreatureObject owner, int slot, boolean notifyClient = false);
 
 	public native void install(CreatureObject owner, SceneObject component, int slot, boolean notifyClient = false);
 	public native void uninstall(CreatureObject owner, int slot, boolean notifyClient);
@@ -1377,6 +1375,9 @@ class ShipObject extends TangibleObject {
 
 	@local
 	public native void loadTemplateData(SharedObjectTemplate templateData);
+
+	@local
+	public native void loadTemplateData(SharedShipObjectTemplate shipTemp);
 
 	@dirty
 	@local
@@ -1487,5 +1488,47 @@ class ShipObject extends TangibleObject {
 	public native ShipDeltaVector getDeltaVector();
 
 	@preLocked
+	@local
+	public native ShipTargetVector getTargetVector();
+
+	@preLocked
 	public abstract native void destroyObjectFromDatabase(boolean destroyContainedObjects = false);
+
+	public native void setSyncStamp(unsigned int value);
+
+	public native unsigned int getSyncStamp();
+
+	@local 
+	public native abstract void updateZone(boolean lightUpdate, boolean sendPackets = true);
+
+	public native CreatureObject getPilot();
+
+	@dirty
+	public native abstract boolean isAttackableBy(TangibleObject object);
+
+	@dirty
+	public native abstract boolean isAggressiveTo(TangibleObject object);
+
+	@local
+	public native void setRotationMatrix(@dereferenced final Quaternion value);
+
+	@local
+	public final Matrix4 getRotationMatrix() {
+		return rotationMatrix;
+	}
+
+	public void setBoundingRadius(float value) {
+		boundingRadius = value;
+	}
+
+	public float getBoundingRadius() {
+		return boundingRadius;
+	}
+
+	@preLocked
+	public native void updateLastDamageReceived();
+
+	public native unsigned long getLastDamageReceivedMili();
+
+	public native float getComponentCondition(unsigned int slot);
 }

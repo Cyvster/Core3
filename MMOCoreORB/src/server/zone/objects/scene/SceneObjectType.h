@@ -142,7 +142,7 @@ public:
 	const static int PILOTCHAIR = 0x2024;
 	const static int OPERATIONSCHAIR = 0x2025;
 	const static int TURRETACCESSLADDER = 0x2026;
-	const static int CONTAINER2 = 0x2027;
+	const static int SHIPCONTAINER = 0x2027;
 
 	/// Not in client *****************
 	const static int CAMOKIT = 0x2028;
@@ -180,6 +180,7 @@ public:
 	const static int SHIPPINGTERMINAL = 0x4009;
 	//const static int TRAVELTERMINAL = 0x400A; -- This is in the client, (See 0x4012)
 	const static int SPACETERMINAL = 0x400B;
+	const static int SHIPPERMISSIONS = 0x400C;
 
 	/// Not in client **************
 	const static int INTERACTIVETERMINAL = 0x400C;
@@ -333,8 +334,6 @@ public:
 	//Seems unused in server and not in client
 	//const static int ITHOGARB = 0x1000013;
 
-
-	// Not in client ************
 	const static int BADGEAREA = 0x2000000;
 	const static int REGIONAREA = 0x2000001;
 	const static int MISSIONSPAWNAREA = 0x2000002;
@@ -344,7 +343,6 @@ public:
 	const static int CAMPAREA = 0x2000009;
 	const static int FSVILLAGEAREA = 0x200000A;
 	const static int SARLACCAREA = 0x200000B;
-
 	const static int NAVMESHAREA = 0x200000C;
 
 	const static int SHIP = 0x20000000;
@@ -352,6 +350,10 @@ public:
 	const static int SHIPCAPITAL = 0x20000002;
 	const static int SHIPSTATION = 0x20000003;
 	const static int SHIPTRANSPORT = 0x20000004;
+
+	// Not in client ************
+	const static int SHIPPOB = 0x20000005;
+	const static int SHIPAGENT = 0x20000006;
 	//*******************************
 
 	const static int SHIPATTACHMENT = 0x40000000;

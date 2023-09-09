@@ -59,26 +59,29 @@ class AiAgent extends CreatureObject {
 	protected Vector<string> skillCommands;
 
 	@dereferenced
-	protected PatrolPointsVector patrolPoints;
+	protected transient PatrolPointsVector patrolPoints;
 
 	@dereferenced
-	protected PatrolPointsVector savedPatrolPoints;
+	protected transient PatrolPointsVector savedPatrolPoints;
 
 	@dereferenced
-	protected PatrolPoint homeLocation;
+	protected transient PatrolPoint homeLocation;
 
 	@dereferenced
-	protected PatrolPoint nextStepPosition;
+	protected transient PatrolPoint nextStepPosition;
 
 	@dereferenced
-	protected PatrolPoint endMovementPosition;
+	protected transient PatrolPoint endMovementPosition;
 
 	protected transient CurrentFoundPath currentFoundPath;
 	protected transient CellObject targetCellObject;
 
 	protected WeaponObject defaultWeapon;
+
 	protected WeaponObject primaryWeapon;
+
 	protected WeaponObject secondaryWeapon;
+
 	protected WeaponObject thrownWeapon;
 
 	protected WeaponObject currentWeapon;
@@ -242,8 +245,6 @@ class AiAgent extends CreatureObject {
 		nextBehaviorInterval = BEHAVIORINTERVAL;
 
 		reactionRank = 0;
-
-		customAiMap = 0;
 
 		convoTemplateCRC = 0;
 
@@ -471,8 +472,13 @@ class AiAgent extends CreatureObject {
 
 	public void clearPatrolPoints() {
 		synchronized (targetMutex) {
-			if (movementState == PATROLLING || movementState == WATCHING) {
-				for (int i = 0; i < patrolPoints.size(); i++) {
+			int patrolPointsSize = patrolPoints.size();
+
+			if (patrolPointsSize > 0 && (movementState == PATROLLING || movementState == WATCHING)) {
+				if (savedPatrolPoints.size() > 5)
+					savedPatrolPoints.removeAll();
+
+				for (int i = 0; i < patrolPointsSize; i++) {
 					savedPatrolPoints.add(patrolPoints.get(i));
 				}
 			}
@@ -710,17 +716,12 @@ class AiAgent extends CreatureObject {
 	@preLocked
 	public abstract native void notifyDespawn(Zone zone);
 
-	public abstract void scheduleDespawn() {
-		//Despawn in 5 minutes.
-		scheduleDespawn(300);
-	}
-
 	/**
 	 * Schedules despawn of the AiAgent.
 	 * @param timeToDespawn the time to despawn the AiAgent in seconds.
 	 */
 	@preLocked
-	public abstract native void scheduleDespawn(int timeToDespawn);
+	public abstract native void scheduleDespawn(int timeToDespawn, boolean force = false);
 
 	/**
 	 * Respawns creature to specified zone with home location position
@@ -1547,6 +1548,21 @@ class AiAgent extends CreatureObject {
 		defaultWeapon = weap;
 	}
 
+	@preLocked
+	public void setPrimaryWeapon(WeaponObject weap) {
+		primaryWeapon = weap;
+	}
+
+	@preLocked
+	public void setSecondaryWeapon(WeaponObject weap) {
+		secondaryWeapon = weap;
+	}
+
+	@preLocked
+	public void setThrownWeapon(WeaponObject weap) {
+		thrownWeapon = weap;
+	}
+
 	@dirty
 	public abstract WeaponObject getPrimaryWeapon() {
 		return primaryWeapon;
@@ -1567,22 +1583,25 @@ class AiAgent extends CreatureObject {
 		return thrownWeapon;
 	}
 
+	@dirty
+	public native WeaponObject getCurrentWeapon() {
+		return currentWeapon;
+	}
+
 	@preLocked
 	public void clearThrownWeapon() {
 		thrownWeapon = null;
 	}
 
-	@dirty
-	public abstract WeaponObject getCurrentWeapon() {
-		return defaultWeapon;
-	}
-
-	public void nullifyWeapons () {
+	public void nullifyWeapons() {
+		currentWeapon = null;
 		primaryWeapon = null;
 		secondaryWeapon = null;
 		thrownWeapon = null;
-		currentWeapon = null;
 	}
+
+	@preLocked
+	public native void destroyAllWeapons();
 
 	@read
 	public int getMobType() {
@@ -1685,5 +1704,10 @@ class AiAgent extends CreatureObject {
 	@preLocked
 	public void setHamRegenDisabled(boolean val) {
 		hamRegenDisabled = val;
+	}
+
+	@read
+	public boolean isAggroDelayPast() {
+		return aggroDelay.isPast();
 	}
 }

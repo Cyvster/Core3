@@ -14,6 +14,7 @@
 #include "server/zone/objects/ship/ShipObject.h"
 #include "server/zone/objects/ship/components/ShipComponent.h"
 #include "server/zone/objects/ship/components/ShipEngineComponent.h"
+#include "server/zone/objects/ship/components/ShipWeaponComponent.h"
 #include "server/zone/objects/ship/events/ShipRecoveryEvent.h"
 #include "server/zone/objects/intangible/ShipControlDevice.h"
 #include "server/zone/objects/tangible/TangibleObject.h"
@@ -21,7 +22,6 @@
 #include "server/zone/packets/ship/ShipObjectMessage3.h"
 #include "server/zone/packets/ship/ShipObjectMessage4.h"
 #include "server/zone/packets/ship/ShipObjectMessage6.h"
-#include "server/zone/packets/cell/UpdateCellPermissionsMessage.h"
 #include "server/zone/packets/scene/SceneObjectCreateMessage.h"
 #include "templates/tangible/SharedShipObjectTemplate.h"
 #include "server/zone/objects/ship/ShipChassisData.h"
@@ -29,6 +29,8 @@
 #include "templates/faction/Factions.h"
 #include "server/zone/objects/player/FactionStatus.h"
 #include "server/zone/packets/tangible/UpdatePVPStatusMessage.h"
+#include "server/zone/packets/scene/SceneObjectDestroyMessage.h"
+#include "server/zone/objects/intangible/tasks/StoreShipTask.h"
 
 void ShipObjectImplementation::initializeTransientMembers() {
 	hyperspacing = false;
@@ -40,86 +42,136 @@ void ShipObjectImplementation::initializeTransientMembers() {
 	TangibleObjectImplementation::initializeTransientMembers();
 }
 
+void ShipObjectImplementation::notifyLoadFromDatabase() {
+	auto owner = getOwner().get();
+
+	if (owner != nullptr && getSpaceZone() != nullptr) {
+		auto zoneServer = getZoneServer();
+
+		if (zoneServer != nullptr) {
+			ManagedReference<SceneObject*> deviceSceneO = zoneServer->getObject(getControlDeviceID()).get();
+
+			if (deviceSceneO != nullptr && deviceSceneO->isShipControlDevice()) {
+				ShipControlDevice* shipDevice = cast<ShipControlDevice*>(deviceSceneO.get());
+
+				if (shipDevice != nullptr) {
+					StoreShipTask* task = new StoreShipTask(owner, shipDevice, shipDevice->getStoredZoneName(), shipDevice->getStoredPosition(true));
+
+					if (task != nullptr)
+						task->schedule(1500);
+				}
+			}
+		}
+	}
+
+	TangibleObjectImplementation::notifyLoadFromDatabase();
+}
+
 void ShipObjectImplementation::loadTemplateData(SharedObjectTemplate* templateData) {
 	TangibleObjectImplementation::loadTemplateData(templateData);
+}
 
-	SharedShipObjectTemplate* ssot = dynamic_cast<SharedShipObjectTemplate*>(templateData);
+void ShipObjectImplementation::loadTemplateData(SharedShipObjectTemplate* ssot) {
+	if (ssot == nullptr) {
+		return;
+	}
 
-	if (ssot != nullptr) {
-		setShipName(ssot->getShipName());
-		setShipType(ssot->getShipType(), false);
-		setShipNameCRC(chassisDataName.hashCode(), false);
-		setUniqueID(getUniqueID(), false);
+	setShipName(ssot->getShipName());
+	setShipType(ssot->getShipType(), false);
+	setShipNameCRC(chassisDataName.hashCode(), false);
+	setUniqueID(getUniqueID(), false);
 
-		setChassisMaxHealth(ssot->getChassisHitpoints(), false);
-		setCurrentChassisHealth(ssot->getChassisHitpoints(), false);
+	setChassisMaxHealth(ssot->getChassisHitpoints(), false);
+	setCurrentChassisHealth(ssot->getChassisHitpoints(), false);
 
-		setSlipRate(ssot->getChassisSlipRate(), false);
-		setChassisSpeed(ssot->getChassisSpeed(), false);
-		setChassisMaxMass(ssot->getChassisMass(), false);
+	setSlipRate(ssot->getChassisSlipRate(), false);
+	setChassisSpeed(ssot->getChassisSpeed(), false);
+	setChassisMaxMass(ssot->getChassisMass(), false);
 
-		setShipFaction(ssot->getShipFaction(), false);
-		setShipDifficulty(ssot->getShipDifficulty(), false);
+	setShipFaction(ssot->getShipFaction(), false);
+	setShipDifficulty(ssot->getShipDifficulty(), false);
 
-		setConversationMessage(ssot->getConversationMessage());
-		setConversationMobile(ssot->getConversationMobile());
-		setConversationTemplate(ssot->getConversationTemplate());
+	setConversationMessage(ssot->getConversationMessage());
+	setConversationMobile(ssot->getConversationMobile());
+	setConversationTemplate(ssot->getConversationTemplate());
 
-		setHasWings(ssot->shipHasWings());
+	setHasWings(ssot->shipHasWings());
 
-		setChassisCategory(ssot->getChassisCategory());
-		setChassisLevel(ssot->getChassisLevel());
+	setChassisCategory(ssot->getChassisCategory());
+	setChassisLevel(ssot->getChassisLevel());
 
-		auto values = ssot->getAttributeMap();
+	auto values = ssot->getAttributeMap();
 
-		for (int i = 0; i < values.size(); ++i) {
-			auto attribute = values.elementAt(i).getKey();
-			auto value = values.elementAt(i).getValue();
+	for (int i = 0; i < values.size(); ++i) {
+		auto attribute = values.elementAt(i).getKey();
+		auto value = values.elementAt(i).getValue();
 
-			if (attribute == "slideDamp") {
-				setSlipRate(value, false);
-			} else if (attribute == "engineAccel") {
-				setEngineAccelerationRate(value, false);
-				setActualAccelerationRate(value, false);
-			} else if (attribute == "engineDecel") {
-				setEngineDecelerationRate(value, false);
-				setActualDecelerationRate(value, false);
-			} else if (attribute == "engineYawAccel") {
-				setEngineYawAccelerationRate(value * Math::DEG2RAD, false);
-				setActualYawAccelerationRate(value * Math::DEG2RAD, false);
-			} else if (attribute == "enginePitchAccel") {
-				setEnginePitchAccelerationRate(value * Math::DEG2RAD, false);
-				setActualPitchAccelerationRate(value * Math::DEG2RAD, false);
-			} else if (attribute == "engineRollAccel") {
-				setEngineRollAccelerationRate(value * Math::DEG2RAD, false);
-				setActualRollAccelerationRate(value * Math::DEG2RAD, false);
-			} else if (attribute == "maxSpeed") {
-				setChassisSpeed(value, false);
-			}
+		if (attribute == "slideDamp") {
+			setSlipRate(value, false);
+		} else if (attribute == "engineAccel") {
+			setEngineAccelerationRate(value, false);
+			setActualAccelerationRate(value, false);
+		} else if (attribute == "engineDecel") {
+			setEngineDecelerationRate(value, false);
+			setActualDecelerationRate(value, false);
+		} else if (attribute == "engineYawAccel") {
+			setEngineYawAccelerationRate(value * Math::DEG2RAD, false);
+			setActualYawAccelerationRate(value * Math::DEG2RAD, false);
+		} else if (attribute == "enginePitchAccel") {
+			setEnginePitchAccelerationRate(value * Math::DEG2RAD, false);
+			setActualPitchAccelerationRate(value * Math::DEG2RAD, false);
+		} else if (attribute == "engineRollAccel") {
+			setEngineRollAccelerationRate(value * Math::DEG2RAD, false);
+			setActualRollAccelerationRate(value * Math::DEG2RAD, false);
+		} else if (attribute == "maxSpeed") {
+			setChassisSpeed(value, false);
 		}
+	}
 
-		auto portal = ssot->getPortalLayout();
+	totalCellNumber = ssot->getTotalCellNumber();
 
-		if (portal != nullptr) {
-			totalCellNumber = portal->getCellTotalNumber();
+	auto portalLayout = ssot->getPortalLayout();
+
+	if (portalLayout != nullptr)
+		totalCellNumber = portalLayout->getFloorMeshNumber();
+
+	//info(true) << getDisplayedName() << " loaded a total of " << totalCellNumber << " cells.";
+
+	auto chassisData = ShipManager::instance()->getChassisData(ssot->getShipName());
+
+	if (chassisData != nullptr) {
+		for (uint32 slot = 0; slot <= Components::FIGHTERSLOTMAX; slot++) {
+			auto slotData = chassisData->getComponentSlotData(slot);
+			setComponentTargetable(slot, slotData ? slotData->isTargetable() : false);
 		}
+	}
 
-		auto chassisData = ShipManager::instance()->getChassisData(ssot->getShipName());
+	auto appearance = ssot->getAppearanceTemplate();
 
-		if (chassisData != nullptr) {
-			for (uint32 slot = 0; slot <= Components::FIGHTERSLOTMAX; slot++) {
-				auto slotData = chassisData->getComponentSlotData(slot);
-				setComponentTargetable(slot, slotData ? slotData->isTargetable() : false);
-			}
+	if (appearance != nullptr) {
+		auto volume = appearance->getBoundingVolume();
+
+		if (volume != nullptr) {
+			const auto& sphere = volume->getBoundingSphere();
+			boundingRadius = sphere.getCenter().length() + sphere.getRadius();
 		}
 	}
 }
 
 void ShipObjectImplementation::sendTo(SceneObject* player, bool doClose, bool forceLoadContainer) {
+	BaseMessage* destroy = new SceneObjectDestroyMessage(asSceneObject());
+	player->sendMessage(destroy);
+
 	BaseMessage* msg = new SceneObjectCreateMessage(asSceneObject());
 	player->sendMessage(msg);
 
 	link(player, containmentType);
+
+	auto pilot = getPilot();
+
+	if (pilot != nullptr) {
+		player->addInRangeObject(pilot, true);
+	}
 
 	try {
 		sendBaselinesTo(player);
@@ -137,150 +189,6 @@ void ShipObjectImplementation::sendTo(SceneObject* player, bool doClose, bool fo
 void ShipObjectImplementation::setShipName(const String& name, bool notifyClient) {
 	chassisDataName = name;
 	shipNameCRC.update(name.hashCode(), false);
-}
-
-void ShipObjectImplementation::storeShip(CreatureObject* player) {
-	if (player == nullptr)
-		return;
-
-	ZoneServer* zoneServer = player->getZoneServer();
-
-	if (zoneServer == nullptr)
-		return;
-
-	ShipControlDevice* shipControlDevice = zoneServer->getObject(getControlDeviceID()).castTo<ShipControlDevice*>();
-
-	if (shipControlDevice == nullptr)
-		return;
-
-	repairShip(1.f); // remove once station repair is added
-
-	shipControlDevice->storeShip(player);
-}
-
-void ShipObjectImplementation::createChildObjects() {
-	auto layout = getObjectTemplate()->getPortalLayout();
-
-	if (layout == nullptr)
-		return;
-
-	for (int i = 0; i < totalCellNumber; ++i) {
-
-		Reference<CellObject*> newCell = getZoneServer()->createObject(0xAD431713, getPersistenceLevel()).castTo<CellObject*>();
-
-		if (newCell == nullptr) {
-			error("could not create cell");
-			continue;
-		}
-
-		Locker clocker(newCell, asShipObject());
-
-		if (!transferObject(newCell, -1, true, true)) {
-			error("could not add cell");
-			continue;
-		}
-
-		newCell->setCellNumber(i + 1);
-
-		if (i != 0) {
-			cellNameMap.put(layout->getCellProperty(i-1)->getName(), newCell);
-		}
-
-		cells.put(i, newCell);
-	}
-
-	ZoneServer* zoneServer = getZoneServer();
-
-	for (int i = 0; i < templateObject->getChildObjectsSize(); ++i) {
-		const ChildObject* child = templateObject->getChildObject(i);
-
-		if (child == nullptr)
-			continue;
-
-		uint32 childHash = child->getTemplateFile().hashCode();
-
-		ManagedReference<SceneObject *> obj = zoneServer->createObject(childHash, getPersistenceLevel());
-
-		if (obj == nullptr)
-			continue;
-
-		Locker objLocker(obj, asSceneObject());
-
-		Vector3 childPosition = child->getPosition();
-		childObjects.put(obj);
-		obj->initializePosition(childPosition.getX(), childPosition.getZ(), childPosition.getY());
-		obj->setDirection(child->getDirection());
-
-		int totalCells = getTotalCellNumber();
-
-		try {
-			if (totalCells >= child->getCellId()) {
-				ManagedReference<CellObject *> cellObject = getCell(child->getCellId());
-
-				//info("Inserting into " + String::valueOf(cellObject->getObjectID()), true);
-
-				if (cellObject != nullptr) {
-					if (!cellObject->transferObject(obj, child->getContainmentType(), true)) {
-						obj->destroyObjectFromDatabase(true);
-						continue;
-					} else {
-						if (obj->getGameObjectType() == SceneObjectType::PILOTCHAIR)
-							setPilotChair(obj);
-					}
-				} else {
-					error("nullptr CELL OBJECT");
-					obj->destroyObjectFromDatabase(true);
-					continue;
-				}
-			}
-		} catch (Exception &e) {
-			error("unreported exception caught in void SceneObjectImplementation::createChildObjects()!");
-			e.printStackTrace();
-		}
-	}
-
-	updateToDatabase();
-}
-
-void ShipObjectImplementation::sendContainerObjectsTo(SceneObject* player, bool forceLoad) {
-	auto creo = player->asCreatureObject();
-
-	if (creo == nullptr) {
-		return;
-	}
-
-	for (int i = 0; i < containerObjects.size(); ++i) {
-		auto object = containerObjects.get(i);
-
-		if (object == nullptr) {
-			continue;
-		}
-
-		object->sendTo(creo, true);
-	}
-
-	for (int i = 0; i < cells.size(); ++i) {
-		auto cell = cells.get(i);
-		if (cell == nullptr) {
-			continue;
-		}
-
-		auto perms = cell->getContainerPermissions();
-		if (perms == nullptr) {
-			continue;
-		}
-
-		cell->sendPermissionsTo(player->asCreatureObject(), true);
-
-		for (int j = 0; j < cell->getContainerObjectsSize(); ++j) {
-			auto object = cell->getContainerObject(j);
-			if (object == nullptr) {
-				continue;
-			}
-
-			object->sendTo(creo, true);
-		}
-	}
 }
 
 void ShipObjectImplementation::sendSlottedObjectsTo(SceneObject* player) {
@@ -371,6 +279,48 @@ ShipObject* ShipObject::asShipObject() {
 	return this;
 }
 
+void ShipObjectImplementation::installAmmo(CreatureObject* player, SceneObject* sceno, int slot, bool notifyClient) {
+	if (sceno == nullptr) {
+		return;
+	}
+
+	auto component = getComponentObject(slot);
+	if (component == nullptr) {
+		return;
+	}
+
+	auto weapon = dynamic_cast<ShipWeaponComponent*>(component);
+	if (weapon == nullptr) {
+		return;
+	}
+
+	auto ammo = dynamic_cast<Component*>(sceno);
+	if (ammo == nullptr) {
+		return;
+	}
+
+	Locker lock(ammo);
+	ammo->destroyObjectFromWorld(true);
+
+	weapon->installAmmo(player, asShipObject(), ammo, slot, notifyClient);
+
+	ammo->destroyObjectFromDatabase(true);
+}
+
+void ShipObjectImplementation::uninstallAmmo(CreatureObject* player, int slot, bool notifyClient) {
+	auto component = getComponentObject(slot);
+	if (component == nullptr) {
+		return;
+	}
+
+	auto weapon = dynamic_cast<ShipWeaponComponent*>(component);
+	if (weapon == nullptr) {
+		return;
+	}
+
+	weapon->uninstallAmmo(player, asShipObject(), slot, notifyClient);
+}
+
 void ShipObjectImplementation::install(CreatureObject* player, SceneObject* sceno, int slot, bool notifyClient) {
 	if (getComponentObject(slot) != nullptr) {
 		return uninstall(player, slot, notifyClient);
@@ -414,8 +364,53 @@ void ShipObjectImplementation::uninstall(CreatureObject* player, int slot, bool 
 	components.drop(slot);
 }
 
+void ShipObjectImplementation::notifyObjectInsertedToZone(SceneObject* object) {
+	auto closeObjectsVector = getCloseObjects();
+	Vector<TreeEntry*> closeObjects(closeObjectsVector->size(), 10);
+	closeObjectsVector->safeCopyReceiversTo(closeObjects, CloseObjectsVector::CREOTYPE);
+
+	for (int i = 0; i < closeObjects.size(); ++i) {
+		SceneObject* obj = static_cast<SceneObject*>(closeObjects.get(i));
+
+		if (obj->isCreatureObject()) {
+			if (obj->getRootParent() != _this.getReferenceUnsafe()) {
+				if (object->getCloseObjects() != nullptr)
+					object->addInRangeObject(obj, false);
+				else
+					object->notifyInsert(obj);
+
+				if (obj->getCloseObjects() != nullptr)
+					obj->addInRangeObject(object, false);
+				else
+					obj->notifyInsert(object);
+			}
+		}
+	}
+
+	notifyInsert(object);
+
+	if (object->getCloseObjects() != nullptr)
+		object->addInRangeObject(asShipObject(), false);
+
+	addInRangeObject(object, false);
+
+	Zone* zone = getZone();
+
+	if (zone != nullptr && zone->isSpaceZone()) {
+		TangibleObject* tano = object->asTangibleObject();
+
+		if (tano != nullptr) {
+			//zone->updateActiveAreas(tano);
+		}
+
+		object->notifyInsertToZone(zone);
+	}
+
+	//this->sendTo(object, true);
+}
+
 int ShipObjectImplementation::notifyObjectInsertedToChild(SceneObject* object, SceneObject* child, SceneObject* oldParent) {
-	ManagedReference<SpaceZone*> zone = getSpaceZone();
+	Zone* zone = getZone();
 
 	Locker* _locker = nullptr;
 
@@ -432,7 +427,7 @@ int ShipObjectImplementation::notifyObjectInsertedToChild(SceneObject* object, S
 			if ((oldParent == nullptr || !oldParent->isCellObject()) || oldParent == child) {
 
 				if (oldParent == nullptr || (oldParent != nullptr && dynamic_cast<SpaceZone*>(oldParent) == nullptr && !oldParent->isCellObject())) {
-					//notifyObjectInsertedToZone(object);
+					notifyObjectInsertedToZone(object);
 					runInRange = false;
 				}
 
@@ -491,8 +486,10 @@ int ShipObjectImplementation::notifyObjectInsertedToChild(SceneObject* object, S
 		   // zone->updateActiveAreas(tano);
 		}
 	}
-	//info("Added: " + object->getDisplayedName(), true);
-	//TangibleObjectImplementation::notifyObjectInsertedToChild(object, child, oldParent);
+
+	// info(true) << getDisplayedName() << " notifyObjectInsertedToChild: " << object->getDisplayedName();
+
+	TangibleObjectImplementation::notifyObjectInsertedToChild(object, child, oldParent);
 
 	return 0;
 }
@@ -522,33 +519,6 @@ int ShipObjectImplementation::notifyObjectRemovedFromChild(SceneObject* object, 
 
 
 	return 0;
-}
-
-void ShipObjectImplementation::damageArmor(float damage, DeltaMessage* delta) {
-	// Assume damage > total armor
-	float armor0 = getCurrentArmorMap()->get(Components::ARMOR0);
-	float armor1 = getCurrentArmorMap()->get(Components::ARMOR1);
-	float half = damage * 0.5f;
-	armor0 -= damage;
-	bool hasArmor0 = armor0 != 0;
-	bool hasArmor1 = armor1 != 0;
-	float remaining = 0;
-	armor0 -= half;
-
-	if (armor0 < 0) {
-		remaining = -armor0;
-		armor0 = 0;
-	}
-
-	armor1 -= remaining + half;
-
-	if (hasArmor0) {
-		setComponentArmor(Components::ARMOR0, armor0, delta);
-	}
-
-	if (hasArmor1) {
-		setComponentArmor(Components::ARMOR1, armor1, delta);
-	}
 }
 
 void ShipObjectImplementation::doRecovery(int mselapsed) {
@@ -645,6 +615,12 @@ void ShipObjectImplementation::doRecovery(int mselapsed) {
 		deltaVector->sendMessages(asShipObject(), pilot);
 	}
 
+	auto targetVector = getTargetVector();
+
+	if (targetVector != nullptr) {
+		targetVector->update();
+	}
+
 	scheduleRecovery();
 }
 
@@ -656,8 +632,16 @@ void ShipObjectImplementation::repairShip(float value) {
 
 	auto pilot = owner.get();
 	auto deltaVector = getDeltaVector();
-	uint8 command = DeltaMapCommands::SET;
 
+	float maxChassis = getChassisMaxHealth();
+	float oldChassis = getChassisCurrentHealth();
+	float newChassis = ((maxChassis - oldChassis) * repair) + oldChassis;
+
+	if (oldChassis != newChassis) {
+		setCurrentChassisHealth(newChassis, false, nullptr, deltaVector);
+	}
+
+	uint8 command = DeltaMapCommands::SET;
 	auto componentMap = getShipComponentMap();
 
 	for (int i = 0; i < componentMap->size(); ++i) {
@@ -696,14 +680,6 @@ void ShipObjectImplementation::repairShip(float value) {
 
 		if (newHp != oldHp) {
 			setComponentHitpoints(slot, newHp, nullptr, command, deltaVector);
-		}
-
-		float maxChassis = getChassisMaxHealth();
-		float oldChassis = getChassisCurrentHealth();
-		float newChassis = ((maxChassis - oldChassis) * repair) + oldChassis;
-
-		if (oldChassis != newChassis) {
-			setCurrentChassisHealth(newChassis, false, nullptr, deltaVector);
 		}
 
 		switch (slot) {
@@ -862,12 +838,16 @@ float ShipObjectImplementation::getActualSpeed() {
 
 	if (componentMap->get(Components::ENGINE) != 0) {
 		float efficiency = getComponentEfficiencyMap()->get(Components::ENGINE);
-		componentActual += engineMaxSpeed * efficiency;
+		float condition = getComponentCondition(Components::ENGINE);
+
+		componentActual += engineMaxSpeed * efficiency * condition;
 	}
 
 	if (componentMap->get(Components::BOOSTER) != 0 && isBoosterActive()) {
 		float efficiency = getComponentEfficiencyMap()->get(Components::BOOSTER);
-		componentActual += boosterMaxSpeed * efficiency;
+		float condition = getComponentCondition(Components::BOOSTER);
+
+		componentActual += boosterMaxSpeed * efficiency * condition;
 	}
 
 	float chassisActual = 1.f;
@@ -894,13 +874,10 @@ bool ShipObjectImplementation::checkInConvoRange(SceneObject* targetObject) {
 	int sqDistance = getWorldPosition().squaredDistanceTo(targetObject->getWorldPosition());
 
 	if (targetObject->isSpaceStationObject()) {
-		int maxSqDistance = SPACESTATION_COMM_MAX_DISTANCE * SPACESTATION_COMM_MAX_DISTANCE;
-
-		if (sqDistance < maxSqDistance)
-			return true;
+		return sqDistance <= (SPACESTATION_COMM_MAX_DISTANCE * SPACESTATION_COMM_MAX_DISTANCE);
 	}
 
-	return false;
+	return sqDistance <= (COMM_MAX_DISTANCE * COMM_MAX_DISTANCE);
 }
 
 float ShipObjectImplementation::calculateCurrentMass() {
@@ -999,6 +976,26 @@ void ShipObjectImplementation::sendPvpStatusTo(CreatureObject* player) {
 	player->sendMessage(pvp);
 }
 
+bool ShipObjectImplementation::isAttackableBy(TangibleObject* object) {
+	auto optionsBit = getOptionsBitmask();
+
+	if ((optionsBit & OptionBitmask::DESTROYING) || (optionsBit & OptionBitmask::INVULNERABLE)) {
+		return false;
+	}
+
+	int thisFaction = getFaction();
+	int objectFaction = object->getFaction();
+
+	if (thisFaction == 0 && objectFaction > 0)
+		return false;
+
+	return faction != objectFaction;
+}
+
+bool ShipObjectImplementation::isAggressiveTo(TangibleObject* object) {
+	return object->isAttackableBy(asShipObject()) && faction != Factions::FACTIONNEUTRAL;
+}
+
 ShipDeltaVector* ShipObjectImplementation::getDeltaVector() {
 	if (shipDeltaVector == nullptr) {
 		shipDeltaVector = new ShipDeltaVector(asShipObject(), getOwner().get());
@@ -1007,6 +1004,14 @@ ShipDeltaVector* ShipObjectImplementation::getDeltaVector() {
 	shipDeltaVector->reset(getOwner().get());
 
 	return shipDeltaVector.get();
+}
+
+ShipTargetVector* ShipObjectImplementation::getTargetVector() {
+	if (shipTargetVector == nullptr) {
+		shipTargetVector = new ShipTargetVector(asShipObject());
+	}
+
+	return shipTargetVector.get();
 }
 
 void ShipObjectImplementation::destroyObjectFromDatabase(bool destroyContainedObjects) {
@@ -1030,4 +1035,58 @@ void ShipObjectImplementation::destroyObjectFromDatabase(bool destroyContainedOb
 	}
 
 	TangibleObjectImplementation::destroyObjectFromDatabase(destroyContainedObjects);
+}
+
+void ShipObjectImplementation::setSyncStamp(uint32 value) {
+	syncTime = System::getMiliTime();
+	movementCounter = value;
+}
+
+uint32 ShipObjectImplementation::getSyncStamp() {
+	long deltaTime = System::getMiliTime() - syncTime;
+	return movementCounter + deltaTime;
+}
+
+void ShipObjectImplementation::updateZone(bool lightUpdate, bool sendPackets) {
+	auto pilot = getPilot();
+
+	if (pilot != nullptr) {
+		pilot->setPosition(getPositionX(),getPositionZ(),getPositionY());
+		pilot->setMovementCounter(movementCounter);
+	}
+
+	SceneObjectImplementation::updateZone(lightUpdate, sendPackets);
+}
+
+CreatureObject* ShipObjectImplementation::getPilot() {
+	auto chair = pilotChair.get();
+
+	if (chair != nullptr) {
+		return chair->getSlottedObject("ship_pilot_pob").castTo<CreatureObject*>();
+	}
+
+	return getSlottedObject("ship_pilot").castTo<CreatureObject*>();
+}
+
+void ShipObjectImplementation::setRotationMatrix(const Quaternion& value) {
+	rotationMatrix.setRotationMatrix(value.toMatrix3());
+}
+
+float ShipObjectImplementation::getComponentCondition(uint32 slot) {
+	float healthMin = getCurrentHitpointsMap()->get(slot);
+	float healthMax = getMaxHitpointsMap()->get(slot);
+
+	if (healthMin == 0.f || healthMax == 0.f) {
+		return 0.f;
+	}
+
+	return healthMin / healthMax;
+}
+
+void ShipObjectImplementation::updateLastDamageReceived() {
+	lastDamageReceived.updateToCurrentTime();
+}
+
+uint64 ShipObjectImplementation::getLastDamageReceivedMili() {
+	return lastDamageReceived.getMiliTime();
 }

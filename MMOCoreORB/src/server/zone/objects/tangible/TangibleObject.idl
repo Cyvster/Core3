@@ -88,6 +88,8 @@ class TangibleObject extends SceneObject {
 
 	protected SceneObject antiDecayKitObject;
 
+	protected boolean insurable;
+
 	protected boolean jediRobe;
 	protected boolean unionRing;
 
@@ -106,6 +108,7 @@ class TangibleObject extends SceneObject {
 
 		antiDecayKitObject = null;
 
+		insurable = true;
 		jediRobe = false;
 		unionRing = false;
 
@@ -605,6 +608,11 @@ class TangibleObject extends SceneObject {
 		return defenderList;
 	}
 
+	@read
+	public boolean hasDefenders() {
+		return defenderList.size() > 0;
+	}
+
 	@local
 	@read
 	public final AutoDeltaSet<int> getVisibleComponents() {
@@ -695,6 +703,11 @@ class TangibleObject extends SceneObject {
 
 	public void setSliced(boolean slice) {
 		sliced = slice;
+	}
+
+	@read
+	public boolean isInsurable() {
+		return insurable;
 	}
 
 	@read

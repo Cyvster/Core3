@@ -122,33 +122,42 @@ bool CombatManager::startCombat(CreatureObject* attacker, TangibleObject* defend
 	return true;
 }
 
-// Called when creature attempts to peace out of combat -- Defender List is cleared
-bool CombatManager::attemptPeace(CreatureObject* attacker) const {
-	attacker->removeDefenders();
-	attacker->setState(CreatureState::PEACE);
+// Called when creature attempts to peace out of combat -- Creature is locked pre, Defender List is cleared
+bool CombatManager::attemptPeace(CreatureObject* creature) const {
+	if (creature == nullptr)
+		return false;
 
-	ThreatMap* threatMap = attacker->getThreatMap();
+	creature->removeDefenders();
+	creature->setState(CreatureState::PEACE);
+
+	ThreatMap* threatMap = creature->getThreatMap();
 
 	if (threatMap != nullptr) {
 		if (threatMap->size() == 0) {
-			attacker->clearCombatState(false);
+			creature->clearCombatState(false);
 			return true;
 		}
+
+		uint64 creatureID = creature->getObjectID();
 
 		for (int i = 0; i < threatMap->size(); i++) {
 			TangibleObject* threatTano = threatMap->elementAt(i).getKey();
 
-			if (threatTano == nullptr || threatTano == attacker) {
+			if (threatTano == nullptr || threatTano->getObjectID() == creatureID) {
 				continue;
 			}
 
-			if (attacker->isInRange(threatTano, 128.f) && threatTano->getMainDefender() == attacker) {
-				return true;
+			SceneObject* mainDefender = threatTano->getMainDefender();
+
+			// If the defender is in range and is the maind defender of the creature, fail to peace
+			if (creature->isInRange(threatTano, 128.f) && mainDefender != nullptr && mainDefender->getObjectID() == creatureID) {
+				return false;
 			}
 		}
 
-		attacker->clearCombatState(false);
+		creature->clearCombatState(false);
 	}
+
 	return true;
 }
 
@@ -2208,10 +2217,12 @@ float CombatManager::hitChanceEquation(float attackerAccuracy, float targetDefen
 int CombatManager::getSpeedModifier(CreatureObject* attacker, WeaponObject* weapon) const {
 	int speedMods = 0;
 
-	const auto weaponSpeedMods = weapon->getSpeedModifiers();
+	if (weapon != nullptr) {
+		const auto weaponSpeedMods = weapon->getSpeedModifiers();
 
-	for (int i = 0; i < weaponSpeedMods->size(); ++i) {
-		speedMods += attacker->getSkillMod(weaponSpeedMods->get(i));
+		for (int i = 0; i < weaponSpeedMods->size(); ++i) {
+			speedMods += attacker->getSkillMod(weaponSpeedMods->get(i));
+		}
 	}
 
 	speedMods += attacker->getSkillMod("private_speed_bonus");
@@ -2720,6 +2731,10 @@ float CombatManager::doDroidDetonation(CreatureObject* droid, CreatureObject* de
 // Calculate Weapon Speed
 
 float CombatManager::calculateWeaponAttackSpeed(CreatureObject* attacker, WeaponObject* weapon, float skillSpeedRatio) const {
+	if (weapon == nullptr) {
+		return 4.0f;
+	}
+
 	int speedMod = getSpeedModifier(attacker, weapon);
 	float jediSpeed = attacker->getSkillMod("combat_haste") / 100.0f;
 

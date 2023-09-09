@@ -13,15 +13,46 @@
 #include "server/zone/Zone.h"
 #include "server/zone/SpaceZone.h"
 #include "server/zone/TreeEntry.h"
+#include "server/zone/objects/creature/buffs/ConcealBuff.h"
 
 void PlayerZoneComponent::notifyInsertToZone(SceneObject* sceneObject, Zone* newZone) const {
 	String zoneName = newZone->getZoneName();
 
 	if (sceneObject->isPlayerCreature() && newZone != nullptr) {
-		PlayerObject* ghost = sceneObject->asCreatureObject()->getPlayerObject();
+		CreatureObject* player = sceneObject->asCreatureObject();
 
-		if (ghost != nullptr) {
-			ghost->setSavedTerrainName(zoneName);
+		if (player != nullptr) {
+			PlayerObject* ghost = player->getPlayerObject();
+			String zoneName = newZone->getZoneName();
+
+			if (ghost != nullptr)
+				ghost->setSavedTerrainName(zoneName);
+
+			// Remove MaskScent state from concealed players when their buff is for a different zone
+			uint32 concealCrc = STRING_HASHCODE("skill_buff_mask_scent");
+
+			if (player->hasBuff(concealCrc)) {
+				ConcealBuff* concealBuff = cast<ConcealBuff*>(player->getBuff(concealCrc));
+
+				if (concealBuff != nullptr) {
+					Reference<ConcealBuff*> buffRef = concealBuff;
+					Reference<CreatureObject*> playerRef = player;
+					Reference<Zone*> zoneRef = newZone;
+
+					Core::getTaskManager()->executeTask([buffRef, playerRef, zoneRef] () {
+						if (buffRef == nullptr || playerRef == nullptr || zoneRef == nullptr)
+							return;
+
+						Locker lock(playerRef);
+
+						if (buffRef->getPlanetName() != zoneRef->getZoneName()) {
+							playerRef->clearState(CreatureState::MASKSCENT, true);
+						} else {
+							playerRef->setState(CreatureState::MASKSCENT, true);
+						}
+					}, "ClearMaskStateLambda");
+				}
+			}
 		}
 	}
 
@@ -70,17 +101,7 @@ void PlayerZoneComponent::switchZone(SceneObject* sceneObject, const String& new
 			player->executeObjectControllerAction(STRING_HASHCODE("dismount"));
 		}
 
-		if (player->isPilotingShip()) {
-			if (player->hasState(CreatureState::PILOTINGSHIP)) {
-				player->clearState(CreatureState::PILOTINGSHIP);
-			} else if (player->hasState(CreatureState::PILOTINGPOBSHIP)) {
-				player->clearState(CreatureState::PILOTINGPOBSHIP);
-			}
-		} else if (player->isPobShipOperator()) {
-			player->clearState(CreatureState::SHIPOPERATIONS);
-		} else if (player->isShipGunner()) {
-			player->clearState(CreatureState::SHIPGUNNER);
-		}
+		player->clearSpaceStates();
 
 		if (ghost != nullptr) {
 			ghost->setSavedParentID(0);

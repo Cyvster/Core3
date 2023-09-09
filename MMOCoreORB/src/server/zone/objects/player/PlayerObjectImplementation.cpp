@@ -59,7 +59,7 @@
 #include "templates/intangible/SharedPlayerObjectTemplate.h"
 #include "server/zone/objects/player/sessions/TradeSession.h"
 #include "server/zone/objects/player/events/StoreSpawnedChildrenTask.h"
-#include "server/zone/objects/player/events/StoreShipTask.h"
+#include "server/zone/objects/intangible/tasks/StoreShipTask.h"
 #include "server/zone/objects/player/events/RemoveSpouseTask.h"
 #include "server/zone/objects/player/events/PvpTefRemovalTask.h"
 #include "server/zone/objects/player/events/SpawnHelperDroidTask.h"
@@ -294,7 +294,7 @@ void PlayerObjectImplementation::unloadShip() {
 			ShipControlDevice* shipDevice = cast<ShipControlDevice*>(object.get());
 
 			if (shipDevice != nullptr && shipDevice->isShipLaunched()) {
-				StoreShipTask* task = new StoreShipTask(creature, shipDevice);
+				StoreShipTask* task = new StoreShipTask(creature, shipDevice, launchPoint.getGoundZoneName(), launchPoint.getLocation());
 
 				if (task != nullptr)
 					task->execute();
@@ -350,36 +350,40 @@ void PlayerObjectImplementation::unload() {
 
 	ManagedReference<SceneObject*> creoParent = creature->getParent().get();
 
-	if (creature->getZone() != nullptr) {
-		savedTerrainName = creature->getZone()->getZoneName();
+	Zone* creatureZone = creature->getZone();
 
-		if (creoParent != nullptr) {
-			savedParentID = creoParent->getObjectID();
+	if (creatureZone != nullptr) {
+		String zoneName = creatureZone->getZoneName();
+
+		if (creatureZone->isSpaceZone()) {
+			unloadShip();
+
+			zoneName = launchPoint.getGoundZoneName();
+
+			Zone* newZone = getZoneServer()->getZone(zoneName);
+
+			if (newZone != nullptr) {
+				newZone->transferObject(creature, -1, false);
+
+				Vector3 launchLoc = launchPoint.getLocation();
+
+				updateLastValidatedPosition();
+				creature->initializePosition(launchLoc.getX(), launchLoc.getZ(), launchLoc.getY());
+				creature->incrementMovementCounter();
+
+				savedParentID = 0;
+			}
 		} else {
-			savedParentID = 0;
+			if (creoParent != nullptr) {
+				savedParentID = creoParent->getObjectID();
+			} else {
+				savedParentID = 0;
+			}
 		}
+
+		savedTerrainName = zoneName;
 
 		creature->destroyObjectFromWorld(true);
-	} else if (creature->getSpaceZone() != nullptr) {
-		unloadShip();
-
-		String groundZoneName = launchPoint.getGoundZoneName();
-
-		Zone* newZone = getZoneServer()->getZone(groundZoneName);
-
-		if (newZone != nullptr) {
-			newZone->transferObject(creature, -1, false);
-			setSavedParentID(0);
-
-			Vector3 launchLoc = launchPoint.getLocation();
-
-			updateLastValidatedPosition();
-			creature->initializePosition(launchLoc.getX(), launchLoc.getZ(), launchLoc.getY());
-			creature->incrementMovementCounter();
-
-			savedTerrainName = groundZoneName;
-			creature->destroyObjectFromWorld(true);
-		}
 	}
 
 	creature->clearCombatState(true);
@@ -508,7 +512,7 @@ void PlayerObjectImplementation::notifySceneReady() {
 		}
 	}
 
-	//Leave all planet chat rooms
+	//Leave all planet chat rooms (need evidence of planet rooms for space)
 	for (int i = 0; i < zoneServer->getZoneCount(); ++i) {
 		ManagedReference<Zone*> zone = zoneServer->getZone(i);
 
@@ -550,9 +554,10 @@ void PlayerObjectImplementation::notifySceneReady() {
 			chatRooms.remove(i);
 	}
 
-	if(creature->getZone() != nullptr && creature->getZone()->getPlanetManager() != nullptr) {
-		ManagedReference<WeatherManager*> weatherManager = creature->getZone()->getPlanetManager()->getWeatherManager();
-		if(weatherManager != nullptr) {
+	if (zone != nullptr && zone->getPlanetManager() != nullptr) {
+		ManagedReference<WeatherManager*> weatherManager = zone->getPlanetManager()->getWeatherManager();
+
+		if (weatherManager != nullptr) {
 			creature->setCurrentWind((byte)System::random(200));
 			creature->setCurrentWeather(0xFF);
 			weatherManager->sendWeatherTo(creature);
@@ -560,7 +565,12 @@ void PlayerObjectImplementation::notifySceneReady() {
 	}
 
 	checkAndShowTOS();
-	createHelperDroid();
+
+	if (zone != nullptr && !zone->isSpaceZone())
+		createHelperDroid();
+
+
+	// info(true) << "notifySceneReady for " << creature->getDisplayedName();
 }
 
 void PlayerObjectImplementation::sendFriendLists() {

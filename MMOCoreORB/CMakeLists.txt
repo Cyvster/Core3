@@ -1,7 +1,22 @@
 # Copyright (C) 2007 <SWGEmu>. All rights reserved.
 # Distribution of this file for usage outside of Core3 is prohibited.
 
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.7.0 FATAL_ERROR)
+
+find_program(CLANGXX_EXECUTABLE_PATH NAMES clang++)
+
+if (CLANGXX_EXECUTABLE_PATH)
+	find_program(CMAKE_C_COMPILER clang)
+	find_program(CMAKE_CXX_COMPILER clang++)
+	message(STATUS "Found ${CMAKE_CXX_COMPILER} using clang compiler.")
+	set(LINKER_IS_LLD 1 CACHE INTERNAL "use lld linker")
+	find_program(LLD_EXECUTABLE_PATH NAMES ld.lld)
+	if (LLD_EXECUTABLE_PATH)
+		message(STATUS "Using DWARF4 format with linker ${LLD_EXECUTABLE_PATH}")
+		add_link_options(-fuse-ld=lld  -Wl,--gdb-index)
+		set(CMAKE_CXX_FLAGS_DEBUG "-gdwarf-4")
+    endif()
+endif()
 
 project(core3 CXX C)
 
@@ -18,8 +33,8 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	message(FATAL_ERROR "GCC version must be at least 5.4!")
     endif()
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.4)
-        message(FATAL_ERROR "Clang version must be at least 3.4!")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 16)
+        message(FATAL_ERROR "Clang version must be at least 16!")
     endif()
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.10)
@@ -52,7 +67,7 @@ option(ENABLE_ODB "Enables odb3 compiling" OFF)
 option(ENABLE_ODB_REFERENCES "Sets ODB_REFERENCES define" ON) #needs to match engine3
 option(ENABLE_BUILD_CLIENT "Enables core3client build" ON)
 option(ENABLE_JEMALLOC_LINK "Enables jemalloc linking if found" ON)
-option(ENABLE_MULTITHREADED_LINKER "Enables ld.gold/lld with --threads check and use" ON)
+option(ENABLE_MULTITHREADED_LINKER "Enables ld.gold/lld with --threads check and use" OFF)
 option(ENABLE_LOCKFREE_BCLIENT_BUFFERS "Enables lock free base client buffers, requires boost thread" OFF) #needs to match engine3
 option(DUMP_ALL_CMAKE_VARIABLES "Prints all cmake variables" OFF)
 
@@ -64,7 +79,7 @@ include(UseGold)
 find_package(Git QUIET)
 
 # Add lua includes and libraries
-find_package(Lua "5.3" REQUIRED)
+find_package(Lua "5.3" EXACT REQUIRED)
 include_directories(${LUA_INCLUDE_DIR})
 
 # Find mysql includes and libraries
@@ -90,6 +105,7 @@ include_directories(${ZLIB_INCLUDE_DIRS})
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 	message(STATUS "Compiling with AI debug enabled")
 	add_definitions(-DDEBUG_AI)
+	add_definitions(-DDEBUG_SHIP_AI)
 endif()
 
 if (ENABLE_SESSION_API)
@@ -116,8 +132,12 @@ if(ENABLE_MULTITHREADED_LINKER)
 
 	if(LLD_LINKER_SUPPORTED)
 		set(LINKER_IS_LLD 1 CACHE INTERNAL "use lld linker")
+		message(STATUS "Using lld linker")
 	elseif(GOLD_LINKER_SUPPORTED)
 		set(LINKER_IS_GOLD 1 CACHE INTERNAL "use gold linker")
+		message(STATUS "Using gold linker")
+	else()
+		message(STATUS "ENABLE_MULTITHREADED_LINKER failed to find linker.")
 	endif()
 
 	if(LINKER_IS_GOLD)
@@ -194,10 +214,10 @@ endif(IDL_NOPRELOCKS)
 if(COMPILE_TESTS)
 	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-    add_subdirectory(utils/googletest-release-1.10.0)
+    add_subdirectory(utils/googletest-release-1.13.0)
 
-    include_directories(${CMAKE_SOURCE_DIR}/utils/googletest-release-1.10.0/googletest/include)
-    include_directories(${CMAKE_SOURCE_DIR}/utils/googletest-release-1.10.0/googlemock/include)
+    include_directories(${CMAKE_SOURCE_DIR}/utils/googletest-release-1.13.0/googletest/include)
+    include_directories(${CMAKE_SOURCE_DIR}/utils/googletest-release-1.13.0/googlemock/include)
 
 	enable_testing()
 

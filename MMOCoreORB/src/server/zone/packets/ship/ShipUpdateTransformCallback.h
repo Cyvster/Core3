@@ -21,8 +21,9 @@
 #include "server/zone/packets/ship/PackedRotationRate.h"
 
 #ifdef SHIP_TRANSFORM_DEBUG
+#include "server/zone/managers/ship/ShipManager.h"
+#include "server/zone/objects/ship/ShipCollisionData.h"
 #include "server/zone/packets/ui/CreateClientPathMessage.h"
-#include "server/zone/packets/object/ShowFlyText.h"
 #endif // SHIP_TRANSFORM_DEBUG
 
 class ShipUpdateTransformCallback : public MessageCallback {
@@ -146,19 +147,21 @@ public:
 			return updateError(pilot, "!ship", false);
 		}
 
-		SpaceZone* zone = ship->getSpaceZone();
-		if (zone == nullptr) {
+		Zone* zone = ship->getZone();
+
+		if (zone == nullptr || !zone->isSpaceZone()) {
 			return updateError(pilot, "!zone", false);
+		}
+
+		if (ghost->getClientLastMovementStamp() == 0 && counter != 0) {
+			ghost->setClientLastMovementStamp(counter);
+			return synchronize(ship, pilot);
 		}
 
 		deltaTime = (long)counter - (long)ghost->getClientLastMovementStamp();
 
 		if (deltaTime < -Transform::SYNCDELTA) {
 			return updateError(pilot, "!syncDelta", true);
-		}
-
-		if (deltaTime == counter) {
-			return synchronize(ship, pilot);
 		}
 
 		if (deltaTime < Transform::MINDELTA) {
@@ -172,13 +175,16 @@ public:
 		Locker pLock(pilot);
 		Locker cLock(ship, pilot);
 
+		ship->setSyncStamp(counter);
+
 		if (isPositionUpdate(ship)) {
 			updatePosition(ship, pilot);
 		} else if (isStaticUpdate(ship)) {
 			updateStatic(ship, pilot);
-		} else {
-			return;
 		}
+
+		auto data = new ShipUpdateTransformMessage(ship, ship->getPosition(), velocity, yawRate, pitchRate, rollRate, counter);
+		pilot->sendMessage(data);
 
 		ghost->setClientLastMovementStamp(counter);
 	}
@@ -215,100 +221,121 @@ public:
 		return false;
 	}
 
-	void updateCollision(ShipObject* ship, CreatureObject* pilot) {
+	void updateCollision(ShipObject* ship, CreatureObject* pilot, const Vector3& collisionPoint) {
 #ifdef SHIP_TRANSFORM_DEBUG
-		sendDebug(pilot, ship, "updateCollision", Vector3(positionX, positionY, positionZ));
+		sendDebug(pilot, ship, "updateCollision", collisionPoint);
 #endif // SHIP_TRANSFORM_DEBUG
 
-		Quaternion direction(directionW, directionX, directionY, directionZ);
-		direction.normalize();
-
-		pilot->setMovementCounter(counter);
-		ship->setMovementCounter(counter);
-		ship->setDirection(direction);
+		updateTransform(ship, pilot, collisionPoint, true);
+		broadcastTransform(ship, pilot, collisionPoint);
 
 		auto collide = new ShipUpdateTransformCollisionMessage(ship);
-		pilot->broadcastMessage(collide, true);
+		ship->broadcastMessage(collide, false);
 
 		auto effect = new PlayClientEffectObjectMessage(ship, "clienteffect/space_collision.cef", "");
-		pilot->broadcastMessage(effect, true);
+		ship->broadcastMessage(effect, false);
 	}
 
 	void updatePosition(ShipObject* ship, CreatureObject* pilot) {
-		Vector3 targetPosition = Vector3(positionX, positionY, positionZ);
-		Vector3 collisionPoint;
+		Vector3 position(positionX, positionY, positionZ);
+		/*Vector3 collisionPoint;
 
-		if (CollisionManager::checkShipCollision(ship, targetPosition, collisionPoint)) {
-			return updateCollision(ship, pilot);
-		}
+		if (CollisionManager::checkShipCollision(ship, position, collisionPoint)) {
+			return updateCollision(ship, pilot, collisionPoint);
+		}*/
 
-		Vector3 nextPosition = Vector3(positionX, positionY, positionZ);
-		Vector3 thisPosition = ship->getPosition();
-
-		int interval = (int)(deltaTime * 0.005f);
-
-		float magnitude = velocity.getSpeed() / ship->getActualMaxSpeed();
-		float vector = (magnitude / interval) * positionMod;
-
-		if (vector > 0.1f && vector <= positionMod) {
-			nextPosition = ((nextPosition - thisPosition) * vector) + nextPosition;
-		}
+		Vector3 nextPosition = (position - ship->getPosition()) + position;
 
 #ifdef SHIP_TRANSFORM_DEBUG
 		sendDebug(pilot, ship, "updatePosition", nextPosition);
 #endif // SHIP_TRANSFORM_DEBUG
 
-		pilot->setMovementCounter(counter);
-		ship->setMovementCounter(counter);
-		ship->setDirection(directionW, directionX, directionY, directionZ);
-		ship->setPosition(positionX, positionZ, positionY);
-		ship->updateZone(true, false);
-
-		auto data = new ShipUpdateTransformMessage(ship, nextPosition, velocity, yawRate, pitchRate, rollRate);
-		ship->broadcastMessage(data, false);
+		updateTransform(ship, pilot, position, false);
+		broadcastTransform(ship, pilot, nextPosition);
 	}
 
 	void updateStatic(ShipObject* ship, CreatureObject* pilot) {
+		const Vector3& position = ship->getPosition();
+
 #ifdef SHIP_TRANSFORM_DEBUG
-		sendDebug(pilot, ship, "updateStatic", ship->getPosition());
+		sendDebug(pilot, ship, "updateStatic", position);
 #endif // SHIP_TRANSFORM_DEBUG
 
-		pilot->setMovementCounter(counter);
-		ship->setMovementCounter(counter);
-		ship->setDirection(directionW, directionX, directionY, directionZ);
-		ship->updateZone(true, false);
-
-		auto data = new ShipUpdateTransformMessage(ship);
-		ship->broadcastMessage(data, false);
+		updateTransform(ship, pilot, position, false);
+		broadcastTransform(ship, pilot, position);
 	}
 
 	void synchronize(ShipObject* ship, CreatureObject* pilot) {
+		const Vector3& position = ship->getPosition();
+
 #ifdef SHIP_TRANSFORM_DEBUG
-		sendDebug(pilot, ship, "synchronize", Vector3(positionX, positionY, positionZ));
+		sendDebug(pilot, ship, "synchronize", position);
 #endif // SHIP_TRANSFORM_DEBUG
 
-		auto zone = ship->getSpaceZone();
-		if (zone != nullptr && pilot->getSpaceZone() == nullptr) {
-			pilot->setSpaceZone(zone);
+		updateTransform(ship, pilot, position, true);
+	}
+
+	void updateTransform(ShipObject* ship, CreatureObject* pilot, const Vector3& position, bool reorthonormalize) {
+		Quaternion direction(directionW, directionX, directionY, directionZ);
+
+		if (reorthonormalize) {
+			direction.normalize();
 		}
 
-		Quaternion direction = *ship->getDirection();
-		direction.normalize();
+		if (ship->getDirectionW() != direction.getW() || ship->getDirectionX() != direction.getX() || ship->getDirectionY() != direction.getY() || ship->getDirectionZ() != direction.getZ()) {
+			ship->setRotationMatrix(direction);
+		}
 
-		pilot->setMovementCounter(counter);
-		ship->setMovementCounter(counter);
+		ship->setPosition(position.getX(), position.getZ(), position.getY());
 		ship->setDirection(direction);
-		ship->updateZone(true, false);
 
-		auto data = new DataTransform(ship);
-		pilot->sendMessage(data);
+		bool lightUpdate = priority != 0x23;
+		ship->updateZone(lightUpdate, false);
 
-		PlayerObject* ghost = pilot->getPlayerObject();
-		if (ghost == nullptr || ghost->isTeleporting()) {
+		if (reorthonormalize) {
+			auto data = new DataTransform(ship);
+			pilot->sendMessage(data);
+		}
+	}
+
+	void broadcastTransform(ShipObject* ship, CreatureObject* pilot, const Vector3& position) {
+		auto shipCov = ship->getCloseObjects();
+		if (shipCov == nullptr) {
 			return;
 		}
 
-		ghost->setClientLastMovementStamp(counter);
+		SortedVector<ManagedReference<TreeEntry*> > closePlayers;
+		shipCov->safeCopyReceiversTo(closePlayers, CloseObjectsVector::PLAYERTYPE);
+
+		for (int i = 0; i < closePlayers.size(); ++i) {
+			auto targetCreo = closePlayers.get(i).castTo<CreatureObject*>();
+
+			if (targetCreo == nullptr || targetCreo->getObjectID() == pilot->getObjectID()) {
+				continue;
+			}
+
+			auto targetRoot = targetCreo->getRootParent();
+
+			if (targetRoot == nullptr || !targetRoot->isShipObject()) {
+				continue;
+			}
+
+			auto targetShip = targetRoot->asShipObject();
+
+			if (targetShip == nullptr) {
+				continue;
+			}
+
+			uint32 syncStamp = targetShip->getSyncStamp();
+
+			if (velocity.getSpeed() > 0.f) {
+				auto data = new ShipUpdateTransformMessage(ship, position, velocity, yawRate, pitchRate, rollRate, syncStamp);
+				targetCreo->sendMessage(data);
+			} else {
+				auto data = new ShipUpdateTransformMessage(ship, syncStamp);
+				targetCreo->sendMessage(data);
+			}
+		}
 	}
 
 	void updateError(CreatureObject* pilot, const String& message, bool bounceBack) {
@@ -365,8 +392,8 @@ public:
 			<< " yawRate:   " << yawRate.get() << endl
 			<< " pitchRate: " << pitchRate.get() << endl
 			<< " rollRate:  " << rollRate.get() << endl
-			<< " syncStamp: " << counter << endl
-			<< " deltaTime: " << counter - ship->getMovementCounter() << endl
+			<< " syncStamp: " << ship->getSyncStamp() << endl
+			<< " counter:   " << counter << endl
 			<< "--------------------------------";
 
 		pilot->sendSystemMessage(msg.toString());
@@ -377,19 +404,35 @@ public:
 		Vector3 thisPosition = Vector3(positionX, positionY, positionZ);
 
 		auto path = new CreateClientPathMessage();
-		path->addCoordinate(lastPosition.getX(), lastPosition.getZ(), lastPosition.getY());
-		path->addCoordinate(thisPosition.getX(), thisPosition.getZ(), thisPosition.getY());
+		path->addCoordinate(lastPosition);
+		path->addCoordinate(thisPosition);
 
-		if (drawPathRadius) {
-			path->addCoordinate(thisPosition.getX() + 8, thisPosition.getZ(), thisPosition.getY());
-			path->addCoordinate(thisPosition.getX() - 8, thisPosition.getZ(), thisPosition.getY());
-			path->addCoordinate(thisPosition.getX(), thisPosition.getZ(), thisPosition.getY());
-			path->addCoordinate(thisPosition.getX(), thisPosition.getZ(), thisPosition.getY() + 8);
-			path->addCoordinate(thisPosition.getX(), thisPosition.getZ(), thisPosition.getY() - 8);
-			path->addCoordinate(thisPosition.getX(), thisPosition.getZ(), thisPosition.getY());
+		auto targetData = ShipManager::instance()->getCollisionData(ship);
+		if (targetData == nullptr) {
+			return;
 		}
 
-		path->addCoordinate(nextPosition.getX(), nextPosition.getZ(), nextPosition.getY());
+		Matrix4 targetRotation;
+		targetRotation.setRotationMatrix(ship->getDirection()->getConjugate().toMatrix3());
+
+		float targetRadius = targetData->getBoundingSphere().getRadius();
+
+		if (targetData->getVolumeType() == ShipCollisionData::CollisionVolumeType::MESH) {
+			path->drawBoundingSphere(thisPosition, targetRotation, targetData->getBoundingSphere());
+		}
+
+		if (targetData->getVolumeType() == ShipCollisionData::CollisionVolumeType::BOX) {
+			path->drawBoundingSphere(thisPosition, targetRotation, targetData->getBoundingSphere());
+			path->drawBoundingBox(thisPosition, targetRotation, targetData->getChassisBox());
+		}
+
+		if (targetData->getVolumeType() == ShipCollisionData::CollisionVolumeType::RADIUS) {
+			path->drawBoundingSphere(thisPosition, targetRotation, targetData->getBoundingSphere());
+			path->drawBoundingSphere(thisPosition, targetRotation, targetData->getChassisSphere());
+		}
+
+		path->addCoordinate(thisPosition);
+		path->addCoordinate(nextPosition);
 		ship->broadcastMessage(path, false);
 	}
 #endif // SHIP_TRANSFORM_DEBUG

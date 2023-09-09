@@ -79,7 +79,7 @@ function ThemeParkLogic:spawnNpcs()
 		end
 
 		if npcSpawnData.position == SIT then
-			CreatureObject(pNpc):setState(STATESITTINGONCHAIR)
+			CreatureObject(pNpc):setState(SITTINGONCHAIR)
 		end
 		if (npcSpawnData.mood ~= nil and npcSpawnData.mood ~= "") then
 			CreatureObject(pNpc):setMoodString(npcSpawnData.mood)
@@ -737,6 +737,11 @@ function ThemeParkLogic:spawnDestroyBuilding(mission, pConversingPlayer, pActive
 		return false
 	end
 
+	-- Clearing the buildings owner so the player cannot drop or pickup objects from it
+	BuildingObject(pBuilding):setOwnerID(0)
+	BuildingObject(pBuilding):revokeAllPermissions()
+	BuildingObject(pBuilding):grantPermission("QUEST", SceneObject(pConversingPlayer):getObjectID())
+
 	createObserver(OBJECTDESTRUCTION, self.className, "notifyDestroyedBuilding", pBuilding)
 
 	local buildingCell = BuildingObject(pBuilding):getCell(buildingData.terminal.vectorCellID)
@@ -751,7 +756,12 @@ function ThemeParkLogic:spawnDestroyBuilding(mission, pConversingPlayer, pActive
 		return false
 	end
 
-	writeData(SceneObject(pConversingPlayer):getObjectID() .. ":destroyableBuildingID", SceneObject(pBuilding):getObjectID())
+	local playerID = SceneObject(pConversingPlayer):getObjectID()
+	local buildingID = SceneObject(pBuilding):getObjectID()
+
+	writeData(playerID .. ":destroyableBuildingID:", SceneObject(pBuilding):getObjectID())
+	writeData(buildingID .. ":destroyableBuildingOwnerID:", SceneObject(pConversingPlayer):getObjectID())
+
 	return self:spawnDestroyMissionNpcs(mission, pConversingPlayer)
 end
 
@@ -834,7 +844,7 @@ function ThemeParkLogic:spawnMissionNpcs(mission, pConversingPlayer, pActiveArea
 	local numberOfSpawns = #mission.primarySpawns + #mission.secondarySpawns
 
 	if (currentMissionType == "destroy") then
-		local buildingID = readData(playerID .. ":destroyableBuildingID")
+		local buildingID = readData(playerID .. ":destroyableBuildingID:")
 		local pBuilding = getSceneObject(buildingID)
 
 		if pBuilding == nil then
@@ -950,7 +960,7 @@ function ThemeParkLogic:spawnDestroyMissionNpcs(mission, pConversingPlayer)
 	local childNpcs = buildingData.childNpcs
 	local numberOfChildNpcs = #childNpcs
 
-	local buildingID = readData(playerID .. ":destroyableBuildingID")
+	local buildingID = readData(playerID .. ":destroyableBuildingID:")
 	local pBuilding = getSceneObject(buildingID)
 
 	if pBuilding == nil then
@@ -1291,7 +1301,11 @@ function ThemeParkLogic:notifyDestroyedBuilding(pBuilding, pBuilding2)
 		return 1
 	end
 
-	local ownerID = BuildingObject(pBuilding):getOwnerID()
+	local buildingID = SceneObject(pBuilding):getObjectID()
+
+	local ownerID = readData(buildingID .. ":destroyableBuildingOwnerID:")
+	deleteData(buildingID .. ":destroyableBuildingOwnerID:")
+
 	local pPlayer = getCreatureObject(ownerID)
 
 	if (pPlayer == nil) then
@@ -1815,7 +1829,7 @@ function ThemeParkLogic:completeMission(pConversingPlayer)
 	end
 
 	writeData(playerID .. ":activeMission", 2)
-	deleteData(playerID .. ":destroyableBuildingID")
+	deleteData(playerID .. ":destroyableBuildingID:")
 end
 
 function ThemeParkLogic:failMission(pConversingPlayer)
@@ -2017,12 +2031,12 @@ function ThemeParkLogic:cleanUpMission(pConversingPlayer)
 	local currentMissionType = self:getMissionType(npcNumber, pConversingPlayer)
 
 	if (currentMissionType == "destroy") then
-		local buildingID = readData(playerID .. ":destroyableBuildingID")
+		local buildingID = readData(playerID .. ":destroyableBuildingID:")
 		if (buildingID ~= 0) then
 			dropObserver(OBJECTDESTRUCTION, getSceneObject(buildingID))
 			destroyBuilding(buildingID)
 		end
-		deleteData(playerID .. ":destroyableBuildingID")
+		deleteData(playerID .. ":destroyableBuildingID:")
 	end
 
 	local numberOfObjects = readData(playerID .. ":missionStaticObjects")

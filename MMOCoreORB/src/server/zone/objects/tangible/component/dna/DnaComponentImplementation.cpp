@@ -64,16 +64,16 @@ void DnaComponentImplementation::fillAttributeList(AttributeListMessage* alm, Cr
 		break;
 	}
 
-	alm->insertAttribute("dna_comp_hardiness", hardiness);
-	alm->insertAttribute("dna_comp_fortitude", fortitude);
-	alm->insertAttribute("dna_comp_dexterity", dexterity);
-	alm->insertAttribute("dna_comp_endurance", endurance);
-	alm->insertAttribute("dna_comp_intellect", intellect);
-	alm->insertAttribute("dna_comp_cleverness", cleverness);
-	alm->insertAttribute("dna_comp_dependability", dependability);
-	alm->insertAttribute("dna_comp_courage", courage);
-	alm->insertAttribute("dna_comp_fierceness", fierceness);
-	alm->insertAttribute("dna_comp_power", power);
+	alm->insertAttribute("dna_comp_hardiness", getHardiness());
+	alm->insertAttribute("dna_comp_fortitude", getFortitude());
+	alm->insertAttribute("dna_comp_dexterity", getDexterity());
+	alm->insertAttribute("dna_comp_endurance", getEndurance());
+	alm->insertAttribute("dna_comp_intellect", getIntellect());
+	alm->insertAttribute("dna_comp_cleverness", getCleverness());
+	alm->insertAttribute("dna_comp_dependability", getDependability());
+	alm->insertAttribute("dna_comp_courage", getCourage());
+	alm->insertAttribute("dna_comp_fierceness", getFierceness());
+	alm->insertAttribute("dna_comp_power", getPower());
 
 	if (armorRating == 0)
 		alm->insertAttribute("dna_comp_armor_rating", "@obj_attr_n:armor_pierce_none");
@@ -103,10 +103,11 @@ void DnaComponentImplementation::fillAttributeList(AttributeListMessage* alm, Cr
 	alm->insertAttribute("dna_comp_ranged_attack", (ranged ? "Yes" : "No"));
 }
 
-bool DnaComponentImplementation::isSpecialResist(int type) {
+bool DnaComponentImplementation::isSpecialResist(unsigned int type) {
 	return specialResists & type;
 }
 
-void DnaComponentImplementation::setSpecialResist(int type) {
-	specialResists |= type;
+void DnaComponentImplementation::setSpecialResist(unsigned int type) {
+	if (!(specialResists & type))
+		specialResists |= type;
 }

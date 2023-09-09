@@ -11,7 +11,7 @@
 #include "server/zone/ZoneServer.h"
 #include "server/zone/managers/combat/CombatManager.h"
 
-//#define DEBUG_DOTS
+// #define DEBUG_DOTS
 
 DamageOverTime::DamageOverTime() {
 	setAttackerID(0);
@@ -22,6 +22,8 @@ DamageOverTime::DamageOverTime() {
 	setExpires(Time((uint32) 0));
 	setSecondaryStrength(0);
 	addSerializableVariables();
+
+	setLoggingName("DamageOverTime");
 }
 
 DamageOverTime::DamageOverTime(CreatureObject* attacker, uint64 tp, uint8 attrib, uint32 str, uint32 dur, int secondaryStrength) {
@@ -37,9 +39,11 @@ DamageOverTime::DamageOverTime(CreatureObject* attacker, uint64 tp, uint8 attrib
 	activate();
 
 	addSerializableVariables();
+
+	setLoggingName("DamageOverTime");
 }
 
-DamageOverTime::DamageOverTime(const DamageOverTime& dot) : Object(), Serializable() {
+DamageOverTime::DamageOverTime(const DamageOverTime& dot) : Object(), Serializable(), Logger() {
 	addSerializableVariables();
 
 	attackerID = dot.attackerID;
@@ -51,6 +55,8 @@ DamageOverTime::DamageOverTime(const DamageOverTime& dot) : Object(), Serializab
 	expires = dot.expires;
 	nextTick = dot.nextTick;
 	secondaryStrength = dot.secondaryStrength;
+
+	setLoggingName("DamageOverTime");
 }
 
 DamageOverTime& DamageOverTime::operator=(const DamageOverTime& dot) {
@@ -67,7 +73,6 @@ DamageOverTime& DamageOverTime::operator=(const DamageOverTime& dot) {
 	nextTick = dot.nextTick;
 	secondaryStrength = dot.secondaryStrength;
 
-
 	return *this;
 }
 
@@ -81,7 +86,6 @@ void DamageOverTime::addSerializableVariables() {
 	addSerializableVariable("expires", &expires);
 	addSerializableVariable("nextTick", &nextTick);
 	addSerializableVariable("secondaryStrength", &secondaryStrength);
-
 }
 
 void to_json(nlohmann::json& j, const DamageOverTime& t) {
@@ -168,7 +172,7 @@ uint32 DamageOverTime::applyDot(CreatureObject* victim) {
 
 uint32 DamageOverTime::initDot(CreatureObject* victim, CreatureObject* attacker) {
 #ifdef DEBUG_DOTS
-	info(true) << "initDot called " << victim->getFirstName() << " ID: " << victim->getObjectID() << " Type: " << type;
+	info(true) << "initDot called -- START: Player " << victim->getFirstName() << " ID: " << victim->getObjectID() << " Type: " << type << " Pool: " << attribute;
 #endif
 
 	uint32 power = 0;
@@ -203,7 +207,7 @@ uint32 DamageOverTime::initDot(CreatureObject* victim, CreatureObject* attacker)
 	power = (uint32)(strength * (1.f - absorptionMod / 100.f));
 
 #ifdef DEBUG_DOTS
-	info(true) << "initDot called " << victim->getFirstName() << " Type: " << type << " Power: " << power << " Absorption Mod: " << absorptionMod;
+	info(true) << "initDot called " << victim->getFirstName() << " Type: " << type << " Power: " << power << " Absorption Mod: " << absorptionMod << " Pool: " << attribute;
 #endif
 
 	//victim->addDamage(attacker,1);
@@ -307,8 +311,14 @@ uint32 DamageOverTime::doFireTick(CreatureObject* victim, CreatureObject* attack
 }
 
 uint32 DamageOverTime::doPoisonTick(CreatureObject* victim, CreatureObject* attacker) {
+	if (victim == nullptr || attacker == nullptr)
+		return 0;
+
+	if (strength <= 0)
+		return 0;
+
 	// we need to allow dots to tick while incapped, but not do damage
-	if (victim->isIncapacitated() && victim->isFeigningDeath() == false)
+	if (victim->isIncapacitated() && !victim->isFeigningDeath())
 		return 0;
 
 	uint32 attr = victim->getHAM(attribute);
@@ -316,9 +326,18 @@ uint32 DamageOverTime::doPoisonTick(CreatureObject* victim, CreatureObject* atta
 
 	// absorption reduces the strength of a dot by the given %.
 	int damage = (int)(strength * (1.f - absorptionMod / 100.f));
+
+#ifdef DEBUG_DOTS
+	info(true) << "doPoisonTick -- Victim: " << victim->getDisplayedName() << " Attribute: " << attr << " Absorption Mod: " << absorptionMod << " Damage: " << damage << " Strength: " << strength;
+#endif
+
 	if (attr < damage) {
 		//System::out << "setting strength to " << attr -1 << endl;
 		damage = attr - 1;
+
+#ifdef DEBUG_DOTS
+		info(true) << "Attribute < damage -- new damage: " << damage;
+#endif
 	}
 
 	Reference<CreatureObject*> attackerRef = attacker;
@@ -449,22 +468,38 @@ uint32 DamageOverTime::doForceChokeTick(CreatureObject* victim, CreatureObject* 
 
 float DamageOverTime::reduceTick(float reduction) {
 #ifdef DEBUG_DOTS
-	info(true) << "reduceTick - Reduction: " << reduction << " Strength = " << strength;
+	info(true) << "reduceTick -- Pool: " << attribute << " Strength = " << strength << " Reduction: " << reduction;
 #endif
 
 	// this ensures we can't increase a dot strength
-	if (reduction <= 0.f)
+	if (reduction <= 0.f) {
+#ifdef DEBUG_DOTS
+		info(true) << "Reduction is less than 0 RETURNING: " << reduction;
+#endif
 		return reduction;
+	}
 
-	int reducReamining = reduction - strength;
+	int reducRemaining = reduction - strength;
 
 	strength -= reduction;
+	strength = (strength < 0 ? 0 : strength);
 
-	if (reducReamining > 0.f) {
+#ifdef DEBUG_DOTS
+	info(true) << "Remaining Cure: " << reducRemaining << " New Strength: " << strength;
+#endif
+
+	if (reducRemaining > 0) {
+#ifdef DEBUG_DOTS
+		info(true) << "DoT has been cured";
+#endif
 		expireTick();
 	}
 
-	return reducReamining;
+#ifdef DEBUG_DOTS
+	info(true) << "reduceTick -- END";
+#endif
+
+	return reducRemaining;
 }
 
 void DamageOverTime::multiplyDuration(float multiplier) {

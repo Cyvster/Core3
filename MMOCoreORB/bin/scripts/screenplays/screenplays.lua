@@ -568,6 +568,10 @@ includeFile("caves/tatooine_sennex_cave.lua")
 includeFile("caves/tatooine_squill_cave.lua")
 includeFile("caves/tatooine_tusken_bunker.lua")
 
+-- Cantinas
+includeFile("cities/cantinas/bartenders.lua")
+includeFile("cities/cantinas/bartender_conv_handler.lua")
+
 -- Cities
 includeFile("cities/city.lua")
 includeFile("cities/corellia_bela_vistal.lua")
@@ -696,6 +700,8 @@ includeFile("racetracks/racetracks.lua")
 --Space
 includeFile("space/space_chassis_dealer_conv_handler.lua")
 includeFile("space/pilot_seat_menu_component.lua")
+includeFile("space/ship_operations_menu_component.lua")
+includeFile("space/ship_turret_menu_component.lua")
 
 --Space Stations
 includeFile("space/spacestations/spacestation.lua")

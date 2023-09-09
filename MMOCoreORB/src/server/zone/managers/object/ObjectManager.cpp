@@ -217,6 +217,7 @@ void ObjectManager::registerObjectTypes() {
 	objectFactory.registerObject<Terminal>(SceneObjectType::SHIPPINGTERMINAL);
 	objectFactory.registerObject<Terminal>(SceneObjectType::INTERACTIVETERMINAL);
 	objectFactory.registerObject<MissionTerminal>(SceneObjectType::MISSIONTERMINAL);
+	objectFactory.registerObject<Terminal>(SceneObjectType::SHIPPERMISSIONS);
 	objectFactory.registerObject<Terminal>(SceneObjectType::BAZAAR);
 	objectFactory.registerObject<Terminal>(SceneObjectType::BANK);
 	objectFactory.registerObject<StartingLocationTerminal>(SceneObjectType::NEWBIETUTORIALTERMINAL);
@@ -345,15 +346,20 @@ void ObjectManager::registerObjectTypes() {
 	objectFactory.registerObject<Component>(SceneObjectType::SHIPCHASSIS);
 	objectFactory.registerObject<Component>(SceneObjectType::SHIPMISSILE);
 	objectFactory.registerObject<Component>(SceneObjectType::SHIPCOUNTERMEASURE);
-	objectFactory.registerObject<Component>(SceneObjectType::SHIPWEAPONLAUNCHER);
-	objectFactory.registerObject<Component>(SceneObjectType::SHIPCOUNTERMEASURELAUNCHER);
+	objectFactory.registerObject<ShipWeaponComponent>(SceneObjectType::SHIPWEAPONLAUNCHER);
+	objectFactory.registerObject<ShipWeaponComponent>(SceneObjectType::SHIPCOUNTERMEASURELAUNCHER);
 	objectFactory.registerObject<TangibleObject>(SceneObjectType::PILOTCHAIR);
+	objectFactory.registerObject<TangibleObject>(SceneObjectType::OPERATIONSCHAIR);
+	objectFactory.registerObject<TangibleObject>(SceneObjectType::TURRETACCESSLADDER);
+	objectFactory.registerObject<TangibleObject>(SceneObjectType::SHIPCONTAINER);
 	objectFactory.registerObject<FactoryCrate>(SceneObjectType::FACTORYCRATE);
 	objectFactory.registerObject<ShipObject>(SceneObjectType::SHIP);
 	objectFactory.registerObject<FighterShipObject>(SceneObjectType::SHIPFIGHTER);
 	objectFactory.registerObject<ShipObject>(SceneObjectType::SHIPCAPITAL);
 	objectFactory.registerObject<ShipObject>(SceneObjectType::SHIPTRANSPORT);
 	objectFactory.registerObject<SpaceStationObject>(SceneObjectType::SHIPSTATION);
+	objectFactory.registerObject<PobShipObject>(SceneObjectType::SHIPPOB);
+	objectFactory.registerObject<ShipAiAgent>(SceneObjectType::SHIPAGENT);
 	objectFactory.registerObject<TangibleObject>(SceneObjectType::CRYSTAL);
 }
 
