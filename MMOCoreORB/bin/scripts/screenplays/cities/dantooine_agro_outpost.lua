@@ -72,6 +72,9 @@ DantooineAgroOutpostScreenPlay = CityScreenPlay:new {
 		{"ussox", 60, 1635.07, 4, -6402.37, 322, 0, ""},
 		{"yras_shen_jen",60,1572.26,4,-6417.06,75.0582,0, "neutral"},
 		{"junk_quich", 0, 1579.04, 4, -6374.52, 48, 0, ""}
+		{"informant_npc_lvl_1",0,6688.34,26.79,-4141.19,270,0, ""},
+		{"informant_npc_lvl_2",0,6688.25,26.79,-4143.03,270,0, ""},
+		{"informant_npc_lvl_3",0,6688.35,26.79,-4144.71,270,0, ""},
 	}
 }
 
