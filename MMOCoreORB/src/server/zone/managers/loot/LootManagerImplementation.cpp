@@ -313,7 +313,7 @@ TangibleObject* LootManagerImplementation::createLootObject(const LootItemTempla
 	float adjustment = floor((float)(((level > 50) ? level : 50) - 50) / 10.f + 0.5);
 
 	if (System::random(legendaryChance) >= legendaryChance - adjustment) {
-		UnicodeString newName = prototype->getDisplayedName() + " (Legendary)";
+		//UnicodeString newName = prototype->getDisplayedName() + " (Legendary)";
 		prototype->setCustomObjectName(newName, false);
 
 		excMod = legendaryModifier;
@@ -322,7 +322,7 @@ TangibleObject* LootManagerImplementation::createLootObject(const LootItemTempla
 
 		legendaryLooted.increment();
 	} else if (System::random(exceptionalChance) >= exceptionalChance - adjustment) {
-		UnicodeString newName = prototype->getDisplayedName() + " (Exceptional)";
+		//UnicodeString newName = prototype->getDisplayedName() + " (Exceptional)";
 		prototype->setCustomObjectName(newName, false);
 
 		excMod = exceptionalModifier;
