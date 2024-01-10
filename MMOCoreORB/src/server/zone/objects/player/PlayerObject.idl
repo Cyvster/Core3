@@ -939,7 +939,7 @@ class PlayerObject extends IntangibleObject {
 	@local
 	@dereferenced
 	@read
-	public native Vector3 getTrainerCoordinates();
+	public native Vector3 getJediTrainerCoordinates();
 
 	public void setTrainerZoneName(string zoneName) {
 		trainerZoneName = zoneName;
@@ -965,14 +965,9 @@ class PlayerObject extends IntangibleObject {
 	}
 
 	/**
-	 * Unloads all the spawned creatures from the datapad control devices
+	 * Unloads all the spawned objects from the datapad control devices
 	 */
-	public native void unloadSpawnedChildren();
-
-	/**
-	 * Unloads the currently called ship
-	 */
-	public native void unloadShip();
+	public native void unloadSpawnedChildren(boolean petsOnly = false);
 
 	public void addToConsentList(final string name) {
 		consentList.put(name);

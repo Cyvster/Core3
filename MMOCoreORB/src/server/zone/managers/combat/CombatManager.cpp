@@ -841,7 +841,7 @@ void CombatManager::broadcastCombatSpam(TangibleObject* attacker, TangibleObject
 #ifdef COV_DEBUG
 		info("Null closeobjects vector in CombatManager::broadcastCombatSpam", true);
 #endif
-		zone->getInRangeObjects(attacker->getWorldPositionX(), attacker->getWorldPositionY(), COMBAT_SPAM_RANGE, &closeObjects, true);
+		zone->getInRangeObjects(attacker->getWorldPositionX(), attacker->getWorldPositionZ(), attacker->getWorldPositionY(), COMBAT_SPAM_RANGE, &closeObjects, true);
 	}
 
 	for (int i = 0; i < closeObjects.size(); ++i) {
@@ -950,15 +950,26 @@ Reference<SortedVector<ManagedReference<TangibleObject*>>*> CombatManager::getAr
 		}
 	}
 
-	if (range < 0) {
-		range = weapon->getMaxRange();
+	bool thrownWeapon = false;
+	bool heavyWeapon = false;
+
+	if (weapon != nullptr) {
+		thrownWeapon = weapon->isThrownWeapon();
+		heavyWeapon = weapon->isHeavyWeapon();
+
+		if (range < 0) {
+			range = weapon->getMaxRange();
+		}
+
+		if (data.isSplashDamage())
+			range += data.getRange();
+
+		if (thrownWeapon || heavyWeapon)
+			range = weapon->getMaxRange() + areaRange;
 	}
 
-	if (data.isSplashDamage())
-		range += data.getRange();
-
-	if (weapon->isThrownWeapon() || weapon->isHeavyWeapon())
-		range = weapon->getMaxRange() + areaRange;
+	if (range < 0)
+		return defenders;
 
 	try {
 		// zone->rlock();
@@ -974,7 +985,7 @@ Reference<SortedVector<ManagedReference<TangibleObject*>>*> CombatManager::getAr
 #ifdef COV_DEBUG
 			attacker->info("Null closeobjects vector in CombatManager::getAreaTargets", true);
 #endif
-			zone->getInRangeObjects(attackerPos.getX(), attackerPos.getY(), 128, &closeObjects, true);
+			zone->getInRangeObjects(attackerPos.getX(), 0, attackerPos.getY(), 128, &closeObjects, true);
 		}
 
 		for (int i = 0; i < closeObjects.size(); ++i) {
@@ -1032,10 +1043,8 @@ Reference<SortedVector<ManagedReference<TangibleObject*>>*> CombatManager::getAr
 				continue;
 			}
 
-			if (data.isSplashDamage() || weapon->isThrownWeapon() || weapon->isHeavyWeapon()) {
-				if (defenderObject->getWorldPosition().squaredDistanceTo(tano->getWorldPosition()) - tanoRadiusSq > (areaRange * areaRange))
-					continue;
-			}
+			if ((data.isSplashDamage() || thrownWeapon || heavyWeapon) && (defenderObject->getWorldPosition().squaredDistanceTo(tano->getWorldPosition()) - tanoRadiusSq > (areaRange * areaRange)))
+				continue;
 
 			CreatureObject* creo = tano->asCreatureObject();
 
@@ -1052,7 +1061,7 @@ Reference<SortedVector<ManagedReference<TangibleObject*>>*> CombatManager::getAr
 			// zone->runlock();
 
 			try {
-				if (!(weapon->isThrownWeapon()) && !(data.isSplashDamage()) && !(weapon->isHeavyWeapon())) {
+				if (!thrownWeapon && !data.isSplashDamage() && !heavyWeapon) {
 					if (CollisionManager::checkLineOfSight(object, attacker)) {
 						defenders->put(tano);
 						attacker->addDefender(tano);
@@ -2108,13 +2117,10 @@ int CombatManager::getHitChance(TangibleObject* attacker, CreatureObject* creoDe
 			int attackMask = weapon->getWeaponBitmask();
 			int attackType = weapon->getAttackType();
 
-			if (attackType == SharedWeaponObjectTemplate::RANGEDATTACK && !attacker->isTurret()) {
-				if (attackMask == WeaponType::PISTOLWEAPON || attackMask == WeaponType::CARBINEWEAPON || attackMask == WeaponType::RIFLEWEAPON
-				|| attackMask == WeaponType::LIGHTNINGRIFLEWEAPON || attackMask == WeaponType::HEAVYWEAPON || attackMask == WeaponType::SPECIALHEAVYWEAPON) {
-					evadeTotal = evadeSkill = creoDefender->getSkillMod("saber_block");
-				}
+			if ((!attacker->isTurret() && attackMask != WeaponType::GRENADEWEAPON) && (attackType == SharedWeaponObjectTemplate::RANGEDATTACK || attackMask == WeaponType::HEAVYWEAPON)) {
+				evadeTotal = evadeSkill = creoDefender->getSkillMod("saber_block");
 
-				if (evadeTotal != 0 && System::random(100) <= evadeTotal) {
+				if (evadeTotal > 0 && System::random(100) <= evadeTotal) {
 					hitResult = HitStatus::RICOCHET;
 				}
 			}

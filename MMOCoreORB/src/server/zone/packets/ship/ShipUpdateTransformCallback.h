@@ -128,21 +128,29 @@ public:
 
 	void run() {
 		ManagedReference<CreatureObject*> pilot = client->getPlayer();
+
 		if (pilot == nullptr) {
 			return;
 		}
 
 		PlayerObject* ghost = pilot->getPlayerObject();
-		if (ghost == nullptr || ghost->isTeleporting()) {
+
+		if (ghost == nullptr) {
 			return updateError(pilot, "!ghost", false);
 		}
 
-		ManagedReference<SceneObject*> parent = pilot->getRootParent();
-		if (parent == nullptr) {
-			return updateError(pilot, "!parent", false);
+		if (ghost->isTeleporting()) {
+			return updateError(pilot, "ghost-TP", false);
 		}
 
-		ShipObject* ship = parent->asShipObject();
+		ManagedReference<SceneObject*> rootParent = pilot->getRootParent();
+
+		if (rootParent == nullptr) {
+			return updateError(pilot, "!rootParent", false);
+		}
+
+		ShipObject* ship = rootParent->asShipObject();
+
 		if (ship == nullptr|| ship->isHyperspacing()) {
 			return updateError(pilot, "!ship", false);
 		}
@@ -152,6 +160,9 @@ public:
 		if (zone == nullptr || !zone->isSpaceZone()) {
 			return updateError(pilot, "!zone", false);
 		}
+
+		Locker pLock(pilot);
+		Locker cLock(ship, pilot);
 
 		if (ghost->getClientLastMovementStamp() == 0 && counter != 0) {
 			ghost->setClientLastMovementStamp(counter);
@@ -171,9 +182,6 @@ public:
 		if (!isPositionValid()) {
 			return updateError(pilot, "!isPositionValid", true);
 		}
-
-		Locker pLock(pilot);
-		Locker cLock(ship, pilot);
 
 		ship->setSyncStamp(counter);
 
@@ -289,6 +297,32 @@ public:
 		ship->setPosition(position.getX(), position.getZ(), position.getY());
 		ship->setDirection(direction);
 
+		const float updatedSpeed = velocity.getSpeed();
+		if (ship->getCurrentSpeed() != updatedSpeed) {
+			ship->setCurrentSpeed(updatedSpeed);
+
+			// we want these to be in the same message, so we need to create a vector
+			auto deltaVector = ship->getDeltaVector();
+
+			// potential optimizations here if they matter: persist ypFactor and just check that it's changed,
+			// you only need to check pitch or yaw, they should both change together
+			const float ypFactor = ship->getComponentEfficiencyMap()->get(Components::ENGINE) * ship->getSpeedRotationFactor(updatedSpeed);
+			const float actualYawRate = ship->getEngineYawRate() * ypFactor;
+			const float actualPitchRate = ship->getEnginePitchRate() * ypFactor;
+
+			if (ship->getActualYawRate() != actualYawRate) {
+				ship->setActualYawRate(actualYawRate, false, nullptr, deltaVector);
+			}
+
+			if (ship->getActualPitchRate() != actualPitchRate) {
+				ship->setActualPitchRate(actualPitchRate, false, nullptr, deltaVector);
+			}
+
+			if (deltaVector != nullptr) {
+				deltaVector->sendMessages(ship, pilot);
+			}
+		}
+
 		bool lightUpdate = priority != 0x23;
 		ship->updateZone(lightUpdate, false);
 
@@ -300,6 +334,7 @@ public:
 
 	void broadcastTransform(ShipObject* ship, CreatureObject* pilot, const Vector3& position) {
 		auto shipCov = ship->getCloseObjects();
+
 		if (shipCov == nullptr) {
 			return;
 		}
@@ -349,12 +384,14 @@ public:
 			}
 		}
 
-		auto parent = pilot->getRootParent();
-		if (parent == nullptr || !parent->isShipObject()) {
+		auto rootParent = pilot->getRootParent();
+
+		if (rootParent == nullptr || !rootParent->isShipObject()) {
 			return;
 		}
 
-		auto ship = parent->asShipObject();
+		auto ship = rootParent->asShipObject();
+
 		if (ship == nullptr) {
 			return;
 		}
@@ -366,7 +403,7 @@ public:
 		if (bounceBack) {
 			const Vector3& position = ship->getPosition();
 
-			parent->teleport(position.getX(), position.getZ(), position.getY(), 0);
+			rootParent->teleport(position.getX(), position.getZ(), position.getY(), 0);
 		}
 	}
 

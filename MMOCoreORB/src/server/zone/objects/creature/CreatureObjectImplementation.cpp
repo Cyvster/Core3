@@ -185,12 +185,10 @@ void CreatureObjectImplementation::initializeMembers() {
 	setContainerDenyPermission("owner", ContainerPermissions::MOVECONTAINER);
 }
 
-void CreatureObjectImplementation::loadTemplateData(
-		SharedObjectTemplate* templateData) {
+void CreatureObjectImplementation::loadTemplateData(SharedObjectTemplate* templateData) {
 	TangibleObjectImplementation::loadTemplateData(templateData);
 
-	const SharedCreatureObjectTemplate* creoData =
-			dynamic_cast<SharedCreatureObjectTemplate*> (templateData);
+	const SharedCreatureObjectTemplate* creoData = dynamic_cast<SharedCreatureObjectTemplate*>(templateData);
 
 	if (creoData == nullptr)
 		return;
@@ -301,8 +299,7 @@ void CreatureObjectImplementation::sendToOwner(bool doClose) {
 	BaseMessage* parameters = new ParametersMessage();
 	owner->sendMessage(parameters);
 
-	ManagedReference<GuildManager*> guildManager =
-			server->getZoneServer()->getGuildManager();
+	ManagedReference<GuildManager*> guildManager = server->getZoneServer()->getGuildManager();
 	guildManager->sendBaselinesTo(asCreatureObject());
 
 	ManagedReference<SceneObject*> grandParent = getRootParent();
@@ -380,8 +377,7 @@ void CreatureObjectImplementation::sendBaselinesTo(SceneObject* player) {
 }
 
 void CreatureObjectImplementation::sendSlottedObjectsTo(SceneObject* player) {
-	SortedVector<SceneObject*> objects(getSlottedObjectsSize(),
-			getSlottedObjectsSize());
+	SortedVector<SceneObject*> objects(getSlottedObjectsSize(), getSlottedObjectsSize());
 	objects.setNoDuplicateInsertPlan();
 
 	try {
@@ -398,10 +394,7 @@ void CreatureObjectImplementation::sendSlottedObjectsTo(SceneObject* player) {
 				if (descriptors->size() > 0) {
 					const String& childArrangement = descriptors->get(0);
 
-					if (player != asCreatureObject() && ((childArrangement == "bank")
-							|| (childArrangement == "inventory") || (childArrangement
-									== "datapad") || (childArrangement == "mission_bag"))) {
-
+					if (player != asCreatureObject() && ((childArrangement == "bank") || (childArrangement == "inventory") || (childArrangement == "datapad") || (childArrangement == "mission_bag"))) {
 						sendWithoutContents = true;
 					}
 				}
@@ -816,7 +809,7 @@ bool CreatureObjectImplementation::setState(uint64 state, bool notifyClient) {
 #ifdef COV_DEBUG
 						info("Null closeobjects vector in CreatureObjectImplementation::setState", true);
 #endif
-						thisZone->getInRangeObjects(getWorldPositionX(), getWorldPositionY(), ZoneServer::CLOSEOBJECTRANGE, &closeSceneObjects, true);
+						thisZone->getInRangeObjects(getWorldPositionX(), getWorldPositionZ(), getWorldPositionY(), thisZone->getZoneObjectRange(), &closeSceneObjects, true);
 						maxInRangeObjects = closeSceneObjects.size();
 					} else {
 						closeobjects->safeCopyReceiversTo(closeSceneObjects, CloseObjectsVector::PLAYERTYPE);
@@ -3660,7 +3653,7 @@ int CreatureObjectImplementation::notifyObjectDestructionObservers(TangibleObjec
 }
 
 int CreatureObjectImplementation::notifyObjectKillObservers(TangibleObject* killer) {
-	notifyObservers(ObserverEventType::PLAYERKILLED, killer, 0);
+	notifyObservers(ObserverEventType::PLAYERKILLED, killer, getObjectID());
 
 	return 0;
 }
@@ -3779,9 +3772,9 @@ Reference<WeaponObject*> CreatureObjectImplementation::getWeapon() {
 		retWeapon = getDefaultWeapon();
 	}
 
-	if (retWeapon == nullptr) {
-		info(true) << getDisplayedName() << " ID: " << getObjectID() << "  returning a null weapon - " << __FILE__ << ":" << __LINE__ << ":" << __FUNCTION__ << ": " << *_this.getReferenceUnsafeStaticCast();
-	}
+	// if (retWeapon == nullptr) {
+	//	info(true) << getDisplayedName() << " ID: " << getObjectID() << "  returning a null weapon - " << __FILE__ << ":" << __LINE__ << ":" << __FUNCTION__ << ": " << *_this.getReferenceUnsafeStaticCast();
+	// }
 
 	return retWeapon;
 }
@@ -3804,7 +3797,7 @@ void CreatureObjectImplementation::setFaction(unsigned int crc) {
 		if (currentZone != nullptr) {
 			// Notify nearby active areas of faction change
 			SortedVector<ManagedReference<ActiveArea* > > activeAreas;
-			currentZone->getInRangeActiveAreas(player->getPositionX(), player->getPositionY(), &activeAreas, true);
+			currentZone->getInRangeActiveAreas(player->getPositionX(), player->getPositionZ(), player->getPositionY(), &activeAreas, true);
 
 			for (int i = 0; i < activeAreas.size(); i++) {
 				ActiveArea* area = activeAreas.get(i);
@@ -3819,7 +3812,7 @@ void CreatureObjectImplementation::setFaction(unsigned int crc) {
 		if (ghost == nullptr)
 			return;
 
-		Vector<ManagedReference<CreatureObject*> > petsToStore;
+		Vector<ManagedReference<ControlDevice*> > petsToStore;
 
 		for (int i = 0; i < ghost->getActivePetsSize(); i++) {
 			ManagedReference<AiAgent*> pet = ghost->getActivePet(i);
@@ -3833,9 +3826,14 @@ void CreatureObjectImplementation::setFaction(unsigned int crc) {
 				String templateFaction = creatureTemplate->getFaction();
 
 				if (!templateFaction.isEmpty() && (templateFaction.hashCode() != crc)) {
-					petsToStore.add(pet.castTo<CreatureObject*>());
-					player->sendSystemMessage("You're no longer the right faction for one of your pets, storing...");
-					continue;
+					ControlDevice* controlDevice = pet->getControlDevice().get();
+
+					if (controlDevice != nullptr && controlDevice->isPetControlDevice()) {
+						petsToStore.add(controlDevice);
+						player->sendSystemMessage("You're no longer the right faction for one of your pets, storing...");
+
+						continue;
+					}
 				}
 			}
 
@@ -3845,7 +3843,9 @@ void CreatureObjectImplementation::setFaction(unsigned int crc) {
 		}
 
 		StoreSpawnedChildrenTask* task = new StoreSpawnedChildrenTask(player, std::move(petsToStore));
-		task->execute();
+
+		if (task != nullptr)
+			task->execute();
 	}
 
 	notifyObservers(ObserverEventType::FACTIONCHANGED);
@@ -4313,9 +4313,22 @@ void CreatureObjectImplementation::schedulePersonalEnemyFlagTasks() {
 }
 
 void CreatureObjectImplementation::setHue(int hueIndex) {
-	String appearanceFilename = getObjectTemplate()->getAppearanceFilename();
+	SharedObjectTemplate* templateData = getObjectTemplate();
+
+	if (templateData == nullptr)
+		return;
+
+	SharedCreatureObjectTemplate* creatureTemplate = dynamic_cast<SharedCreatureObjectTemplate*>(templateData);
+
+	if (creatureTemplate == nullptr)
+		return;
+
+	String appearanceFilename = creatureTemplate->getAppearanceFilename();
+
 	VectorMap<String, Reference<CustomizationVariable*> > variables;
 	AssetCustomizationManagerTemplate::instance()->getCustomizationVariables(appearanceFilename.hashCode(), variables, false);
+
+	//info(true) << "Appearance Filename: " << appearanceFilename << " Setting Hue #" << hueIndex << " Total Variables: " << variables.size();
 
 	for (int i = 0; i < variables.size(); ++i) {
 		const auto& varName = variables.elementAt(i).getKey();
@@ -4330,12 +4343,18 @@ void CreatureObjectImplementation::setHue(int hueIndex) {
 			continue;
 
 		const auto& paletteFileName = palette->getPaletteFileName();
+
+		if (paletteFileName.contains("white"))
+			continue;
+
 		UniqueReference<PaletteTemplate*> paletteTemplate(TemplateManager::instance()->getPaletteTemplate(paletteFileName));
 
 		if (paletteTemplate == nullptr)
 			continue;
 
 		int maxIndex = paletteTemplate->getColorCount();
+
+		//info(true) << "Color Count: " << maxIndex;
 
 		int tempHue = hueIndex;
 
@@ -4345,6 +4364,8 @@ void CreatureObjectImplementation::setHue(int hueIndex) {
 			tempHue = maxIndex - 1;
 
 		setCustomizationVariable(varName, tempHue, true);
+
+		break;
 	}
 
 	hueValue = hueIndex;

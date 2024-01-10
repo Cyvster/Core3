@@ -20,7 +20,7 @@
 #include "server/zone/managers/reaction/ReactionManager.h"
 #include "server/zone/objects/intangible/PetControlDevice.h"
 #include "server/zone/objects/creature/ai/AiAgent.h"
-#include "server/zone/objects/intangible/tasks/PetControlDeviceStoreObjectTask.h"
+#include "server/zone/objects/intangible/tasks/PetControlDeviceStoreTask.h"
 #include "server/zone/objects/area/ActiveArea.h"
 #include "server/zone/managers/creature/PetManager.h"
 
@@ -106,7 +106,6 @@ Luna<LuaAiAgent>::RegType LuaAiAgent::Register[] = {
 		{ "activateRecovery", &LuaAiAgent::activateRecovery },
 		{ "executeBehavior", &LuaAiAgent::executeBehavior },
 		{ "info", &LuaAiAgent::info },
-		{ "spatialChat", &LuaAiAgent::spatialChat },
 		{ "setDefender", &LuaAiAgent::setDefender },
 		{ "addDefender", &LuaAiAgent::addDefender },
 		{ "assist", &LuaAiAgent::assist },
@@ -127,8 +126,6 @@ Luna<LuaAiAgent>::RegType LuaAiAgent::Register[] = {
 		{ "setNoAiAggro", &LuaAiAgent::setNoAiAggro },
 		{ "doDespawn", &LuaAiAgent::doDespawn },
 		{ "getCreatureTemplateName", &LuaAiAgent::getCreatureTemplateName },
-		{ "clearCreatureBit", &LuaAiAgent::clearCreatureBit },
-		{ "setCreatureBit", &LuaAiAgent::setCreatureBit },
 		{ "isInRangeOfHome", &LuaAiAgent::isInRangeOfHome },
 		{ "getPatrolPointsSize", &LuaAiAgent::getPatrolPointsSize },
 		{ "addCreatureFlag", &LuaAiAgent::addCreatureFlag },
@@ -763,30 +760,6 @@ int LuaAiAgent::info(lua_State* L) {
 	return 0;
 }
 
-int LuaAiAgent::spatialChat(lua_State* L) {
-	ZoneServer* zoneServer = ServerCore::getZoneServer();
-	if (zoneServer == nullptr)
-		return 0;
-
-	ChatManager* chatManager = zoneServer->getChatManager();
-
-	if (lua_islightuserdata(L, -1)) {
-		StringIdChatParameter* message = (StringIdChatParameter*)lua_touserdata(L, -1);
-
-		if (realObject != nullptr && message != nullptr) {
-			chatManager->broadcastChatMessage(realObject, *message, 0, 0, realObject->getMoodID());
-		}
-	} else {
-		String message = lua_tostring(L, -1);
-
-		if (realObject != nullptr) {
-			chatManager->broadcastChatMessage(realObject, message, 0, 0, realObject->getMoodID());
-		}
-	}
-
-	return 0;
-}
-
 int LuaAiAgent::setDefender(lua_State* L) {
 	SceneObject* obj = (SceneObject*) lua_touserdata(L, -1);
 
@@ -999,22 +972,6 @@ int LuaAiAgent::getCreatureTemplateName(lua_State* L) {
 	return 1;
 }
 
-int LuaAiAgent::clearCreatureBit(lua_State* L) {
-	Locker locker(realObject);
-
-	realObject->clearCreatureBit(lua_tointeger(L, -1));
-
-	return 0;
-}
-
-int LuaAiAgent::setCreatureBit(lua_State* L) {
-	Locker locker(realObject);
-
-	realObject->setCreatureBit(lua_tointeger(L, -1));
-
-	return 0;
-}
-
 int LuaAiAgent::isInRangeOfHome(lua_State* L) {
 	float range = lua_tonumber(L, -1);
 	PatrolPoint* home = realObject->getHomeLocation();
@@ -1071,7 +1028,7 @@ int LuaAiAgent::storePet(lua_State* L) {
 	ManagedReference<PetControlDevice*> controlDevice = realObject->getControlDevice().get().castTo<PetControlDevice*>();
 
 	if (owner != nullptr && controlDevice != nullptr) {
-		Reference<PetControlDeviceStoreObjectTask*> task = new PetControlDeviceStoreObjectTask(controlDevice, owner, true);
+		Reference<PetControlDeviceStoreTask*> task = new PetControlDeviceStoreTask(controlDevice, owner, true);
 		task->execute();
 	}
 

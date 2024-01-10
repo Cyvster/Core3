@@ -9,6 +9,7 @@ import system.lang.Time;
 import server.zone.objects.tangible.TangibleObject;
 import server.zone.objects.ship.components.ShipComponent;
 import server.zone.objects.ship.events.ShipRecoveryEvent;
+include server.zone.TreeEntry;
 include server.zone.objects.scene.SceneObject;
 include server.zone.objects.creature.CreatureObject;
 include server.zone.CloseObjectsVector;
@@ -22,7 +23,7 @@ include server.zone.objects.scene.variables.DeltaVectorMap;
 include server.zone.objects.scene.variables.DeltaBitArray;
 include server.zone.objects.manufactureschematic.craftingvalues.CraftingValues;
 include templates.SharedObjectTemplate;
-include templates.tangible.SharedShipObjectTemplate;
+include templates.tangible.ship.SharedShipObjectTemplate;
 include system.util.VectorMap;
 include system.lang.ref.Reference;
 include server.zone.objects.ship.ShipDeltaVector;
@@ -98,6 +99,16 @@ class ShipObject extends TangibleObject {
 	protected unsigned long syncTime;
 
 	protected float boundingRadius;
+
+	// internal velocity values
+	protected float currentSpeed;
+
+	// internal "sweet spot" variables (set by engine)
+	protected float speedRotationFactorMax;
+
+	protected float speedRotationFactorMin;
+
+	protected float speedRotationFactorOptimal;
 
 	@dereferenced
 	protected Matrix4 rotationMatrix;
@@ -433,10 +444,14 @@ class ShipObject extends TangibleObject {
 	@local
 	public native ShipObject asShipObject();
 
-	public native void sendTo(SceneObject player, boolean doClose, boolean forceLoadContainer = true);
+	public native abstract void sendTo(SceneObject player, boolean doClose, boolean forceLoadContainer = true);
 	public native void sendBaselinesTo(SceneObject player);
 
 	public native void notifyObjectInsertedToZone(SceneObject object);
+
+	@local
+	public native abstract void notifyInsert(TreeEntry obj);
+
 	public native int notifyObjectInsertedToChild(SceneObject object, SceneObject child, SceneObject oldParent);
 	public native int notifyObjectRemovedFromChild(SceneObject object, SceneObject child);
 
@@ -1524,6 +1539,40 @@ class ShipObject extends TangibleObject {
 	public float getBoundingRadius() {
 		return boundingRadius;
 	}
+
+	public void setCurrentSpeed(float value) {
+	    currentSpeed = value;
+	}
+
+	public float getCurrentSpeed() {
+	    return currentSpeed;
+	}
+
+	public void setSpeedRotationFactorMax(float value) {
+	    speedRotationFactorMax = value;
+	}
+
+	public float getSpeedRotationFactorMax() {
+	    return speedRotationFactorMax;
+	}
+
+	public void setSpeedRotationFactorMin(float value) {
+	    speedRotationFactorMin = value;
+	}
+
+	public float getSpeedRotationFactorMin() {
+	    return speedRotationFactorMin;
+	}
+
+	public void setSpeedRotationFactorOptimal(float value) {
+	    speedRotationFactorOptimal = value;
+	}
+
+	public float getSpeedRotationFactorOptimal() {
+	    return speedRotationFactorOptimal;
+	}
+
+	public native float getSpeedRotationFactor(float speed);
 
 	@preLocked
 	public native void updateLastDamageReceived();

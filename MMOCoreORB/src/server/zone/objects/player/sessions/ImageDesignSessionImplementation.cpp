@@ -18,7 +18,7 @@
 #include "server/zone/objects/player/PlayerObject.h"
 #include "server/zone/objects/transaction/TransactionLog.h"
 
-//#define DEBUG_ID
+// #define DEBUG_ID
 
 void ImageDesignSessionImplementation::initializeTransientMembers() {
 	FacadeImplementation::initializeTransientMembers();
@@ -244,33 +244,42 @@ void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater
 			strongReferenceDesigner->notifyObservers(ObserverEventType::IMAGEDESIGNHAIR, nullptr, 0);
 
 			if (xpGranted < 100)
-					xpGranted = 100;
+				xpGranted = 100;
 		}
 
 		int bodyAttSize= bodyAttributes->size();
 		int colorAttSize = colorAttributes->size();
 
-#ifdef DEBUG_ID
-		info(true) << "updateImageDesign - Body Attributes Size = " << bodyAttSize << " Color Attributes = " << colorAttSize;
-#endif
+		// Modification type pulled from iff customization_data
+		int modificationType = ImageDesignManager::NONE;
 
 		if (bodyAttSize > 0) {
-			if (xpGranted < 300)
-				xpGranted = 300;
-
 			for (int i = 0; i < bodyAttSize; ++i) {
 				VectorMapEntry<String, float>* entry = &bodyAttributes->elementAt(i);
-				imageDesignManager->updateCustomization(strongReferenceDesigner, entry->getKey(), entry->getValue(), strongReferenceTarget);
+				imageDesignManager->updateCustomization(strongReferenceDesigner, entry->getKey(), entry->getValue(), modificationType, strongReferenceTarget);
 			}
 		}
 
 		if (colorAttSize > 0) {
-			if (xpGranted < 100)
-				xpGranted = 100;
-
 			for (int i = 0; i < colorAttSize; ++i) {
 				VectorMapEntry<String, uint32>* entry = &colorAttributes->elementAt(i);
-				imageDesignManager->updateColorCustomization(strongReferenceDesigner, entry->getKey(), entry->getValue(), hairObject, strongReferenceTarget);
+				imageDesignManager->updateColorCustomization(strongReferenceDesigner, entry->getKey(), entry->getValue(), hairObject, modificationType, strongReferenceTarget);
+			}
+		}
+
+#ifdef DEBUG_ID
+		info(true) << "updateImageDesign - Type: " << type << " Body Attributes Size = " << bodyAttSize << " Color Attributes = " << colorAttSize << " Modification Type = " << modificationType;
+#endif
+
+		// Set XP based on modifcation type
+		switch(modificationType) {
+			case ImageDesignManager::PHYSICAL: {
+				if (xpGranted < 300)
+					xpGranted = 300;
+			}
+			case ImageDesignManager::COSMETIC: {
+				if (xpGranted < 100)
+					xpGranted = 100;
 			}
 		}
 
@@ -280,6 +289,7 @@ void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater
 
 		// Add holo emote
 		String holoemote = imageDesignData.getHoloEmote();
+
 		if (!holoemote.isEmpty()) {
 			PlayerObject* ghost = strongReferenceTarget->getPlayerObject();
 
@@ -316,30 +326,35 @@ void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater
 	targetObject->sendMessage(message);
 }
 
-int ImageDesignSessionImplementation::doPayment() {
+bool ImageDesignSessionImplementation::doPayment() {
 	ManagedReference<CreatureObject*> designerCreature = this->designerCreature.get();
 	ManagedReference<CreatureObject*> targetCreature = this->targetCreature.get();
 
 	int targetCredits = targetCreature->getCashCredits() + targetCreature->getBankCredits();
 
 	uint32 requiredPayment = imageDesignData.getRequiredPayment();
+	uint32 offeredPayment = imageDesignData.getOfferedPayment();
+	uint32 paymentAmount = requiredPayment;
+
+	if (paymentAmount < offeredPayment)
+		paymentAmount = offeredPayment;
 
 	// The client should prevent this, but in case it doesn't
-	if (targetCredits < requiredPayment) {
+	if (targetCredits < paymentAmount) {
 		targetCreature->sendSystemMessage("You do not have enough credits to pay the required payment.");
 		designerCreature->sendSystemMessage("Target does not have enough credits for the required payment.");
 
 		cancelSession();
 
-		return 0;
+		return false;
 	}
 
-	if (requiredPayment <= targetCreature->getCashCredits()) {
-		TransactionLog trx(targetCreature, designerCreature, TrxCode::IMAGEDESIGN, requiredPayment, true);
-		targetCreature->subtractCashCredits(requiredPayment);
-		designerCreature->addCashCredits(requiredPayment);
+	if (paymentAmount <= targetCreature->getCashCredits()) {
+		TransactionLog trx(targetCreature, designerCreature, TrxCode::IMAGEDESIGN, paymentAmount, true);
+		targetCreature->subtractCashCredits(paymentAmount);
+		designerCreature->addCashCredits(paymentAmount);
 	} else {
-		int requiredBankCredits = requiredPayment - targetCreature->getCashCredits();
+		int requiredBankCredits = paymentAmount - targetCreature->getCashCredits();
 
 		TransactionLog trxCash(targetCreature, designerCreature, TrxCode::IMAGEDESIGN, targetCreature->getCashCredits(), true);
 		targetCreature->subtractCashCredits(targetCreature->getCashCredits());
@@ -348,9 +363,10 @@ int ImageDesignSessionImplementation::doPayment() {
 		trxBank.groupWith(trxCash);
 
 		targetCreature->subtractBankCredits(requiredBankCredits);
-		designerCreature->addCashCredits(requiredPayment);
+		designerCreature->addCashCredits(paymentAmount);
 	}
-	return 1;
+
+	return true;
 }
 
 void ImageDesignSessionImplementation::checkDequeueEvent(SceneObject* scene) {

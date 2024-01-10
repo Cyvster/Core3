@@ -10,6 +10,7 @@ import server.zone.packets.object.ObjectMenuResponse;
 import server.zone.objects.creature.CreatureObject;
 include templates.SharedObjectTemplate;
 include server.zone.objects.manufactureschematic.craftingvalues.CraftingValues;
+import system.util.Vector;
 
 @lua
 @json
@@ -24,7 +25,11 @@ class ShipDeed extends Deed {
 	protected string certRequired;
 	protected string parkingLocation;
 
+	@dereferenced
+	private Vector<string> skillsRequired;
+
 	protected int shipType;
+	protected boolean createComponents;
 
 	public ShipDeed() {
 		Logger.setLoggingName("ShipDeed");
@@ -39,6 +44,7 @@ class ShipDeed extends Deed {
 		parkingLocation = "theed_starport";
 
 		shipType = 0;
+		createComponents = false;
 	}
 
 	public native void initializeTransientMembers();
@@ -106,6 +112,15 @@ class ShipDeed extends Deed {
 		shipType = type;
 	}
 
+	@preLocked
+	public void setCreateComponents(boolean val) {
+		createComponents = val;
+	}
+
+	public void addSkillRequired(string skill) {
+		skillsRequired.add(skill);
+	}
+
 	// Getters
 	@read
 	public string getControlDeviceTemplate() {
@@ -137,11 +152,22 @@ class ShipDeed extends Deed {
 		return certRequired;
 	}
 
+	public int getTotalSkillsRequired() {
+		return skillsRequired.size();
+	}
+
+	public string getSkillRequired(int index) {
+		return skillsRequired.get(index);
+	}
+
+	public boolean shouldCreateComponents() {
+		return createComponents;
+	}
+
 	@read
 	public int getShipType() {
 		return shipType;
 	}
-
 
 	@dirty
 	public boolean isShipDeedObject() {

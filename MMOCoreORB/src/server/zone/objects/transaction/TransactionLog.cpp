@@ -904,6 +904,7 @@ const String TransactionLog::trxCodeToString(TrxCode code) {
 	case TrxCode::ADMINCOMMAND:             return "admincommand";              // From an admin command
 	case TrxCode::ADKAPPLY:                 return "adkapply";                  // Apply ADK to an item
 	case TrxCode::ADKREMOVE:                return "adkremove";                 // Remove ADK from item
+	case TrxCode::APPLYATTACHMENT:          return "applyattachment";           // Apply Attachment to an item
 	case TrxCode::AUCTIONADDSALE:           return "auctionaddsale";            // addSaleItem()
 	case TrxCode::AUCTIONBID:               return "auctionbid";                // Auction Bid Escrow
 	case TrxCode::AUCTIONEXPIRED:           return "auctionexpired";            // Never retrieved and expired
@@ -927,6 +928,7 @@ const String TransactionLog::trxCodeToString(TrxCode code) {
 	case TrxCode::INSTANTBUY:               return "instantbuy";                // Instant Buy
 	case TrxCode::LOTTERYDROID:             return "lotterydroid";              // Lottery Droid
 	case TrxCode::LUASCRIPT:                return "luascript";                 // LUA Script
+	case TrxCode::LUALOOT:                  return "lualoot";                   // Loot from LUA Script
 	case TrxCode::MINED:                    return "mined";                     // Resouces mined by installations
 	case TrxCode::MISSIONCOMPLETE:          return "missioncomplete";           // Mission Completed Summary
 	case TrxCode::NPCLOOTCLAIM:             return "npclootclaim";              // NPC Loot Claimed
@@ -941,6 +943,7 @@ const String TransactionLog::trxCodeToString(TrxCode code) {
 	case TrxCode::PLAYERDIED:               return "playerdied";                // Player Died
 	case TrxCode::RECYCLED:                 return "recycled";                  // Recycled Items
 	case TrxCode::SERVERDESTROYOBJECT:      return "serverdestroyobject";       // /serverDestroyObject command
+	case TrxCode::SHIPDEEDPURCHASE:         return "shipdeedpurchase";          // Purchase of a ship deed from chassis dealer
 	case TrxCode::SLICECONTAINER:           return "slicecontainer";            // Slicing session on a container
 	case TrxCode::STRUCTUREDEED:            return "structuredeed";             // Structure deed trxs
 	case TrxCode::TRANSFERITEMMISC:         return "transferitemmisc";          // /transferitemmisc command

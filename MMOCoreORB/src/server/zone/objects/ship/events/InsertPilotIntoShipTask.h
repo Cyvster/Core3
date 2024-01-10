@@ -8,6 +8,7 @@
 #include "server/zone/objects/creature/CreatureObject.h"
 #include "server/zone/SpaceZone.h"
 #include "server/zone/objects/ship/PobShipObject.h"
+#include "server/zone/objects/player/PlayerObject.h"
 
 class InsertPilotIntoShipTask : public Task, public Logger {
 	ManagedWeakReference<CreatureObject*> play;
@@ -25,16 +26,19 @@ public:
 		if (player == nullptr || ship == nullptr)
 			return;
 
-		auto spaceZone = ship->getSpaceZone();
+		auto spaceZone = ship->getLocalZone();
 
 		if (spaceZone == nullptr) {
 			return;
 		}
 
+		// Lock the ship
 		Locker lock(ship);
 
+		// Cross lock the player to be inserted as the pilot
 		Locker clock(player, ship);
 
+		// Update the players group
 		if (player->isGrouped()) {
 			auto group = player->getGroup();
 
@@ -54,13 +58,14 @@ public:
 			}
 
 			// Always apply the interior state
-			player->setState(CreatureState::SHIPINTERIOR);
 			player->setState(CreatureState::PILOTINGPOBSHIP);
 
 			// set pob pilot to the same direction as the chair
 			player->setDirection(*pilotChair->getDirection());
 
-			player->switchZone(spaceZone->getZoneName(), pilotChair->getPositionX(), pilotChair->getPositionZ() + 0.5, pilotChair->getPositionY(), pilotChair->getObjectID());
+			Vector3 chairLocation = pilotChair->getPosition();
+
+			player->switchZone(spaceZone->getZoneName(), chairLocation.getX(), chairLocation.getZ() + 0.5, chairLocation.getY(), pilotChair->getObjectID());
 		} else {
 			player->setState(CreatureState::PILOTINGSHIP);
 

@@ -178,7 +178,7 @@ public:
 	#ifdef COV_DEBUG
 				attacker->info("Null closeobjects vector in DotPackCommand::handleArea", true);
 	#endif
-				zone->getInRangeObjects(attackerCreo->getPositionX(), attackerCreo->getPositionY(), 128, &closeObjects, true);
+				zone->getInRangeObjects(attackerCreo->getPositionX(), attackerCreo->getPositionZ(), attackerCreo->getPositionY(), 128, &closeObjects, true);
 			}
 
 
@@ -258,7 +258,9 @@ public:
 				bool shouldGcwCrackdownTef = false, shouldGcwTef = false, shouldBhTef = false, shouldGroupTef = false, shouldBhGroupTef = false;
 
 				CombatManager::instance()->checkForTefs(creature, targetCreature, &shouldGcwCrackdownTef, &shouldGcwTef, &shouldBhTef);
-				ghost->updateLastCombatActionTimestamp(shouldGcwCrackdownTef, shouldGcwTef, shouldBhTef);
+				if (shouldGcwCrackdownTef || shouldGcwTef || shouldBhTef) {
+					ghost->updateLastCombatActionTimestamp(shouldGcwCrackdownTef, shouldGcwTef, shouldBhTef);
+				}
 			}
 		}
 	}
@@ -443,7 +445,9 @@ public:
 				bool shouldGcwCrackdownTef = false, shouldGcwTef = false, shouldBhTef = false;
 
 				CombatManager::instance()->checkForTefs(creature, targetCreature, &shouldGcwCrackdownTef, &shouldGcwTef, &shouldBhTef);
-				ghost->updateLastCombatActionTimestamp(shouldGcwCrackdownTef, shouldGcwTef, shouldBhTef);
+				if (shouldGcwCrackdownTef || shouldGcwTef || shouldBhTef) {
+					ghost->updateLastCombatActionTimestamp(shouldGcwCrackdownTef, shouldGcwTef, shouldBhTef);
+				}
 			}
 		}
 

@@ -103,7 +103,6 @@ namespace ai {
 		int activateRecovery(lua_State* L);
 		int executeBehavior(lua_State* L);
 		int info(lua_State* L);
-		int spatialChat(lua_State* L);
 		int setDefender(lua_State* L);
 		int addDefender(lua_State* L);
 		int assist(lua_State* L);
@@ -123,8 +122,6 @@ namespace ai {
 		int setNoAiAggro(lua_State* L);
 		int doDespawn(lua_State* L);
 		int getCreatureTemplateName(lua_State* L);
-		int clearCreatureBit(lua_State* L);
-		int setCreatureBit(lua_State* L);
 		int isInRangeOfHome(lua_State* L);
 		int getPatrolPointsSize(lua_State* L);
 		int addCreatureFlag(lua_State* L);

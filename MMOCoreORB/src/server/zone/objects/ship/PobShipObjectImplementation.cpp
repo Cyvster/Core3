@@ -5,13 +5,14 @@
 
 #include "server/zone/objects/ship/PobShipObject.h"
 #include "server/zone/objects/ship/ShipObject.h"
-#include "templates/tangible/SharedShipObjectTemplate.h"
+#include "templates/tangible/ship/SharedShipObjectTemplate.h"
 #include "server/zone/objects/ship/PlayerLaunchPoints.h"
 #include "server/zone/objects/ship/DamageSparkLocations.h"
 #include "server/zone/ZoneServer.h"
 #include "server/zone/objects/player/PlayerObject.h"
 #include "server/zone/objects/guild/GuildObject.h"
 #include "server/zone/objects/tangible/terminal/Terminal.h"
+#include "server/zone/packets/cell/UpdateCellPermissionsMessage.h"
 
 void PobShipObjectImplementation::notifyLoadFromDatabase() {
 	CreatureObject* owner = getOwner().get();
@@ -140,11 +141,9 @@ void PobShipObjectImplementation::createChildObjects() {
 						obj->destroyObjectFromDatabase(true);
 						continue;
 					} else {
-						uint32 gameObjectType = obj->getGameObjectType();
-
-						if (gameObjectType == SceneObjectType::PILOTCHAIR) {
+						if (obj->isPilotChair()) {
 							setPilotChair(obj);
-						} else if (gameObjectType == SceneObjectType::SHIPPERMISSIONS) {
+						} else if (obj->getGameObjectType() == SceneObjectType::SHIPPERMISSIONS) {
 							Terminal* terminalChild = obj.castTo<Terminal*>();
 
 							if (terminalChild != nullptr)
@@ -177,48 +176,186 @@ void PobShipObjectImplementation::createChildObjects() {
 	updateToDatabase();
 }
 
-void PobShipObjectImplementation::sendContainerObjectsTo(SceneObject* player, bool forceLoad) {
+void PobShipObjectImplementation::destroyObjectFromDatabase(bool destroyContainedObjects) {
+	auto thisPob = asShipObject();
+
+	SortedVector<ManagedReference<SceneObject*>> players;
+	players.setNoDuplicateInsertPlan();
+
+	// Check cells for players
+	for (int i = cells.size() - 1; i >= 0 ; --i) {
+		auto& cell = cells.get(i);
+
+		if (cell == nullptr)
+			continue;
+
+		for (int j = cell->getContainerObjectsSize() - 1; j >= 0 ; --j) {
+			auto object = cell->getContainerObject(j);
+
+			if (object == nullptr || !object->isPlayerCreature())
+				continue;
+
+			players.put(object);
+		}
+	}
+
+	// Kick all the players to the ground zone
+	for (int i = players.size() - 1; i >= 0 ; --i) {
+		auto& object = players.get(i);
+
+		if (object == nullptr || !object->isPlayerCreature())
+			continue;
+
+		auto player = object->asCreatureObject();
+
+		if (player == nullptr)
+			continue;
+
+		Locker clock(player, thisPob);
+
+		auto ghost = player->getPlayerObject();
+
+		if (ghost == nullptr)
+			continue;
+
+		auto launchZone = ghost->getSpaceLaunchZone();
+
+		if (launchZone.isEmpty())
+			launchZone = "tatooine";
+
+		auto launchLoc = ghost->getSpaceLaunchLocation();
+
+		player->switchZone(launchZone, launchLoc.getX(), launchLoc.getZ(), launchLoc.getY());
+	}
+
+	ShipObjectImplementation::destroyObjectFromDatabase(destroyContainedObjects);
+}
+
+void PobShipObjectImplementation::notifyInsert(TreeEntry* object) {
+	auto sceneO = static_cast<SceneObject*>(object);
+	uint64 scnoID = sceneO->getObjectID();
+
+#ifdef DEBUG_COV
+	if (sceneO->isPlayerCreature()) {
+		info(true) << "\n\nPobShipObjectImplementation::notifyInsert -- Ship ID: " << getObjectID()  << " Player: " << sceneO->getDisplayedName() << " ID: " << scnoID;
+	}
+#endif // DEBUG_COV
+
+	uint64 sceneObjRootID = 0;
+	auto sceneObjRootPar = sceneO->getRootParent();
+
+	if (sceneObjRootPar != nullptr) {
+		sceneObjRootID = sceneObjRootPar->getObjectID();
+	}
+
+	bool objectInThisShip = sceneObjRootID == getObjectID();
+
+	for (int i = 0; i < cells.size(); ++i) {
+		auto& cell = cells.get(i);
+
+		if (!cell->isContainerLoaded())
+			continue;
+
+		try {
+			for (int j = 0; j < cell->getContainerObjectsSize(); ++j) {
+				auto child = cell->getContainerObject(j);
+
+				if (child == nullptr || child->getObjectID() == scnoID)
+					continue;
+
+				if (objectInThisShip) {
+					if (child->getCloseObjects() != nullptr)
+						child->addInRangeObject(object, false);
+					else
+						child->notifyInsert(object);
+
+					child->sendTo(sceneO, true, false);
+
+					if (sceneO->getCloseObjects() != nullptr)
+						sceneO->addInRangeObject(child, false);
+					else
+						sceneO->notifyInsert(child);
+
+					if (sceneO->getParent() != nullptr)
+						sceneO->sendTo(child, true, false);
+				} else if (!sceneO->isCreatureObject() && !child->isCreatureObject()) {
+					child->notifyInsert(object);
+					object->notifyInsert(child);
+				}
+			}
+		} catch (Exception& e) {
+			warning(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+}
+
+void PobShipObjectImplementation::sendTo(SceneObject* sceneO, bool doClose, bool forceLoadContainer) {
+	CreatureObject* player = sceneO->asCreatureObject();
+
 	if (player == nullptr)
 		return;
 
-	auto creo = player->asCreatureObject();
+	ShipObjectImplementation::sendTo(player, doClose, forceLoadContainer);
 
-	if (creo == nullptr) {
-		return;
-	}
+	auto closeObjects = player->getCloseObjects();
 
-	for (int i = 0; i < containerObjects.size(); ++i) {
-		auto object = containerObjects.get(i);
-
-		if (object == nullptr) {
-			continue;
-		}
-
-		object->sendTo(creo, true);
-	}
-
+	// for some reason client doesnt like when you send cell creatures while sending cells?
 	for (int i = 0; i < cells.size(); ++i) {
-		auto cell = cells.get(i);
-
-		if (cell == nullptr) {
-			continue;
-		}
+		auto& cell = cells.get(i);
 
 		auto perms = cell->getContainerPermissions();
 
-		if (perms == nullptr) {
-			continue;
+		if (!perms->hasInheritPermissionsFromParent()) {
+			BaseMessage* perm = new UpdateCellPermissionsMessage(cell->getObjectID(), false);
+			player->sendMessage(perm);
 		}
 
-		cell->sendPermissionsTo(creo, true);
+		for (int j = 0; j < cell->getContainerObjectsSize(); ++j) {
+			auto containerObject = cell->getContainerObject(j);
+
+			if (containerObject == nullptr) {
+				continue;
+			}
+
+			if (containerObject == player) {
+				if (containerObject->getMovementCounter() == 0) {
+					containerObject->sendTo(player, true, false);
+				}
+
+				continue;
+			}
+
+			if (containerObject->isCreatureObject() || (closeObjects != nullptr && closeObjects->contains(containerObject.get())))
+				containerObject->sendTo(player, true, false);
+		}
+	}
+}
+
+void PobShipObjectImplementation::sendContainerObjectsTo(SceneObject* sceneO, bool forceLoad) {
+	if (sceneO == nullptr)
+		return;
+
+	auto player = sceneO->asCreatureObject();
+
+	if (player == nullptr) {
+		return;
+	}
+
+	for (int i = 0; i < cells.size(); ++i) {
+		auto& cell = cells.get(i);
+
+		cell->sendTo(player, true);
+		cell->sendPermissionsTo(player, true);
 
 		for (int j = 0; j < cell->getContainerObjectsSize(); ++j) {
 			auto object = cell->getContainerObject(j);
+
 			if (object == nullptr) {
 				continue;
 			}
 
-			object->sendTo(creo, true);
+			object->sendTo(player, true);
 		}
 	}
 }

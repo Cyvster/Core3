@@ -23,8 +23,7 @@
 #include "server/zone/packets/ship/ShipObjectMessage4.h"
 #include "server/zone/packets/ship/ShipObjectMessage6.h"
 #include "server/zone/packets/scene/SceneObjectCreateMessage.h"
-#include "templates/tangible/SharedShipObjectTemplate.h"
-#include "server/zone/objects/ship/ShipChassisData.h"
+#include "templates/tangible/ship/SharedShipObjectTemplate.h"
 #include "server/zone/managers/stringid/StringIdManager.h"
 #include "templates/faction/Factions.h"
 #include "server/zone/objects/player/FactionStatus.h"
@@ -43,27 +42,6 @@ void ShipObjectImplementation::initializeTransientMembers() {
 }
 
 void ShipObjectImplementation::notifyLoadFromDatabase() {
-	auto owner = getOwner().get();
-
-	if (owner != nullptr && getSpaceZone() != nullptr) {
-		auto zoneServer = getZoneServer();
-
-		if (zoneServer != nullptr) {
-			ManagedReference<SceneObject*> deviceSceneO = zoneServer->getObject(getControlDeviceID()).get();
-
-			if (deviceSceneO != nullptr && deviceSceneO->isShipControlDevice()) {
-				ShipControlDevice* shipDevice = cast<ShipControlDevice*>(deviceSceneO.get());
-
-				if (shipDevice != nullptr) {
-					StoreShipTask* task = new StoreShipTask(owner, shipDevice, shipDevice->getStoredZoneName(), shipDevice->getStoredPosition(true));
-
-					if (task != nullptr)
-						task->schedule(1500);
-				}
-			}
-		}
-	}
-
 	TangibleObjectImplementation::notifyLoadFromDatabase();
 }
 
@@ -106,7 +84,13 @@ void ShipObjectImplementation::loadTemplateData(SharedShipObjectTemplate* ssot) 
 		auto attribute = values.elementAt(i).getKey();
 		auto value = values.elementAt(i).getValue();
 
-		if (attribute == "slideDamp") {
+		if (attribute == "speedRotationFactorMin") {
+			setSpeedRotationFactorMin(value);
+		} else if (attribute == "speedRotationFactorOptimal") {
+			setSpeedRotationFactorOptimal(value);
+		} else if (attribute == "speedRotationFactorMax") {
+			setSpeedRotationFactorMax(value);
+		} else if (attribute == "slideDamp") {
 			setSlipRate(value, false);
 		} else if (attribute == "engineAccel") {
 			setEngineAccelerationRate(value, false);
@@ -159,31 +143,7 @@ void ShipObjectImplementation::loadTemplateData(SharedShipObjectTemplate* ssot) 
 }
 
 void ShipObjectImplementation::sendTo(SceneObject* player, bool doClose, bool forceLoadContainer) {
-	BaseMessage* destroy = new SceneObjectDestroyMessage(asSceneObject());
-	player->sendMessage(destroy);
-
-	BaseMessage* msg = new SceneObjectCreateMessage(asSceneObject());
-	player->sendMessage(msg);
-
-	link(player, containmentType);
-
-	auto pilot = getPilot();
-
-	if (pilot != nullptr) {
-		player->addInRangeObject(pilot, true);
-	}
-
-	try {
-		sendBaselinesTo(player);
-		sendSlottedObjectsTo(player);
-		sendContainerObjectsTo(player, false);
-	} catch (Exception& e) {
-		error(e.getMessage());
-		e.printStackTrace();
-	}
-
-	if (doClose)
-		SceneObjectImplementation::close(player);
+	TangibleObjectImplementation::sendTo(player, doClose, forceLoadContainer);
 }
 
 void ShipObjectImplementation::setShipName(const String& name, bool notifyClient) {
@@ -195,24 +155,42 @@ void ShipObjectImplementation::sendSlottedObjectsTo(SceneObject* player) {
 	VectorMap<String, ManagedReference<SceneObject* > > slotted;
 	getSlottedObjects(slotted);
 
-	SortedVector<uint64> objects(slotted.size(), slotted.size());
+	SortedVector<SceneObject*> objects(getSlottedObjectsSize(), getSlottedObjectsSize());
 	objects.setNoDuplicateInsertPlan();
 
-	for (int i = 0; i < slotted.size(); ++i) {
-		SceneObject* object = slotted.get(i);
-		if (object == nullptr || objects.put(object->getObjectID()) == -1) {
-			continue;
-		}
+	try {
+		for (int i = 0; i < slotted.size(); ++i) {
+			Reference<SceneObject*> object = getSlottedObject(i);
 
-		if (object == player && player->getMovementCounter() != 0) {
-			continue;
-		}
+			int arrangementSize = object->getArrangementDescriptorSize();
 
-		if (object->isInOctTree()) {
-			notifyInsert(object);
-		} else {
-			object->sendTo(player, true, false);
+			bool sendWithoutContents = false;
+
+			if (arrangementSize > 0) {
+				const Vector<String>* descriptors = object->getArrangementDescriptor(0);
+
+				if (descriptors->size() > 0) {
+					const String& childArrangement = descriptors->get(0);
+
+					if (((childArrangement == "bank") || (childArrangement == "inventory") || (childArrangement == "datapad") || (childArrangement == "mission_bag"))) {
+						sendWithoutContents = true;
+					}
+				}
+			}
+
+			if (objects.put(object) != -1) {
+				if (object->isInOctree()) {
+					notifyInsert(object);
+				} else if (sendWithoutContents) {
+					object->sendWithoutContainerObjectsTo(player);
+				} else {
+					object->sendTo(player, true, false);
+				}
+			}
 		}
+	} catch (Exception& e) {
+		error(e.getMessage());
+		e.printStackTrace();
 	}
 }
 
@@ -365,25 +343,36 @@ void ShipObjectImplementation::uninstall(CreatureObject* player, int slot, bool 
 }
 
 void ShipObjectImplementation::notifyObjectInsertedToZone(SceneObject* object) {
+	info(true) << "\n\n" << getDisplayedName() << " ShipObjectImplementation::notifyObjectInsertedToZone - for " << object->getDisplayedName();
+
 	auto closeObjectsVector = getCloseObjects();
-	Vector<TreeEntry*> closeObjects(closeObjectsVector->size(), 10);
-	closeObjectsVector->safeCopyReceiversTo(closeObjects, CloseObjectsVector::CREOTYPE);
+	SortedVector<TreeEntry*> closeObjects(closeObjectsVector->size(), 10);
+
+	if (closeObjectsVector != nullptr) {
+		closeObjectsVector->safeCopyReceiversTo(closeObjects, CloseObjectsVector::CREOTYPE);
+	} else {
+		auto zone = getZone();
+
+		if (zone != nullptr)
+			zone->getInRangeObjects(getWorldPositionX(), getWorldPositionZ(), getWorldPositionY(), zone->getZoneObjectRange(), &closeObjects, false);
+	}
 
 	for (int i = 0; i < closeObjects.size(); ++i) {
 		SceneObject* obj = static_cast<SceneObject*>(closeObjects.get(i));
 
-		if (obj->isCreatureObject()) {
-			if (obj->getRootParent() != _this.getReferenceUnsafe()) {
-				if (object->getCloseObjects() != nullptr)
-					object->addInRangeObject(obj, false);
-				else
-					object->notifyInsert(obj);
+		if (obj == nullptr || !obj->isCreatureObject())
+			continue;
 
-				if (obj->getCloseObjects() != nullptr)
-					obj->addInRangeObject(object, false);
-				else
-					obj->notifyInsert(object);
-			}
+		if (obj->getRootParent() != _this.getReferenceUnsafe()) {
+			if (object->getCloseObjects() != nullptr)
+				object->addInRangeObject(obj, false);
+			else
+				object->notifyInsert(obj);
+
+			if (obj->getCloseObjects() != nullptr)
+				obj->addInRangeObject(object, false);
+			else
+				obj->notifyInsert(object);
 		}
 	}
 
@@ -396,17 +385,25 @@ void ShipObjectImplementation::notifyObjectInsertedToZone(SceneObject* object) {
 
 	Zone* zone = getZone();
 
-	if (zone != nullptr && zone->isSpaceZone()) {
-		TangibleObject* tano = object->asTangibleObject();
-
-		if (tano != nullptr) {
-			//zone->updateActiveAreas(tano);
-		}
-
+	if (zone != nullptr) {
 		object->notifyInsertToZone(zone);
 	}
+}
 
-	//this->sendTo(object, true);
+void ShipObjectImplementation::notifyInsert(TreeEntry* object) {
+	auto sceneO = static_cast<SceneObject*>(object);
+	uint64 scnoID = sceneO->getObjectID();
+
+#ifdef DEBUG_COV
+	if (sceneO->isPlayerCreature()) {
+		info(true) << "notifyInsert -- Ship ID: " << getObjectID()  << " Player: " << sceneO->getDisplayedName() << " ID: " << scnoID;
+	}
+#endif // DEBUG_COV
+
+
+	// TODO: should be broadcast slotted players here?
+
+
 }
 
 int ShipObjectImplementation::notifyObjectInsertedToChild(SceneObject* object, SceneObject* child, SceneObject* oldParent) {
@@ -480,14 +477,7 @@ int ShipObjectImplementation::notifyObjectInsertedToChild(SceneObject* object, S
 
 	if (zone != nullptr) {
 		delete _locker;
-
-		if (object->isTangibleObject()) {
-			TangibleObject* tano = object->asTangibleObject();
-		   // zone->updateActiveAreas(tano);
-		}
 	}
-
-	// info(true) << getDisplayedName() << " notifyObjectInsertedToChild: " << object->getDisplayedName();
 
 	TangibleObjectImplementation::notifyObjectInsertedToChild(object, child, oldParent);
 
@@ -496,27 +486,6 @@ int ShipObjectImplementation::notifyObjectInsertedToChild(SceneObject* object, S
 
 int ShipObjectImplementation::notifyObjectRemovedFromChild(SceneObject* object, SceneObject* child) {
 	TangibleObjectImplementation::notifyObjectRemovedFromChild(object, child);
-	//info("Removed: " + object->getDisplayedName(), true);
-	/*SceneObject* parent = sceneObject->getParent();
-	Zone* zone = sceneObject->getZone();
-
-	if (!parent->isCellObject())
-		return;
-
-	if (building != parent->getParent()) {
-		error("removing from wrong building object");
-		return;
-	}
-
-	sceneObject->broadcastMessage(sceneObject->link((uint64)0, (uint32)0xFFFFFFFF), true, false);*/
-
-	//parent->removeObject(sceneObject, false);
-
-
-	//remove(object);
-
-	//		building->removeNotifiedSentObject(sceneObject);
-
 
 	return 0;
 }
@@ -1015,6 +984,64 @@ ShipTargetVector* ShipObjectImplementation::getTargetVector() {
 }
 
 void ShipObjectImplementation::destroyObjectFromDatabase(bool destroyContainedObjects) {
+	auto thisShip = asShipObject();
+
+	VectorMap<String, ManagedReference<SceneObject* > > slotted;
+	getSlottedObjects(slotted);
+
+	SortedVector<ManagedReference<SceneObject*>> players;
+	players.setNoDuplicateInsertPlan();
+
+	// Check slotted objects for players
+	for (int i = slotted.size() - 1; i >= 0 ; --i) {
+		auto object = slotted.get(i);
+
+		if (object == nullptr || !object->isPlayerCreature())
+			continue;
+
+		players.put(object);
+	}
+
+	// Check container for players
+	for (int i = getContainerObjectsSize() - 1; i >= 0 ; --i) {
+		auto object = getContainerObject(i);
+
+		if (object == nullptr || !object->isPlayerCreature())
+			continue;
+
+		players.put(object);
+	}
+
+	// Kick all the players to the ground zone
+	for (int i = players.size() - 1; i >= 0 ; --i) {
+		auto& object = players.get(i);
+
+		if (object == nullptr || !object->isPlayerCreature())
+			continue;
+
+		auto player = object->asCreatureObject();
+
+		if (player == nullptr)
+			continue;
+
+		Locker clock(player, thisShip);
+
+		auto ghost = player->getPlayerObject();
+
+		if (ghost == nullptr)
+			continue;
+
+		auto launchZone = ghost->getSpaceLaunchZone();
+
+		if (launchZone.isEmpty())
+			launchZone = "tatooine";
+
+		auto launchLoc = ghost->getSpaceLaunchLocation();
+
+		player->switchZone(launchZone, launchLoc.getX(), launchLoc.getZ(), launchLoc.getY());
+	}
+
+	// Remove and destroy all the components
 	auto pilot = owner.get();
 
 	for (uint32 slot = 0; slot <= Components::FIGHTERSLOTMAX; ++slot) {
@@ -1033,6 +1060,9 @@ void ShipObjectImplementation::destroyObjectFromDatabase(bool destroyContainedOb
 			component->destroyObjectFromDatabase(true);
 		}
 	}
+
+	if (getLocalZone() != nullptr)
+		destroyObjectFromWorld(true);
 
 	TangibleObjectImplementation::destroyObjectFromDatabase(destroyContainedObjects);
 }
@@ -1085,6 +1115,60 @@ float ShipObjectImplementation::getComponentCondition(uint32 slot) {
 
 void ShipObjectImplementation::updateLastDamageReceived() {
 	lastDamageReceived.updateToCurrentTime();
+}
+
+float ShipObjectImplementation::getSpeedRotationFactor(float speed) {
+	const float maxSpeed = getActualMaxSpeed();
+	const float maxFactor = getSpeedRotationFactorMax();
+	const float minFactor = getSpeedRotationFactorMin();
+	const float optimalFactor = getSpeedRotationFactorOptimal();
+
+	const float speedRatio = maxSpeed > 0.f ? speed / maxSpeed : 0.f;
+
+	auto getFactor = [&]() -> float {
+		/*
+		 *      rotation factor (in units of max pitch/yaw)
+		 *      |
+         *        +--------------------------------------------------------------------+
+         *        |             +             +            +             +             |
+         *        |                                ****                                ---- 1.0 @ optimal speed
+         *        |                             ****  ****                             |
+         *    0.8 |-+                       ****          ****                       +-|
+         *        |                      ****                ****                      |
+         *        |                   ***                        ***                   |
+         *        |               ****                              ****               |
+         *    0.4 |-+          ***                                      ***          +-|
+         *        |        ****                                            ****        |
+         *        |     ***                                                    ***     |
+         *        | ****        +             +            +             +        **** ---- minFactor/maxFactor
+         *      0 +-|-------------------------------|--------------------------------|-+
+         *        0 |          0.2           0.4    |     0.6           0.8          | 1 -- speed (in units of max speed)
+         *          |                               |                                |
+         *      Min Speed                     Optimal Speed                     Max Speed
+         *
+         * When speed < optimal speed:
+         *     find y-value on upslope, between minFactor and 1.f,
+         *     interpolated from min speed (0.f) to optimal speed
+         *     ergo, t = (speedRatio - 0) / (optimalFactor - 0) = speedRatio / optimalFactor
+         *
+         * When speed > optimal speed:
+         *     find y-value on downslope, between 1.f and maxFactor
+         *     interpolated from optimal speed to max speed (1.f)
+         *     ergo, t = (speedRatio - optimalFactor) / (1 - optimalFactor)
+		 */
+		if (speedRatio < optimalFactor || optimalFactor >= 1.f) {
+			// linearly interpolate between minFactor to 1 (1 being the optimal factor)
+			// at a ratio in the range expressed as speedRatio / optimalFactor
+			return Math::linearInterpolate(minFactor, 1.f, speedRatio / optimalFactor);
+		}
+
+		// linearly interpolate between 1 to maxFactor (1 being the optimal factor)
+		// at a ratio in the range expressed as (speedRatio - optimalFactor) / (1 - optimalFactor)
+		return Math::linearInterpolate(1.f, maxFactor, (speedRatio - optimalFactor) / (1.f - optimalFactor));
+	};
+
+	// discretize factor to prevent overupdating the client
+	return floorf((getFactor() * 10.f) + 0.5f) / 10.f;
 }
 
 uint64 ShipObjectImplementation::getLastDamageReceivedMili() {

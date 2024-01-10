@@ -113,8 +113,21 @@ void MapLocationTable::updateObjectsIcon(SceneObject* object, byte icon) {
 	}
 }
 
-const SortedVector<MapLocationEntry>& MapLocationTable::getLocation(const String& name) const {
-	return locations.get(name);
+const SortedVector<MapLocationEntry> MapLocationTable::getLocation(const String& name) const {
+	SortedVector<MapLocationEntry> mapTable;
+
+	for (int i = 0; i < locations.size(); ++i) {
+		String locName = locations.elementAt(i).getKey();
+
+		if (!locName.contains(name))
+			continue;
+
+		mapTable = locations.elementAt(i).getValue();
+
+		break;
+	}
+
+	return mapTable;
 }
 
 int MapLocationTable::findLocation(const String& name) const {

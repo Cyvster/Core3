@@ -210,7 +210,7 @@ bool ContainerComponent::transferObject(SceneObject* sceneObject, SceneObject* o
 
 	ManagedReference<SceneObject*> objParent = object->getParent().get();
 
-	ManagedReference<Zone*> objZone = object->getLocalSpaceZone() != nullptr ? object->getLocalSpaceZone() : object->getLocalZone();
+	ManagedReference<Zone*> objZone = object->getLocalZone();
 	ManagedReference<Zone*> oldRootZone = object->getZone();
 
 	if (object->containsActiveSession(SessionFacadeType::SLICING)) {
@@ -223,8 +223,10 @@ bool ContainerComponent::transferObject(SceneObject* sceneObject, SceneObject* o
 	}
 
 	if (objParent != nullptr || objZone != nullptr) {
-		if (objParent != nullptr)
-			objParent->removeObject(object, sceneObject, notifyClient);
+		if (objParent != nullptr) {
+			// Don't notify client yet, if you do here it confuses the client and drops from toolbar etc.
+			objParent->removeObject(object, sceneObject, false);
+		}
 
 		if (object->getParent() != nullptr) {
 			object->error("error removing from parent");
@@ -233,18 +235,10 @@ bool ContainerComponent::transferObject(SceneObject* sceneObject, SceneObject* o
 		}
 
 		if (objZone != nullptr) {
-			if (objZone->isSpaceZone()) {
-				SpaceZone* spaceZone = objZone->asSpaceZone();
-
-				if (spaceZone != nullptr)
-					spaceZone->remove(object);
-			} else {
-				objZone->remove(object);
-			}
+			objZone->remove(object);
 		}
 
-		object->setGroundZone(nullptr);
-		object->setSpaceZone(nullptr);
+		object->setZone(nullptr);
 
 		if (objParent == nullptr)
 			objParent = objZone;
@@ -257,7 +251,6 @@ bool ContainerComponent::transferObject(SceneObject* sceneObject, SceneObject* o
 	VectorMap<String, ManagedReference<SceneObject*> >* slottedObjects = sceneObject->getSlottedObjects();
 	VectorMap<uint64, ManagedReference<SceneObject*> >* containerObjects = sceneObject->getContainerObjects();
 
-	//if (containerType == 1 || containerType == 5) {
 	if (containmentType >= 4) {
 		int arrangementGroup = containmentType - 4;
 
@@ -280,7 +273,10 @@ bool ContainerComponent::transferObject(SceneObject* sceneObject, SceneObject* o
 
 		object->setParent(sceneObject);
 		object->setContainmentType(containmentType);
-	} else if (containmentType == -1) { /* else if (containerType == 2 || containerType == 3) {*/
+
+		// We need to update the stored parent for objects moved
+		object->updateZoneWithParent(sceneObject, false, false);
+	} else if (containmentType == -1) {
 		if (!allowOverflow && containerObjects->size() >= sceneObject->getContainerVolumeLimit()){
 			return false;
 		}
@@ -296,7 +292,7 @@ bool ContainerComponent::transferObject(SceneObject* sceneObject, SceneObject* o
 
 		ManagedReference<Zone*> newRootZone = object->getZone();
 
-		if (newRootZone != nullptr && newRootZone != oldRootZone) {
+		if (newRootZone != nullptr && newRootZone != oldRootZone && newRootZone->isGroundZone()) {
 			bool shouldRegister = true;
 
 			// Prevent GCW PvE Base Terminals Registering when inserted in cell container

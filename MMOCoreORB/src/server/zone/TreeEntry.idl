@@ -15,15 +15,14 @@ import engine.util.u3d.Vector3;
 include engine.util.u3d.Coordinate;
 include server.zone.TreeNode;
 
-@dirty
+@json
 class TreeEntry extends Observable {
-
 	public native TreeEntry(TreeNode n = null);
 
 	@dereferenced
 	protected Coordinate coordinates;
 
-	public TreeNode node;
+	transient protected TreeNode node;
 
 	protected boolean bounding;
 
@@ -287,7 +286,7 @@ class TreeEntry extends Observable {
 	}
 
 	@read
-	public boolean isInOctTree() {
+	public boolean isInOctree() {
 		return node;
 	}
 

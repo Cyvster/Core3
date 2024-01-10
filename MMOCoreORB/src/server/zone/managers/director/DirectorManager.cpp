@@ -99,6 +99,7 @@
 #include "server/zone/managers/ship/ShipManager.h"
 #include "templates/params/ship/ShipFlags.h"
 #include "templates/params/creature/PlayerArrangement.h"
+#include "server/zone/objects/ship/components/ShipChassisComponent.h"
 
 int DirectorManager::DEBUG_MODE = 0;
 int DirectorManager::ERROR_CODE = NO_ERROR;
@@ -531,6 +532,9 @@ void DirectorManager::initializeLuaEngine(Lua* luaEngine) {
 	luaEngine->registerFunction("getWorldFloor", getWorldFloor);
 	luaEngine->registerFunction("useCovertOvert", useCovertOvert);
 
+	// JTL
+	luaEngine->registerFunction("generateShipDeed", generateShipDeed);
+
 	//Navigation Mesh Management
 	luaEngine->registerFunction("createNavMesh", createNavMesh);
 	luaEngine->registerFunction("destroyNavMesh", destroyNavMesh);
@@ -907,8 +911,19 @@ int DirectorManager::createLoot(lua_State* L) {
 
 	LootManager* lootManager = ServerCore::getZoneServer()->getLootManager();
 
-	TransactionLog trx(TrxCode::LUASCRIPT, container);
+	auto dst = container;
+
+	if (!container->isCreatureObject()) {
+		auto parent = container->getParentRecursively(SceneObjectType::PLAYERCREATURE);
+
+		if (parent != nullptr) {
+			dst = parent;
+		}
+	}
+
+	TransactionLog trx(TrxCode::LUALOOT, dst);
 	trx.addContextFromLua(L);
+	trx.addState("dstContainer", container->getObjectID());
 
 	uint64 lootObjectID = lootManager->createLoot(trx,container, lootGroup, level, maxCondition);
 
@@ -941,8 +956,20 @@ int DirectorManager::createLootSet(lua_State* L) {
 		return 0;
 
 	LootManager* lootManager = ServerCore::getZoneServer()->getLootManager();
-	TransactionLog trx(TrxCode::LUASCRIPT, container);
+
+	auto dst = container;
+
+	if (!container->isCreatureObject()) {
+		auto parent = container->getParentRecursively(SceneObjectType::PLAYERCREATURE);
+
+		if (parent != nullptr) {
+			dst = parent;
+		}
+	}
+
+	TransactionLog trx(TrxCode::LUALOOT, dst);
 	trx.addContextFromLua(L);
+	trx.addState("dstContainer", container->getObjectID());
 	if (lootManager->createLootSet(trx, container, lootGroup, level, maxCondition, setSize)) {
 		trx.commit(true);
 	} else {
@@ -976,8 +1003,20 @@ int DirectorManager::createLootFromCollection(lua_State* L) {
 	luaObject.pop();
 
 	LootManager* lootManager = ServerCore::getZoneServer()->getLootManager();
-	TransactionLog trx(TrxCode::LUASCRIPT, container);
+
+	auto dst = container;
+
+	if (!container->isCreatureObject()) {
+		auto parent = container->getParentRecursively(SceneObjectType::PLAYERCREATURE);
+
+		if (parent != nullptr) {
+			dst = parent;
+		}
+	}
+
+	TransactionLog trx(TrxCode::LUALOOT, dst);
 	trx.addContextFromLua(L);
+	trx.addState("dstContainer", container->getObjectID());
 	if (lootManager->createLootFromCollection(trx, container, &lootCollection, level)) {
 		trx.commit(true);
 	} else {
@@ -1823,10 +1862,20 @@ int DirectorManager::spatialChat(lua_State* L) {
 		return 0;
 	}
 
+	ManagedReference<CreatureObject*> creature = (CreatureObject*)lua_touserdata(L, -2);
+
+	if (creature == nullptr)
+		return 0;
+
 	ZoneServer* zoneServer = ServerCore::getZoneServer();
+
+	if (zoneServer == nullptr)
+		return 0;
+
 	ChatManager* chatManager = zoneServer->getChatManager();
 
-	ManagedReference<CreatureObject*> creature = (CreatureObject*)lua_touserdata(L, -2);
+	if (chatManager == nullptr)
+		return 0;
 
 	if (lua_islightuserdata(L, -1)) {
 		StringIdChatParameter* message = (StringIdChatParameter*)lua_touserdata(L, -1);
@@ -4576,6 +4625,35 @@ int DirectorManager::useCovertOvert(lua_State* L) {
 	bool result = ConfigManager::instance()->useCovertOvertSystem();
 
 	lua_pushboolean(L, result);
+
+	return 1;
+}
+
+int DirectorManager::generateShipDeed(lua_State* L) {
+	if (checkArgumentCount(L, 3) == 1) {
+		String err = "incorrect number of arguments passed to DirectorManager::generateShipDeed";
+		printTraceError(L, err);
+		ERROR_CODE = INCORRECT_ARGUMENTS;
+		return 0;
+	}
+
+	CreatureObject* player = (CreatureObject*)lua_touserdata(L, -3);
+	ShipChassisComponent* chassisBlueprint = (ShipChassisComponent*)lua_touserdata(L, -2);
+	CreatureObject* chassisDealer = (CreatureObject*)lua_touserdata(L, -1);
+
+	if (player == nullptr || chassisBlueprint == nullptr || chassisDealer == nullptr) {
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	auto shipManager = ShipManager::instance();
+
+	if (shipManager != nullptr && shipManager->createDeedFromChassis(player, chassisBlueprint, chassisDealer)) {
+		lua_pushboolean(L, true);
+		return 1;
+	}
+
+	lua_pushboolean(L, false);
 
 	return 1;
 }

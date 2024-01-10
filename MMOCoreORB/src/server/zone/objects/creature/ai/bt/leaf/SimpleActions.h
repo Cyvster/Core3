@@ -250,7 +250,11 @@ public:
 	Behavior::Status execute(AiAgent* agent, unsigned int startIdx = 0) const {
 		//agent->info("SelectAttack::execute", true);
 
-		WeaponObject* weapon = agent->getWeapon();
+		if (agent->isDead()) {
+			return FAILURE;
+		}
+
+		WeaponObject* weapon = agent->getCurrentWeapon();
 
 		if (weapon != nullptr && weapon->getAttackType() ==  SharedWeaponObjectTemplate::FORCEATTACK) {
 			return agent->selectSpecialAttack(-1) ? SUCCESS : FAILURE;
@@ -392,9 +396,9 @@ public:
 		// we don't need to check a value. Just checking to see if this value
 		// exists on the blackboard is fine since it can never be false
 		if (agent->peekBlackboard("isWaiting")) {
-			if (agent->isWaiting() || duration < 0) // < 0 means indefinite wait
+			if (agent->isWaiting() || duration < 0) { // < 0 means indefinite wait
 				return RUNNING;
-			else {
+			} else {
 				agent->eraseBlackboard("isWaiting");
 				return SUCCESS;
 			}
@@ -511,7 +515,7 @@ public:
 			return FAILURE;
 
 		if (System::random(100) > 98 && !agent->isDizzied()) {
-			WeaponObject* weapon = agent->getWeapon();
+			WeaponObject* weapon = agent->getCurrentWeapon();
 
 			if (weapon == nullptr || !weapon->isRangedWeapon())
 				return FAILURE;

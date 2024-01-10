@@ -3,15 +3,18 @@
 #define STORESPAWNEDCHILDRENTASK_H_
 
 #include "server/zone/objects/creature/CreatureObject.h"
+#include "server/zone/objects/intangible/ControlDevice.h"
+#include "server/zone/objects/intangible/PetControlDevice.h"
+#include "server/zone/objects/intangible/tasks/PetControlDeviceStoreTask.h"
+#include "server/zone/objects/intangible/ShipControlDevice.h"
+#include "server/zone/objects/intangible/tasks/StoreShipTask.h"
 
 class StoreSpawnedChildrenTask : public Task {
 	ManagedWeakReference<CreatureObject*> play;
-	Vector<ManagedReference<CreatureObject*> > children;
-public:
-	StoreSpawnedChildrenTask(CreatureObject* creo,
-			Vector<ManagedReference<CreatureObject*> >&& ch) :
-		play(creo), children(std::move(ch)) {
+	Vector<ManagedReference<ControlDevice*>> devices;
 
+public:
+	StoreSpawnedChildrenTask(CreatureObject* creo, Vector<ManagedReference<ControlDevice*>>&& dev) : play(creo), devices(std::move(dev)) {
 	}
 
 	void run() {
@@ -22,25 +25,45 @@ public:
 
 		Locker locker(player);
 
-		for (int i = 0; i < children.size(); ++i) {
-			CreatureObject* child = children.get(i);
+		for (int i = 0; i < devices.size(); ++i) {
+			ManagedReference<ControlDevice*> controlDevice = devices.get(i).get();
 
-			if (child == nullptr)
+			if (controlDevice == nullptr)
 				continue;
 
-			Locker clocker(child, player);
+			if (controlDevice->isPetControlDevice()) {
+				CreatureObject* pet = cast<CreatureObject*>(controlDevice->getControlledObject());
 
-			ManagedReference<ControlDevice*> controlDevice = child->getControlDevice().get();
+				if (pet == nullptr)
+					continue;
 
-			if (controlDevice != nullptr) {
+				Locker clocker(pet, player);
+
+				PetControlDeviceStoreTask* storeTask = new PetControlDeviceStoreTask(controlDevice.castTo<PetControlDevice*>(), player, true);
+
+				if (storeTask != nullptr)
+					storeTask->execute();
+			} else if (controlDevice->isShipControlDevice()) {
+				auto ghost = player->getPlayerObject();
+
+				if (ghost == nullptr)
+					continue;
+
+				auto shipDevice = controlDevice.castTo<ShipControlDevice*>();
+
+				if (shipDevice == nullptr || !shipDevice->isShipLaunched())
+					continue;
+
+				StoreShipTask* storeTask = new StoreShipTask(player, shipDevice, ghost->getSpaceLaunchZone(), ghost->getSpaceLaunchLocation());
+
+				if (storeTask != nullptr)
+					storeTask->execute();
+			} else {
 				Locker deviceLocker(controlDevice);
 				controlDevice->storeObject(player, true);
 			}
 		}
-
 	}
 };
-
-
 
 #endif /* STORESPAWNEDCHILDRENTASK_H_ */

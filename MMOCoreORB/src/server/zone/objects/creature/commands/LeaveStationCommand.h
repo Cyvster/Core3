@@ -33,23 +33,18 @@ public:
 		if (cell == nullptr)
 			return GENERALERROR;
 
-		Vector3 position = parent->getPosition();
+		// Reset player movement counter
+		creature->setMovementCounter(0);
 
-		creature->setPosition(position.getX(), position.getZ(), position.getY());
+		// Clear Station State
+		creature->clearSpaceStates();
+
+		// Set Ship Interior State
+		creature->setState(CreatureState::SHIPINTERIOR);
 
 		if (!cell->transferObject(creature, -1, true)) {
 			return GENERALERROR;
 		}
-
-		// Clear station state
-		if (creature->hasState(CreatureState::PILOTINGPOBSHIP))
-			creature->clearState(CreatureState::PILOTINGPOBSHIP);
-		else if (creature->hasState(CreatureState::SHIPOPERATIONS))
-			creature->clearState(CreatureState::SHIPOPERATIONS);
-		else if (creature->hasState(CreatureState::SHIPGUNNER))
-			creature->clearState(CreatureState::SHIPGUNNER);
-		else if (creature->hasState(CreatureState::SHIPOPERATIONS))
-			creature->clearState(CreatureState::SHIPOPERATIONS);
 
 		return SUCCESS;
 	}

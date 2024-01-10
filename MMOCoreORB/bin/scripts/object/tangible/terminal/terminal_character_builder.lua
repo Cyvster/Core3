@@ -2499,7 +2499,7 @@ object_tangible_terminal_terminal_character_builder = object_tangible_terminal_s
 					"Imperial Pilot Initiate", "pilot_imperial_navy_novice",
 					"Starships",
 					{
-						"Intermediate TIE Combat Craft Operations", "pilot_imperial_navy_starships__01",
+						"Intermediate TIE Combat Craft Operations", "pilot_imperial_navy_starships_01",
 						"Advanced TIE Combat Craft Operations", "pilot_imperial_navy_starships_02",
 						"Advanced Capability TIE Vessels", "pilot_imperial_navy_starships_03",
 						"TIE Experimental Vessels", "pilot_imperial_navy_starships_04"
@@ -3086,8 +3086,13 @@ object_tangible_terminal_terminal_character_builder = object_tangible_terminal_s
 			},
 			"Bio-Engineer Testing",
 			{
-				"FurryCat Test - ju6d14qq", "ju6d14qq",
-				"FurryCat Test - d5j7caq6", "d5j7caq6",
+				"FurryCat Test - ju6d14qq", "dna_set:ju6d14qq",
+				"FurryCat Test - d5j7caq6", "dna_set:d5j7caq6",
+				"FurryCat Test - ke5nbvgo", "dna_set:ke5nbvgo",
+				"FurryCat Test - dcfolokr", "dna_set:dcfolokr",
+				"FurryCat Test - jgbq7aiq", "dna_set:jgbq7aiq",
+				"FurryCat Test - o97m0aan", "dna_set:o97m0aan",
+				"FurryCat Test - mmhkbp03", "dna_set:mmhkbp03",
 			},
 			"Clothes",
 			{
@@ -3646,6 +3651,7 @@ object_tangible_terminal_terminal_character_builder = object_tangible_terminal_s
 				"@veteran_new:falconchair","object/tangible/veteran_reward/frn_couch_falcon_section_s01.iff",
 				"@veteran_new:mini_tiefighter","object/tangible/veteran_reward/frn_vet_tie_fighter_toy.iff",
 				"@veteran_new:mini_xwing","object/tangible/veteran_reward/frn_vet_x_wing_toy.iff",
+				"@veteran_new:sorosuub","object/tangible/space/veteran_reward/sorosuub_space_yacht_deed.iff",
 				--270 Day Rewards
 				"Deed for Flash Speeder","object/tangible/deed/vehicle_deed/speederbike_flash_deed.iff",
 				"Special Edition Goggles Style 1","object/tangible/wearables/goggles/goggles_s01.iff",
