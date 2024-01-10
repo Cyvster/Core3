@@ -453,7 +453,7 @@ int CombatManager::creoTargetCombatAction(CreatureObject* attacker, WeaponObject
 		break;
 	case BLOCK:
 		doBlock(attacker, weapon, defender, damage);
-		damageMultiplier = 0.5f;
+		damageMultiplier = 0.0f;
 		break;
 	case DODGE:
 		doDodge(attacker, weapon, defender, damage);
@@ -2797,7 +2797,7 @@ void CombatManager::doBlock(TangibleObject* attacker, WeaponObject* weapon, Crea
 }
 
 void CombatManager::doDodge(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defender, int damage) const {
-	defender->doCombatAnimation(STRING_HASHCODE("dodge"));
+	//defender->doCombatAnimation(STRING_HASHCODE("dodge"));
 	defender->showFlyText("combat_effects", "dodge", 0, 0xFF, 0);
 }
 

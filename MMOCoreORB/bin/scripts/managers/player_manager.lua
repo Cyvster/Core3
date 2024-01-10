@@ -44,7 +44,7 @@
 --GENERAL PLAYER SETTINGS
 -----------------------------------
 
-onlineCharactersPerAccount = 2 --How many characters are allowed online from a single account.
+onlineCharactersPerAccount = 10 --How many characters are allowed online from a single account.
 allowSameAccountPvpRatingCredit = 0
 
 --Blue frog / GM buff values
@@ -57,7 +57,7 @@ medicalDuration = 7200 -- in seconds
 groupExpMultiplier = 1.2
 
 --Sets a global experience multiplier
-globalExpMultiplier = 1.0
+globalExpMultiplier = 10.0
 
 --Sets the base number of control devices of each type that a player can have in their datapad at once
 --For creature pets, A Creature Handler will have the base number + their stored pets skill mod as limit
@@ -70,11 +70,12 @@ baseStoredShips = 3
 -----------------------------------
 --VETERAN REWARDS CONFIG
 -----------------------------------
-veteranRewardMilestones = {90, 180, 270, 360, 450, 540, 630, 720, 810, 900, 990, 1080} --days, must be sorted low to high
+veteranRewardMilestones = {1, 90, 180, 270, 360, 450, 540, 630, 720, 810, 900, 990, 1080} --days, must be sorted low to high
 
-veteranRewardAdditionalMilestones = 360 --frequency, in days, of additional milestones (beyond the established ones)
+veteranRewardAdditionalMilestones = 1 --frequency, in days, of additional milestones (beyond the established ones)
 
 veteranRewards = {
+
 	-- 90 Day Rewards
 	{templateFile = "object/tangible/veteran_reward/harvester.iff", milestone=90, oneTime=true, description="@veteran_new:poweredharvester", jtlReward = false},
 	{templateFile = "object/tangible/veteran_reward/data_terminal_s1.iff", milestone=90, oneTime=false, description="@veteran_new:dataterminal1", jtlReward = false},
@@ -85,7 +86,7 @@ veteranRewards = {
 	{templateFile = "object/tangible/veteran_reward/frn_vet_r2_toy.iff", milestone=90, oneTime=false, description="@veteran_new:mini_r2", jtlReward = false},
 
 	-- 180 Day Rewards
-	{templateFile = "object/tangible/veteran_reward/resource.iff", milestone=180, oneTime=true, description="@veteran_new:resourcecrate", jtlReward = false},
+	{templateFile = "object/tangible/veteran_reward/resource.iff", milestone=1, oneTime=false, description="@veteran_new:resourcecrate", jtlReward = false},
 	{templateFile = "object/tangible/veteran_reward/frn_couch_falcon_corner_s01.iff", milestone=180, oneTime=false, description="@veteran_new:falconcouch", jtlReward = false},
 	{templateFile = "object/tangible/veteran_reward/frn_couch_falcon_section_s01.iff", milestone=180, oneTime=false, description="@veteran_new:falconchair", jtlReward = false},
 	{templateFile = "object/tangible/veteran_reward/frn_vet_tie_fighter_toy.iff", milestone=180, oneTime=false, description="@veteran_new:mini_tiefighter", jtlReward = false},
@@ -109,7 +110,7 @@ veteranRewards = {
 	{templateFile = "object/tangible/veteran_reward/frn_tech_console_sectional_d.iff", milestone=360, oneTime=false, description="@veteran_new:techconsole_d", jtlReward = false},
 	{templateFile = "object/tangible/veteran_reward/frn_vet_jabba_toy.iff", milestone=360, oneTime=false, description="@veteran_new:mini_jabba", jtlReward = false},
 	{templateFile = "object/tangible/veteran_reward/frn_vet_stormtrooper_toy.iff", milestone=360, oneTime=false, description="@veteran_new:mini_stormtrooper", jtlReward = false},
-	{templateFile = "object/tangible/veteran_reward/antidecay.iff", milestone=360, oneTime=true, description="@veteran_new:antidecay", jtlReward = false},
+	{templateFile = "object/tangible/veteran_reward/antidecay.iff", milestone=1, oneTime=false, description="@veteran_new:antidecay", jtlReward = false},
 
 	-- 450 Day Rewards
 	{templateFile = "object/tangible/camp/camp_spit_s2.iff", milestone=450, oneTime=false, description="Camp Center (Small)", jtlReward = false},
@@ -174,6 +175,7 @@ veteranRewards = {
 	{templateFile = "object/tangible/veteran_reward/one_year_anniversary/painting_07.iff", milestone=1080, oneTime=false, description="Painting: Smuggler's Run", jtlReward = false},
 	{templateFile = "object/tangible/veteran_reward/one_year_anniversary/painting_08.iff", milestone=1080, oneTime=false, description="Painting: Imperial Oppression (TIE Oppressor)", jtlReward = false},
 	{templateFile = "object/tangible/veteran_reward/one_year_anniversary/painting_09.iff", milestone=1080, oneTime=false, description="Painting: Emperor's Eyes (TIE Sentinel)", jtlReward = false},
+
 }
 
 -- { "stringId", "songFilePath" }

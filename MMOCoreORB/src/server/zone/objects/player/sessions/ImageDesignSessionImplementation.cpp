@@ -309,9 +309,11 @@ void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater
 		if (playerManager != nullptr && xpGranted > 0) {
 			if (strongReferenceDesigner == strongReferenceTarget) {
 				xpGranted /= 2;
+
 			}
 
-			playerManager->awardExperience(strongReferenceDesigner, "imagedesigner", xpGranted, true);
+			playerManager->awardExperience(strongReferenceDesigner, "imagedesigner", (xpGranted * 10), true);
+
 		}
 
 		// End the session

@@ -788,6 +788,12 @@ void TangibleObjectImplementation::setConditionDamage(float condDamage, bool not
 int TangibleObjectImplementation::inflictDamage(TangibleObject* attacker, int damageType, float damage, bool destroy, bool notifyClient, bool isCombatAction) {
 	if (hasAntiDecayKit())
 		return 0;
+	
+	int roll = System::random(1000);
+	int chance = 1;
+	
+	if (roll < chance)
+		return 0;
 
 	float newConditionDamage = conditionDamage + damage;
 

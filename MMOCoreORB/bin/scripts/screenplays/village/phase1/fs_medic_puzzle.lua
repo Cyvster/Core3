@@ -144,7 +144,7 @@ function FsMedicPuzzle:cureSymptoms(pPlayer, pNpc, pPack)
 	if (symptomCount == 0) then
 		CreatureObject(pPlayer):sendSystemMessage("@quest/force_sensitive/fs_medic:npc_cured")
 		local villagerCount = self:getCuredVillagerCount(pPlayer)
-		self:setCuredVillagerCount(pPlayer, villagerCount + 1)
+		self:setCuredVillagerCount(pPlayer, villagerCount + 15)
 
 		for i = 0, self.totalSymptoms - 1, 1 do
 			deleteData(playerID .. ":fs_medic_puzzle_npc:" .. npcID .. ":symptom" .. i)

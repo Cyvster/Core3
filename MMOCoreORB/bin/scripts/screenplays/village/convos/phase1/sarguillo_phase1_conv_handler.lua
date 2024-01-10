@@ -15,7 +15,7 @@ function villageSarguilloPhase1ConvoHandler:getInitialScreen(pPlayer, pNpc, pCon
 
 	if (VillageJediManagerTownship:getCurrentPhase() ~= 1 or not VillageJediManagerCommon.isVillageEligible(pPlayer)) then
 		return convoTemplate:getScreen("intro_noteligible")
-	elseif (completedCount == 20) then
+	elseif (completedCount == 1) then
 		return convoTemplate:getScreen("intro_didallpatrols")
 	elseif (completedCount == 9 and reachedAllWaypoints and completedLastPoint and not failedPatrol) then
 		return convoTemplate:getScreen("intro_completedfirstset")
@@ -90,10 +90,10 @@ function villageSarguilloPhase1ConvoHandler:completeCurrentPatrol(pPlayer)
 	FsPatrol:completeFsPatrol(pPlayer)
 	QuestManager.setStoredVillageValue(pPlayer, "FsPatrolCompletedCount", completedCount)
 
-	if (completedCount == 10) then
+	if (completedCount == 1) then
 		QuestManager.completeQuest(pPlayer, QuestManager.quests.FS_PATROL_QUEST_10)
 		VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_combat_prowess_ranged_accuracy")
-	elseif (completedCount == 20) then
+	--elseif (completedCount == 20) then
 		QuestManager.completeQuest(pPlayer, QuestManager.quests.FS_PATROL_QUEST_20)
 		QuestManager.completeQuest(pPlayer, QuestManager.quests.FS_PATROL_QUEST_FINISH)
 		QuestManager.setCurrentQuestID(pPlayer, 0)

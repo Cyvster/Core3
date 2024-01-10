@@ -737,8 +737,8 @@ void WeaponObjectImplementation::decay(CreatureObject* user) {
 		return;
 	}
 
-	int roll = System::random(100);
-	int chance = 5;
+	int roll = System::random(1000);
+	int chance = 1;
 
 	if (hasPowerup())
 		chance += 10;

@@ -80,7 +80,7 @@ public:
 			}
 			break;
 		case SAMPLING:
-			if (waitCount == 9) {
+			if (waitCount == 3) {
 				currentPhase = END;
 			}else {
 				waitCount++;
@@ -214,6 +214,7 @@ public:
 	}
 	void award(int cl, float rollMod, int skillMod) {
 		int xp = DnaManager::instance()->generateXp(cl);
+		xp = xp * 10;
 		ManagedReference<PlayerManager*> playerManager = player->getZoneServer()->getPlayerManager();
 		if(playerManager != nullptr)
 			playerManager->awardExperience(player, "bio_engineer_dna_harvesting", xp, true);

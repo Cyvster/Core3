@@ -115,8 +115,16 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	if (fortitude > 500) {
 		armorRating = 1;
 
+	}
+	if (fortitude > 750) {
+		armorRating = 2;
+	}
+	if (fortitude > 900) {
+		armorRating = 3;
+	}
+	
 	// min - max values
-	} else if (fortitude > 1000) {
+	else if (fortitude > 1000) {
 		fortitude = 1000;
 	} else if (fortitude < 0) {
 		fortitude = 1;
@@ -177,10 +185,10 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	}
 
 	// max on resists
-	if (kinResist > 60)
-		kinResist = 60;
-	if (energyResist > 60)
-		energyResist = 60;
+	if (kinResist > 90)
+		kinResist = 90;
+	if (energyResist > 90)
+		energyResist = 90;
 	if (blastResist > 100)
 		blastResist = 100;
 	if (heatResist > 100)
@@ -208,16 +216,17 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	// Strength: har,dep
 	// Quickness: dex,dep
 
-	health = (hardiness * 15) + (dexterity * 3);
-	action = (dexterity * 15) + (intellect * 3);
-	mind = (intellect * 15) + (hardiness * 3);
 
-	stamina = (dexterity * 15) + (endurance * 3);
-	willPower = (intellect * 15) + (cleverness * 3);
-	constitution = (hardiness * 15) + (fortitude * 3);
-	focus = (intellect * 15) + (dependability * 3);
-	strength = (hardiness * 15) + (dependability * 3);
-	quickness = (dexterity * 15) + (dependability * 3);
+	health = (hardiness * 30) + (dexterity * 3);
+	action = (dexterity * 30) + (intellect * 3);
+	mind = (intellect * 30) + (hardiness * 3);
+
+	stamina = (dexterity * 30) + (endurance * 3);
+	willPower = (intellect * 30) + (cleverness * 3);
+	constitution = (hardiness * 30) + (fortitude * 3);
+	focus = (intellect * 30) + (dependability * 3);
+	strength = (hardiness * 30) + (dependability * 3);
+	quickness = (dexterity * 30) + (dependability * 3);
 
 #ifdef DEBUG_GENETIC_LAB
 	info(true) << "Health: " << health << " Action: " << action << " Mind: " << mind;
@@ -237,8 +246,10 @@ void GeneticComponentImplementation::updateCraftingValues(CraftingValues* values
 	info(true) << "Speed: " << speed;
 #endif
 
+
 	// Calculate damage
 	float damage = (power * 0.8f) / 10.0f;
+
 
 	// Calculate damage variable
 	float damageVar = ((power / 10000.0f) * 2.0f);
@@ -388,4 +399,5 @@ float GeneticComponentImplementation::getEffectiveArmor() {
 #endif
 
 	return effectiveCalc;
+  
 }

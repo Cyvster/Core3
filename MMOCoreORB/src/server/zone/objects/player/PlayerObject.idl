@@ -373,7 +373,7 @@ class PlayerObject extends IntangibleObject {
 
 		clientLastMovementStamp = 0;
 
-		maximumLots = 10;
+		maximumLots = 200;
 
 		adminLevel = 0;
 		priviledgeFlag = 0;
