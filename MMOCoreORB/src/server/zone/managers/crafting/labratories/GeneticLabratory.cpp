@@ -358,7 +358,7 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	float currentPercentage = 0.0f, maxPercentage = 0.0f, capValue = 0.0f, initialValue = 0.0f, rangeValue = 0.0f, fortitude = 0.0f;
 	bool hidden = false;
 
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < craftingValues->getTotalExperimentalAttributes(); i++) {
 		String attribute = craftingValues->getAttribute(i);
 		String group = craftingValues->getAttributeGroup(attribute);
 		
@@ -564,7 +564,7 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 	String attribute1, attribute2;
 
 	String experimentedGroup = craftingValues->getVisibleAttributeGroup(rowEffected);
-	int totalAttributes = craftingValues->getTotalExperimentalAttributes();
+	int totalAttributes = 1000;//craftingValues->getTotalExperimentalAttributes();
 	Vector<String> randomFailed;
 
 #ifdef DEBUG_GENETIC_LAB
