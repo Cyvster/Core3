@@ -282,8 +282,8 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	*/
 
 	// Physique: Fortitude and Hardiness
-	float fortitudeMax = 200;//Genetics::physiqueFormula(physique->getFortitude(), prowess->getFortitude(), mental->getFortitude(), psychological->getFortitude(), aggression->getFortitude()) * modifier;
-	float hardinessMax = 800;//Genetics::physiqueFormula(physique->getHardiness(), prowess->getHardiness(), mental->getHardiness(), psychological->getHardiness(), aggression->getHardiness()) * modifier;
+	float fortitudeMax = Genetics::physiqueFormula(physique->getFortitude(), prowess->getFortitude(), mental->getFortitude(), psychological->getFortitude(), aggression->getFortitude()) * modifier;
+	float hardinessMax = Genetics::physiqueFormula(physique->getHardiness(), prowess->getHardiness(), mental->getHardiness(), psychological->getHardiness(), aggression->getHardiness()) * modifier;
 
 	// Prowess: Endurance and Dexterity
 	float dexterityMax = 1000;//Genetics::prowessFormula(physique->getDexterity(), prowess->getDexterity(), mental->getDexterity(), psychological->getDexterity(), aggression->getDexterity()) * modifier;
@@ -342,7 +342,7 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	craftingValues->setCapValue("fierceness", fiercenessMax);
 
 	craftingValues->addExperimentalAttribute("power", "expAggressionProfile", 1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("power", 1000);
+	craftingValues->setCapValue("power", powerMax);
 
 
 
@@ -633,7 +633,7 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 	}
 
 	// Attribute 1
-	capValue = craftingValues->getCapValue(attribute1);
+	capValue = 1000;//craftingValues->getCapValue(attribute1);
 	float att1Mod = (swap1 ? (modifier * signSwap) : modifier);
 
 	newValue = attValue1 + (attValue2 / (attValue1 + attValue2) * att1Mod);
@@ -652,7 +652,7 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 #endif
 
 	// Attribute 2
-	capValue = craftingValues->getCapValue(attribute2);
+	capValue = 1000;//craftingValues->getCapValue(attribute2);
 	float att2Mod = (swap2 ? (modifier * signSwap) : modifier);
 
 	newValue = attValue2 + (attValue1 / (attValue1 + attValue2) * att2Mod);
