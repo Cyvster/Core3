@@ -370,7 +370,7 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 			continue;
 
 		// Get attribute cap value, update max value for experimentation and get max percentage
-		capValue = 1000;//craftingValues->getCapValue(attribute);
+		capValue = craftingValues->getCapValue(attribute);
 		craftingValues->setMaxValue(attribute, 1000.f);
 
 		maxPercentage = (capValue / 1000.f);
@@ -633,7 +633,7 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 	}
 
 	// Attribute 1
-	capValue = 1000;//craftingValues->getCapValue(attribute1);
+	capValue = craftingValues->getCapValue(attribute1);
 	float att1Mod = (swap1 ? (modifier * signSwap) : modifier);
 
 	newValue = attValue1 + (attValue2 / (attValue1 + attValue2) * att1Mod);
@@ -652,7 +652,7 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 #endif
 
 	// Attribute 2
-	capValue = 1000;//craftingValues->getCapValue(attribute2);
+	capValue = craftingValues->getCapValue(attribute2);
 	float att2Mod = (swap2 ? (modifier * signSwap) : modifier);
 
 	newValue = attValue2 + (attValue1 / (attValue1 + attValue2) * att2Mod);
