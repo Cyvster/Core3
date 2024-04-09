@@ -38,7 +38,7 @@ protected:
 
 	// 12/22 == 12/22 = 0.5
 	float calcMaxPercentage(uint32 value,uint32 diff) {
-		float percent = 1;//((float)diff/(float)value);
+		float percent = ((float)diff/(float)value);
 
 		if (percent > 1)
 			percent = 1;
