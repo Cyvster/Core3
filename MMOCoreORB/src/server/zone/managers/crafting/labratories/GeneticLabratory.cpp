@@ -282,11 +282,11 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	*/
 
 	// Physique: Fortitude and Hardiness
-	float fortitudeMax = Genetics::physiqueFormula(physique->getFortitude(), prowess->getFortitude(), mental->getFortitude(), psychological->getFortitude(), aggression->getFortitude()) * modifier;
-	float hardinessMax = Genetics::physiqueFormula(physique->getHardiness(), prowess->getHardiness(), mental->getHardiness(), psychological->getHardiness(), aggression->getHardiness()) * modifier;
+	float fortitudeMax = 200;//Genetics::physiqueFormula(physique->getFortitude(), prowess->getFortitude(), mental->getFortitude(), psychological->getFortitude(), aggression->getFortitude()) * modifier;
+	float hardinessMax = 800;//Genetics::physiqueFormula(physique->getHardiness(), prowess->getHardiness(), mental->getHardiness(), psychological->getHardiness(), aggression->getHardiness()) * modifier;
 
 	// Prowess: Endurance and Dexterity
-	float dexterityMax = Genetics::prowessFormula(physique->getDexterity(), prowess->getDexterity(), mental->getDexterity(), psychological->getDexterity(), aggression->getDexterity()) * modifier;
+	float dexterityMax = 1000;//Genetics::prowessFormula(physique->getDexterity(), prowess->getDexterity(), mental->getDexterity(), psychological->getDexterity(), aggression->getDexterity()) * modifier;
 	float enduranceMax = Genetics::prowessFormula(physique->getEndurance(), prowess->getEndurance(), mental->getEndurance(), psychological->getEndurance(), aggression->getEndurance()) * modifier;
 
 	// Mental: Intellect and Cleverness
@@ -342,7 +342,7 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	craftingValues->setCapValue("fierceness", fiercenessMax);
 
 	craftingValues->addExperimentalAttribute("power", "expAggressionProfile", 1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("power", powerMax);
+	craftingValues->setCapValue("power", 1000);
 
 
 
