@@ -315,34 +315,35 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 
 	// Add Attribute and set the max and min values.
 	craftingValues->addExperimentalAttribute("fortitude", "expPhysiqueProfile", 1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("fortitude", 1000);
+	craftingValues->setCapValue("fortitude", fortitudeMax);
 
 	craftingValues->addExperimentalAttribute("hardiness", "expPhysiqueProfile", 1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("hardiness", 1000);
+	craftingValues->setCapValue("hardiness", hardinessMax);
 
 	craftingValues->addExperimentalAttribute("dexterity", "expProwessProfile", 1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("dexterity", 1000);
+	craftingValues->setCapValue("dexterity", dexterityMax);
 
 	craftingValues->addExperimentalAttribute("endurance", "expProwessProfile",  1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("endurance", 1000);
+	craftingValues->setCapValue("endurance", enduranceMax);
 
 	craftingValues->addExperimentalAttribute("intellect", "expMentalProfile", 1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("intellect", 1000);
+	craftingValues->setCapValue("intellect", intellectMax);
 
 	craftingValues->addExperimentalAttribute("cleverness", "expMentalProfile", 1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("cleverness", 1000);
+	craftingValues->setCapValue("cleverness", clevernessMax);
 
 	craftingValues->addExperimentalAttribute("dependability", "expPsychologicalProfile", 1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("dependability", 1000);
+	craftingValues->setCapValue("dependability", dependabilityMax);
 
 	craftingValues->addExperimentalAttribute("courage", "expPsychologicalProfile", 1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("courage", 1000);
+	craftingValues->setCapValue("courage", courageMax);
 
 	craftingValues->addExperimentalAttribute("fierceness", "expAggressionProfile", 1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("fierceness", 1000);
+	craftingValues->setCapValue("fierceness", fiercenessMax);
 
 	craftingValues->addExperimentalAttribute("power", "expAggressionProfile", 1.0f, 1000.f, 0, false, AttributesMap::LINEARCOMBINE);
-	craftingValues->setCapValue("power", 1000);
+	craftingValues->setCapValue("power", powerMax);
+
 
 
 	/*
