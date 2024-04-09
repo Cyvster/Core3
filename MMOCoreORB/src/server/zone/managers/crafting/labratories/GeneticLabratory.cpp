@@ -565,7 +565,7 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 	String attribute1, attribute2;
 
 	String experimentedGroup = craftingValues->getVisibleAttributeGroup(rowEffected);
-	int totalAttributes = 1000;//craftingValues->getTotalExperimentalAttributes();
+	int totalAttributes = craftingValues->getTotalExperimentalAttributes();
 	Vector<String> randomFailed;
 
 #ifdef DEBUG_GENETIC_LAB
