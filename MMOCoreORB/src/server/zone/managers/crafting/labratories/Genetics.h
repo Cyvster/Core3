@@ -240,7 +240,7 @@ public:
 	}
 
 	static float initialValue(float maxValue) {
-		return (maxValue * ((maxValue / 1000.0f) + 0.15f));
+		return (maxValue * 0.7f);//((maxValue / 1000.0f) + 0.15f));
 	}
 
 	/**
