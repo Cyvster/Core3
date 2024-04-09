@@ -451,7 +451,7 @@ public:
 	}
 
 	static float determineMaxExperimentation(float min, float max) {
-		return ceil((1000 / 10.0f) * .01f); // deterine max percentage. we will lock the stats each round after experimentation to handle adjustment our selves.
+		return ceil((max / 10.0f) * .01f); // deterine max percentage. we will lock the stats each round after experimentation to handle adjustment our selves.
 	}
 
 	// level factor rules
