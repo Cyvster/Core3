@@ -282,20 +282,20 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	*/
 
 	// Physique: Fortitude and Hardiness
-	float fortitudeMax = 1000;//Genetics::physiqueFormula(physique->getFortitude(), prowess->getFortitude(), mental->getFortitude(), psychological->getFortitude(), aggression->getFortitude()) * modifier;
-	float hardinessMax = 1000;//Genetics::physiqueFormula(physique->getHardiness(), prowess->getHardiness(), mental->getHardiness(), psychological->getHardiness(), aggression->getHardiness()) * modifier;
+	float fortitudeMax = Genetics::physiqueFormula(physique->getFortitude(), prowess->getFortitude(), mental->getFortitude(), psychological->getFortitude(), aggression->getFortitude()) * modifier;
+	float hardinessMax = Genetics::physiqueFormula(physique->getHardiness(), prowess->getHardiness(), mental->getHardiness(), psychological->getHardiness(), aggression->getHardiness()) * modifier;
 
 	// Prowess: Endurance and Dexterity
-	float dexterityMax = 1000;//Genetics::prowessFormula(physique->getDexterity(), prowess->getDexterity(), mental->getDexterity(), psychological->getDexterity(), aggression->getDexterity()) * modifier;
-	float enduranceMax = 1000;//Genetics::prowessFormula(physique->getEndurance(), prowess->getEndurance(), mental->getEndurance(), psychological->getEndurance(), aggression->getEndurance()) * modifier;
+	float dexterityMax = Genetics::prowessFormula(physique->getDexterity(), prowess->getDexterity(), mental->getDexterity(), psychological->getDexterity(), aggression->getDexterity()) * modifier;
+	float enduranceMax = Genetics::prowessFormula(physique->getEndurance(), prowess->getEndurance(), mental->getEndurance(), psychological->getEndurance(), aggression->getEndurance()) * modifier;
 
 	// Mental: Intellect and Cleverness
-	float intellectMax = 1000;//Genetics::mentalFormula(physique->getIntellect(), prowess->getIntellect(), mental->getIntellect(), psychological->getIntellect(), aggression->getIntellect()) * modifier;
-	float clevernessMax = 1000;//Genetics::mentalFormula(physique->getCleverness(), prowess->getCleverness(), mental->getCleverness(), psychological->getCleverness(), aggression->getCleverness()) * modifier;
+	float intellectMax = Genetics::mentalFormula(physique->getIntellect(), prowess->getIntellect(), mental->getIntellect(), psychological->getIntellect(), aggression->getIntellect()) * modifier;
+	float clevernessMax = Genetics::mentalFormula(physique->getCleverness(), prowess->getCleverness(), mental->getCleverness(), psychological->getCleverness(), aggression->getCleverness()) * modifier;
 
 	// Physiological: Dependability and Coursage
-	float dependabilityMax = 1000;//Genetics::physchologicalFormula(physique->getDependability(), prowess->getDependability(), mental->getDependability(), psychological->getDependability(), aggression->getDependability()) * modifier;
-	float courageMax = 1000;//Genetics::physchologicalFormula(physique->getCourage(), prowess->getCourage(), mental->getCourage(), psychological->getCourage(), aggression->getCourage()) * modifier;
+	float dependabilityMax = Genetics::physchologicalFormula(physique->getDependability(), prowess->getDependability(), mental->getDependability(), psychological->getDependability(), aggression->getDependability()) * modifier;
+	float courageMax = Genetics::physchologicalFormula(physique->getCourage(), prowess->getCourage(), mental->getCourage(), psychological->getCourage(), aggression->getCourage()) * modifier;
 
 	// Aggression: Ferocity and Power
 	float fiercenessMax = Genetics::aggressionFormula(physique->getFierceness(), prowess->getFierceness(), mental->getFierceness(), psychological->getFierceness(), aggression->getFierceness()) * modifier;
@@ -373,7 +373,7 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 		capValue = craftingValues->getCapValue(attribute);
 		craftingValues->setMaxValue(attribute, 1000.f);
 
-		maxPercentage = 1.0f;//(capValue / 1000.f);
+		maxPercentage = (capValue / 1000.f);
 
 		// Get initial assembled value
 		initialValue = Genetics::initialValue(capValue);
