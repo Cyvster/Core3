@@ -377,16 +377,16 @@ void DnaManager::generateSample(Creature* creature, CreatureObject* player, int 
 	int ferocity = creatureTemplate->getFerocity();
 	int creatureLevel = creature->getLevel();
 
-	int hardiness = 650;//Genetics::hamToValue(creature->getMaxHAM(0), quality);
-	int fortitude = 650;//Genetics::resistanceToValue(creature->getEffectiveResist(), creature->getArmor(), quality);
-	int dexterity = 650;//Genetics::hamToValue(creature->getMaxHAM(3), quality);
-	int endurance = 650;//Genetics::randomizeValue(500, quality);
-	int intellect = 650;//Genetics::hamToValue(creature->getMaxHAM(6), quality);
-	int cleverness = 650;//Genetics::hitChanceToValue(creature->getChanceHit(), quality);
-	int dependability = 650;//Genetics::dietToValue(creatureTemplate->getDiet(), quality);
-	int courage = 650;//Genetics::meatTypeToValue(creatureTemplate->getMeatType(), quality);
-	int fierceness = 650;//Genetics::ferocityToValue(ferocity, quality);
-	int power = 650;//Genetics::damageToValue((creature->getDamageMin() + creature->getDamageMax()) / 2, quality);
+	int hardiness = 1000;//Genetics::hamToValue(creature->getMaxHAM(0), quality);
+	int fortitude = 1000;//Genetics::resistanceToValue(creature->getEffectiveResist(), creature->getArmor(), quality);
+	int dexterity = 1000;//Genetics::hamToValue(creature->getMaxHAM(3), quality);
+	int endurance = 1000;//Genetics::randomizeValue(500, quality);
+	int intellect = 1000;//Genetics::hamToValue(creature->getMaxHAM(6), quality);
+	int cleverness = 1000;//Genetics::hitChanceToValue(creature->getChanceHit(), quality);
+	int dependability = 1000;//Genetics::dietToValue(creatureTemplate->getDiet(), quality);
+	int courage = 1000;//Genetics::meatTypeToValue(creatureTemplate->getMeatType(), quality);
+	int fierceness = 1000;//Genetics::ferocityToValue(ferocity, quality);
+	int power = 1000;//Genetics::damageToValue((creature->getDamageMin() + creature->getDamageMax()) / 2, quality);
 
 	// We should now have enough to generate a sample
 	ManagedReference<DnaComponent*> prototype = zoneServer->createObject(qualityTemplates.get(quality), 1).castTo<DnaComponent*>();
