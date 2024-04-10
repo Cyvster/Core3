@@ -747,7 +747,7 @@ void MissionManagerImplementation::randomizeFactionTerminalMissions(CreatureObje
 
 Vector3 getMissionPosition(CreatureObject* player, float distance, float angle) {
 	float angleRads = angle * (Math::PI / 180.0f);
-	float newAngle = angleRads * (Math::PI / 2);
+	float newAngle = angleRads + (Math::PI / 2);
 
 	float newX = player->getWorldPositionX() + (cos(newAngle) * distance); 
 	float newY = player->getWorldPositionY() + (sin(newAngle) * distance);
@@ -841,7 +841,7 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 		float direction = (float)System::random(360);
 
 		//Player direction choice +/- 5 degrees deviation
-		if (dirChoice > 0) {
+		if (dirChoice >= 0) {
 			int deviation = System::random(5);
 			int isMinus = System::random(100);
 
@@ -853,6 +853,10 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 			//Fix value more than max (360)
 			if (direction > 360) 
 				direction -= 360;
+			
+			//Fix value less than min (0)
+			if (direction < 0) 
+				direction += 360
 		}
 
 		// startPos = player->getWorldCoordinate((float)distance, (float)System::random(360), false);

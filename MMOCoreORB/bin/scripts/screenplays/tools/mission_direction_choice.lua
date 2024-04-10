@@ -16,8 +16,8 @@ mission_direction_choice = ScreenPlay:new {
 	numberOfActs = 1,
 
 	directions = {
-		{dirDesc = "Reset mission direction", dirSelect = 0},
-		{dirDesc = "North", dirSelect = 360},
+		{dirDesc = "Reset mission direction", dirSelect = -1},
+		{dirDesc = "North", dirSelect = 0},
 		{dirDesc = "North East", dirSelect = 315},
 		{dirDesc = "East", dirSelect = 270}, 
 		{dirDesc = "South East", dirSelect = 225}, 
