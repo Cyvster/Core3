@@ -770,7 +770,7 @@ void CityManagerImplementation::processCityUpdate(CityRegion* city) {
 
 			if (ghost != nullptr) {
 				TransactionLog trx(TrxCode::EXPERIENCE, mayor);
-				ghost->addExperience(trx, "political", 750, true);
+				ghost->addExperience(trx, "political", 40000, true);
 			}
 		}
 		updateCityVoting(city);
