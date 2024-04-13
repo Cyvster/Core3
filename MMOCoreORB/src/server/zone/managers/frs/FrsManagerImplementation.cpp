@@ -2881,6 +2881,9 @@ bool FrsManagerImplementation::isPlayerInEnclave(CreatureObject* player) {
 }
 
 void FrsManagerImplementation::sendRankPlayerList(CreatureObject* player, int councilType, int rank) {
+	player->sendSystemMessage("This option has been disabled"); //disabled rank list due to size causing issues
+	return;
+	
 	if (player == nullptr)
 		return;
 
