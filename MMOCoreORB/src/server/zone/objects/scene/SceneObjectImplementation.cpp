@@ -199,7 +199,7 @@ void SceneObjectImplementation::loadTemplateData(SharedObjectTemplate* templateD
 	}
 }
 
-void SceneObjectImplementation::setZoneComponent(const String& name) {
+void SceneObjectImplementation::setGroundZoneComponent(const String& name) {
 	if (name.isEmpty())
 		return;
 
@@ -2025,6 +2025,14 @@ bool SceneObject::isAiAgent() {
 	return false;
 }
 
+bool SceneObjectImplementation::isVendor() {
+	return false;
+}
+
+bool SceneObject::isVendor() {
+	return false;
+}
+
 bool SceneObjectImplementation::isShipAiAgent() {
 	return false;
 }
@@ -2460,6 +2468,15 @@ bool SceneObjectImplementation::isNearBank() {
 	}
 
 	uint64 parentID = getParentID();
+
+	if (parentID != 0 && isPlayerCreature()) {
+		ManagedReference<SceneObject*> parent = getParent();
+
+		if (parent != nullptr && (parent->isMount() || parent->isVehicleObject())) {
+			parentID = parent->getParentID();
+		}
+	}
+
 	float bankRangeSq = 15.f * 15.f;
 	Vector3 thisWorldPos = getWorldPosition();
 

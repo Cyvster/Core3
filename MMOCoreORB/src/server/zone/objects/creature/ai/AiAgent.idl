@@ -924,7 +924,7 @@ class AiAgent extends CreatureObject {
 	 * will overwrite the current wait timer
 	 **/
 	@preLocked
-	public native void setWait(int wait);
+	public native void setWait(unsigned long wait);
 
 	/**
 	 * Sets the wait timer to current time and removes
@@ -1319,6 +1319,9 @@ class AiAgent extends CreatureObject {
 	public boolean isAiAgent() {
 		return true;
 	}
+
+	@dirty
+	public native boolean isVendor();
 
 	@dirty
 	@nativeStub

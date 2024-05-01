@@ -2249,17 +2249,17 @@ void CreatureObjectImplementation::notifyInsert(TreeEntry* obj) {
 	if (linkedCreature != nullptr && linkedCreature->getParent() == asCreatureObject() && linkedCreature->getObjectID() != obj->getObjectID()) {
 #if DEBUG_COV
 		if (entryObject->isPlayerCreature())
-			info(true) << "linkedCreature: " << linkedCreature->getDisplayedName() << " -- proxy notifyInsert for - " << entryObject->getDisplayedName() << " ID: " << obj->getObjectID();
+			info(true) << "linkedCreature: " << linkedCreature->getDisplayedName() << " -- proxy notifyInsert for - " << entryObject->getDisplayedName() << " ID: " << entryObject->getObjectID() << " Template: " << entryObject->getObjectTemplate()->getAppearanceFilename();
 #endif // DEBUG_COV
 
 		if (linkedCreature->getCloseObjects() != nullptr) {
 			linkedCreature->addInRangeObject(entryObject);
-
-			entryObject->sendTo(linkedCreature, true, false);
 		}
 
 		if (entryObject->getCloseObjects() != nullptr) {
 			entryObject->addInRangeObject(linkedCreature);
+		} else {
+			entryObject->notifyInsert(linkedCreature);
 		}
 	}
 }
@@ -2456,8 +2456,10 @@ void CreatureObjectImplementation::feignDeath() {
 	observerTypes.add(ObserverEventType::COMBATCOMMANDENQUEUED);
 
 	buff->init(&observerTypes);
+
 	buff->setSkillModifier("private_damage_divisor", 4);
 	buff->setSkillModifier("private_damage_multiplier", 5);
+
 	creo->addBuff(buff);
 
 	// forcePeace is a scheduledLambda in the CombatManager so should delay until combat action is complete
@@ -2574,8 +2576,7 @@ void CreatureObjectImplementation::setStunnedState(int durationSeconds) {
 
 		Locker blocker(multBuff);
 
-		multBuff->setSkillModifier("private_damage_divisor", 5);
-		multBuff->setSkillModifier("private_damage_multiplier", 4);
+		multBuff->setSkillModifier("private_damage_divisor_stun", 20);
 
 		addBuff(multBuff);
 	}
@@ -2630,7 +2631,7 @@ void CreatureObjectImplementation::setIntimidatedState(int durationSeconds) {
 
 		Locker blocker(multBuff);
 
-		multBuff->setSkillModifier("private_damage_divisor", 2);
+		multBuff->setSkillModifier("private_damage_divisor_intimidate", 50);
 
 		addBuff(multBuff);
 	}
