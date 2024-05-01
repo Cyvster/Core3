@@ -164,7 +164,7 @@ void MissionObjectImplementation::setRewardCredits(int creds, bool notifyClient)
 		if (player->isGrouped()) {
 			Reference<GroupObject*> group = player->getGroup();
 
-			rewardCreditsDivisor = group->getNumberOfPlayerMembers();
+			rewardCreditsDivisor = 1;//group->getNumberOfPlayerMembers();
 		} else {
 			rewardCreditsDivisor = 1;
 		}

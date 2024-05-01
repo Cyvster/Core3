@@ -76,7 +76,7 @@ ConfusionShotCommand = {
 
 	combatSpam = "confusionshot",
 	
-	weaponType = CARBINEWEAPON,
+	weaponType = CARBINEWEAPON,PISTOLWEAPON,
 
 	range = -1
 }

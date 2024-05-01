@@ -573,7 +573,7 @@ void GroupObjectImplementation::calculateGroupLevel() {
 					factionPetLevel += member->getLevel() / 5;
 				}
 
-				groupLevel += member->getLevel() / 5;
+				groupLevel += member->getLevel() / 2;
 		} else if (member->isPlayerCreature()) {
 			int memberLevel = member->getLevel();
 

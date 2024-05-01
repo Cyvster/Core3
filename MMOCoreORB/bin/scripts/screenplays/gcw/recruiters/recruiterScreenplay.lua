@@ -767,10 +767,10 @@ function recruiterScreenplay:handleGoOnLeave(pPlayer)
 		return
 	end
 
-	if (CreatureObject(pPlayer):hasSkill("force_rank_light_novice") or CreatureObject(pPlayer):hasSkill("force_rank_dark_novice")) then
-		CreatureObject(pPlayer):sendSystemMessage("@faction_recruiter:jedi_cant_resign")
-		return
-	end
+	--if (CreatureObject(pPlayer):hasSkill("force_rank_light_novice") or CreatureObject(pPlayer):hasSkill("force_rank_dark_novice")) then
+	--	CreatureObject(pPlayer):sendSystemMessage("@faction_recruiter:jedi_cant_resign")
+	--	return
+	--end
 
 	deleteData(CreatureObject(pPlayer):getObjectID() .. ":changingFactionStatus")
 	CreatureObject(pPlayer):setFactionStatus(0)
@@ -781,10 +781,10 @@ function recruiterScreenplay:handleGoCovert(pPlayer)
 		return
 	end
 
-	if (CreatureObject(pPlayer):hasSkill("force_rank_light_novice") or CreatureObject(pPlayer):hasSkill("force_rank_dark_novice")) then
-		CreatureObject(pPlayer):sendSystemMessage("@faction_recruiter:jedi_cant_go_covert")
-		return
-	end
+	--if (CreatureObject(pPlayer):hasSkill("force_rank_light_novice") or CreatureObject(pPlayer):hasSkill("force_rank_dark_novice")) then
+	--	CreatureObject(pPlayer):sendSystemMessage("@faction_recruiter:jedi_cant_go_covert")
+	--	return
+	--end
 
 	deleteData(CreatureObject(pPlayer):getObjectID() .. ":changingFactionStatus")
 	CreatureObject(pPlayer):setFactionStatus(1)

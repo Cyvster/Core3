@@ -683,13 +683,14 @@ int PlayerObjectImplementation::addExperience(TransactionLog& trx, const String&
 		}
 	}
 
-	int xpCap = -1;
+	int xpCap = 10000000;
+	
 
-	if (xpTypeCapList.contains(xpType))
-		xpCap = xpTypeCapList.get(xpType);
+	/*if (xpTypeCapList.contains(xpType))
+		xpCap = xpTypeCapList.get(xpType);*/
 
 	if (xpCap < 0)
-		xpCap = 2000;
+		xpCap = 10000000;
 
 	if (xp > xpCap) {
 		valueToAdd = xpCap - (xp - valueToAdd);
@@ -2820,7 +2821,6 @@ int PlayerObjectImplementation::getLotsRemaining() {
 
 	return lotsRemaining;
 }
-
 int PlayerObjectImplementation::getOwnedChatRoomCount() {
 	ManagedReference<ChatManager*> chatManager = getZoneServer()->getChatManager();
 	if (chatManager == nullptr)

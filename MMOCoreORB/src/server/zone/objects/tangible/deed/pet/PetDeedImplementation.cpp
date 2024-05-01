@@ -51,7 +51,7 @@ void PetDeedImplementation::fillAttributeList(AttributeListMessage* alm, Creatur
 
 	// Armor Rating
 	if (armor == 0)
-		alm->insertAttribute("armor_rating", "None");
+		alm->insertAttribute("armor_rating", "Light");
 	else if (armor == 1)
 		alm->insertAttribute("armor_rating", "Light");
 	else if (armor == 2)
@@ -363,7 +363,7 @@ void PetDeedImplementation::updateCraftingValues(CraftingValues* values, bool fi
 		}
 
 		// Calculate and set level
-		level = Genetics::calculatePetLevel(component);
+		level = 35;//Genetics::calculatePetLevel(component);
 	}
 
 	CreatureTemplateManager* creatureTemplateManager = CreatureTemplateManager::instance();
@@ -669,7 +669,8 @@ bool PetDeedImplementation::adjustPetStats(CreatureObject* player, CreatureObjec
 	// Adjust Armor Now
 	fortitude = DnaManager::instance()->valueForLevel(DnaManager::ARM_LEVEL, oldLevel);
 	armor = fortitude / 500;
-	float effectiveness = (int)(((fortitude - (armor * 500)) / 50) * 5);
+	//float effectiveness = (int)(((fortitude - (armor * 500)) / 50) * 5);
+	float effectiveness = (int)(fortitude / 13.33);
 	if (!isSpecialResist(SharedWeaponObjectTemplate::KINETIC) && kinResist > 0)
 		kinResist = effectiveness;
 	if (!isSpecialResist(SharedWeaponObjectTemplate::ACID) && acidResist > 0)

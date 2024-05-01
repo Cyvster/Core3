@@ -37,15 +37,16 @@ function ForceShrineMenuComponent:doMeditate(pObject, pPlayer)
 	end
 
 	if (not CreatureObject(pPlayer):hasSkill("force_title_jedi_rank_02") and CreatureObject(pPlayer):hasScreenPlayState(32, "VillageJediProgression")) then
-		local currentTrial = JediTrials:getCurrentTrial(pPlayer)
-
-		if (not JediTrials:isOnPadawanTrials(pPlayer)) then
-			PadawanTrials:startPadawanTrials(pObject, pPlayer)
-		elseif (currentTrial == 0) then
-			PadawanTrials:startNextPadawanTrial(pObject, pPlayer)
-		else
-			PadawanTrials:showCurrentTrial(pObject, pPlayer)
-		end
+		--local currentTrial = JediTrials:getCurrentTrial(pPlayer)
+		JediTrials:unlockJediPadawan(pPlayer)
+		
+		--if (not JediTrials:isOnPadawanTrials(pPlayer)) then
+		--	PadawanTrials:startPadawanTrials(pObject, pPlayer)
+		--elseif (currentTrial == 0) then
+		--	PadawanTrials:startNextPadawanTrial(pObject, pPlayer)
+		--else
+		--	PadawanTrials:showCurrentTrial(pObject, pPlayer)
+		--end
 	elseif (JediTrials:isOnKnightTrials(pPlayer)) then
 		local pPlayerShrine = KnightTrials:getTrialShrine(pPlayer)
 

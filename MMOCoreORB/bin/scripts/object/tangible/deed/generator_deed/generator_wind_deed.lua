@@ -54,7 +54,7 @@ object_tangible_deed_generator_deed_generator_wind_deed = object_tangible_deed_g
 	experimentalGroupTitles = {"null", "null", "expEffeciency", "expStorage", "null"},
 	experimentalSubGroupTitles = {"null", "null", "extractrate", "hoppersize", "hitpoints"},
 	experimentalMin = {0, 0, 4, 25000, 1000},
-	experimentalMax = {0, 0, 10, 50000, 1000},
+	experimentalMax = {0, 0, 3500, 10000000, 1000},
 	experimentalPrecision = {0, 0, 0, 0, 0},
 	experimentalCombineType = {0, 0, 1, 1, 4},
 }

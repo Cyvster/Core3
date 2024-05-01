@@ -115,7 +115,7 @@ public:
 		if (medicalRatingNotIncludingCityBonus <= 0) {
 			creature->sendSystemMessage("@healing_response:must_be_near_droid"); //You must be in a hospital, at a campsite, or near a surgical droid to do that.
 			return false;
-		} else {
+		} /*else {
 			// Building private medical rating always takes precedence, If it a client object structure, no medical rating will prevent buffs/wound healing.
 			ManagedReference<SceneObject*> root = creature->getRootParent();
 
@@ -125,7 +125,7 @@ public:
 					return false;
 				}
 			}
-		}
+		}*/
 
 		if (creature->isInCombat()) {
 			creature->sendSystemMessage("You cannot heal your own wounds while still in Combat.");
@@ -344,8 +344,8 @@ public:
 		Locker locker(woundPack);
 		woundPack->decreaseUseCount();
 
-		if (creatureTarget != creature && !creatureTarget->isPet())
-			awardXp(creature, "medical", woundHealed); //No experience for healing yourself or pets.
+		//if (creatureTarget != creature && !creatureTarget->isPet())
+		awardXp(creature, "medical", woundHealed); //No experience for healing yourself or pets.
 
 		doAnimations(creature, creatureTarget);
 
