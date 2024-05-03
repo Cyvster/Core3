@@ -57,7 +57,7 @@ FastBlastCommand = {
 	animType = GENERATE_RANGED,
 
 	combatSpam = "fastblast",
-	weaponType = CARBINEWEAPON,PISTOLWEAPON,
+	weaponType = CARBINEWEAPON + PISTOLWEAPON,
 
 	range = -1
 }
