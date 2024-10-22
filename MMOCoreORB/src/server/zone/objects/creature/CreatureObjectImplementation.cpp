@@ -282,8 +282,11 @@ void CreatureObjectImplementation::finalize() {
 void CreatureObjectImplementation::sendToOwner(bool doClose) {
 	auto owner = this->owner.get();
 
-	if (owner == nullptr)
+	if (owner == nullptr) {
 		return;
+	}
+
+	// info(true) << getDisplayedName() << " sendToOwner -- START";
 
 	setMovementCounter(0);
 
@@ -305,8 +308,9 @@ void CreatureObjectImplementation::sendToOwner(bool doClose) {
 
 	if (rootParent != nullptr) {
 		rootParent->sendTo(asCreatureObject(), true);
-	} else
+	} else {
 		sendTo(asCreatureObject(), doClose);
+	}
 
 	CloseObjectsVector* vec = getCloseObjects();
 
@@ -334,10 +338,13 @@ void CreatureObjectImplementation::sendToOwner(bool doClose) {
 
 	}
 
-	if (group != nullptr)
+	if (group != nullptr) {
 		group->sendTo(asCreatureObject(), true);
+	}
 
 	owner->resetPacketCheckupTime();
+
+	// info(true) << getDisplayedName() << " sendToOwner -- COMPLETE";
 }
 
 void CreatureObjectImplementation::sendBaselinesTo(SceneObject* player) {
@@ -2197,7 +2204,7 @@ void CreatureObjectImplementation::notifyLoadFromDatabase() {
 		getZoneServer()->getPlayerManager()->fixHAM(asCreatureObject());
 		getZoneServer()->getPlayerManager()->fixBuffSkillMods(asCreatureObject());
         }
-  
+
 	for (int i = 0; i < creatureBuffs.getBuffListSize(); ++i) {
 		ManagedReference<Buff*> buff = creatureBuffs.getBuffByIndex(i);
 
@@ -3404,6 +3411,8 @@ bool CreatureObjectImplementation::isAttackableBy(CreatureObject* creature, bool
 		if (ghost->isOnLoadScreen())
 			return false;
 
+		// info(true) << getDisplayedName() << " passed basic checks, entering faction checks";
+
 		// Get factions
 		uint32 thisFaction = getFaction();
 		uint32 creatureFaction = creature->getFaction();
@@ -3461,37 +3470,47 @@ bool CreatureObjectImplementation::isAttackableBy(CreatureObject* creature, bool
 		// PvP Attackable checks - both this creo and attacker are players
 		if (creature->isPlayerCreature()) {
 			// PvP Mode Config active, all players are attackable to one another
-			if (ConfigManager::instance()->getPvpMode())
+			if (ConfigManager::instance()->getPvpMode()) {
 				return true;
+			}
 
 			PlayerObject* targetGhost = creature->getPlayerObject();
 
-			if (targetGhost == nullptr)
+			if (targetGhost == nullptr) {
 				return false;
+			}
 
-			if (hasPersonalEnemyFlag(creature) && creature->hasPersonalEnemyFlag(asCreatureObject()))
+			// info(true) << creature->getDisplayedName() << " passed basic checks against " << getDisplayedName();
+
+			if (hasPersonalEnemyFlag(creature) && creature->hasPersonalEnemyFlag(asCreatureObject())) {
 				return true;
+			}
 
 			// Duel check & Bounty TEF return true even when players are grouped
 			bool areInDuel = (ghost->requestedDuelTo(creature) && targetGhost->requestedDuelTo(asCreatureObject()));
 
-			if (areInDuel)
+			if (areInDuel) {
 				return true;
+			}
 
-			if (creature->hasBountyMissionFor(asCreatureObject()) || (ghost->hasBhTef() && hasBountyMissionFor(creature)))
+			if (creature->hasBountyMissionFor(asCreatureObject()) || (ghost->hasBhTef() && hasBountyMissionFor(creature))) {
 				return true;
+			}
 
 			// Group prevents players being attackable to one another from Overt status
-			if (getGroupID() != 0 && getGroupID() == creature->getGroupID())
+			if (getGroupID() != 0 && getGroupID() == creature->getGroupID()) {
 				return false;
+			}
 
-			if (ghost->isInPvpArea(true) && targetGhost->isInPvpArea(true))
+			if (ghost->isInPvpArea(true) && targetGhost->isInPvpArea(true)) {
 				return true;
+			}
 
 			ManagedReference<GuildObject*> guildObject = guild.get();
 
-			if (guildObject != nullptr && guildObject->isInWaringGuild(creature))
+			if (guildObject != nullptr && guildObject->isInWaringGuild(creature)) {
 				return true;
+			}
 
 			// PvP Faction Checks - Superseded by TEF, duel, group and guild war checks
 			if (thisFaction == creatureFaction)
@@ -4087,14 +4106,15 @@ void CreatureObjectImplementation::removeOutOfRangeObjects() {
 		return;
 	}
 
-	auto closeObjectsVector = getCloseObjects();
-
-	if (closeObjectsVector == nullptr)
-		return;
-
 	auto ghost = getPlayerObject();
 
 	if (ghost == nullptr) {
+		return;
+	}
+
+	auto closeObjectsVector = getCloseObjects();
+
+	if (closeObjectsVector == nullptr) {
 		return;
 	}
 
@@ -4105,7 +4125,17 @@ void CreatureObjectImplementation::removeOutOfRangeObjects() {
 		return;
 	}
 
-	error() << "Player: " << getDisplayedName() << " ID: " << getObjectID() << " Reached Max COV Count: " << covSize;
+	auto zone = getZone();
+
+	auto message = error();
+	message <<
+	"Player: " << getDisplayedName() << " ID: " << getObjectID() << " Reached Max COV Count: " << covSize << endl <<
+	"Zone: " << (zone != nullptr ? zone->getZoneName() : "null") << endl <<
+	"Current Parent: " << getParentID() << endl <<
+	"Saved Zone: " << ghost->getSavedTerrainName() << endl <<
+	"Saved Parent: " << ghost->getSavedParentID() << endl <<
+	"World Position: " << getWorldPosition().toString();
+	message.flush();
 
 	ghost->setCountMaxCov(covSize);
 }
@@ -4378,4 +4408,32 @@ bool CreatureObjectImplementation::checkInConversationRange(SceneObject* targetO
 	int distanceToCheck = CONVERSATION_MAX_DISTANCE * CONVERSATION_MAX_DISTANCE;
 
 	return sqDistance < distanceToCheck;
+}
+
+void CreatureObjectImplementation::setQueueCommandDeltaTime(const String& commandName, const String& commandGroup) {
+	if (!isPlayerCreature()) {
+		return;
+	}
+
+	if (!commandName.isEmpty()) {
+		cooldownTimerMap->updateToCurrentTime(commandName + "_command_time");
+	}
+
+	if (!commandGroup.isEmpty()) {
+		cooldownTimerMap->updateToCurrentTime(commandGroup + "_command_time");
+	}
+}
+
+uint64 CreatureObjectImplementation::getQueueCommandDeltaTime(const String& commandName) {
+	if (!isPlayerCreature() || commandName.isEmpty()) {
+		return INT64_MAX;
+	}
+
+	auto commandTime = cooldownTimerMap->getTime(commandName + "_command_time");
+
+	if (commandTime == nullptr) {
+		return INT64_MAX;
+	}
+
+	return commandTime->miliDifference();
 }

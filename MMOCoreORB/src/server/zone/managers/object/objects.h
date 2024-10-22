@@ -30,6 +30,7 @@
 #include "server/zone/objects/ship/components/ShipBoosterComponent.h"
 #include "server/zone/objects/ship/components/ShipCapacitorComponent.h"
 #include "server/zone/objects/ship/components/ShipChassisComponent.h"
+#include "server/zone/objects/ship/components/ShipDroidInterfaceComponent.h"
 #include "server/zone/objects/ship/components/ShipEngineComponent.h"
 #include "server/zone/objects/ship/components/ShipReactorComponent.h"
 #include "server/zone/objects/ship/components/ShipShieldComponent.h"
@@ -66,6 +67,7 @@
 #include "server/zone/objects/building/travel/TravelBuildingObject.h"
 #include "server/zone/objects/manufactureschematic/ManufactureSchematic.h"
 #include "server/zone/objects/installation/InstallationObject.h"
+#include "server/zone/objects/installation/TurretObject.h"
 #include "server/zone/objects/installation/factory/FactoryObject.h"
 #include "server/zone/objects/factorycrate/FactoryCrate.h"
 #include "server/zone/objects/installation/shuttle/ShuttleInstallation.h"
@@ -146,9 +148,12 @@
 #include "server/zone/objects/region/SpawnArea.h"
 #include "server/zone/objects/area/space/SpaceActiveArea.h"
 #include "server/zone/objects/area/space/NebulaArea.h"
+#include "server/zone/objects/region/space/SpaceRegion.h"
+#include "server/zone/objects/region/space/SpaceSpawnArea.h"
 #include "server/zone/objects/tangible/misc/ContractCrate.h"
 #include "server/zone/objects/tangible/misc/DeadEyePrototype.h"
 #include "server/zone/objects/tangible/misc/FurnitureObject.h"
 #include "server/zone/objects/tangible/misc/LightObject.h"
+#include "server/zone/objects/tangible/space/content_infrastructure/SpaceSpawner.h"
 
 #endif /* OBJECTS_H_ */

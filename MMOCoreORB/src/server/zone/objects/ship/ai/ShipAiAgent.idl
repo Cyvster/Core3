@@ -36,10 +36,16 @@ include engine.util.u3d.Vector3;
 include server.zone.objects.creature.variables.CooldownTimerMap;
 include engine.util.u3d.Quaternion;
 include server.zone.objects.creature.CreatureObject;
+include server.zone.objects.ship.ShipProjectileData;
+include server.zone.objects.ship.ShipMissileData;
+include server.zone.objects.ship.ShipTurretData;
 
 @json
 class ShipAiAgent extends FighterShipObject {
 	protected transient ShipAiBehaviorEvent behaviorEvent;
+
+	@dereferenced
+	protected transient ReadWriteLock despawnMutex;
 
 	@dereferenced
 	protected transient SpacePatrolPointsVector patrolPoints;
@@ -51,12 +57,6 @@ class ShipAiAgent extends FighterShipObject {
 	protected transient SpacePatrolPoint nextStepPosition;
 
 	@dereferenced
-	protected transient SpacePatrolPoint endMovementPosition;
-
-	@dereferenced
-	protected transient Vector3 lastPosition;
-
-	@dereferenced
 	protected transient Vector3 lastDirection;
 
 	@dereferenced
@@ -64,6 +64,15 @@ class ShipAiAgent extends FighterShipObject {
 
 	@dereferenced
 	protected transient Vector3 nextDirection;
+
+	@dereferenced
+	protected transient Vector3 lastRotation;
+
+	@dereferenced
+	protected transient Vector3 currentRotation;
+
+	@dereferenced
+	protected transient Vector3 nextRotation;
 
 	protected boolean despawnOnNoPlayerInRange;
 
@@ -95,7 +104,6 @@ class ShipAiAgent extends FighterShipObject {
 	protected float coordinateMin;
 	protected float coordinateMax;
 
-	private float currentSpeed;
 	private float lastSpeed;
 
 	@dereferenced
@@ -131,10 +139,18 @@ class ShipAiAgent extends FighterShipObject {
 
 	protected unsigned int shipBitmask;
 
+	protected transient float deltaTime;
+
+	protected transient float missileLockTime;
+
+	@weakReference
+	protected SceneObject homeObject;
+
 	public static final int BEHAVIORINTERVAL = 200; // msec
 
 	public static final float DEFAULTAGGRORADIUS = 768.f;
 	public static final float MAX_ATTACK_DISTANCE = 1280.f;
+	public static final float MAX_EVADE_DURATION = 5.f; // sec
 
 	public static final int OBLIVIOUS = 0;
 	public static final int WATCHING = 1;
@@ -150,6 +166,11 @@ class ShipAiAgent extends FighterShipObject {
 	public static final int NEUTRAL_PROJECTILE = 2;
 	public static final int REBEL_PROJECTILE = 4;
 	public static final int IMPERIAL_PROJECTILE = 6;
+
+	public static final float DEFAULT_PROJECTILE_SPEED = 500.f;
+	public static final float DEFAULT_PROJECTILE_RANGE = 512.f;
+	public static final float DEFAULT_PROJECTILE_REFIRE = 0.5f;
+	public static final float DEFAULT_MISSILE_REFIRE = 5.f;
 
 	protected transient unsigned long customShipAiMap;
 
@@ -197,7 +218,10 @@ class ShipAiAgent extends FighterShipObject {
 	public native void notifyInsert(TreeEntry entry);
 
 	@local
-	public native void notifyDissapear(TreeEntry entry);
+	public abstract native void notifyDissapear(TreeEntry entry);
+
+	@preLocked
+	public abstract native void notifyDespawn(Zone zone);
 
 	@weakReference
 	public ShipObject getFollowShipObject() {
@@ -252,7 +276,7 @@ class ShipAiAgent extends FighterShipObject {
 
 	@local
 	@dereferenced
-	public native Vector3 getInterceptPosition(ShipObject targetShip, float speed, int slot);
+	public native Vector3 getInterceptPosition(ShipObject targetShip, float speed, int slot = -1, int targetSlot = -1);
 
 	@dirty
 	public abstract native float getMaxDistance();
@@ -261,35 +285,62 @@ class ShipAiAgent extends FighterShipObject {
 	public abstract native int setDestination();
 
 	@local
-	public native final Quaternion unitVectorToQuaternion();
+	@dereferenced
+	public native Quaternion radiansToQuaterion(float yaw, float pitch, float roll);
 
-	public native float getRotationRate(float currentRadians, float lastRadians);
+	@local
+	@dereferenced
+	public native Vector3 radiansToUnitVector(float yaw, float pitch);
+
+	@local
+	@dereferenced
+	public native Quaternion unitVectorToQuaternion();
+
+	@local
+	@dereferenced
+	public native Vector3 unitVectorToRotation();
+
+	@local
+	@dereferenced
+	public native Vector3 matrixToUnitVector();
 
 	public native float getMaxThrottle();
 
 	public native float getMinThrottle();
 
+	public native float getMaxTurnRate();
+
+	public native float getRotationRate(float currentRadians, float lastRadians = 0.f);
+
 	public native float qInvSqrt(float x);
+
+	public native float qSqrt(float x);
 
 	public native float qNormalize(@dereferenced Vector3 vec);
 
 	public native boolean setDisabledEngineSpeed();
 
-	public native void setSpeed();
+	public native void setNextSpeed();
 
-	public native void setShipDirection();
+	public native void setNextDirection();
 
 	public native void setNextPosition();
+
+	public native void setDeltaTime();
 
 	@preLocked
 	public abstract native boolean findNextPosition(int maxDistance);
 
-	public abstract native boolean generatePatrol(int num, float dist);
+	public abstract native boolean generatePatrol(int totalPoints, float distance, boolean randomize = true, int pathShape = 0);
+
+	public abstract native void updatePatrolPoints();
 
 	@preLocked
 	public abstract native void leash();
 
 	public abstract native void broadcastTransform(@dereferenced final Vector3 position);
+
+	public native float calculatePixelHeight(@dereferenced final Vector3 position);
 
 	public void clearPatrolPoints() {
 		synchronized (targetMutex) {
@@ -309,6 +360,18 @@ class ShipAiAgent extends FighterShipObject {
 		homeLocation.setPosition(x, z, y);
 		homeLocation.setReached(true);
 		homeLocation.setDirection(direction.getW(), direction.getX(), direction.getZ(), direction.getY());
+	}
+
+	@preLocked
+	public void setHomeObject(SceneObject home) {
+		homeObject = home;
+	}
+
+	@read
+	@local
+	@weakReference
+	public SceneObject getHomeObject() {
+		return homeObject;
 	}
 
 	public void setFollowShipObject(ShipObject ship) {
@@ -505,11 +568,6 @@ class ShipAiAgent extends FighterShipObject {
 		return numberOfPlayersInRange.get();
 	}
 
-	@local
-	@dirty
-	@dereferenced
-	public native Vector3 getCurrentDirectionVector();
-
 	@preLocked
 	public native void setDespawnOnNoPlayerInRange(boolean val);
 
@@ -591,17 +649,68 @@ class ShipAiAgent extends FighterShipObject {
 
 	public native void sendDebugPath();
 
-	public float getCurrentSpeed() {
-		return currentSpeed;
-	}
-
 	@preLocked
 	public native boolean validateTarget();
 
 	@preLocked
 	public native boolean validateTarget(ShipObject targetShip);
 
+	@local
+	@dereferenced
+	public native Vector<unsigned int> getActiveWeaponVector();
+
+	@local
 	public native boolean fireWeaponAtTarget(ShipObject targetShip, unsigned int slot, unsigned int targetSlot);
 
-	public native boolean fireTurretAtTarget(ShipObject targetShip, unsigned int slot, unsigned int targetSlot);
+	@local
+	public native boolean fireProjectileAtTarget(ShipObject targetShip, final ShipProjectileData projectileData, unsigned int slot, unsigned int targetSlot);
+
+	@local
+	public native boolean fireMissileAtTarget(ShipObject targetShip, final ShipProjectileData projectileData, final ShipMissileData missileData, unsigned int slot, unsigned int targetSlot);
+
+	@local
+	public native boolean fireTurretAtTarget(ShipObject targetShip, final ShipProjectileData projectileData, final ShipTurretData turretData, unsigned int slot, unsigned int targetSlot);
+
+	public native float getWeaponRefireDeltaTime(unsigned int slot);
+
+	public native void setWeaponRefireDeltaTime(unsigned int slot);
+
+	public native void initializeTransform(@dereferenced final Vector3 position, @dereferenced final Quaternion direction);
+
+	@local
+	@dereferenced
+	public native Vector3 getHomePosition();
+
+	@read
+	@local
+	@dereferenced
+	public native Vector3 getNextDirectionVector();
+
+	@read
+	@local
+	@dereferenced
+	public native Vector3 getCurrentDirectionVector();
+
+	@read
+	@local
+	@dereferenced
+	public native Vector3 getLastDirectionVector();
+
+	@read
+	@local
+	@dereferenced
+	public native Vector3 getNextRotationVector();
+
+	@read
+	@local
+	@dereferenced
+	public native Vector3 getCurrentRotationVector();
+
+	@read
+	@local
+	@dereferenced
+	public native Vector3 getLastRotationVector();
+
+	@read
+	public native float getLastSpeed();
 }

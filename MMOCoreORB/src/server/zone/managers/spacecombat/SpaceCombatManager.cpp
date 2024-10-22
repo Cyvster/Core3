@@ -11,8 +11,9 @@
 #include "server/zone/packets/jtl/CreateProjectileMessage.h"
 #include "server/zone/packets/ship/OnShipHit.h"
 #include "server/zone/packets/jtl/CreateMissileMessage.h"
+#include "server/zone/packets/ship/DestroyShipComponentMessage.h"
 
-void SpaceCombatManager::broadcastProjectile(ShipObject* ship, const ShipProjectile* projectile) const {
+void SpaceCombatManager::broadcastProjectile(ShipObject* ship, const ShipProjectile* projectile, CreatureObject* player) const {
 	auto cov = ship == nullptr ? nullptr : ship->getCloseObjects();
 	if (cov == nullptr) {
 		return;
@@ -24,7 +25,7 @@ void SpaceCombatManager::broadcastProjectile(ShipObject* ship, const ShipProject
 	for (int i = 0; i < closeObjects.size(); ++i) {
 		auto playerEntry = closeObjects.get(i).castTo<CreatureObject*>();
 
-		if (playerEntry == nullptr) {
+		if (playerEntry == nullptr || playerEntry == player) {
 			continue;
 		}
 
@@ -38,10 +39,14 @@ void SpaceCombatManager::broadcastProjectile(ShipObject* ship, const ShipProject
 void SpaceCombatManager::broadcastMissile(ShipObject* ship, const ShipMissile* missile) const {
 	auto target = missile->getTarget().get();
 
-	if (target != nullptr) {
-		auto message = new CreateMissileMessage(ship, target, missile);
-		ship->broadcastMessage(message, true);
+	if (target == nullptr) {
+		return;
 	}
+
+	Vector<BasePacket*> messages;
+	messages.add(new CreateMissileMessage(ship, target, missile));
+	messages.add(new UpdateMissileMessage(ship, missile, -1, UpdateMissileMessage::UpdateType::HIT));
+	ship->broadcastMessages(&messages, true);
 }
 
 void SpaceCombatManager::broadcastMissileUpdate(ShipObject* ship, const ShipMissile* missile, int counterType, int missileResult) const {
@@ -54,18 +59,17 @@ void SpaceCombatManager::broadcastCountermeasure(ShipObject* ship, const ShipCou
 	ship->broadcastMessage(message, true);
 }
 
-BasePacket* SpaceCombatManager::getHitEffectMessage(const Vector3& collisionPoint, int hitType) const {
+void SpaceCombatManager::getHitEffectMessages(ShipObject* target, const SpaceCollisionResult& result, int hitType, float newPercent, float oldPercent, Vector<BasePacket*>& messages) const {
+	const Vector3& position = result.getPosition();
 	String cefType	= "clienteffect/combat_ship_hit_" + shipHitTypeToString(hitType) + ".cef";
-	return new PlayClientEffectLoc(cefType, "", collisionPoint.getX(), collisionPoint.getZ(), collisionPoint.getY());
-}
 
-BasePacket* SpaceCombatManager::getOnShipHitMessage(ShipObject* target, const Vector3& collisionPoint, int hitType, float newPercent, float oldPercent) const {
-	if (target->getGameObjectType() != SceneObjectType::SHIPFIGHTER) {
-		return getHitEffectMessage(collisionPoint, hitType);
+	messages.add(new PlayClientEffectLoc(cefType, "", position.getX(), position.getZ(), position.getY()));
+
+	if (hitType == ShipHitType::HITCOMPONENT && newPercent <= 0.f) {
+		messages.add(new DestroyShipComponentMessage(target, result.getSlot(), System::frandom(1.f)));
+	} else {
+		messages.add(new OnShipHit(target, result.getDirection(), hitType, newPercent, oldPercent));
 	}
-
-	Vector3 localPoint = collisionPoint - target->getPosition();
-	return new OnShipHit(target, localPoint, hitType, newPercent, oldPercent);
 }
 
 void SpaceCombatManager::applyDamage(ShipObject* ship, const ShipProjectile* projectile, const SpaceCollisionResult& result) const {
@@ -76,7 +80,7 @@ void SpaceCombatManager::applyDamage(ShipObject* ship, const ShipProjectile* pro
 	auto target = result.getObject().get();
 
 	if (target == nullptr || !target->isAttackableBy(ship)) {
-		auto effect = getHitEffectMessage(result.getPosition(), ShipHitType::HITARMOR);
+		auto effect = new PlayClientEffectLoc("clienteffect/combat_ship_hit_shield.cef", "", result.getPosition().getX(), result.getPosition().getZ(), result.getPosition().getY());
 		ship->broadcastMessage(effect, true);
 		return;
 	}
@@ -128,23 +132,23 @@ void SpaceCombatManager::applyDamage(ShipObject* ship, const ShipProjectile* pro
 	Vector<BasePacket*> messages;
 
 	if (damage > 0.f) {
-		damage = applyShieldDamage(target, collisionPoint, damage, shieldEffect, hitFront, deltaVector, messages);
+		damage = applyShieldDamage(target, result, damage, shieldEffect, hitFront, deltaVector, messages);
 	}
 
 	if (damage > 0.f) {
-		damage = applyArmorDamage(target, collisionPoint, damage, armorEffect,  hitFront, deltaVector, messages);
+		damage = applyArmorDamage(target, result, damage, armorEffect,  hitFront, deltaVector, messages);
 	}
 
 	if (damage > 0.f && collisionSlot != Components::CHASSIS) {
-		damage = applyComponentDamage(target, collisionPoint, damage, collisionSlot, deltaVector, messages);
+		damage = applyComponentDamage(target, result, damage, collisionSlot, deltaVector, messages);
 	}
 
 	if (damage > 0.f) {
-		damage = applyActiveComponentDamage(target, collisionPoint, damage, targetSlot, deltaVector, messages);
+		damage = applyActiveComponentDamage(target, result, damage, targetSlot, deltaVector, messages);
 	}
 
 	if (damage > 0.f && target->getShipComponentMap()->get(Components::BRIDGE) == 0) {
-		damage = applyChassisDamage(target, collisionPoint, damage, deltaVector, messages);
+		damage = applyChassisDamage(target, result, damage, deltaVector, messages);
 	}
 
 	if (deltaVector != nullptr) {
@@ -161,7 +165,7 @@ void SpaceCombatManager::applyDamage(ShipObject* ship, const ShipProjectile* pro
 	}
 }
 
-float SpaceCombatManager::applyShieldDamage(ShipObject* target, const Vector3& collisionPoint, float damage, float effect, bool hitFront, ShipDeltaVector* deltaVector, Vector<BasePacket*>& messages) const {
+float SpaceCombatManager::applyShieldDamage(ShipObject* target, const SpaceCollisionResult& result, float damage, float effect, bool hitFront, ShipDeltaVector* deltaVector, Vector<BasePacket*>& messages) const {
 	float shieldMin = hitFront ? target->getFrontShield() : target->getRearShield();
 	float shieldMax = hitFront ? target->getMaxFrontShield() : target->getMaxRearShield();
 
@@ -194,14 +198,13 @@ float SpaceCombatManager::applyShieldDamage(ShipObject* target, const Vector3& c
 			target->setRearShield(shieldMin, false, nullptr, deltaVector);
 		}
 
-		messages.add(getOnShipHitMessage(target, collisionPoint, ShipHitType::HITSHIELD, shieldNew, shieldOld));
-		messages.add(getHitEffectMessage(collisionPoint, ShipHitType::HITSHIELD));
+		getHitEffectMessages(target, result, ShipHitType::HITSHIELD, shieldNew, shieldOld, messages);
 	}
 
 	return shieldDamage / effect;
 }
 
-float SpaceCombatManager::applyArmorDamage(ShipObject* target, const Vector3& collisionPoint, float damage, float effect, bool hitFront, ShipDeltaVector* deltaVector, Vector<BasePacket*>& messages) const {
+float SpaceCombatManager::applyArmorDamage(ShipObject* target, const SpaceCollisionResult& result, float damage, float effect, bool hitFront, ShipDeltaVector* deltaVector, Vector<BasePacket*>& messages) const {
 	uint32 slot = hitFront ? Components::ARMOR0 : Components::ARMOR1;
 
 	float armorMin = target->getCurrentArmorMap()->get(slot);
@@ -255,14 +258,17 @@ float SpaceCombatManager::applyArmorDamage(ShipObject* target, const Vector3& co
 		float totalNew = (armorMin + healthMin) / totalMax;
 		float totalOld = (armorOld + healthOld) / totalMax;
 
-		messages.add(getOnShipHitMessage(target, collisionPoint, ShipHitType::HITARMOR, totalNew, totalOld));
-		messages.add(getHitEffectMessage(collisionPoint, ShipHitType::HITARMOR));
+		getHitEffectMessages(target, result, ShipHitType::HITARMOR, totalNew, totalOld, messages);
+	}
+
+	if (target->getCurrentHitpointsMap()->get(slot) == 0.f) {
+		target->setComponentDemolished(slot, false, deltaVector);
 	}
 
 	return armorDamage / effect;
 }
 
-float SpaceCombatManager::applyChassisDamage(ShipObject* target, const Vector3& collisionPoint, float damage, ShipDeltaVector* deltaVector, Vector<BasePacket*>& messages) const {
+float SpaceCombatManager::applyChassisDamage(ShipObject* target, const SpaceCollisionResult& result, float damage, ShipDeltaVector* deltaVector, Vector<BasePacket*>& messages) const {
 	float chassisMin = target->getChassisCurrentHealth();
 	float chassisMax = target->getChassisMaxHealth();
 
@@ -285,14 +291,13 @@ float SpaceCombatManager::applyChassisDamage(ShipObject* target, const Vector3& 
 	if (chassisNew != chassisOld) {
 		target->setCurrentChassisHealth(chassisMin, false, nullptr, deltaVector);
 
-		messages.add(getOnShipHitMessage(target, collisionPoint, ShipHitType::HITCHASSIS, chassisNew, chassisOld));
-		messages.add(getHitEffectMessage(collisionPoint, ShipHitType::HITCHASSIS));
+		getHitEffectMessages(target, result, ShipHitType::HITCHASSIS, chassisNew, chassisOld, messages);
 	}
 
 	return damage;
 }
 
-float SpaceCombatManager::applyComponentDamage(ShipObject* target, const Vector3& collisionPoint, float damage, int slot, ShipDeltaVector* deltaVector, Vector<BasePacket*>& messages) const {
+float SpaceCombatManager::applyComponentDamage(ShipObject* target, const SpaceCollisionResult& result, float damage, int slot, ShipDeltaVector* deltaVector, Vector<BasePacket*>& messages) const {
 	float armorMin = target->getCurrentArmorMap()->get(slot);
 	float armorMax = target->getMaxArmorMap()->get(slot);
 	float healthMin = target->getCurrentHitpointsMap()->get(slot);
@@ -342,32 +347,21 @@ float SpaceCombatManager::applyComponentDamage(ShipObject* target, const Vector3
 		float totalNew = (armorMin + healthMin) / totalMax;
 		float totalOld = (armorOld + healthOld) / totalMax;
 
-		messages.add(getOnShipHitMessage(target, collisionPoint, ShipHitType::HITCOMPONENT, totalNew, totalOld));
-		messages.add(getHitEffectMessage(collisionPoint, ShipHitType::HITCOMPONENT));
+		getHitEffectMessages(target, result, ShipHitType::HITCOMPONENT, totalNew, totalOld, messages);
 	}
 
-	if (target->getCurrentHitpointsMap()->get(slot) == 0.f) {
-		int flags = target->getComponentOptionsMap()->get(slot);
-
-		if (!(flags & ShipComponentFlag::DISABLED)) {
-			flags |= ShipComponentFlag::DISABLED;
-		}
-
-		if (!(flags & ShipComponentFlag::DEMOLISHED)) {
-			flags |= ShipComponentFlag::DEMOLISHED;
-		}
-
-		target->setComponentOptions(slot, flags, nullptr, 2, deltaVector);
+	if (target->getCurrentHitpointsMap()->get(slot) <= 0.f) {
+		target->setComponentDemolished(slot, false, deltaVector);
 
 		if (slot == Components::BRIDGE) {
-			applyChassisDamage(target, collisionPoint, target->getChassisCurrentHealth(), deltaVector, messages);
+			applyChassisDamage(target, result, target->getChassisCurrentHealth(), deltaVector, messages);
 		}
 	}
 
 	return damage;
 }
 
-float SpaceCombatManager::applyActiveComponentDamage(ShipObject* target, const Vector3& collisionPoint, float damage, int targetSlot, ShipDeltaVector* deltaVector, Vector<BasePacket*>& messages) const {
+float SpaceCombatManager::applyActiveComponentDamage(ShipObject* target, const SpaceCollisionResult& result, float damage, int targetSlot, ShipDeltaVector* deltaVector, Vector<BasePacket*>& messages) const {
 	auto componentMap = target->getShipComponentMap();
 
 	if (componentMap == nullptr) {
@@ -419,7 +413,7 @@ float SpaceCombatManager::applyActiveComponentDamage(ShipObject* target, const V
 		int index = System::random(activeComponents.size() - 1);
 		int slot = activeComponents.get(index);
 
-		damage = applyComponentDamage(target, collisionPoint, damage, slot, deltaVector, messages);
+		damage = applyComponentDamage(target, result, damage, slot, deltaVector, messages);
 
 		if (hitpointsMap->get(slot) == 0) {
 			activeComponents.remove(index);
@@ -628,7 +622,7 @@ int SpaceCombatManager::updateProjectiles() {
 	return System::getMiliTime() - miliTime;
 }
 
-void SpaceCombatManager::addProjectile(ShipObject* ship, ShipProjectile* projectile) {
+void SpaceCombatManager::addProjectile(ShipObject* ship, ShipProjectile* projectile, CreatureObject* player) {
 	if (ship == nullptr || projectile == nullptr) {
 		return;
 	}
@@ -636,7 +630,7 @@ void SpaceCombatManager::addProjectile(ShipObject* ship, ShipProjectile* project
 	Locker sLock(ship);
 
 	projectileMap.addProjectile(ship, projectile);
-	broadcastProjectile(ship, projectile);
+	broadcastProjectile(ship, projectile, player);
 }
 
 void SpaceCombatManager::addMissile(ShipObject* ship, ShipMissile* missile) {

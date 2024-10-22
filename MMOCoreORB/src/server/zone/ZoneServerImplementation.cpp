@@ -190,6 +190,9 @@ void ZoneServerImplementation::initialize() {
 	petManager = new PetManager(_this.getReferenceUnsafeStaticCast());
 	petManager->initialize();
 
+	// Load ship data
+	ShipManager::instance()->initialize();
+
 	startGroundZones();
 	startSpaceZones();
 
@@ -297,10 +300,7 @@ void ZoneServerImplementation::startSpaceZones() {
 }
 
 void ZoneServerImplementation::startManagers() {
-	info("loading managers..");
-
-	// Load ship data
-	ShipManager::instance()->initialize();
+	info(true) << "ZoneServerImplementation -- Starting Managers...";
 
 	radialManager = new RadialManager(_this.getReferenceUnsafeStaticCast());
 	radialManager->deploy("RadialManager");
@@ -336,6 +336,8 @@ void ZoneServerImplementation::startManagers() {
 
 	frsManager = new FrsManager(_this.getReferenceUnsafeStaticCast());
 	frsManager->initialize();
+
+	info(true) << "ZoneServerImplementation -- Managers Started.";
 }
 
 void ZoneServerImplementation::start(int p, int mconn) {
@@ -364,10 +366,21 @@ void ZoneServerImplementation::timedShutdown(int minutes, int flags) {
 	} else {
 		task->schedule(60 * 1000);
 
-		String str = "Server will shutdown in " + String::valueOf(minutes) + " minutes";
-		Logger::console.info(str, true);
+		StringBuffer shutdownMsg;
 
-		getChatManager()->broadcastGalaxy(nullptr, str);
+		shutdownMsg << "You will be disconnected in ";
+
+		if (minutes > 1) {
+			shutdownMsg << minutes << " minutes ";
+		} else {
+			shutdownMsg << minutes << " minute ";
+		}
+
+		shutdownMsg << "so the server can perform a final save before shutting down. Please find a safe place to logout.";
+
+		Logger::console.info(shutdownMsg.toString(), true);
+
+		getChatManager()->broadcastGalaxy(nullptr, shutdownMsg.toString());
 	}
 }
 
@@ -416,7 +429,7 @@ void ZoneServerImplementation::shutdown() {
 }
 
 void ZoneServerImplementation::stopManagers() {
-	info("stopping managers..", true);
+	info(true) << "ZoneServerImplementation -- Stopping Managers...";
 
 	missionManager = nullptr;
 	radialManager = nullptr;
@@ -425,6 +438,7 @@ void ZoneServerImplementation::stopManagers() {
 	reactionManager = nullptr;
 
 	if (frsManager != nullptr) {
+		frsManager->stop();
 		frsManager = nullptr;
 	}
 
@@ -480,7 +494,9 @@ void ZoneServerImplementation::stopManagers() {
 		objectManager = nullptr;
 	}
 
-	info("managers stopped", true);
+	ShipManager::instance()->stop();
+
+	info(true) << "ZoneServerImplementation -- Managers Stopped";
 }
 
 void ZoneServerImplementation::clearZones() {
@@ -729,7 +745,7 @@ void ZoneServerImplementation::changeUserCap(int amount) {
 	unlock();
 }
 
-void ZoneServerImplementation::addTotalSentPacket(int count) {
+void ZoneServerImplementation::addTotalSentPacket(unsigned int count) {
 //	lock();
 
 	totalSentPackets += count;
@@ -737,7 +753,7 @@ void ZoneServerImplementation::addTotalSentPacket(int count) {
 //	unlock();
 }
 
-void ZoneServerImplementation::addTotalResentPacket(int count) {
+void ZoneServerImplementation::addTotalResentPacket(unsigned int count) {
 	//lock();
 
 	totalResentPackets += count;

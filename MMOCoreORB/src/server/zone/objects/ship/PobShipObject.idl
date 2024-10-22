@@ -23,6 +23,8 @@ include server.zone.objects.cell.CellObject;
 include server.zone.objects.ship.ShipPermissionList;
 
 class PobShipObject extends ShipObject {
+	public static final unsigned int MAX_PLAYER_ITEMS = 100;
+
 	@dereferenced
 	protected VectorMap<string, CellObject> cellNameMap;
 
@@ -63,6 +65,12 @@ class PobShipObject extends ShipObject {
 	public native void notifyInsert(TreeEntry obj);
 
 	public native void notifyInsertToZone(Zone zone);
+
+	public native int notifyObjectInsertedToChild(SceneObject object, SceneObject child, SceneObject oldParent);
+	public native int notifyObjectRemovedFromChild(SceneObject object, SceneObject child);
+
+	@dirty
+	public native abstract void onEnter(CreatureObject player);
 
 	public native void updatePlayersInShip(boolean lightUpdate, boolean sendPackets = true);
 
@@ -142,6 +150,11 @@ class PobShipObject extends ShipObject {
 
 	@dirty
 	public native int getCurrentNumberOfPlayerItems();
+
+	@dirty
+	public abstract unsigned int getMaximumNumberOfPlayerItems() {
+		return MAX_PLAYER_ITEMS;
+	}
 
 	/**
 	 * Loops through all the cells, destroying items from the database that aren't contained in the child objects vector.

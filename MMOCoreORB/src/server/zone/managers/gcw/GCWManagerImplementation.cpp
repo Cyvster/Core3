@@ -42,6 +42,7 @@
 #include "server/zone/objects/player/sui/callbacks/PowerRegulatorSuiCallback.h"
 #include "server/zone/objects/player/sui/callbacks/RemoveDefenseSuiCallback.h"
 #include "server/zone/objects/player/sui/callbacks/DonateDefenseSuiCallback.h"
+#include "server/zone/objects/player/sui/callbacks/DonateMineSuiCallback.h"
 #include "server/zone/objects/player/sui/callbacks/TurretControlSuiCallback.h"
 
 #include "server/zone/managers/structure/StructureManager.h"
@@ -732,20 +733,23 @@ void GCWManagerImplementation::initializeBaseTimers(BuildingObject* building) {
 }
 
 void GCWManagerImplementation::addMinefield(BuildingObject* building, SceneObject* minefield) {
-	if (building == nullptr)
+	if (building == nullptr) {
 		return;
+	}
 
 	DestructibleBuildingDataComponent* baseData = getDestructibleBuildingData(building);
 
-	if (baseData == nullptr)
+	if (baseData == nullptr) {
 		return;
+	}
 
 	Locker _lock(building);
 
-	if (minefield != nullptr)
+	if (minefield != nullptr) {
 		baseData->addMinefield(baseData->getTotalMinefieldCount(), minefield->getObjectID());
-	else
+	} else {
 		baseData->addMinefield(baseData->getTotalMinefieldCount(), 0);
+	}
 
 	verifyMinefields(building);
 }
@@ -2661,7 +2665,7 @@ void GCWManagerImplementation::sendSelectDeedToDonate(BuildingObject* building, 
 	if (ghost->hasSuiBoxWindowType(SuiWindowType::HQ_TERMINAL))
 		ghost->closeSuiWindowType(SuiWindowType::HQ_TERMINAL);
 
-	ManagedReference<SceneObject*> inv = creature->getSlottedObject("inventory");
+	ManagedReference<SceneObject*> inv = creature->getInventory();
 
 	if (inv == nullptr)
 		return;
@@ -2706,6 +2710,63 @@ void GCWManagerImplementation::sendSelectDeedToDonate(BuildingObject* building, 
 	} else {
 		ghost->addSuiBox(donate);
 		creature->sendMessage(donate->generateMessage());
+	}
+}
+
+void GCWManagerImplementation::sendSelectMineToDonate(InstallationObject* installation, CreatureObject* player) {
+	if (installation == nullptr || player == nullptr)
+		return;
+
+	if (player->getFaction() == Factions::FACTIONNEUTRAL || (installation->getFactionStatus() > player->getFactionStatus())) {
+		return;
+	}
+
+	auto ghost = player->getPlayerObject();
+
+	if (ghost == nullptr) {
+		return;
+	}
+
+	if (ghost->hasSuiBoxWindowType(SuiWindowType::HQ_TERMINAL)) {
+		ghost->closeSuiWindowType(SuiWindowType::HQ_TERMINAL);
+	}
+
+	ManagedReference<SceneObject*> inventory = player->getInventory();
+
+	if (inventory == nullptr) {
+		return;
+	}
+
+	ManagedReference<SuiListBox*> donate = new SuiListBox(player, SuiWindowType::HQ_TERMINAL);
+
+	if (donate == nullptr) {
+		return;
+	}
+
+	donate->setPromptTitle("Donate Mines");
+	donate->setPromptText("Which mine would you like to donate?");
+
+	donate->setUsingObject(installation);
+	donate->setOkButton(true, "@ok");
+	donate->setCancelButton(true, "@cancel");
+
+	donate->setCallback(new DonateMineSuiCallback(zone->getZoneServer()));
+
+	for (int i = 0; i < inventory->getContainerObjectsSize(); ++i) {
+		ManagedReference<SceneObject*> inventoryObject = inventory->getContainerObject(i);
+
+		if (inventoryObject == nullptr || inventoryObject->isFactoryCrate() || (inventoryObject->getGameObjectType() != SceneObjectType::MINE)) {
+			continue;
+		}
+
+		donate->addMenuItem(inventoryObject->getDisplayedName(), inventoryObject->getObjectID());
+	}
+
+	if (donate->getMenuSize() == 0) {
+		player->sendSystemMessage("You do not possess any mines to donate.");
+	} else {
+		ghost->addSuiBox(donate);
+		player->sendMessage(donate->generateMessage());
 	}
 }
 
@@ -2791,30 +2852,27 @@ void GCWManagerImplementation::performDefenseDonation(BuildingObject* building, 
 void GCWManagerImplementation::performDonateMinefield(BuildingObject* building, CreatureObject* creature, Deed* deed) {
 	String serverTemplatePath = deed->getGeneratedObjectTemplate();
 	TemplateManager* templateManager = TemplateManager::instance();
+
 	Reference<SharedObjectTemplate*> baseServerTemplate = building->getObjectTemplate();
 	Reference<SharedObjectTemplate*> minefieldTemplate = nullptr;
+
 	const ChildObject* child = nullptr;
 
 	int currentMinefieldIndex = 0;
 
 	DestructibleBuildingDataComponent* baseData = getDestructibleBuildingData(building);
 
-	if (baseData == nullptr)
+	if (baseData == nullptr) {
 		return;
-
-	// go through it and inf the first available mine
-	int minefieldIndex = 0;
-	for (minefieldIndex = 0; minefieldIndex < baseData->getTotalMinefieldCount(); minefieldIndex++) {
-		if (baseData->getMinefieldID(minefieldIndex) == 0)
-			break;
 	}
 
 	// Minefield donation
 	int nextAvailableMinefield = 0;
 
-	for (nextAvailableMinefield = 0; nextAvailableMinefield < baseData->getTotalTurretCount(); nextAvailableMinefield++) {
-		if (baseData->getMinefieldID(nextAvailableMinefield) == 0)
+	for (nextAvailableMinefield = 0; nextAvailableMinefield < baseData->getTotalMinefieldCount(); nextAvailableMinefield++) {
+		if (baseData->getMinefieldID(nextAvailableMinefield) == 0) {
 			break;
+		}
 	}
 
 	if (nextAvailableMinefield >= baseData->getTotalMinefieldCount()) {
@@ -2843,29 +2901,33 @@ void GCWManagerImplementation::performDonateMinefield(BuildingObject* building, 
 		}
 	}
 
-	if (child == nullptr || minefieldTemplate == nullptr || minefieldTemplate->getGameObjectType() != SceneObjectType::MINEFIELD)
+	if (child == nullptr || minefieldTemplate == nullptr || minefieldTemplate->getGameObjectType() != SceneObjectType::MINEFIELD) {
 		return;
+	}
 
 	uint64 minefieldID = addChildInstallationFromDeed(building, child, creature, deed);
 
-	if (minefieldID > 0) {
-		baseData->setMinefieldID(currentMinefieldIndex, minefieldID);
-
-		if (isBaseVulnerable(building))
-			baseData->setDefenseAddedThisVuln(true);
-
-		StringIdChatParameter params;
-		params.setStringId("@faction/faction_hq/faction_hq_response:terminal_response45"); //"You successfully donate a %TO deed to the current facility."
-		params.setTO(deed->getObjectNameStringIdFile(), deed->getObjectNameStringIdName());
-		creature->sendSystemMessage(params);
-
-		building->addCooldown("defense_donation", donationCooldown * 1000);
-
-		verifyMinefields(building);
-
-		Locker clock(deed, creature);
-		deed->destroyObjectFromWorld(true);
+	if (minefieldID <= 0) {
+		return;
 	}
+
+	baseData->setMinefieldID(currentMinefieldIndex, minefieldID);
+
+	if (isBaseVulnerable(building)) {
+		baseData->setDefenseAddedThisVuln(true);
+	}
+
+	StringIdChatParameter params;
+	params.setStringId("@faction/faction_hq/faction_hq_response:terminal_response45"); //"You successfully donate a %TO deed to the current facility."
+	params.setTO(deed->getObjectNameStringIdFile(), deed->getObjectNameStringIdName());
+	creature->sendSystemMessage(params);
+
+	building->addCooldown("defense_donation", donationCooldown * 1000);
+
+	verifyMinefields(building);
+
+	Locker clock(deed, creature);
+	deed->destroyObjectFromWorld(true);
 }
 
 void GCWManagerImplementation::performDonateScanner(BuildingObject* building, CreatureObject* creature,  Deed* scannerDeed) {
@@ -3022,6 +3084,16 @@ void GCWManagerImplementation::performDonateTurret(BuildingObject* building, Cre
 }
 
 uint64 GCWManagerImplementation::addChildInstallationFromDeed(BuildingObject* building, const ChildObject* child, CreatureObject* creature, Deed* deed) {
+	if (building == nullptr || child == nullptr) {
+		return 0;
+	}
+
+	auto zoneServer = zone->getZoneServer();
+
+	if (zoneServer == nullptr) {
+		return 0;
+	}
+
 	Vector3 position = building->getPosition();
 
 	const Quaternion* direction = building->getDirection();
@@ -3039,46 +3111,46 @@ uint64 GCWManagerImplementation::addChildInstallationFromDeed(BuildingObject* bu
 	float degrees = direction->getDegrees();
 	Quaternion dir = child->getDirection();
 
-	ManagedReference<SceneObject*> obj = zone->getZoneServer()->createObject(deed->getGeneratedObjectTemplate().hashCode(), building->getPersistenceLevel());
+	ManagedReference<SceneObject*> childObject = zoneServer->createObject(deed->getGeneratedObjectTemplate().hashCode(), building->getPersistenceLevel());
 
-	if (obj == nullptr) {
+	if (childObject == nullptr) {
 		return 0;
 	}
 
-	Locker locker(obj);
+	Locker locker(childObject);
 
-	obj->initializePosition(x, z, y);
-	obj->setDirection(dir.rotate(Vector3(0, 1, 0), degrees));
+	childObject->initializePosition(x, z, y);
+	childObject->setDirection(dir.rotate(Vector3(0, 1, 0), degrees));
 
-	if (!obj->isTangibleObject()) {
-		obj->destroyObjectFromDatabase(true);
+	if (!childObject->isTangibleObject()) {
+		childObject->destroyObjectFromDatabase(true);
 		return 0;
 	}
 
-	TangibleObject* tano = cast<TangibleObject*>(obj.get());
+	TangibleObject* childTanO = childObject->asTangibleObject();
 
-	if (tano != nullptr) {
-		tano->setFaction(building->getFaction());
-		tano->setPvpStatusBitmask(building->getPvpStatusBitmask() | tano->getPvpStatusBitmask());
+	if (childTanO == nullptr) {
+		childObject->destroyObjectFromDatabase(true);
+		return 0;
+	}
 
-		if (tano->isTurret())
-			tano->setDetailedDescription("Donated Turret");
+	childTanO->setFaction(building->getFaction());
+	childTanO->setPvpStatusBitmask(building->getPvpStatusBitmask() | childTanO->getPvpStatusBitmask());
 
-		if (tano->isInstallationObject()) {
-			InstallationObject* instObject = cast<InstallationObject*>(tano);
+	if (childTanO->isInstallationObject()) {
+		InstallationObject* instObject = cast<InstallationObject*>(childTanO);
 
-			if (instObject != nullptr) {
-				instObject->setOwner(building->getObjectID());
-				instObject->createChildObjects();
-				instObject->setDeedObjectID(deed->getObjectID());
-			}
+		if (instObject != nullptr) {
+			instObject->setOwner(building->getObjectID());
+			instObject->createChildObjects();
+			instObject->setDeedObjectID(deed->getObjectID());
 		}
 	}
 
-	zone->transferObject(obj, -1, true);
-	building->getChildObjects()->put(obj);
+	zone->transferObject(childTanO, -1, true);
+	building->getChildObjects()->put(childTanO);
 
-	return obj->getObjectID();
+	return childTanO->getObjectID();
 }
 
 void GCWManagerImplementation::sendTurretAttackListTo(CreatureObject* creature, SceneObject* turretControlTerminal) {

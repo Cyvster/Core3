@@ -45,7 +45,7 @@ namespace server {
 namespace zone {
 
 class QuadTree;
-class OctTree;
+class Octree;
 class TreeEntry;
 class TreeEntryImplementation;
 
@@ -66,6 +66,8 @@ class TreeNode: public Object {
 	float maxX, maxY, maxZ;
 
 	float dividerX, dividerY, dividerZ;
+
+	String nodeName;
 
 public:
 	TreeNode();
@@ -125,29 +127,30 @@ public:
 
 	// Check if this node has children nodes
 	inline bool hasSubNodes() const {
-		return nwNode != nullptr || neNode != nullptr || swNode != nullptr || seNode
-			!= nullptr || nwNode2 != nullptr || neNode2 != nullptr || swNode2 != nullptr || seNode2 != nullptr;
+		return nwNode != nullptr || neNode != nullptr || swNode != nullptr || seNode != nullptr || nwNode2 != nullptr || neNode2 != nullptr || swNode2 != nullptr || seNode2 != nullptr;
 	}
 
 	// Test if the point is inside this node
 	inline bool testInside(float x, float y, float z) const {
-		return x >= minX && x < maxX && y >= minY && y < maxY && z >= minZ && z < maxZ;
+		// Logger::console.info(true) << "TreeNode - testInside --- Using X: " << x << " Z: " << z << " Y: " << y << " minX: " << minX << " maxX: " << maxX << " minZ: " << minZ << " maxZ: " << maxZ << " minY: " << minY << " maxY: " << maxY;
+
+		return ((x > minX) && (x < maxX) && (y > minY) && (y < maxY) && (z > minZ) && (z < maxZ));
 	}
 
 	inline bool testInside(float x, float y) const {
-		return x >= minX && x < maxX && y >= minY && y < maxY;
+		return ((x > minX) && (x < maxX) && (y > minY) && (y < maxY));
 	}
 
 	// Test if the object is inside this quad tree node
 	bool testInsideQuadTree(TreeEntry* obj) const;
 
 	// Test if the object is inside this oct tree node
-	bool testInsideOctTree(TreeEntry* obj) const;
+	bool testInsideOctree(TreeEntry* obj) const;
 
 	String toStringData();
 
 	friend class server::zone::QuadTree;
-	friend class server::zone::OctTree;
+	friend class server::zone::Octree;
 	friend class server::zone::TreeEntryImplementation;
 };
 

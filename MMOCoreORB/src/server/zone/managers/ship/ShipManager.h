@@ -20,9 +20,18 @@
 #include "server/zone/objects/ship/ShipCountermeasureData.h"
 #include "server/zone/objects/ship/components/ShipChassisComponent.h"
 #include "server/zone/objects/ship/ShipTurretData.h"
+#include "ShipUniqueIdMap.h"
+#include "SpaceSpawnGroup.h"
+
+namespace server {
+namespace zone {
+namespace managers {
+namespace ship {
 
 class ShipManager : public Singleton<ShipManager>, public Object, public Logger {
 protected:
+	Reference<Lua*> lua;
+
 	HashTable<uint32, Reference<ShipComponentData*>> shipComponents;
 	HashTable<String, ShipComponentData*> shipComponentTemplateNames;
 	HashTable<String, Reference<ShipAppearanceData*>> shipAppearanceData;
@@ -37,6 +46,10 @@ protected:
 
 	VectorMap<String, Vector3> hyperspaceLocations;
 	VectorMap<String, String> hyperspaceZones;
+
+	HashTable<uint32, Reference<SpaceSpawnGroup*>> spawnGroupMap;
+
+	ShipUniqueIdMap shipUniqueIdMap;
 
 	void checkProjectiles();
 	void loadShipComponentData();
@@ -60,13 +73,28 @@ public:
 
 	const static int NO_CERT_COST_MULTI = 5;
 
-	ShipManager() {
-		setLoggingName("ShipManager");
-		setGlobalLogging(false);
-		setLogging(false);
+	enum LUA_ERROR_CODE {
+		NO_ERROR = 0,
+		GENERAL_ERROR,
+		DUPLICATE_SHIP_MOBILE,
+		INCORRECT_ARGUMENTS,
+		DUPLICATE_CONVO
 	};
 
+	static int ERROR_CODE;
+
+	ShipManager();
+	virtual ~ShipManager() {};
+
 	void initialize();
+	void stop();
+
+	int loadShipSpawnGroups();
+
+	static int checkArgumentCount(lua_State* L, int args);
+
+	static int includeFile(lua_State* L);
+	static int addShipSpawnGroup(lua_State* L);
 
 	bool hyperspaceLocationExists(const String& name) const {
 		return hyperspaceLocations.contains(name) && hyperspaceZones.contains(name);
@@ -135,7 +163,8 @@ private:
 
 public:
 	ShipAiAgent* createAiShip(const String& shipName);
-	ShipObject* createPlayerShip(CreatureObject* owner, const String& shipName, bool loadComponents = false);
+	ShipAiAgent* createAiShip(uint32 shipCRC);
+	ShipObject* createPlayerShip(CreatureObject* owner, const String& shipName, const String& certificationRequired, bool loadComponents = false);
 
 	bool createDeedFromChassis(CreatureObject* owner, ShipChassisComponent* chassisBlueprint, CreatureObject* chassisDealer);
 
@@ -166,7 +195,27 @@ public:
 	 * @param the ship control device
 	 */
 	void promptNameShip(CreatureObject* creature, ShipControlDevice* shipDevice);
+
+	void reDeedShip(CreatureObject* creature, ShipControlDevice* shipDevice);
+
+	HashTableIterator<uint32, Reference<SpaceSpawnGroup*>> spawnGroupIterator() {
+		return spawnGroupMap.iterator();
+	}
+
+	SpaceSpawnGroup* getSpaceSpawnGroup(uint32 crc) {
+		return spawnGroupMap.get(crc);
+	}
+
+	uint16 setShipUniqueID(ShipObject* ship);
+
+	void dropShipUniqueID(ShipObject* ship);
 };
 
+} // namespace ship
+} // namespace managers
+} // namespace zone
+} // namespace server
+
+using namespace server::zone::managers::ship;
 
 #endif /* SHIPMANAGER_H_ */

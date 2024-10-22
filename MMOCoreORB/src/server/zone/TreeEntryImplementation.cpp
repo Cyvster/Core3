@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 //#define DEBUG_TREE_ENTRY
 
-TreeEntryImplementation::TreeEntryImplementation(TreeNode *n) {
+TreeEntryImplementation::TreeEntryImplementation(TreeNode* n) {
 	node = n;
 	bounding = false;
 	closeobjects = nullptr;
@@ -20,8 +20,30 @@ TreeEntryImplementation::TreeEntryImplementation(TreeNode *n) {
 	receiverFlags = 0;
 }
 
-void TreeEntryImplementation::setNode(TreeNode *n) {
+void TreeEntryImplementation::setNode(TreeNode* n) {
 	node = n;
+}
+
+void TreeEntryImplementation::addInRangeObject(TreeEntry* obj, bool doNotifyUpdate) {
+	if (obj == nullptr) {
+		return;
+	}
+
+	if (closeobjects != nullptr && closeobjects->put(obj) != -1) {
+ 		notifyInsert(obj);
+	} else if (doNotifyUpdate) {
+		notifyPositionUpdate(obj);
+	}
+}
+
+void TreeEntryImplementation::removeInRangeObject(TreeEntry* obj, bool notifyDisappear) {
+	if (obj == nullptr) {
+		return;
+	}
+
+	if (closeobjects != nullptr && closeobjects->drop(obj) && notifyDisappear) {
+		notifyDissapear(obj);
+	}
 }
 
 bool TreeEntryImplementation::containsPoint(float px, float py) {
@@ -57,13 +79,9 @@ bool TreeEntryImplementation::isInSWArea(TreeNode* checkNode) const {
 #endif
 
 	if (checkNode->dividerZ != -1)
-		return coordinates.getPositionX() >= checkNode->minX && coordinates.getPositionX() < checkNode->dividerX &&
-			coordinates.getPositionY() >= checkNode->minY && coordinates.getPositionY() < checkNode->dividerY &&
-				coordinates.getPositionZ() >= checkNode->minZ && coordinates.getPositionZ() < checkNode->dividerZ;
-
+		return coordinates.getPositionX() > checkNode->minX && coordinates.getPositionX() < checkNode->dividerX && coordinates.getPositionY() > checkNode->minY && coordinates.getPositionY() < checkNode->dividerY && coordinates.getPositionZ() > checkNode->minZ && coordinates.getPositionZ() < checkNode->dividerZ;
 	else
-		return coordinates.getPositionX() >= checkNode->minX && coordinates.getPositionX() < checkNode->dividerX &&
-			coordinates.getPositionY() >= checkNode->minY && coordinates.getPositionY() < checkNode->dividerY;
+		return coordinates.getPositionX() > checkNode->minX && coordinates.getPositionX() < checkNode->dividerX && coordinates.getPositionY() > checkNode->minY && coordinates.getPositionY() < checkNode->dividerY;
 }
 
 bool TreeEntryImplementation::isInSEArea(TreeNode* checkNode) const {
@@ -72,12 +90,9 @@ bool TreeEntryImplementation::isInSEArea(TreeNode* checkNode) const {
 #endif
 
 	if (checkNode->dividerZ != -1)
-		return coordinates.getPositionX() >= checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX &&
-			coordinates.getPositionY() >= checkNode->minY && coordinates.getPositionY() < checkNode->dividerY &&
-				coordinates.getPositionZ() >= checkNode->minZ && coordinates.getPositionZ() < checkNode->dividerZ;
+		return coordinates.getPositionX() > checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX && coordinates.getPositionY() > checkNode->minY && coordinates.getPositionY() < checkNode->dividerY && coordinates.getPositionZ() > checkNode->minZ && coordinates.getPositionZ() < checkNode->dividerZ;
 	else
-		return coordinates.getPositionX() >= checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX &&
-			coordinates.getPositionY() >= checkNode->minY && coordinates.getPositionY() < checkNode->dividerY;
+		return coordinates.getPositionX() > checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX && coordinates.getPositionY() > checkNode->minY && coordinates.getPositionY() < checkNode->dividerY;
 }
 
 bool TreeEntryImplementation::isInNWArea(TreeNode* checkNode) const {
@@ -86,12 +101,9 @@ bool TreeEntryImplementation::isInNWArea(TreeNode* checkNode) const {
 #endif
 
 	if (checkNode->dividerZ != -1)
-		return coordinates.getPositionX() >= checkNode->minX && coordinates.getPositionX() < checkNode->dividerX &&
-			coordinates.getPositionY() >= checkNode->dividerY && coordinates.getPositionY() < checkNode->maxY &&
-				coordinates.getPositionZ() >= checkNode->minZ && coordinates.getPositionZ() < checkNode->dividerZ;
+		return coordinates.getPositionX() > checkNode->minX && coordinates.getPositionX() < checkNode->dividerX && coordinates.getPositionY() > checkNode->dividerY && coordinates.getPositionY() < checkNode->maxY && coordinates.getPositionZ() > checkNode->minZ && coordinates.getPositionZ() < checkNode->dividerZ;
 	else
-		return coordinates.getPositionX() >= checkNode->minX && coordinates.getPositionX() < checkNode->dividerX &&
-			coordinates.getPositionY() >= checkNode->dividerY && coordinates.getPositionY() < checkNode->maxY;
+		return coordinates.getPositionX() > checkNode->minX && coordinates.getPositionX() < checkNode->dividerX && coordinates.getPositionY() > checkNode->dividerY && coordinates.getPositionY() < checkNode->maxY;
 }
 
 bool TreeEntryImplementation::isInNEArea(TreeNode* checkNode) const {
@@ -100,12 +112,9 @@ bool TreeEntryImplementation::isInNEArea(TreeNode* checkNode) const {
 #endif
 
 	if (checkNode->dividerZ != -1)
-		return coordinates.getPositionX() >= checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX &&
-			coordinates.getPositionY() >= checkNode->dividerY && coordinates.getPositionY() < checkNode->maxY &&
-				coordinates.getPositionZ() >= checkNode->minZ && coordinates.getPositionZ() < checkNode->dividerZ;
+		return coordinates.getPositionX() > checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX && coordinates.getPositionY() > checkNode->dividerY && coordinates.getPositionY() < checkNode->maxY && coordinates.getPositionZ() > checkNode->minZ && coordinates.getPositionZ() < checkNode->dividerZ;
 	else
-		return coordinates.getPositionX() >= checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX &&
-			coordinates.getPositionY() >= checkNode->dividerY && coordinates.getPositionY() < node->maxY;
+		return coordinates.getPositionX() > checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX && coordinates.getPositionY() > checkNode->dividerY && coordinates.getPositionY() < node->maxY;
 }
 
 bool TreeEntryImplementation::isInSW2Area(TreeNode* checkNode) const {
@@ -114,9 +123,7 @@ bool TreeEntryImplementation::isInSW2Area(TreeNode* checkNode) const {
 #endif
 
 	if (checkNode->dividerZ != -1)
-		return coordinates.getPositionX() >= checkNode->minX && coordinates.getPositionX() < checkNode->dividerX &&
-			coordinates.getPositionY() >= checkNode->minY && coordinates.getPositionY() < checkNode->dividerY &&
-				coordinates.getPositionZ() >= checkNode->dividerZ && coordinates.getPositionZ() < checkNode->maxZ;
+		return coordinates.getPositionX() > checkNode->minX && coordinates.getPositionX() < checkNode->dividerX && coordinates.getPositionY() > checkNode->minY && coordinates.getPositionY() < checkNode->dividerY && coordinates.getPositionZ() > checkNode->dividerZ && coordinates.getPositionZ() < checkNode->maxZ;
 	else
 		return 0;
 }
@@ -127,12 +134,9 @@ bool TreeEntryImplementation::isInSE2Area(TreeNode* checkNode) const {
 #endif
 
 	if (checkNode->dividerZ != -1)
-		return coordinates.getPositionX() >= checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX &&
-			coordinates.getPositionY() >= checkNode->minY && coordinates.getPositionY() < checkNode->dividerY &&
-				coordinates.getPositionZ() >= checkNode->dividerZ && coordinates.getPositionZ() < checkNode->maxZ;
+		return coordinates.getPositionX() > checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX && coordinates.getPositionY() > checkNode->minY && coordinates.getPositionY() < checkNode->dividerY && coordinates.getPositionZ() > checkNode->dividerZ && coordinates.getPositionZ() < checkNode->maxZ;
 	else
 		return 0;
-
 }
 
 bool TreeEntryImplementation::isInNE2Area(TreeNode* checkNode) const {
@@ -141,9 +145,7 @@ bool TreeEntryImplementation::isInNE2Area(TreeNode* checkNode) const {
 #endif
 
 	if (checkNode->dividerZ != -1)
-		return coordinates.getPositionX() >= checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX &&
-			coordinates.getPositionY() >= checkNode->dividerY && coordinates.getPositionY() < checkNode->maxY &&
-				coordinates.getPositionZ() >= checkNode->dividerZ && coordinates.getPositionZ() < checkNode->maxZ;
+		return coordinates.getPositionX() > checkNode->dividerX && coordinates.getPositionX() < checkNode->maxX && coordinates.getPositionY() > checkNode->dividerY && coordinates.getPositionY() < checkNode->maxY && coordinates.getPositionZ() > checkNode->dividerZ && coordinates.getPositionZ() < checkNode->maxZ;
 	else
 		return 0;
 }
@@ -154,9 +156,7 @@ bool TreeEntryImplementation::isInNW2Area(TreeNode* checkNode) const {
 #endif
 
 	if (checkNode->dividerZ != -1)
-		return coordinates.getPositionX() >= checkNode->minX && coordinates.getPositionX() < checkNode->dividerX &&
-			coordinates.getPositionY() >= checkNode->dividerY && coordinates.getPositionY() < checkNode->maxY &&
-				coordinates.getPositionZ() >= checkNode->dividerZ && coordinates.getPositionZ() < checkNode->maxZ;
+		return coordinates.getPositionX() > checkNode->minX && coordinates.getPositionX() < checkNode->dividerX && coordinates.getPositionY() > checkNode->dividerY && coordinates.getPositionY() < checkNode->maxY && coordinates.getPositionZ() > checkNode->dividerZ && coordinates.getPositionZ() < checkNode->maxZ;
 	else
 		return 0;
 }
@@ -167,12 +167,10 @@ bool TreeEntryImplementation::isInArea(TreeNode* checkNode) const {
 #endif
 
 	if (checkNode->dividerZ != -1) {
-		return ((coordinates.getPositionX() + radius > checkNode->dividerX && coordinates.getPositionX() - radius < checkNode->dividerX) ||
-			(coordinates.getPositionY() + radius > checkNode->dividerY && coordinates.getPositionY() - radius < checkNode->dividerY)) &&
-			(coordinates.getPositionZ() + radius > checkNode->dividerZ && coordinates.getPositionZ() - radius < checkNode->dividerZ);
+		return ((coordinates.getPositionX() + radius > checkNode->dividerX && coordinates.getPositionX() - radius < checkNode->dividerX) || (coordinates.getPositionY() + radius > checkNode->dividerY && coordinates.getPositionY() - radius < checkNode->dividerY)) &&
+			   (coordinates.getPositionZ() + radius > checkNode->dividerZ && coordinates.getPositionZ() - radius < checkNode->dividerZ);
 	} else {
-		return (coordinates.getPositionX() + radius > checkNode->dividerX && coordinates.getPositionX() - radius < checkNode->dividerX) ||
-			(coordinates.getPositionY() + radius > checkNode->dividerY && coordinates.getPositionY() - radius < checkNode->dividerY);
+		return (coordinates.getPositionX() + radius > checkNode->dividerX && coordinates.getPositionX() - radius < checkNode->dividerX) || (coordinates.getPositionY() + radius > checkNode->dividerY && coordinates.getPositionY() - radius < checkNode->dividerY);
 	}
 }
 
@@ -246,8 +244,9 @@ float TreeEntryImplementation::getOutOfRangeDistance() {
 	auto thisNode = node.get();
 	float closeRange = ZoneServer::CLOSEOBJECTRANGE;
 
-	if (thisNode != nullptr && thisNode->dividerZ != -1)
+	if (thisNode != nullptr && thisNode->dividerZ != -1) {
 		closeRange = ZoneServer::SPACEOBJECTRANGE;
+	}
 
 	if (radius > (closeRange * 0.5f)) {
 		return closeRange + radius;
@@ -255,3 +254,113 @@ float TreeEntryImplementation::getOutOfRangeDistance() {
 
 	return closeRange;
 }
+
+void TreeEntryImplementation::setParent(TreeEntry* value) {
+	parent = value;
+	updateWorldPosition(false);
+}
+
+void TreeEntryImplementation::initializePosition(const Vector3& value) {
+	coordinates.initializePosition(value);
+	updateWorldPosition(true);
+}
+
+void TreeEntryImplementation::initializePosition(float x, float z, float y) {
+	coordinates.initializePosition(x, z, y);
+	updateWorldPosition(true);
+}
+
+void TreeEntryImplementation::setPosition(const Vector3& value) {
+	coordinates.setPosition(value);
+	updateWorldPosition(false);
+}
+
+void TreeEntryImplementation::setPosition(float x, float z, float y) {
+	coordinates.setPosition(x, z, y);
+	updateWorldPosition(false);
+}
+
+void TreeEntryImplementation::updateWorldPosition(bool initialize) {
+#ifdef DEBUG_WORLD_POSITION
+	auto sceneO = static_cast<SceneObject*>(_this.getReferenceUnsafeStaticCast());
+#endif // DEBUG_WORLD_POSITION
+
+	auto root = static_cast<SceneObject*>(getRootParentUnsafe());
+
+	Vector3 worldPosition = getPosition();
+
+	if (root != nullptr) {
+		if (root->isBuildingObject() || root->isPobShip()) {
+			float rootRad = -root->getDirection()->getRadians();
+			float rootCos = cos(rootRad);
+			float rootSin = sin(rootRad);
+
+			float localX = getPositionX();
+			float localY = getPositionY();
+			float localZ = getPositionZ();
+
+			float rotatedX = (localX * rootCos) - (localY * rootSin);
+			float rotatedY = (localX * rootSin) + (localY * rootCos);
+
+			float worldX = root->getPositionX() + rotatedX;
+			float worldY = root->getPositionY() + rotatedY;
+			float worldZ = root->getPositionZ() + localZ;
+
+#ifdef DEBUG_WORLD_POSITION
+			if (sceneO != nullptr && sceneO->isPlayerCreature())
+				Logger::console.info(true) << sceneO->getDisplayedName() << " -- Coordinates are using root parent to calculate";
+#endif // DEBUG_WORLD_POSITION
+
+			worldPosition = Vector3(worldX, worldY, worldZ);
+		} else {
+			worldPosition = root->getPosition();
+		}
+	}
+
+	if (initialize) {
+#ifdef DEBUG_WORLD_POSITION
+		if (sceneO != nullptr && sceneO->isPlayerCreature()) {
+			Logger::console.info(true) << sceneO->getDisplayedName() << " -- INITIALIZING - World Coordinates to " << worldPosition.toString();
+		}
+#endif // DEBUG_WORLD_POSITION
+
+		worldCoordinates.initializePosition(worldPosition.getX(), worldPosition.getZ(), worldPosition.getY());
+	} else {
+#ifdef DEBUG_WORLD_POSITION
+		if (sceneO != nullptr && sceneO->isPlayerCreature()) {
+			Logger::console.info(true) << sceneO->getDisplayedName() << " -- UPDATING - World Coordinates to " << worldPosition.toString();
+		}
+#endif // DEBUG_WORLD_POSITION
+
+		worldCoordinates.setPosition(worldPosition.getX(), worldPosition.getZ(), worldPosition.getY());
+	}
+}
+
+Vector3 TreeEntryImplementation::getWorldPosition() {
+#ifdef DEBUG_WORLD_POSITION
+	auto sceneO = static_cast<SceneObject*>(_this.getReferenceUnsafeStaticCast());
+#endif // DEBUG_WORLD_POSITION
+
+	auto currentWorld = worldCoordinates.getPosition();
+
+#ifdef DEBUG_WORLD_POSITION
+	if (sceneO != nullptr && sceneO->isPlayerCreature()) {
+		Logger::console.info(true) << sceneO->getDisplayedName() << " -- TreeEntryImplementation::getWorldPosition() is returning  " << currentWorld.toString();
+	}
+#endif // DEBUG_WORLD_POSITION
+
+	return currentWorld;
+}
+
+float TreeEntryImplementation::getWorldPositionX() const {
+	return worldCoordinates.getPositionX();
+}
+
+float TreeEntryImplementation::getWorldPositionY() const {
+	return worldCoordinates.getPositionY();
+}
+
+float TreeEntryImplementation::getWorldPositionZ() const {
+	return worldCoordinates.getPositionZ();
+}
+

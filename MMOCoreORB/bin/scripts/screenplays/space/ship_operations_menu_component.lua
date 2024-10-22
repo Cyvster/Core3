@@ -52,7 +52,7 @@ function ShipOperationsMenuComponent:handleObjectMenuSelect(pOpsChair, pPlayer, 
 		return
 	end
 
-	--print("Operations Seat Menu Selected ID " .. selectedID .. " Container ID: " .. SceneObject(pOpsChair):getObjectID() .. " Objects Size: " .. SceneObject(pOpsChair):getContainerObjectsSize())
+	-- print("Operations Seat Menu Selected ID " .. selectedID .. " Container ID: " .. SceneObject(pOpsChair):getObjectID() .. " Objects Size: " .. SceneObject(pOpsChair):getContainerObjectsSize())
 
 	-- Enter Ship Operations
 	if (selectedID == 120) then
@@ -61,9 +61,16 @@ function ShipOperationsMenuComponent:handleObjectMenuSelect(pOpsChair, pPlayer, 
 			return 0
 		end
 
-		-- Make sure player is within 5m
-		if (not CreatureObject(pPlayer):isInRangeWithObject(pOpsChair, 5)) then
-			CreatureObject(pPlayer):sendSystemMessage("@system_msg:out_of_range")
+		local player = LuaCreatureObject(pPlayer)
+
+		if (player == nil) then
+			return 0
+		end
+
+		-- Make sure player is within 7m
+		if (not player:isInRangeWithObject3d(pOpsChair, 7)) then
+			-- print("Failing due to range: " .. SceneObject(pPlayer):getDistanceTo3d(pOpsChair))
+			player:sendSystemMessage("@system_msg:out_of_range")
 			return 0
 		end
 
@@ -73,28 +80,41 @@ function ShipOperationsMenuComponent:handleObjectMenuSelect(pOpsChair, pPlayer, 
 			return 0
 		end
 
-		-- TODO
-		-- operations certification check
+		local ship = LuaShipObject(pShip)
+
+		if (ship == nil) then
+			return 0
+		end
 
 		-- Faction Check
 		local shipFaction = TangibleObject(pShip):getFaction()
 
-		if (shipFaction ~= FACTIONNEUTRAL and shipFaction ~= CreatureObject(pPlayer):getFaction()) then
-			CreatureObject(pPlayer):sendSystemMessage("@space/space_interaction:wrong_faction")
+		if (shipFaction == FACTIONIMPERIAL and not player:isImperialPilot()) then
+			player:sendSystemMessage("@space/space_interaction:wrong_faction")
+			return 0
+		elseif (shipFaction == FACTIONREBEL and not player:isRebelPilot()) then
+			player:sendSystemMessage("@space/space_interaction:wrong_faction")
+			return 0
+		elseif (shipFaction == FACTIONNEUTRAL and not player:isFreelancePilot()) then
+			player:sendSystemMessage("@space/space_interaction:wrong_faction")
 			return 0
 		end
 
 		if (SceneObject(pOpsChair):getSlottedObject("ship_operations_station") ~= nil) then
-			CreatureObject(pPlayer):sendSystemMessage("The Ship Operations Chair is already occupied.")
+			player:sendSystemMessage("The Ship Operations Chair is already occupied.")
 			return 0
 		end
 
-		SceneObject(pOpsChair):transferObject(pPlayer, SHIP_OPERATIONS_POB, 1)
-
-		CreatureObject(pPlayer):clearState(SHIPINTERIOR)
+		player:storePets()
 
 		-- Add in their ship operatios state
-		CreatureObject(pPlayer):setState(SHIPOPERATIONS)
+		player:setState(SHIPOPERATIONS)
+
+		SceneObject(pPlayer):setPosition(0, 0.5, 0)
+
+		SceneObject(pOpsChair):transferObject(pPlayer, SHIP_OPERATIONS_POB, 1)
+
+		player:clearState(SHIPINTERIOR)
 	end
 
 	return 0

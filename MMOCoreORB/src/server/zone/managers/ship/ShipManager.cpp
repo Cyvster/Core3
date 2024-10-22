@@ -5,14 +5,15 @@
  *      Author: victor
  */
 
-#include <server/zone/managers/collision/CollisionManager.h>
-#include <server/zone/packets/ship/OnShipHit.h>
 #include "ShipManager.h"
+
+#include "server/ServerCore.h"
+#include "server/zone/ZoneServer.h"
+#include "server/zone/managers/collision/CollisionManager.h"
+#include "server/zone/packets/ship/OnShipHit.h"
 #include "templates/manager/DataArchiveStore.h"
 #include "templates/datatables/DataTableIff.h"
 #include "server/zone/objects/ship/ShipChassisData.h"
-#include "server/ServerCore.h"
-#include "server/zone/ZoneServer.h"
 #include "templates/tangible/ship/SharedShipObjectTemplate.h"
 #include "server/zone/objects/ship/ComponentSlots.h"
 #include "server/zone/objects/ship/ShipComponentFlag.h"
@@ -32,6 +33,20 @@
 #include "server/zone/objects/tangible/deed/ship/ShipDeed.h"
 #include "server/chat/ChatManager.h"
 #include "server/zone/managers/planet/PlanetManager.h"
+#include "SpaceSpawnGroup.h"
+
+int ShipManager::ERROR_CODE = NO_ERROR;
+
+ShipManager::ShipManager() : Logger("ShipManger") {
+	setGlobalLogging(false);
+	setLogging(false);
+
+	lua = new Lua();
+	lua->init();
+
+	lua->registerFunction("includeFile", includeFile);
+	lua->registerFunction("addShipSpawnGroup", addShipSpawnGroup);
+}
 
 void ShipManager::initialize() {
 	loadShipChassisData();
@@ -44,6 +59,32 @@ void ShipManager::initialize() {
 	loadShipCollisionData();
 	loadShipTurretIffData();
 	loadShipTurretLuaData();
+
+	// Load the ship spawn groups
+	loadShipSpawnGroups();
+}
+
+void ShipManager::stop() {
+	chassisData.removeAll();
+	shipComponents.removeAll();
+	shipComponentTemplateNames.removeAll();
+	shipAppearanceData.removeAll();
+	shipProjectileData.removeAll();
+	shipProjectiletTemplateNames.removeAll();
+	shipCollisionData.removeAll();
+	chassisData.removeAll();
+
+	missileData.removeAll();
+	countermeasureData.removeAll();
+
+	for (int i = 0; i < turretData.size(); ++i) {
+		auto dataMap = turretData.elementAt(i).getValue();
+
+		dataMap.removeAll();
+	}
+
+	hyperspaceLocations.removeAll();
+	hyperspaceZones.removeAll();
 }
 
 void ShipManager::loadHyperspaceLocations() {
@@ -431,6 +472,92 @@ void ShipManager::loadShipComponentObjects(ShipObject* ship) {
 	}
 }
 
+int ShipManager::loadShipSpawnGroups() {
+	info(true) << "Loading Ship Spawn Groups...";
+
+	bool ret = false;
+
+	try {
+		ret = lua->runFile("scripts/object/ship/spawn/shipSpawnGroups.lua");
+	} catch (Exception& e) {
+		error(e.getMessage());
+		e.printStackTrace();
+		ret = false;
+	}
+
+	// Set the reference to lua null
+	lua = nullptr;
+
+	if (!ret) {
+		ERROR_CODE = GENERAL_ERROR;
+	}
+
+	info(true) << "Finished loading " << ShipManager::instance()->spawnGroupMap.size() << " Ship Spawn Groups.";
+
+	return ERROR_CODE;
+}
+
+int ShipManager::checkArgumentCount(lua_State* L, int args) {
+	int parameterCount = lua_gettop(L);
+
+	if (parameterCount < args) {
+		return 1;
+	} else if (parameterCount > args)
+		return 2;
+
+	return 0;
+}
+
+int ShipManager::includeFile(lua_State* L) {
+	if (checkArgumentCount(L, 1) == 1) {
+		instance()->error("incorrect number of arguments passed to ShipManager::includeFile");
+		ERROR_CODE = INCORRECT_ARGUMENTS;
+		return 0;
+	}
+
+	String filename = Lua::getStringParameter(L);
+
+	int oldError = ERROR_CODE;
+
+	bool ret = Lua::runFile("scripts/object/ship/spawn/" + filename, L);
+
+	if (!ret) {
+		ERROR_CODE = GENERAL_ERROR;
+
+		instance()->error("scripts/object/ship/spawn/" + filename);
+	} else {
+		if (!oldError && ERROR_CODE) {
+			instance()->error("scripts/object/ship/spawn/" + filename);
+		}
+	}
+
+	return 0;
+}
+
+int ShipManager::addShipSpawnGroup(lua_State* L) {
+	if (checkArgumentCount(L, 2) == 1) {
+		instance()->error("incorrect number of arguments passed to ShipManager::addShipSpawnGroup");
+		ERROR_CODE = INCORRECT_ARGUMENTS;
+		return 0;
+	}
+
+	String groupName = lua_tostring(L, -2);
+	uint32 groupCRC = (uint32) groupName.hashCode();
+
+#ifdef DEBUG_SPACE_REGIONS
+	Logger::console.info(true) << "Adding SpaceSpawnGroup: " << groupName;
+#endif // DEBUG_SPACE_REGIONS
+
+	LuaObject shipSpawnGroup(L);
+
+	// SpaceSpawnGroup is loaded from lua here
+	ShipManager::instance()->spawnGroupMap.put(groupCRC, new SpaceSpawnGroup(groupName, shipSpawnGroup));
+
+	shipSpawnGroup.pop();
+
+	return 0;
+}
+
 // Ship is locked coming in
 ShipControlDevice* ShipManager::createShipControlDevice(ShipObject* ship) {
 	String controlName = "object/intangible/ship/" + ship->getShipChassisName().replaceAll("player_", "") + "_pcd.iff";
@@ -462,9 +589,13 @@ ShipControlDevice* ShipManager::createShipControlDevice(ShipObject* ship) {
 }
 
 ShipAiAgent* ShipManager::createAiShip(const String& shipName) {
+	return createAiShip(shipName.hashCode());
+}
+
+ShipAiAgent* ShipManager::createAiShip(uint32 shipCRC) {
 	//info(true) << "ShipManager::createAiShip -- Create Chassis Name: " << shipName;
 
-	auto shipTemp = dynamic_cast<SharedShipObjectTemplate*>(TemplateManager::instance()->getTemplate(shipName.hashCode()));
+	auto shipTemp = dynamic_cast<SharedShipObjectTemplate*>(TemplateManager::instance()->getTemplate(shipCRC));
 
 	if (shipTemp == nullptr) {
 		return nullptr;
@@ -472,8 +603,9 @@ ShipAiAgent* ShipManager::createAiShip(const String& shipName) {
 
 	auto zoneServer = ServerCore::getZoneServer();
 
-	if (zoneServer == nullptr)
+	if (zoneServer == nullptr) {
 		return nullptr;
+	}
 
 	ManagedReference<ShipAiAgent*> shipAgent = zoneServer->createObject(shipTemp->getServerObjectCRC(), 0).castTo<ShipAiAgent*>();
 
@@ -490,11 +622,11 @@ ShipAiAgent* ShipManager::createAiShip(const String& shipName) {
 	return shipAgent;
 }
 
-ShipObject* ShipManager::createPlayerShip(CreatureObject* owner, const String& shipName, bool loadComponents) {
+ShipObject* ShipManager::createPlayerShip(CreatureObject* owner, const String& shipName, const String& certificationRequired, bool loadComponents) {
 	if (owner == nullptr)
 		return nullptr;
 
-	ManagedReference<SceneObject*> dataPad = owner->getSlottedObject("datapad");
+	ManagedReference<SceneObject*> dataPad = owner->getDatapad();
 
 	if (dataPad == nullptr) {
 		return nullptr;
@@ -530,6 +662,8 @@ ShipObject* ShipManager::createPlayerShip(CreatureObject* owner, const String& s
 
 	// Load ship template data
 	ship->loadTemplateData(shipTemp);
+
+	ship->setCertificationRequired(certificationRequired);
 
 	// Create Control device
 	auto shipControlDevice = createShipControlDevice(ship);
@@ -811,11 +945,12 @@ void ShipManager::promptFindLostItems(CreatureObject* player, PobShipObject* pob
 	}
 }
 
-void ShipManager::promptNameShip(CreatureObject* creature, ShipControlDevice* shipDevice) {
-	if (creature == nullptr || shipDevice == nullptr)
+void ShipManager::promptNameShip(CreatureObject* player, ShipControlDevice* shipDevice) {
+	if (player == nullptr || shipDevice == nullptr) {
 		return;
+	}
 
-	auto ghost = creature->getPlayerObject();
+	auto ghost = player->getPlayerObject();
 
 	if (ghost == nullptr)
 		return;
@@ -826,7 +961,7 @@ void ShipManager::promptNameShip(CreatureObject* creature, ShipControlDevice* sh
 		return;
 	}
 
-	ManagedReference<SuiInputBox*> inputBox = new SuiInputBox(creature, SuiWindowType::OBJECT_NAME);
+	ManagedReference<SuiInputBox*> inputBox = new SuiInputBox(player, SuiWindowType::OBJECT_NAME);
 
 	inputBox->setUsingObject(shipDevice);
 
@@ -835,10 +970,189 @@ void ShipManager::promptNameShip(CreatureObject* creature, ShipControlDevice* sh
 
 	inputBox->setMaxInputSize(20);
 
-	inputBox->setCallback(new NameShipSuiCallback(creature->getZoneServer()));
+	inputBox->setCallback(new NameShipSuiCallback(player->getZoneServer()));
 	inputBox->setForceCloseDistance(-1);
 
 	ghost->addSuiBox(inputBox);
 
-	creature->sendMessage(inputBox->generateMessage());
+	player->sendMessage(inputBox->generateMessage());
+}
+
+void ShipManager::reDeedShip(CreatureObject* player, ShipControlDevice* shipDevice) {
+	if (player == nullptr || shipDevice == nullptr) {
+		return;
+	}
+
+	ManagedReference<ShipObject*> ship = shipDevice->getControlledObject()->asShipObject();
+
+	if (ship == nullptr) {
+		return;
+	}
+
+	auto zoneServer = player->getZoneServer();
+
+	if (zoneServer == nullptr) {
+		return;
+	}
+
+	auto zone = player->getZone();
+
+	if (zone == nullptr) {
+		return;
+	}
+
+	auto planetManager = zone->getPlanetManager();
+
+	if (planetManager == nullptr) {
+		return;
+	}
+
+	auto parkingLocation = shipDevice->getParkingLocation();
+	auto travelPoint = planetManager->getNearestPlanetTravelPoint(player->getWorldPosition(), 128.f);
+
+	if (travelPoint == nullptr || parkingLocation != travelPoint->getPointName()) {
+		player->sendSystemMessage("@space/space_interaction:wrong_parking_location"); // "Your ship is not parked here. (Examine the Ship Control Device to see where it is actually parked)"
+		return;
+	}
+
+	if (ship->isSorosuubSpaceYacht()) {
+		player->sendSystemMessage("@space/space_interaction:space_yacht"); // "The Sorosuub Yacht cannot be re-deeded!"
+		return;
+	} else if (ship->isStarterShip()) {
+		player->sendSystemMessage("@space/space_interaction:newbie_ship"); // "You cannot redeed a starter ship!"
+		return;
+	} else if (ship->isPobShip()) {
+		auto pobShip = ship->asPobShip();
+
+		if (pobShip == nullptr) {
+			return;
+		}
+
+		if (pobShip->getCurrentNumberOfPlayerItems() > 0) {
+			player->sendSystemMessage("@space/space_interaction:items_in_ship"); // "You cannot pack this ship into a deed until you have removed all items from its interior."
+			return;
+		}
+	}
+
+	if (ship->hasComponentsInstalled()) {
+		player->sendSystemMessage("@space/space_interaction:components_installed"); // "You cannot pack this ship until all components have been removed from the ship."
+		return;
+	}
+
+	auto inventory = player->getInventory();
+
+	if (inventory == nullptr) {
+		return;
+	}
+
+	String chassisName = ship->getShipChassisName().replaceAll("player_", "");
+	String deedPath = "object/tangible/ship/crafted/chassis/" + chassisName + "_deed.iff";
+
+	// Create the deed and transfer
+	auto object = zoneServer->createObject(deedPath.hashCode(), 2);
+
+	if (object == nullptr || !object->isShipDeedObject()) {
+		return;
+	}
+
+	ShipDeed* shipDeed = object.castTo<ShipDeed*>();
+
+	if (shipDeed == nullptr) {
+		return;
+	}
+
+	// Transfer the ship stats to the deed
+	Locker deedLock(shipDeed, shipDevice);
+
+	auto controlDeviceTemplate = shipDevice->getObjectTemplate();
+
+	if (controlDeviceTemplate == nullptr) {
+		return;
+	}
+
+	auto deviceStringName = controlDeviceTemplate->getFullTemplateString();
+	auto certificationRequired = ship->getCertificationRequired();
+
+
+	int shipType = shipDevice->getShipType();
+	float maxHealth = ship->getChassisMaxHealth();
+	float currentHealthDamage = (maxHealth - ship->getChassisCurrentHealth());
+	float maxMass = ship->getChassisMaxMass();
+
+	/*
+	StringBuffer msg;
+	msg << "Ship ReDeed Ship Stats Debug -- Control Device Template: " << deviceStringName << endl <<
+	"Max Hit Points: " << maxHealth << endl <<
+	"Hit Points Damage = " << currentHealthDamage << endl <<
+	"Max Mass: " << maxMass << endl <<
+	"Certifcation Required: " << certificationRequired << endl <<
+	"Parking Locaiton: " << parkingLocation << endl;
+	*/
+
+	for (int i = 0; i < shipDevice->getTotalSkillsRequired(); i++) {
+		auto skillName = shipDevice->getSkillRequired(i);
+		shipDeed->addSkillRequired(skillName);
+		// msg << "Skills Required: " << skillName << endl;
+	}
+
+	/*
+	info(true) << msg.toString();
+	*/
+
+	shipDeed->setControlDeviceTemplate(deviceStringName);
+	shipDeed->setCertificationRequired(certificationRequired);
+	shipDeed->setParkingLocation(parkingLocation);
+
+	shipDeed->setMaxHitPoints(maxHealth);
+	shipDeed->setHitPointsDamage(currentHealthDamage);
+	shipDeed->setMass(maxMass);
+	shipDeed->setShipType(shipType);
+
+	deedLock.release();
+
+	TransactionLog trx(shipDevice, player, shipDeed, TrxCode::SHIPREDEED, true);
+	trx.commit();
+
+	Locker playerLock(player, shipDevice);
+
+	// Transfer the deed
+	inventory->transferObject(shipDeed, -1, true, true);
+
+	playerLock.release();
+
+	player->broadcastObject(shipDeed, true);
+
+	// Destroy the ship
+	Locker shipLock(ship, shipDevice);
+
+	ship->destroyObjectFromWorld(true);
+	ship->destroyObjectFromDatabase(true);
+
+	shipLock.release();
+
+	// Destroy the control device
+	shipDevice->destroyObjectFromWorld(true);
+	shipDevice->destroyObjectFromDatabase(true);
+
+	player->sendSystemMessage("@space/space_interaction:packed"); // "You have successfully packed this ship into a deed!"
+}
+
+uint16 ShipManager::setShipUniqueID(ShipObject* ship) {
+	if (ship == nullptr) {
+		return 0;
+	}
+
+	Locker sLock(ship);
+	uint16 shipID = shipUniqueIdMap.setUniqueID(ship);
+
+	return shipID;
+}
+
+void ShipManager::dropShipUniqueID(ShipObject* ship) {
+	if (ship == nullptr) {
+		return;
+	}
+
+	Locker sLock(ship);
+	shipUniqueIdMap.dropUniqueID(ship);
 }

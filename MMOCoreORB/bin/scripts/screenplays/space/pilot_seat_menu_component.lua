@@ -61,9 +61,16 @@ function PilotSeatMenuComponent:handleObjectMenuSelect(pPilotChair, pPlayer, sel
 			return 0
 		end
 
-		-- Make sure player is within 5m
-		if (not CreatureObject(pPlayer):isInRangeWithObject(pPilotChair, 5)) then
-			CreatureObject(pPlayer):sendSystemMessage("@system_msg:out_of_range")
+		local player = LuaCreatureObject(pPlayer)
+
+		if (player == nil) then
+			return 0
+		end
+
+		-- Make sure player is within 7m
+		if (not player:isInRangeWithObject3d(pPilotChair, 7)) then
+			-- print("Failing due to range: " .. SceneObject(pPlayer):getDistanceTo3d(pPilotChair))
+			player:sendSystemMessage("@system_msg:out_of_range")
 			return 0
 		end
 
@@ -76,28 +83,27 @@ function PilotSeatMenuComponent:handleObjectMenuSelect(pPilotChair, pPlayer, sel
 			return 0
 		end
 
-		-- TODO
-		-- pilot certification check -- 'no_ship_certification', 'You are not certified to pilot this ship.');
+		local ship = LuaShipObject(pShip)
 
-		-- Faction Check
-		local shipFaction = TangibleObject(pShip):getFaction()
-
-		if (shipFaction ~= FACTIONNEUTRAL and shipFaction ~= CreatureObject(pPlayer):getFaction()) then
-			CreatureObject(pPlayer):sendSystemMessage("@space/space_interaction:wrong_faction")
+		if (ship == nil) then
 			return 0
 		end
 
-		if (SceneObject(pPilotChair):getSlottedObject("ship_pilot_pob") ~= nil) then
-			CreatureObject(pPlayer):sendSystemMessage("Someone is already piloting this ship.")
+		if (not ship:canBePilotedBy(pPlayer)) then
+			player:sendSystemMessage("@space/space_interaction:no_ship_certification") --'You are not certified to pilot this ship.'
 			return 0
 		end
+
+		player:storePets()
+
+		-- Add in their piloting state
+		player:setState(PILOTINGPOBSHIP)
+
+		SceneObject(pPlayer):setPosition(0, 0.5, 0)
 
 		SceneObject(pPilotChair):transferObject(pPlayer, SHIP_PILOT_POB, 1)
 
-		CreatureObject(pPlayer):clearState(SHIPINTERIOR)
-
-		-- Add in their piloting state
-		CreatureObject(pPlayer):setState(PILOTINGPOBSHIP)
+		player:clearState(SHIPINTERIOR)
 	end
 
 	return 0

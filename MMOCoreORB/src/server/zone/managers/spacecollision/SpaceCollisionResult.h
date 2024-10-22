@@ -11,30 +11,29 @@
 #include "server/zone/packets/ui/CreateClientPathMessage.h"
 #endif // SPACECOLLISION_DEBUG
 
-class SpaceCollisionResult {
+class SpaceCollisionEntry {
 protected:
 	ManagedWeakReference<ShipObject*> object;
 	Vector3 position;
+	Vector3 direction;
+
 	float distance;
-	bool front;
 	int slot;
 
 public:
-	SpaceCollisionResult() {
+	SpaceCollisionEntry() {
 		distance = FLT_MAX;
-		front = false;
 		slot = -1;
 	}
 
-	void setCollision(ShipObject* targetShip, const ShipProjectile* projectile, float intersection, int componentSlot = -1, bool hitFront = false) {
+	SpaceCollisionEntry(ShipObject* targetShip, const ShipProjectile* projectile, const Vector3& localDirection, float intersection, int componentSlot = -1) {
 		object = targetShip;
-		distance = projectile->getDistance() * intersection;
-		position = (projectile->getDirection() * distance) + projectile->getLastPosition();
-		front = hitFront;
+		distance = projectile->getDistance() * Math::clamp(0.f, intersection, 1.f);
 
-		if (componentSlot != -1) {
-			slot = componentSlot;
-		}
+		position = (projectile->getDirection() * distance) + projectile->getLastPosition();
+		direction = localDirection;
+
+		slot = componentSlot;
 	}
 
 	ManagedWeakReference<ShipObject*> getObject() const {
@@ -45,16 +44,62 @@ public:
 		return position;
 	}
 
+	const Vector3& getDirection() const {
+		return direction;
+	}
+
 	float getDistance() const {
 		return distance;
 	}
 
 	bool isHitFront() const {
-		return front;
+		return direction.getZ() >= 0.f;
 	}
 
 	int getSlot() const {
 		return slot;
+	}
+};
+
+class SpaceCollisionResult {
+protected:
+	VectorMap<float, SpaceCollisionEntry> collisionMap;
+
+public:
+	SpaceCollisionResult() {
+
+	}
+
+	void setCollision(ShipObject* targetShip, const ShipProjectile* projectile, const Vector3& localDirection, float intersection, int componentSlot = Components::CHASSIS) {
+		collisionMap.put(intersection, SpaceCollisionEntry(targetShip, projectile, localDirection, intersection, componentSlot));
+	}
+
+	ManagedWeakReference<ShipObject*> getObject(int index = 0) const {
+		return collisionMap.size() > index ? collisionMap.elementAt(index).getValue().getObject() : nullptr;
+	}
+
+	const Vector3& getPosition(int index = 0) const {
+		return collisionMap.size() > index ? collisionMap.elementAt(index).getValue().getPosition() : Vector3::ZERO;
+	}
+
+	const Vector3& getDirection(int index = 0) const {
+		return collisionMap.size() > index ? collisionMap.elementAt(index).getValue().getDirection() : Vector3::ZERO;
+	}
+
+	float getDistance(int index = 0) const {
+		return collisionMap.size() > index ? collisionMap.elementAt(index).getValue().getDistance() : FLT_MAX;
+	}
+
+	bool isHitFront(int index = 0) const {
+		return collisionMap.size() > index ? collisionMap.elementAt(index).getValue().isHitFront() : false;
+	}
+
+	int getSlot(int index = 0) const {
+		return collisionMap.size() > index ? collisionMap.elementAt(index).getValue().getSlot() : -1;
+	}
+
+	int size() const {
+		return collisionMap.size();
 	}
 
 #ifdef SPACECOLLISION_DEBUG
@@ -74,12 +119,20 @@ public:
 			return;
 		}
 
+		const auto& position = getPosition();
+
 		auto path = new CreateClientPathMessage();
+		path->addCoordinate(ship->getPosition());
 		path->addCoordinate(projectile->getLastPosition());
 		path->addCoordinate(position);
 
 		StringBuffer msg;
-		msg << writeDebugResultMessage(targetShip);
+		msg
+		<< "  distance:       " << getDistance() << endl
+		<< "  position:       " << getPosition().toString() << endl
+		<< "  front/back:     " << (isHitFront() ? "FRONT" : "BACK") << endl
+		<< "  slot:           " << getSlot() << endl
+		<< targetData->toDebugString(false) << endl;
 
 		const Vector3& targetPosition = targetShip->getPosition();
 
@@ -98,7 +151,7 @@ public:
 			path->drawBoundingBox(targetPosition, targetRotation, targetData->getChassisBox());
 		}
 
-		if (targetData->getVolumeType() == ShipCollisionData::CollisionVolumeType::RADIUS) {
+		if (targetData->getVolumeType() == ShipCollisionData::CollisionVolumeType::SPHERE) {
 			path->drawBoundingSphere(targetPosition, targetRotation, targetData->getBoundingSphere());
 			path->drawBoundingSphere(targetPosition, targetRotation, targetData->getChassisSphere());
 		}
@@ -112,45 +165,14 @@ public:
 		pilot->sendMessage(path);
 	}
 
-	String writeDebugResultMessage(ShipObject* target) {
-		auto targetData = ShipManager::instance()->getCollisionData(target);
-		if (targetData == nullptr) {
-			return "!targetData";
-		}
-
-		StringBuffer msg;
-		msg << "SpaceCollisionResult" << endl
-			<< "  distance:       " << distance << endl
-			<< "  position:       " << position.toString() << endl
-			<< "  front/back:     " << (front ? "FRONT" : "BACK") << endl
-			<< "  chassisRadius:  " << targetData->getChassisSphere().getRadius() << endl
-			<< "  boundingRadius: " << targetData->getBoundingSphere().getRadius() << endl
-			<< "  volumeType:     " << targetData->getVolumeType() << endl
-			<< "  slot:           " << slot << endl;
-
-		return msg.toString();
-	}
-
-	String writeDebugHardpointMessage(const ShipCollisionHardpoint& hardpoint, int slot) {
-		StringBuffer msg;
-		msg << "  hardpoint:      " << hardpoint.getHardpointName()
-			<< "  appearance:     " << hardpoint.getAppearanceName()
-			<< "  position:       " << hardpoint.getSphere().getCenter().toString()
-			<< "  radius:         " << hardpoint.getSphere().getRadius()
-			<< "  slot:           " << slot << endl;
-
-		return msg.toString();
-	}
-
 	String debugCollisionHardpoints(ShipObject* targetShip, const Vector3& targetPosition, const Matrix4& targetRotation, const ShipCollisionData* targetData, CreateClientPathMessage* path) {
 		StringBuffer msg;
-		float targetRadius = targetData->getBoundingSphere().getRadius();
 
-		for (uint32 slot = 0; slot <= Components::FIGHTERSLOTMAX; ++slot) {
+		for (int slot = -1; slot <= Components::CAPITALSLOTMAX; ++slot) {
 			String slotName = Components::shipComponentSlotToString(slot);
 			uint32 compCrc = targetShip->getShipComponentMap()->get(slot);
 
-			if (compCrc == 0) {
+			if (slot != Components::CHASSIS && compCrc == 0) {
 				continue;
 			}
 
@@ -158,15 +180,35 @@ public:
 
 			for (int i = 0; i < hardPoints.size(); ++i) {
 				auto key = hardPoints.getUnsafe(i).getKey();
-				if (key != compCrc) {
+				if (slot != Components::CHASSIS && (key != compCrc || slot != getSlot())) {
 					continue;
 				}
 
 				const auto& hardPoint = hardPoints.getUnsafe(i).getValue();
-				float hardpointRadius = hardPoint.getSphere().getRadius();
+				int volumeType = hardPoint.getVolumeType();
 
-				path->drawBoundingSphere(targetPosition, targetRotation, hardPoint.getSphere());
-				msg << slot << ": " << writeDebugHardpointMessage(hardPoint, slot);
+				if (volumeType == ShipCollisionData::CollisionVolumeType::SPHERE) {
+					path->drawBoundingSphere(targetPosition, targetRotation, hardPoint.getSphere());
+					path->drawBoundingSphere(targetPosition, targetRotation, Sphere(hardPoint.getSphere().getCenter(), hardPoint.getRadius()));
+					msg << slotName << ": " << hardPoint.toDebugString();
+				}
+
+				if (volumeType == ShipCollisionData::CollisionVolumeType::BOX) {
+					path->drawBoundingBox(targetPosition, targetRotation, hardPoint.getBox());
+					path->drawBoundingSphere(targetPosition, targetRotation, Sphere(hardPoint.getSphere().getCenter(), hardPoint.getRadius()));
+					msg << slotName << ": " << hardPoint.toDebugString();
+				}
+
+				if (volumeType == ShipCollisionData::CollisionVolumeType::MESH) {
+					path->drawBoundingSphere(targetPosition, targetRotation, hardPoint.getSphere());
+					path->drawBoundingSphere(targetPosition, targetRotation, Sphere(hardPoint.getSphere().getCenter(), hardPoint.getRadius()));
+					msg << slotName << ": " << hardPoint.toDebugString();
+				}
+
+				if (volumeType == ShipCollisionData::CollisionVolumeType::RADIUS) {
+					path->drawBoundingSphere(targetPosition, targetRotation, hardPoint.getSphere());
+					msg << slotName << ": " << hardPoint.toDebugString();
+				}
 			}
 		}
 

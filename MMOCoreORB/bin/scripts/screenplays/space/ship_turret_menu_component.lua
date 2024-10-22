@@ -58,12 +58,11 @@ function ShipTurretMenuComponent:handleObjectMenuSelect(pTurret, pPlayer, select
 
 	--[[ TODO:
 		faction check "@space/space_interaction:"wrong_faction"
-		"space/space_interaction:no_turret"
-		"space/space_interaction:turret_disabled"
 	]]
 
-	-- Make sure player is within 5m
-	if (not CreatureObject(pPlayer):isInRangeWithObject(pTurret, 5)) then
+	-- Make sure player is within 4m
+	if (not CreatureObject(pPlayer):isInRangeWithObject3d(pTurret, 4)) then
+		-- print("Failing due to range: " .. SceneObject(pPlayer):getDistanceTo3d(pTurret))
 		CreatureObject(pPlayer):sendSystemMessage("@system_msg:out_of_range")
 		return 0
 	end
@@ -71,6 +70,12 @@ function ShipTurretMenuComponent:handleObjectMenuSelect(pTurret, pPlayer, select
 	local pShip = SceneObject(pPlayer):getRootParent()
 
 	if (pShip == nil or not SceneObject(pShip):isShipObject()) then
+		return 0
+	end
+
+	local ship = LuaShipObject(pShip)
+
+	if (ship == nil) then
 		return 0
 	end
 
@@ -82,11 +87,26 @@ function ShipTurretMenuComponent:handleObjectMenuSelect(pTurret, pPlayer, select
 		return 0
 	end
 
+	CreatureObject(pPlayer):storePets()
+
+	-- Add players ship operatios state
+	CreatureObject(pPlayer):setState(SHIPGUNNER)
+
+	SceneObject(pPlayer):setPosition(0, 0.5, 0)
+
 	-- Ship Turret
 	if (selectedID == 120) then
 		-- Check if occupied
 		if (SceneObject(pTurret):getSlottedObject("ship_gunner0_pob") ~= nil) then
 			CreatureObject(pPlayer):sendSystemMessage("@space/space_interaction:turret_occupied")
+			return 0
+		end
+
+		if (not ship:hasUpperTurret()) then
+			CreatureObject(pPlayer):sendSystemMessage("@space/space_interaction:no_turret")
+			return 0
+		elseif (not ship:isUpperTurretFunctional()) then
+			CreatureObject(pPlayer):sendSystemMessage("@space/space_interaction:turret_disabled")
 			return 0
 		end
 
@@ -98,13 +118,18 @@ function ShipTurretMenuComponent:handleObjectMenuSelect(pTurret, pPlayer, select
 			return 0
 		end
 
+		if (not ship:hasLowerTurret()) then
+			CreatureObject(pPlayer):sendSystemMessage("@space/space_interaction:no_turret")
+			return 0
+		elseif (not ship:isLowerTurretFunctional()) then
+			CreatureObject(pPlayer):sendSystemMessage("@space/space_interaction:turret_disabled")
+			return 0
+		end
+
 		SceneObject(pTurret):transferObject(pPlayer, SHIP_GUNNER1_POB, 1)
 	end
 
 	CreatureObject(pPlayer):clearState(SHIPINTERIOR)
-
-	-- Add players ship operatios state
-	CreatureObject(pPlayer):setState(SHIPGUNNER)
 
 	return 0
 end

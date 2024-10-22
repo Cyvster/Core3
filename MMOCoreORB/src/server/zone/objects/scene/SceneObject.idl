@@ -348,7 +348,7 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	 * @param notifyClient not used currently
 	 * @return returns true if the object has been successfully removed
 	 */
-	public native abstract boolean removeObject(SceneObject object, SceneObject destination, boolean notifyClient = false);
+	public native abstract boolean removeObject(SceneObject object, SceneObject destination, boolean notifyClient = false, boolean nullifyParent = true);
 
 	/**
 	 * Destroys the object from the world
@@ -650,7 +650,7 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	public native void notifyInsert(TreeEntry entry);
 
 	@local
-	public native void notifyDissapear(TreeEntry entry);
+	public abstract native void notifyDissapear(TreeEntry entry);
 
 	public native abstract void notifyRemoveFromZone();
 
@@ -935,9 +935,18 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	public abstract native float getDistanceTo(SceneObject object);
 
 	@mock
+	@dirty
+	public abstract native float getDistanceTo3d(SceneObject object);
+
+	@mock
 	@local
 	@dirty
 	public abstract native float getDistanceTo(Coordinate coordinate);
+
+	@mock
+	@local
+	@dirty
+	public abstract native float getDistanceTo3d(Coordinate coordinate);
 
 	public abstract native void updateVehiclePosition(boolean sendPackets);
 
@@ -1007,24 +1016,6 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	@dereferenced
 	@dirty
 	public native Vector3 getWorldCoordinate(float distance, float angleDegrees, boolean includeZ);
-
-	@mock
-	@dirty
-	public abstract native float getWorldPositionX();
-
-	@dirty
-	@mock
-	public abstract native float getWorldPositionY();
-
-	@dirty
-	@mock
-	public abstract native float getWorldPositionZ();
-
-	@dirty
-	@local
-	@dereferenced
-	@mock
-	public abstract native Vector3 getWorldPosition();
 
 	@read
 	public float getDirectionX() {
@@ -1137,6 +1128,11 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	@reference
 	@mock
 	public abstract native SceneObject getInventory();
+
+	@dirty
+	@reference
+	@mock
+	public abstract native SceneObject getDatapad();
 
 	@read
 	public int getSlotDescriptorSize() {
@@ -1569,6 +1565,10 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	@virtualStub
 	public native abstract boolean isShipAiAgent();
 
+	@dirty
+	@local
+	public native abstract boolean isPlayerShip();
+
 	@mock
 	@dirty
 	@local
@@ -1642,9 +1642,10 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	public native abstract FighterShipObject asFighterShip();
 
 	@dirty
-	public abstract boolean isCreature() {
-		return false;
-	}
+	@local
+	@nativeStub
+	@virtualStub
+	public native abstract boolean isCreature();
 
 	@dirty
 	@local
@@ -1952,18 +1953,23 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	}
 
 	@read
-	public abstract boolean isPilotChair() {
+	public boolean isPilotChair() {
 		return gameObjectType == SceneObjectType.PILOTCHAIR;
 	}
 
 	@read
-	public abstract boolean isOperationsChair() {
+	public boolean isOperationsChair() {
 		return gameObjectType == SceneObjectType.OPERATIONSCHAIR;
 	}
 
 	@read
-	public abstract boolean isShipTurret() {
+	public boolean isShipTurret() {
 		return gameObjectType == SceneObjectType.TURRETACCESSLADDER;
+	}
+
+	@dirty
+	public boolean isValidJtlParent() {
+		return (isPilotChair() || isOperationsChair() || isShipTurret() || (isShipObject() && !isPobShip()));
 	}
 
 	@read
@@ -2322,6 +2328,11 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	}
 
 	@dirty
+	public abstract boolean isSpaceSpawner() {
+		return false;
+	}
+
+	@dirty
 	public abstract boolean isEventPerkDeed() {
 		return false;
 	}
@@ -2388,4 +2399,14 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	public native abstract void setSyncStamp(unsigned int value);
 
 	public native abstract unsigned int getSyncStamp();
+
+	@dirty
+	public abstract int getCurrentNumberOfPlayerItems() {
+		return 0;
+	}
+
+	@dirty
+	public abstract unsigned int getMaximumNumberOfPlayerItems() {
+		return 0;
+	}
 }

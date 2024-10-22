@@ -79,8 +79,18 @@ void CellObjectImplementation::onBuildingInsertedToZone(BuildingObject* building
 }
 
 void CellObjectImplementation::onShipInsertedToZone(PobShipObject* pobShip) {
+	if (pobShip == nullptr) {
+		return;
+	}
+
 	for (int j = 0; j < getContainerObjectsSize(); ++j) {
 		SceneObject* child = getContainerObject(j);
+
+		if (child == nullptr) {
+			continue;
+		}
+
+		// info(true) << pobShip->getDisplayedName() << " -- PobShip is broadcasting contained object: " << child->getDisplayedName();
 
 		pobShip->notifyObjectInsertedToZone(child);
 	}
@@ -113,18 +123,17 @@ void CellObjectImplementation::sendBaselinesTo(SceneObject* player) {
 int CellObjectImplementation::canAddObject(SceneObject* object, int containmentType, String& errorDescription) {
 	ManagedReference<SceneObject*> strongParent = getParent().get();
 
-	if (strongParent != nullptr && strongParent->isBuildingObject()) {
-		BuildingObject* building = strongParent->asBuildingObject();
-
+	if (strongParent != nullptr && (strongParent->isBuildingObject() || strongParent->isPobShip())) {
 		int count = 1;
 
-		if (object->isVendor())
+		if (object->isVendor()) {
 			count = 0;
-		else if (object->isContainerObject())
+		} else if (object->isContainerObject()) {
 			count += object->getCountableObjectsRecursive();
+		}
 
-		if (building->getCurrentNumberOfPlayerItems() + count > building->getMaximumNumberOfPlayerItems()) {
-			errorDescription = "@container_error_message:container13";
+		if ((strongParent->getCurrentNumberOfPlayerItems() + count) > strongParent->getMaximumNumberOfPlayerItems()) {
+			errorDescription = "@container_error_message:container13"; // This house has too many items in it
 
 			return TransferErrorCode::TOOMANYITEMSINHOUSE;
 		}
@@ -155,17 +164,13 @@ bool CellObjectImplementation::transferObject(SceneObject* object, int containme
 			TangibleObject* tano = cast<TangibleObject*>(object);
 
 			if (tano != nullptr) {
-				if (zone->isSpaceZone()) {
-					//TODO: update this when OctreeActiveArea is added
-				} else {
-					zone->updateActiveAreas(tano);
-				}
+				zone->updateActiveAreas(tano);
 			}
 		}
 
-		if (object->isCreatureObject() || object->isVendor() || object->getPlanetMapCategoryCRC() != 0 || object->getPlanetMapSubCategoryCRC() != 0)
+		if (object->isCreatureObject() || object->isVendor() || object->getPlanetMapCategoryCRC() != 0 || object->getPlanetMapSubCategoryCRC() != 0) {
 			forceLoadObjectCount.increment();
-
+		}
 	} catch (...) {
 	}
 
@@ -179,8 +184,6 @@ bool CellObjectImplementation::transferObject(SceneObject* object, int containme
 
 				if (building != nullptr && creo != nullptr)
 					building->onEnter(creo);
-			} else if (strongParent->isPobShip()) {
-				// TODO: add notification of player being added to PoBShipCell
 			}
 		}
 	}
@@ -191,11 +194,12 @@ bool CellObjectImplementation::transferObject(SceneObject* object, int containme
 	return ret;
 }
 
-bool CellObjectImplementation::removeObject(SceneObject* object, SceneObject* destination, bool notifyClient) {
-	bool ret = SceneObjectImplementation::removeObject(object, destination, notifyClient);
+bool CellObjectImplementation::removeObject(SceneObject* object, SceneObject* destination, bool notifyClient, bool nullifyParent) {
+	bool ret = SceneObjectImplementation::removeObject(object, destination, notifyClient, nullifyParent);
 
-	if (object->isCreatureObject() || object->isVendor() || object->getPlanetMapCategoryCRC() != 0 || object->getPlanetMapSubCategoryCRC() != 0)
+	if (object->isCreatureObject() || object->isVendor() || object->getPlanetMapCategoryCRC() != 0 || object->getPlanetMapSubCategoryCRC() != 0) {
 		forceLoadObjectCount.decrement();
+	}
 
 	return ret;
 }

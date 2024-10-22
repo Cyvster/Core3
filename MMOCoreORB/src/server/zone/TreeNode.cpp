@@ -4,7 +4,7 @@
 
 #include "server/zone/TreeEntry.h"
 #include "server/zone/QuadTree.h"
-#include "server/zone/OctTree.h"
+#include "server/zone/Octree.h"
 #include "server/zone/objects/scene/SceneObject.h"
 
 #define NO_ENTRY_REF_COUNTING
@@ -19,7 +19,7 @@ TreeNode::TreeNode() {
 	dividerX = 0, dividerY = 0,	dividerZ = -1;
 }
 
-TreeNode::TreeNode(float minx, float miny, float minz, float maxx, float maxy, float maxz, TreeNode *parent) {
+TreeNode::TreeNode(float minx, float miny, float minz, float maxx, float maxy, float maxz, TreeNode* parent) {
 	objects.setNoDuplicateInsertPlan();
 
 	parentNode = parent;
@@ -33,7 +33,7 @@ TreeNode::TreeNode(float minx, float miny, float minz, float maxx, float maxy, f
 
 	if (!validateNode() || minX > maxX || minY > maxY || minZ > maxZ) {
 		StringBuffer msg;
-		msg << "[OctTree] invalid node in create - " << toStringData();
+		msg << "[Octree] invalid node in create - " << toStringData();
 		Logger::console.error(msg);
 	}
 
@@ -66,8 +66,8 @@ TreeNode::~TreeNode() {
 }
 
 void TreeNode::addObject(TreeEntry *obj) {
-	/*if (dividerZ != -1 && OctTree::doLog())
-		Logger::console.info(true) << hex << "object [" << obj->getObjectID() <<  "] added to OctTree"
+	/*if (dividerZ != -1 && Octree::doLog())
+		Logger::console.info(true) << hex << "object [" << obj->getObjectID() <<  "] added to Octree"
 		<< toStringData() << "\n";
 	else if (dividerZ == 0 && QuadTree::doLog())
 		Logger::console.info(true) << hex << "object [" << obj->getObjectID() <<  "] added to QuadTree"
@@ -89,11 +89,11 @@ void TreeNode::removeObject(TreeEntry* obj) {
 	} else {
 		obj->setNode(nullptr);
 
-		if (OctTree::doLog()) {
+		if (Octree::doLog()) {
 			SceneObject* sceneO = cast<SceneObject*>(obj);
 
 			if (sceneO != nullptr && dividerX != 0) {
-				//Logger::console.info(true) << "TreeNode::removeObject -- OctTree Object ID: " << sceneO->getObjectID() << " " << sceneO->getDisplayedName() <<  " - removed object from Oct Tree Node: " << toStringData() << "\n";
+				//Logger::console.info(true) << "TreeNode::removeObject -- Octree Object ID: " << sceneO->getObjectID() << " " << sceneO->getDisplayedName() <<  " - removed object from Oct Tree Node: " << toStringData() << "\n";
 			}
 		}
 	}
@@ -116,29 +116,42 @@ bool TreeNode::testInsideQuadTree(TreeEntry* obj) const {
 	return x >= minX && x <= maxX && y >= minY && y <= maxY;
 }
 
-bool TreeNode::testInsideOctTree(TreeEntry* obj) const {
+bool TreeNode::testInsideOctree(TreeEntry* obj) const {
 	float x = obj->getPositionX();
 	float y = obj->getPositionY();
 	float z = obj->getPositionZ();
 
-	//Logger::console.info(true) << "TreeNode::testInsideOctTree called - X = " << x << " Z = " << z << " Y = " << y;
+	//Logger::console.info(true) << "TreeNode::testInsideOctree called - X = " << x << " Z = " << z << " Y = " << y;
 	//Logger::console.info(true) << " minX = " << minX << " maxX = " << maxX << " minZ = " << minZ << " maxZ = " << maxZ << " minY = " << minY << " maxY = " << maxY;
 
-	return x >= minX && x <= maxX && y >= minY && y <= maxY && z >= minZ && z <= maxZ;
+	return ((x > minX) && (x < maxX) && (y > minY) && (y < maxY) && (z > minZ) && (z < maxZ));
 }
 
 bool TreeNode::testInRange(float x, float y, float z, float range) const {
-	bool insideX = (minX <= x) && (x < maxX);
-	bool insideY = (minY <= y) && (y < maxY);
-	bool insideZ = (minZ <= z) && (z < maxZ);
+	bool insideX = (minX < x) && (x < maxX);
+	bool insideY = (minY < y) && (y < maxY);
+	bool insideZ = (minZ < z) && (z < maxZ);
+
+	/*
+	StringBuffer msg;
+	msg <<
+	" Node -- " << nodeName << " - " << this <<
+	" (Min X: " << (int)minX << ", Min Y: " << (int)minY << ", Min Z: " << (int)minZ <<
+	", Max X: " << (int)maxX << ", Max Y: " << (int)maxY << ", Max Z: " << (int)maxZ << ")" <<
+	"[Total Objects in Node: " << objects.size() << "]";
+
+	Logger::console.info(true) << "TreeNode - testInRange -- " << msg.toString() << " for X: " << x << " Z: " << z << " Y: " << y << " insideX: " << (insideX ? "TRUE" : "FALSE") << " insideZ: " << (insideZ ? "TRUE" : "FALSE") << " insideY: " << (insideY ? "TRUE" : "FALSE");
+	*/
 
 	if (insideX && insideY && insideZ) {
 		return true;
 	}
 
-	bool closeenoughX = (fabs(minX - x) < range || fabs(maxX - x) < range);
-	bool closeenoughY = (fabs(minY - y) < range || fabs(maxY - y) < range);
-	bool closeenoughZ = (fabs(minZ - z) < range || fabs(maxZ - z) < range);
+	bool closeenoughX = ((fabs(minX - x) < range) || (fabs(maxX - x) < range));
+	bool closeenoughY = ((fabs(minY - y) < range) || (fabs(maxY - y) < range));
+	bool closeenoughZ = ((fabs(minZ - z) < range) || (fabs(maxZ - z) < range));
+
+	// Logger::console.info(true) << "TreeNode - testInRange -- " << msg.toString() << " for X: " << x << " Z: " << z << " Y: " << y << " closeenoughX: " << (closeenoughX ? "TRUE" : "FALSE") << " closeenoughZ: " << (closeenoughZ ? "TRUE" : "FALSE") << " closeenoughY: " << (closeenoughY ? "TRUE" : "FALSE");
 
 	if ((insideX || closeenoughX) && (insideY || closeenoughY) && (insideZ || closeenoughZ)) {
 		return true;
@@ -184,7 +197,7 @@ void TreeNode::check () {
 		else if (parentNode->seNode2 == this)
 			parentNode->seNode2 = nullptr;
 
-		//if (OctTree::doLog())
+		//if (Octree::doLog())
 			//Logger::console.info(true) << "deleting node (" << this << ")\n";
 
 		//delete this;
@@ -192,10 +205,12 @@ void TreeNode::check () {
 }
 
 String TreeNode::toStringData() {
-	StringBuffer s;
-	s << " Node " << this << " (" << (int) minX << ","
-			<< (int) minY << "," << (int) minZ << "," << (int) maxX << "," << (int) maxY << ","
-			<< (int) maxZ << ") [" << objects.size() << "]";
+	StringBuffer msg;
+	msg <<
+	" Node -- " << nodeName << " - " << this <<
+	" (Min X: " << (int)minX << ", Min Y: " << (int)minY << ", Min Z: " << (int)minZ <<
+	", Max X: " << (int)maxX << ", Max Y: " << (int)maxY << ", Max Z: " << (int)maxZ << ")" <<
+	"[Total Objects in Node: " << objects.size() << "]";
 
-	return s.toString();
+	return msg.toString();
 }
