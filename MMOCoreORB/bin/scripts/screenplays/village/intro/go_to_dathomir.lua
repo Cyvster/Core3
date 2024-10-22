@@ -25,6 +25,27 @@ function GoToDathomir:onEnteredActiveArea(pPlayer)
 
 	QuestManager.completeQuest(pPlayer, QuestManager.quests.FS_VILLAGE_ELDER)
 	self:finish(pPlayer)
+
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_heightened_senses_luck")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_heightened_senses_surveying")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_heightened_senses_persuasion")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_heightened_senses_healing")
+
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_crafting_mastery_technique")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_crafting_mastery_experimentation")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_crafting_mastery_repair")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_crafting_mastery_assembly")
+
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_combat_prowess_melee_speed")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_combat_prowess_melee_accuracy")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_combat_prowess_ranged_accuracy")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_combat_prowess_ranged_speed")
+
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_enhanced_reflexes_ranged_defense")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_enhanced_reflexes_melee_defense")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_enhanced_reflexes_vehicle_control")
+	VillageJediManagerCommon.unlockBranch(pPlayer, "force_sensitive_enhanced_reflexes_survival")
+	
 end
 
 -- Event handler for the onSuccessfulSpawn.

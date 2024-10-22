@@ -44,7 +44,7 @@
 object_building_player_city_hospital_naboo = object_building_player_city_shared_hospital_naboo:new {
 	lotSize = 3,
 	baseMaintenanceRate = 50,
-	allowedZones = {"dantooine", "naboo", "rori"},
+	allowedZones = {"dantooine", "naboo", "rori", "dathomir", "endor", "yavin4"},
 	length = 5,
 	width = 5,
 	planetMapCategory = "medicalcenter",

@@ -6,9 +6,9 @@ acklay_bones_rare = {
 	customObjectName = "",
 	directObjectTemplate = "object/tangible/component/weapon/acklay_bone_reinforcement_core.iff",
 	craftingValues = {
-		{"mindamage",65,130,0},
-		{"maxdamage",65,130,0},
-		{"useCount",1,11,0},
+		{"mindamage",300,500,0},
+		{"maxdamage",300,500,0},
+		{"useCount",11,35,0},
 	},
 	customizationStringNames = {},
 	customizationValues = {}

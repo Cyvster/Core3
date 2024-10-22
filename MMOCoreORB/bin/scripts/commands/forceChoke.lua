@@ -77,10 +77,10 @@ ForceChokeCommand = {
 		)
 	},
 
-	frsLightMinDamageModifier = 1,
-	frsLightMaxDamageModifier = 4,
-	frsDarkMinDamageModifier = 1,
-	frsDarkMaxDamageModifier = 4,
+	frsLightMinDamageModifier = 6,
+	frsLightMaxDamageModifier = 12,
+	frsDarkMinDamageModifier = 6,
+	frsDarkMaxDamageModifier = 12,
 }
 
 AddCommand(ForceChokeCommand)

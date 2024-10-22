@@ -50,7 +50,7 @@ int SurveyToolImplementation::handleObjectMenuSelect(CreatureObject* player, byt
 		if (selectedID == 20) { // use object
 			int range = getRange(player);
 
-			if(range <= 0 || range > 384) {
+			if(range <= 0 || range > 2624) {
 				sendRangeSui(player);
 				return 0;
 			}
@@ -95,22 +95,22 @@ void SurveyToolImplementation::sendRangeSui(CreatureObject* player) {
 	suiToolRangeBox->setPromptText("@survey:select_range");
 
 	if (surveyMod >= 20)
-		suiToolRangeBox->addMenuItem("64m x 3pts", 0);
+		suiToolRangeBox->addMenuItem("64m x 5pts", 0);
 
 	if (surveyMod >= 35)
-		suiToolRangeBox->addMenuItem("128m x 4pts", 1);
+		suiToolRangeBox->addMenuItem("576m x 6pts", 1);
 
 	if (surveyMod >= 55)
-		suiToolRangeBox->addMenuItem("192m x 4pts", 2);
+		suiToolRangeBox->addMenuItem("1088m x 8pts", 2);
 
 	if (surveyMod >= 75)
-		suiToolRangeBox->addMenuItem("256m x 5pts", 3);
+		suiToolRangeBox->addMenuItem("1600m x 10pts", 3);
 
 	if (surveyMod >= 100)
-		suiToolRangeBox->addMenuItem("320m x 5pts", 4);
+		suiToolRangeBox->addMenuItem("2112m x 10pts", 4);
 
 	if (surveyMod >= 120)
-		suiToolRangeBox->addMenuItem("384m x 5pts", 5);
+		suiToolRangeBox->addMenuItem("2624m x 20pts", 5);
 
 	suiToolRangeBox->setUsingObject(_this.getReferenceUnsafeStaticCast());
 	suiToolRangeBox->setCallback(new SurveyToolSetRangeSuiCallback(server->getZoneServer()));
@@ -132,15 +132,15 @@ int SurveyToolImplementation::getRange(CreatureObject* player) {
 int SurveyToolImplementation::getSkillBasedRange(int skillLevel) {
 
 	if (skillLevel >= 120)
-		return 384;
+		return 2624;
 	else if (skillLevel >= 100)
-		return 320;
+		return 2112;
 	else if (skillLevel >= 75)
-		return 256;
+		return 1600;
 	else if (skillLevel >= 55)
-		return 192;
+		return 1088;
 	else if (skillLevel >= 35)
-		return 128;
+		return 576;
 	else if (skillLevel >= 20)
 		return 64;
 
@@ -151,12 +151,16 @@ void SurveyToolImplementation::setRange(int r) {
 	range = r;  // Distance the tool checks during survey
 
 	// Set number of grid points in survey SUI 3x3 to 5x5
-	if (range >= 256) {
-		points = 5;
-	} else if (range >= 128) {
-		points = 4;
+	if (range >=2624){
+		points = 20;
+	} else if (range >=1600){
+		points = 10;
+	} else if (range >= 1088) {
+		points = 8;
+	} else if (range >= 576) {
+		points = 6;
 	} else {
-		points = 3;
+		points = 5;
 	}
 }
 

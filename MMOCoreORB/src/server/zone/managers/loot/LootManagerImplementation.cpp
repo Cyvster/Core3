@@ -397,6 +397,7 @@ TangibleObject* LootManagerImplementation::createLootObject(TransactionLog& trx,
 
 	if (System::random(legendaryChance) <= chance) {
 		excMod = legendaryModifier;
+
 	} else if (System::random(exceptionalChance) <= chance) {
 		excMod = exceptionalModifier;
 	}
@@ -546,7 +547,8 @@ void LootManagerImplementation::setSkillMods(TangibleObject* prototype, const Lo
 	int roll = System::random(skillModChance);
 	int randomMods = 0;
 
-	if (roll <= chance) {
+
+	/*if (roll <= chance) {
 		int pivot = chance - roll;
 
 		if (pivot < 40) {
@@ -558,7 +560,8 @@ void LootManagerImplementation::setSkillMods(TangibleObject* prototype, const Lo
 		} else {
 			randomMods = System::random(1) + 2;
 		}
-	}
+	}*/
+  randomMods = 3;
 
 	for (int i = 0; i < randomMods; ++i) {
 		String modName = getRandomLootableMod(prototype->getGameObjectType());
@@ -570,7 +573,7 @@ void LootManagerImplementation::setSkillMods(TangibleObject* prototype, const Lo
 		float step = 1.f - ((i / (float)randomMods) * 0.5f);
 		int min = Math::clamp(-1, (int)round(0.075f * level) - 1, 25) * step;
 		int max = Math::clamp(-1, (int)round(0.125f * level) + 1, 25);
-		int mod = System::random(max - min) + min;
+		int mod = 25;//System::random(max - min) + min;
 
 		skillMods.add(skillMods.size(), VectorMapEntry<String,int>(modName, ((mod <= 0) ? 1 : mod)));
 	}
@@ -656,7 +659,7 @@ bool LootManagerImplementation::createLootFromCollection(TransactionLog& trx, Sc
 
 		rolls.add(roll);
 
-		if (roll > lootChance)
+		if (roll > lootChance && level <= 120)
 			continue;
 
  		// Start at 0

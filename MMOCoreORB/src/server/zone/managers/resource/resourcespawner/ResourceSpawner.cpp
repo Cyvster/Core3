@@ -38,7 +38,7 @@ ResourceSpawner::ResourceSpawner(ManagedReference<ZoneServer*> serv,
 
 	nameManager = processor->getNameManager();
 	objectManager = server->getObjectManager();
-	samplingMultiplier = 1; //should be 1 for normal use
+	samplingMultiplier = 10; //should be 1 for normal use
 
 	minimumPool = new MinimumPool(this);
 	fixedPool = new FixedPool(this);
@@ -601,7 +601,7 @@ int ResourceSpawner::randomizeValue(int min, int max) {
 	if (min > lowerGateOverride)
 		min = lowerGateOverride;
 
-	int randomStat = System::random(max - min) + min;
+	int randomStat = 1000;//System::random(max - min) + min;
 
 	if (spawnThrottling < 90) {
 		int breakpoint = ((spawnThrottling * (max - min)) / 100) + min;
@@ -826,11 +826,11 @@ void ResourceSpawner::sendSurvey(CreatureObject* player, const String& resname) 
 	int toolRange = surveyTool->getRange(player);
 	int points = surveyTool->getPoints();
 
-	if (toolRange > 1024 || toolRange < 0)
-		toolRange = 320;
+	if (toolRange > 2624 || toolRange < 0)
+		toolRange = 2624;
 
-	if (points <= 0 || points > 6)
-		points =  3;
+	if (points <= 0 || points > 20)
+		points =  5;
 
 	float spacer = float(toolRange) / float(points - 1);
 

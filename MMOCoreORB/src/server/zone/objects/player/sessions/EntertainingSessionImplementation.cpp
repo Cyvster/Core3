@@ -262,6 +262,7 @@ void EntertainingSessionImplementation::doPerformanceAction() {
 	}
 
 	int actionDrain = entertainer->calculateCostAdjustment(CreatureAttribute::QUICKNESS, performance->getActionPointsPerLoop());
+	actionDrain = actionDrain / 3;
 
 	if (entertainer->getHAM(CreatureAttribute::ACTION) <= actionDrain) {
 		if (isDancing()) {
@@ -651,7 +652,7 @@ void EntertainingSessionImplementation::doFlourish(int flourishNumber, bool gran
 		baseActionDrain = 0;
 
 	//float baseActionDrain = -40 + (getQuickness() / 37.5);
-	float flourishActionDrain = baseActionDrain / 2.0;
+	float flourishActionDrain = baseActionDrain / 10.0;//2.0;
 
 	int actionDrain = (int)round((flourishActionDrain * 10 + 0.5) / 10.0); // Round to nearest dec for actual int cost
 
@@ -696,8 +697,8 @@ void EntertainingSessionImplementation::addEntertainerBuffDuration(CreatureObjec
 
 	buffDuration += duration;
 
-	if (buffDuration > (120.0f + (10.0f / 60.0f)) ) // 2 hrs 10 seconds
-		buffDuration = (120.0f + (10.0f / 60.0f)); // 2hrs 10 seconds
+	if (buffDuration > (30.0f + (10.0f / 60.0f)) ) // 2 hrs 10 seconds
+		buffDuration = (240.0f + (10.0f / 60.0f)); // 2hrs 10 seconds
 
 	setEntertainerBuffDuration(creature, performanceType, buffDuration);
 }
@@ -895,11 +896,13 @@ void EntertainingSessionImplementation::activateEntertainerBuff(CreatureObject* 
 		{
 			uint32 focusBuffCRC = STRING_HASHCODE("performance_enhance_music_focus");
 			uint32 willBuffCRC = STRING_HASHCODE("performance_enhance_music_willpower");
+			uint32 mindBuffCRC = STRING_HASHCODE("performance_enhance_dance_mind");
 			oldBuff = cast<PerformanceBuff*>(creature->getBuff(focusBuffCRC));
 			if (oldBuff != nullptr && oldBuff->getBuffStrength() > buffStrength)
 				return;
 			ManagedReference<PerformanceBuff*> focusBuff = new PerformanceBuff(creature, focusBuffCRC, buffStrength, buffDuration * 60, PerformanceBuffType::MUSIC_FOCUS);
 			ManagedReference<PerformanceBuff*> willBuff = new PerformanceBuff(creature, willBuffCRC, buffStrength, buffDuration * 60, PerformanceBuffType::MUSIC_WILLPOWER);
+			ManagedReference<PerformanceBuff*> mindBuff = new PerformanceBuff(creature, mindBuffCRC, buffStrength, buffDuration * 60, PerformanceBuffType::DANCE_MIND);
 
 			Locker locker(focusBuff);
 			creature->addBuff(focusBuff);
@@ -907,18 +910,34 @@ void EntertainingSessionImplementation::activateEntertainerBuff(CreatureObject* 
 
 			Locker locker2(willBuff);
 			creature->addBuff(willBuff);
+			locker.release();
+			
+			Locker locker3(mindBuff);
+			creature->addBuff(mindBuff);
 			break;
 		}
 		case PerformanceType::DANCE:
 		{
 			uint32 mindBuffCRC = STRING_HASHCODE("performance_enhance_dance_mind");
+			uint32 focusBuffCRC = STRING_HASHCODE("performance_enhance_music_focus");
+			uint32 willBuffCRC = STRING_HASHCODE("performance_enhance_music_willpower");
 			oldBuff = cast<PerformanceBuff*>(creature->getBuff(mindBuffCRC));
 			if (oldBuff != nullptr && oldBuff->getBuffStrength() > buffStrength)
 				return;
 			ManagedReference<PerformanceBuff*> mindBuff = new PerformanceBuff(creature, mindBuffCRC, buffStrength, buffDuration * 60, PerformanceBuffType::DANCE_MIND);
-
+			ManagedReference<PerformanceBuff*> focusBuff = new PerformanceBuff(creature, focusBuffCRC, buffStrength, buffDuration * 60, PerformanceBuffType::MUSIC_FOCUS);
+			ManagedReference<PerformanceBuff*> willBuff = new PerformanceBuff(creature, willBuffCRC, buffStrength, buffDuration * 60, PerformanceBuffType::MUSIC_WILLPOWER);
+			
 			Locker locker(mindBuff);
 			creature->addBuff(mindBuff);
+			locker.release();
+			
+			Locker locker2(focusBuff);
+			creature->addBuff(focusBuff);
+			locker.release();
+
+			Locker locker3(willBuff);
+			creature->addBuff(willBuff);
 			break;
 		}
 		}
@@ -1069,7 +1088,7 @@ void EntertainingSessionImplementation::awardEntertainerExperience() {
 			xpAmount = ceil(xpAmount * totalBonus);
 
 			if (playerManager != nullptr)
-				playerManager->awardExperience(player, xptype, xpAmount, true);
+				playerManager->awardExperience(player, xptype, (xpAmount * 2), true);
 
 			oldFlourishXp = flourishXp;
 			flourishXp = 0;
@@ -1081,7 +1100,7 @@ void EntertainingSessionImplementation::awardEntertainerExperience() {
 			String healxptype("entertainer_healing");
 
 			if (playerManager != nullptr)
-				playerManager->awardExperience(player, healxptype, healingXp, true);
+				playerManager->awardExperience(player, healxptype, (healingXp * 10), true);
 
 			healingXp = 0;
 		}

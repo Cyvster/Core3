@@ -304,7 +304,7 @@ void LightsaberCrystalComponentImplementation::fillAttributeList(AttributeListMe
 				alm->insertAttribute("wpn_attack_cost_health", sacHealth);
 				alm->insertAttribute("wpn_attack_cost_action", sacAction);
 				alm->insertAttribute("wpn_attack_cost_mind", sacMind);
-				alm->insertAttribute("forcecost", (int)getForceCost());
+				alm->insertAttribute("forcecost", (float)getForceCost());
 
 				// For debugging
 				if (player->isPrivileged()) {
@@ -453,7 +453,7 @@ void LightsaberCrystalComponentImplementation::updateCraftingValues(CraftingValu
 	int color = values->getCurrentValue("color");
 
 	if (colorMax != 31) {
-		int finalColor = Math::min(color, 11);
+		int finalColor = Math::min(color, 30);
 		setColor(finalColor);
 		updateCrystal(finalColor);
 	} else {

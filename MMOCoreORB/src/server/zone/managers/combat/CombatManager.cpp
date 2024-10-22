@@ -454,7 +454,7 @@ int CombatManager::creoTargetCombatAction(CreatureObject* attacker, WeaponObject
 		break;
 	case BLOCK:
 		doBlock(attacker, weapon, defender, damage);
-		damageMultiplier = 0.5f;
+		damageMultiplier = 0.0f;
 		break;
 	case DODGE:
 		doDodge(attacker, weapon, defender, damage);

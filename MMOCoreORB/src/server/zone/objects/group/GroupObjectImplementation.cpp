@@ -601,7 +601,6 @@ void GroupObjectImplementation::calculateGroupLevel() {
 				if (pcd != nullptr && pcd->getPetType() == PetManager::FACTIONPET) {
 					factionPetLevel += (memberLevel / 5.f);
 				}
-
 				newLevel += (memberLevel / 5.f);
 		} else if (member->isPlayerCreature()) {
 			if (memberLevel > highestPlayer) {

@@ -377,16 +377,16 @@ void DnaManager::generateSample(Creature* creature, CreatureObject* player, int 
 	int ferocity = creatureTemplate->getFerocity();
 	int creatureLevel = creature->getLevel();
 
-	int hardiness = Genetics::hamToValue(creature->getMaxHAM(0), quality);
-	int fortitude = Genetics::resistanceToValue(creature->getEffectiveResist(), creature->getArmor(), quality);
-	int dexterity = Genetics::hamToValue(creature->getMaxHAM(3), quality);
-	int endurance = Genetics::randomizeValue(500, quality);
-	int intellect = Genetics::hamToValue(creature->getMaxHAM(6), quality);
-	int cleverness = Genetics::hitChanceToValue(creature->getChanceHit(), quality);
-	int dependability = Genetics::dietToValue(creatureTemplate->getDiet(), quality);
-	int courage = Genetics::meatTypeToValue(creatureTemplate->getMeatType(), quality);
-	int fierceness = Genetics::ferocityToValue(ferocity, quality);
-	int power = Genetics::damageToValue((creature->getDamageMin() + creature->getDamageMax()) / 2, quality);
+	int hardiness = 1000;//Genetics::hamToValue(creature->getMaxHAM(0), quality);
+	int fortitude = 1000;//Genetics::resistanceToValue(creature->getEffectiveResist(), creature->getArmor(), quality);
+	int dexterity = 1000;//Genetics::hamToValue(creature->getMaxHAM(3), quality);
+	int endurance = 1000;//Genetics::randomizeValue(500, quality);
+	int intellect = 1000;//Genetics::hamToValue(creature->getMaxHAM(6), quality);
+	int cleverness = 1000;//Genetics::hitChanceToValue(creature->getChanceHit(), quality);
+	int dependability = 1000;//Genetics::dietToValue(creatureTemplate->getDiet(), quality);
+	int courage = 1000;//Genetics::meatTypeToValue(creatureTemplate->getMeatType(), quality);
+	int fierceness = 1000;//Genetics::ferocityToValue(ferocity, quality);
+	int power = 1000;//Genetics::damageToValue((creature->getDamageMin() + creature->getDamageMax()) / 2, quality);
 
 	// We should now have enough to generate a sample
 	ManagedReference<DnaComponent*> prototype = zoneServer->createObject(qualityTemplates.get(quality), 1).castTo<DnaComponent*>();

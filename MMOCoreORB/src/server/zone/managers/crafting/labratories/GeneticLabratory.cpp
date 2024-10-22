@@ -89,9 +89,9 @@ void GeneticLabratory::recalculateResistances(CraftingValues* craftingValues, fl
 	float fortitude = craftingValues->getCurrentValue("fortitude");
 
 		// Reset effective resists if fortitude breaks 500
-	if (fortitude < 500 && fortitude + fortDiff >= 500) {
-		armorReset = true;
-	}
+	//if (fortitude < 500 && fortitude + fortDiff >= 500) {
+		//armorReset = true;
+	//}
 
 	float effectivenessBonus = (fortDiff / 1000.f) * 100.f;
 
@@ -361,7 +361,7 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	for (int i = 0; i < craftingValues->getTotalExperimentalAttributes(); i++) {
 		String attribute = craftingValues->getAttribute(i);
 		String group = craftingValues->getAttributeGroup(attribute);
-
+		
 #ifdef DEBUG_GENETIC_LAB
 		info(true) << " ==== Updating Attribute: " << attribute << " ====";
 #endif
@@ -386,8 +386,8 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 		info(true) << "Setting Attribute Value: " << initialValue << " with Cap Value: " << capValue <<  " Group: " << group;
 #endif
 
-		if (attribute == "fortitude" && initialValue >= 500.f) {
-			fortitude = initialValue;
+		if (attribute == "fortitude" && initialValue >= 1001.f) {
+			fortitude = 1000;
 
 #ifdef DEBUG_GENETIC_LAB
 			info(true) << "Fortitude is over 500: " << fortitude;
@@ -433,7 +433,7 @@ void GeneticLabratory::setInitialCraftingValues(TangibleObject* prototype, Manuf
 	info(true) << "===== END Special Protections =====";
 #endif
 
-	bool armorReset = (fortitude > 500.f);
+	bool armorReset = (fortitude > 1001.f);
 	float blast = 0.f, kinetic = 0.f, energy = 0.f, heat = 0.f, cold = 0.f, electric = 0.f, acid = 0.f, stun = 0.f;
 
 	// Calculate Resistances
@@ -609,6 +609,8 @@ void GeneticLabratory::experimentRow(CraftingValues* craftingValues,int rowEffec
 	*/
 
 	float newValue = 0.f, capValue = 0.f, fortDiff = 0.f;
+
+	pointsAttempted = pointsAttempted * 5; //adding 5x experimentation points modifier
 
 	float modifier = calculateExperimentationValueModifier(experimentationResult, pointsAttempted) * 2000.f;
 

@@ -75,10 +75,10 @@ ForceLightningCone2Command = {
 	forceAttack = true,
 	damageType = ELECTRICITY_DAMAGE,
 
-	frsLightMinDamageModifier = 4,
-	frsLightMaxDamageModifier = 8,
-	frsDarkMinDamageModifier = 4,
-	frsDarkMaxDamageModifier = 8,
+	frsLightMinDamageModifier = 40,
+	frsLightMaxDamageModifier = 80,
+	frsDarkMinDamageModifier = 40,
+	frsDarkMaxDamageModifier = 80,
 
 	range = 32
 }

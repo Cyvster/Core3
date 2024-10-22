@@ -803,6 +803,7 @@ void CreatureManagerImplementation::droidHarvest(Creature* creature, CreatureObj
 	}
 	int ownerSkill = owner->getSkillMod("creature_harvesting");
 	int quantityExtracted = int(quantity * float(ownerSkill / 100.0f));
+	quantityExtracted = quantityExtracted * 10; //10x harvest multiplier
 	// add in droid bonus
 	quantityExtracted = Math::max(quantityExtracted, 3);
 	ManagedReference<ResourceSpawn*> resourceSpawn = resourceManager->getCurrentSpawn(restype, droidZone->getZoneName());
@@ -973,6 +974,7 @@ void CreatureManagerImplementation::harvest(Creature* creature, CreatureObject* 
 		return;
 	}
 	int quantityExtracted = int(quantity * float(player->getSkillMod("creature_harvesting") / 100.0f));
+	quantityExtracted = quantityExtracted * 10; //10x harvest multiplier
 	quantityExtracted = Math::max(quantityExtracted, 3);
 
 	ManagedReference<ResourceSpawn*> resourceSpawn = resourceManager->getCurrentSpawn(restype, player->getZone()->getZoneName());

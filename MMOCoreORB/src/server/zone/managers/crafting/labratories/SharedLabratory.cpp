@@ -53,7 +53,7 @@ float SharedLabratory::calculateExperimentationValueModifier(int experimentation
 		results = 0;
 		break;
 	}
-	results *= pointsAttempted;
+	results *= pointsAttempted * 5;
 	return results;
 }
 float SharedLabratory::calculateAssemblyValueModifier(int assemblyResult) {

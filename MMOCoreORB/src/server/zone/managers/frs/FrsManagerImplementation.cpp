@@ -490,8 +490,8 @@ void FrsManagerImplementation::validatePlayerData(CreatureObject* player, bool v
 		else if (councilType == COUNCIL_DARK && player->getFaction() != Factions::FACTIONIMPERIAL)
 			player->setFaction(Factions::FACTIONIMPERIAL);
 
-		if (player->getFactionStatus() != FactionStatus::OVERT)
-			player->setFactionStatus(FactionStatus::OVERT);
+		//if (player->getFactionStatus() != FactionStatus::OVERT)
+			//player->setFactionStatus(FactionStatus::OVERT);
 
 		if (realPlayerRank >= 4 && !player->hasSkill("force_title_jedi_rank_04"))
 			player->addSkill("force_title_jedi_rank_04", true);
@@ -990,6 +990,7 @@ Vector<uint64> FrsManagerImplementation::getPlayerListByCouncil(int councilType)
 void FrsManagerImplementation::deductMaintenanceXp(CreatureObject* player) {
 	PlayerObject* ghost = player->getPlayerObject();
 
+	return;
 	if (ghost == nullptr)
 		return;
 
@@ -2896,6 +2897,9 @@ bool FrsManagerImplementation::isPlayerInEnclave(CreatureObject* player) {
 }
 
 void FrsManagerImplementation::sendRankPlayerList(CreatureObject* player, int councilType, int rank) {
+	player->sendSystemMessage("This option has been disabled"); //disabled rank list due to size causing issues
+	return;
+	
 	if (player == nullptr)
 		return;
 

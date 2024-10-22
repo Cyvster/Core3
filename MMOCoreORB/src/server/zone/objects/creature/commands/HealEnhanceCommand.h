@@ -93,7 +93,7 @@ public:
 		if (medicalRatingNotIncludingCityBonus <= 0) {
 			enhancer->sendSystemMessage("@healing_response:must_be_near_droid"); // You must be in a hospital, at a campsite, or near a surgical droid to do that.
 			return false;
-		} else {
+		}/* else {
 			// Building private medical rating always takes precedence, If it a client object structure, no medical rating will prevent buffs/wound healing.
 			ManagedReference<SceneObject*> root = enhancer->getRootParent();
 
@@ -103,7 +103,7 @@ public:
 					return false;
 				}
 			}
-		}
+		}*/
 
 		if (enhancer->isInCombat()) {
 			enhancer->sendSystemMessage("You cannot HealEnhance yourself while in Combat.");

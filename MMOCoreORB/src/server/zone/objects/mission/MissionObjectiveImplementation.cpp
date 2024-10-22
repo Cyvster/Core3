@@ -309,7 +309,7 @@ void MissionObjectiveImplementation::awardReward() {
 	bool expanded = false;
 
 	if (playerCount > divisor) {
-		divisor = playerCount;
+		divisor = 1;//playerCount;
 		expanded = true;
 	}
 

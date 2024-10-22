@@ -240,7 +240,7 @@ public:
 	}
 
 	static float initialValue(float maxValue) {
-		return (maxValue * ((maxValue / 1000.0f) + 0.15f));
+		return (maxValue * 0.25f);//((maxValue / 1000.0f) + 0.15f));
 	}
 
 	/**
@@ -426,6 +426,7 @@ public:
 		resistanceLevel += resistMath(pet->getAcid(), armorRating, eff, false, 2.0, 1);
 		resistanceLevel += resistMath(pet->getStun(), armorRating, eff, false, 2.0, 1);
 		level += ((float)resistanceLevel) / 10.0;
+		
 		return level;
 	}
 
