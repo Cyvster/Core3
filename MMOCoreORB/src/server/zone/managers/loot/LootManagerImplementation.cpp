@@ -561,7 +561,7 @@ void LootManagerImplementation::setSkillMods(TangibleObject* prototype, const Lo
 			randomMods = System::random(1) + 2;
 		}
 	}*/
-  randomMods = 3;
+  randomMods = 6;
 
 	for (int i = 0; i < randomMods; ++i) {
 		String modName = getRandomLootableMod(prototype->getGameObjectType());
