@@ -52,12 +52,12 @@ legendaryChance = 0 --1000000
 --Multiplier values for bonus modifiers
 baseModifier = 1
 
-yellowModifier = 2
-exceptionalModifier = 8
-legendaryModifier = 9
+yellowModifier = 2.5
+exceptionalModifier = 2.5
+legendaryModifier = 2.5
 
 --The chance for random skill mods to be on looted weapons/wearables
-skillModChance = 1000 -- 1 in 1000
+skillModChance = 1 --1000 -- 1 in 1000
 
 -- Dot Distribution chance by DOT type. They must equate to 1.0
 poisonDotChance = 0.50
