@@ -263,11 +263,11 @@ void LootManagerImplementation::setCustomObjectName(TangibleObject* object, cons
 
 	String suffixName = "";
 
-	if (excMod >= legendaryModifier) {
+	/*if (excMod >= legendaryModifier) {
 		suffixName = " (Legendary)";
 	} else if (excMod >= exceptionalModifier) {
 		suffixName = " (Exceptional)";
-	}
+	}*/
 
 	if (suffixName != "") {
 		object->setCustomObjectName(object->getDisplayedName() + suffixName, false);
