@@ -2824,7 +2824,7 @@ void PlayerObjectImplementation::deleteAllWaypoints() {
 	}
 }
 
-int PlayerObjectImplementation::getLotsRemaining() {
+/*int PlayerObjectImplementation::getLotsRemaining() {
 	Locker locker(asPlayerObject());
 
 	int lotsRemaining = maximumLots;
@@ -2840,7 +2840,54 @@ int PlayerObjectImplementation::getLotsRemaining() {
 	}
 
 	return lotsRemaining;
+}*/
+//begin custom lots remaining code provided by Bagsie. sets lots count to be shared across all characters on account
+int PlayerObjectImplementation::getLotsRemaining() {
+    ManagedReference<CreatureObject> creature = getParent().get().castTo<CreatureObject>();
+
+    if (creature == nullptr)
+        return 0;
+
+    auto owner = creature->getClient();
+
+    if (owner != nullptr)
+        accountID = owner->getAccountID();
+
+
+    Locker locker(asPlayerObject());
+
+    Reference<CharacterList> characterList = account->getCharacterList();
+    auto playerManager = server->getPlayerManager();
+    Reference<CreatureObject> altChar;
+
+    int lotsRemaining = maximumLots * characterList->size();
+
+    if(lotsRemaining < maximumLots)
+        lotsRemaining = maximumLots;
+
+    for(int i = 0; i < characterList->size(); ++i) {
+        auto entry = &characterList->get(i);
+        if(entry->getGalaxyID() == server->getZoneServer()->getGalaxyID()) {
+            altChar = playerManager->getPlayer(entry->getFirstName());
+            if(altChar != nullptr && altChar->isPlayerCreature()) {
+                auto ghost = altChar->getPlayerObject();
+                for (int j = 0; j < ghost->getTotalOwnedStructureCount(); ++j) {
+                    auto oid = ghost->getOwnedStructure(j);
+
+                    Reference<StructureObject> structure = getZoneServer()->getObject(oid).castTo<StructureObject>();
+
+                    if (structure != nullptr) {
+                        lotsRemaining = lotsRemaining - structure->getLotSize();
+
+                    }
+                }
+            }
+        }
+    }
+    return lotsRemaining;
 }
+//end custom lots remaining code provided by Bagsie
+
 int PlayerObjectImplementation::getOwnedChatRoomCount() {
 	ManagedReference<ChatManager*> chatManager = getZoneServer()->getChatManager();
 	if (chatManager == nullptr)
