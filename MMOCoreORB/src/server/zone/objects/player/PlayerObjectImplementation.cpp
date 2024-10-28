@@ -2824,7 +2824,7 @@ void PlayerObjectImplementation::deleteAllWaypoints() {
 	}
 }
 
-/*int PlayerObjectImplementation::getLotsRemaining() {
+int PlayerObjectImplementation::getLotsRemaining() {
 	Locker locker(asPlayerObject());
 
 	int lotsRemaining = maximumLots;
@@ -2840,7 +2840,8 @@ void PlayerObjectImplementation::deleteAllWaypoints() {
 	}
 
 	return lotsRemaining;
-}*/
+}
+/*
 //begin custom lots remaining code provided by Bagsie. sets lots count to be shared across all characters on account
 int PlayerObjectImplementation::getLotsRemaining() {
     ManagedReference<PlayerManager> playerManager = server->getZoneServer()->getPlayerManager();
@@ -2881,6 +2882,7 @@ if (lotsRemaining < maximumLots)
     return lotsRemaining;
 }
 //end custom lots remaining code provided by Bagsie
+*/
 
 int PlayerObjectImplementation::getOwnedChatRoomCount() {
 	ManagedReference<ChatManager*> chatManager = getZoneServer()->getChatManager();
