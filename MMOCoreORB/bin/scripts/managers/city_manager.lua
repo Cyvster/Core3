@@ -55,13 +55,13 @@ CitySpecializationCooldown = 604800000
 TreasuryWithdrawalCooldown = 86400000
 
 --The number of city update cycles that must pass before mayoral voting process is complete.
-CityVotingCycles = 3
+CityVotingCycles = 12
 
 --The number of city update cyles after which to lock the mayoral voting race registration.
-CityVotingCyclesUntilLocked = 2
+CityVotingCyclesUntilLocked = 8
 
 --The amount of time in minutes before the city performs an update.
-CityUpdateInterval = 10080
+CityUpdateInterval = 2520
 
 --The amount of time in minutes a new city has to gain enough citizens to remain a city.
 NewCityGracePeriod = 1440
@@ -85,7 +85,7 @@ TrainersPerRank = 3
 MissionTerminalsPerRank = 3
 
 -- Amount to discount city maintenance  float.  1 = 100%, .75 =75%, .5=50% etc
-maintenanceDiscount = 1.0
+maintenanceDiscount = 0.1
 
 --[[
 	CITIES ALLOWED PER PLANET
