@@ -29,7 +29,8 @@ public:
 			return;
 		}
 
-		session->sendDestroyCode();
+		//session->sendDestroyCode();
+		session->destroyStructure(); //skip code sequence and just destroy structure when pressing yes. change provided by bagsie
 	}
 };
 
