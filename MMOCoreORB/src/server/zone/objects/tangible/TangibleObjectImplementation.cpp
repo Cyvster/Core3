@@ -1288,12 +1288,12 @@ void TangibleObjectImplementation::repair(CreatureObject* player, RepairTool * r
 	}
 
 	//Condition is unrepairable
-	if ((getMaxCondition() - getConditionDamage()) <= 0) {
+	/*if ((getMaxCondition() - getConditionDamage()) <= 0) {
 		StringIdChatParameter cantrepair("error_message", "sys_repair_unrepairable");
 		cantrepair.setTT(getDisplayedName());
 		player->sendSystemMessage(cantrepair); //%TT's condition is beyond repair even for your skills.
 		return;
-	}
+	}*/
 
 	Reference<RepairToolTemplate*> repairTemplate = nullptr;
 
