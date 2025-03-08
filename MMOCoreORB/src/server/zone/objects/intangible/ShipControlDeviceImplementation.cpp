@@ -52,8 +52,6 @@ ShipObject* ShipControlDeviceImplementation::launchShip(CreatureObject* player, 
 		return nullptr;
 	}
 
-	ship->setFactionStatus(player->getFactionStatus());
-	ship->setShipFaction(player->getFaction());
 	ship->scheduleRecovery();
 
 	if (player->isInvulnerable()) {
@@ -185,7 +183,7 @@ int ShipControlDeviceImplementation::handleObjectMenuSelect(CreatureObject* play
 
 			Vector<uint64> dummyVec;
 
-			LaunchShipTask* launchTask = new LaunchShipTask(player, _this.getReferenceUnsafeStaticCast(), dummyVec);
+			LaunchShipTask* launchTask = new LaunchShipTask(player, _this.getReferenceUnsafeStaticCast(), dummyVec, zone->getZoneName());
 
 			if (launchTask != nullptr)
 				launchTask->execute();
@@ -284,7 +282,7 @@ int ShipControlDeviceImplementation::canBeDestroyed(CreatureObject* player) {
 void ShipControlDeviceImplementation::destroyObjectFromDatabase(bool destroyContainedObjects) {
 	auto ship = getControlledObject();
 
-	if (ship != nullptr) {
+	if (ship != nullptr && ship->getLocalZone() != nullptr) {
 		Locker clock(ship, _this.getReferenceUnsafeStaticCast());
 
 		ship->destroyObjectFromDatabase(true);

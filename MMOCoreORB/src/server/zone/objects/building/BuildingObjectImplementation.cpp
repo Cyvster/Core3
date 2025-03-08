@@ -621,7 +621,7 @@ void BuildingObjectImplementation::notifyDissapear(TreeEntry* object) {
 		}
 
 		try {
-			for (int j = 0; j < cell->getContainerObjectsSize(); ++j) {
+			for (int j = cell->getContainerObjectsSize() - 1; j >= 0 ; j--) {
 				auto child = cell->getContainerObject(j);
 
 				// Child should not remove itself
@@ -649,7 +649,7 @@ void BuildingObjectImplementation::notifyDissapear(TreeEntry* object) {
 				}
 			}
 		} catch (const Exception& exception) {
-			warning() << "Could not remove all container objects in BuildingObject::notifyDissapear -- Object Leaving Range: " << sceneO->getDisplayedName() << " ID: " << sceneO->getObjectID();
+			warning() << "Could not remove all container objects in BuildingObject::notifyDissapear -- ID: " << getObjectID() << " -- Object Leaving Range: " << sceneO->getDisplayedName() << " ID: " << sceneO->getObjectID();
 
 			exception.printStackTrace();
 		}
@@ -1052,7 +1052,7 @@ void BuildingObjectImplementation::onExit(CreatureObject* player, uint64 parenti
 
 uint32 BuildingObjectImplementation::getMaximumNumberOfPlayerItems() {
 	if (isCivicStructure() )
-		return 2500;
+		return 250;
 
 	SharedStructureObjectTemplate* ssot = dynamic_cast<SharedStructureObjectTemplate*> (templateObject.get());
 
@@ -1068,7 +1068,7 @@ uint32 BuildingObjectImplementation::getMaximumNumberOfPlayerItems() {
 
 	auto maxItems = MAXPLAYERITEMS;
 
-	return Math::min(maxItems, lots * 10000);
+	return Math::min(maxItems, lots * 100);
 }
 
 int BuildingObjectImplementation::notifyObjectInsertedToChild(SceneObject* object, SceneObject* child, SceneObject* oldParent) {
@@ -1996,7 +1996,7 @@ bool BuildingObjectImplementation::isBuildingObject() {
 	return true;
 }
 
-float BuildingObjectImplementation::getOutOfRangeDistance() const {
+float BuildingObjectImplementation::getOutOfRangeDistance(uint64 specialRangeID) {
 #ifdef COV_BUILDING_QUAD_RANGE
 	return ZoneServer::CLOSEOBJECTRANGE * 4;
 #else // COV_BUILDING_QUAD_RANGE

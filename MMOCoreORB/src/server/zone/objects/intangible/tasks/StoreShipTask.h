@@ -12,6 +12,8 @@
 #include "server/zone/objects/ship/PobShipObject.h"
 #include "templates/params/creature/PlayerArrangement.h"
 #include "server/zone/objects/player/PlayerObject.h"
+#include "server/zone/objects/creature/ai/DroidObject.h"
+#include "server/zone/objects/intangible/tasks/PetControlDeviceStoreTask.h"
 
 // #define DEBUG_SHIP_STORE
 
@@ -52,6 +54,11 @@ public:
 		// Lock the ship
 		Locker shipLock(ship);
 
+		// Remove the ships astromech if one is assigned
+		if (ship->getShipDroidID() != 0) {
+			removeDroid(ship, player);
+		}
+
 		// Copy list of the players onboard for removal
 		Vector<uint64> playersOnBoard = ship->getPlayersOnBoard();
 
@@ -82,6 +89,9 @@ public:
 
 			playersOnBoard.remove(i);
 		}
+
+		// Clear Staff Speed
+		ship->setStaffShipSpeed(0.f);
 
 		// Destroy the ship from the zone.
 		ship->destroyObjectFromWorld(false);
@@ -123,8 +133,9 @@ public:
 		info(true) << "removePlayer called";
 #endif
 
-		if (player == nullptr)
+		if (player == nullptr) {
 			return false;
+		}
 
 		auto zoneServer = player->getZoneServer();
 
@@ -136,9 +147,74 @@ public:
 		info(true) << "removing player: " << player->getDisplayedName() << " to zone: " << newZoneName;
 #endif
 
+		auto parent = player->getParent().get();
+
+		// Clear the Players Space States
 		player->clearSpaceStates();
 
+		// Clear the Players Space Mission Objects
+		player->removeAllSpaceMissionObjects(false);
+
 		player->switchZone(newZoneName, location.getX(), location.getZ(), location.getY(), 0, false);
+
+		if (parent != nullptr && parent->hasObjectInContainer(player->getObjectID())) {
+#ifdef DEBUG_SHIP_STORE
+			info(true) << "Clearing player parent ID: " << parent->getObjectID();
+#endif
+			parent->removeObject(player, nullptr, false);
+		}
+
+		return true;
+	}
+
+	bool removeDroid(ShipObject* ship, CreatureObject* player) {
+		if (ship == nullptr || player == nullptr) {
+			return false;
+		}
+
+		auto zoneServer = ship->getZoneServer();
+
+		if (zoneServer == nullptr) {
+			return false;
+		}
+
+		const uint64& droidID = ship->getShipDroidID();
+
+		if (droidID == 0) {
+			return false;
+		}
+
+		ManagedReference<SceneObject*> droidRef = zoneServer->getObject(droidID);
+
+		if (droidRef == nullptr || !droidRef->isDroidObject()) {
+			return false;
+		}
+
+		auto droidObject = dynamic_cast<DroidObject*>(droidRef.get());
+
+		if (droidObject == nullptr) {
+			return false;
+		}
+
+		ManagedReference<ControlDevice*> controlDevice = droidObject->getControlDevice().get();
+
+		if (controlDevice == nullptr || !controlDevice->isPetControlDevice()) {
+			return false;
+		}
+
+		auto petControlDevice = dynamic_cast<PetControlDevice*>(controlDevice.get());
+
+		if (petControlDevice == nullptr) {
+			return false;
+		}
+
+		Locker cLock(controlDevice, ship);
+
+		auto storeTask = new PetControlDeviceStoreTask(petControlDevice, player, true);
+
+		if (storeTask != nullptr) {
+			storeTask->execute();
+		}
 
 		return true;
 	}

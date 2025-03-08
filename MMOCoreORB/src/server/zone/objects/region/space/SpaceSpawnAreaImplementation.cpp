@@ -18,7 +18,7 @@
 #include "server/zone/objects/area/areashapes/SphereAreaShape.h"
 #include "server/zone/objects/area/events/RemoveNoSpawnAreaTask.h"
 
-#define DEBUG_SPACE_AREAS
+// #define DEBUG_SPACE_AREAS
 // #define DEBUG_SPACE_SPAWNING
 
 void SpaceSpawnAreaImplementation::notifyPositionUpdate(TreeEntry* entry) {
@@ -386,7 +386,7 @@ int SpaceSpawnAreaImplementation::getShipSpawnLevel(ShipObject* playerShip) {
 
 // This will return a random position within the area shape
 Vector3 SpaceSpawnAreaImplementation::getRandomPosition() {
-	Vector3 position = areaShape->getRandomPosition(getWorldPosition(), 256.f, ZoneServer::SPACEOBJECTRANGE);
+	Vector3 position = areaShape->getRandomPosition(getWorldPosition(), 256.f, ZoneServer::SPACECLOSEOBJECTRANGE);
 
 #ifdef DEBUG_SPACE_SPAWNING
 	info(true) << getAreaName() << " -- getRandomPosition --  Location = " << position.toString();

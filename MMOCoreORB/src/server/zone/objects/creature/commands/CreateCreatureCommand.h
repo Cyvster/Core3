@@ -252,10 +252,6 @@ public:
 
 		if (tokens.hasMoreTokens()) {
 			tokens.getStringToken(shipName);
-
-			if (!shipName.contains(".iff")) {
-				shipName = "object/ship/" + shipName + ".iff";
-			}
 		}
 
 		if (tokens.hasMoreTokens()) {
@@ -271,8 +267,8 @@ public:
 
 		Locker sLock(shipAgent, creature);
 
-		if (!faction.isEmpty() && faction != shipAgent->getShipFaction()) {
-			shipAgent->setShipFaction(faction, false);
+		if (!faction.isEmpty() && faction != shipAgent->getShipFactionString()) {
+			shipAgent->setShipFactionString(faction, false);
 		}
 
 		shipAgent->setFactionStatus(FactionStatus::OVERT);

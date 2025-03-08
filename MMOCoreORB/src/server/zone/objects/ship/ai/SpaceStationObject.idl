@@ -20,8 +20,7 @@ class SpaceStationObject extends ShipAiAgent {
 	}
 
 	@dirty
-	@preLocked
-	public native boolean sendConversationStartTo(SceneObject player);
+	public native abstract float getOutOfRangeDistance(unsigned long specialRangeObjectID = 0);
 
 	@dirty
 	public boolean isSpaceStation() {

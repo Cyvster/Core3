@@ -60,7 +60,7 @@ public:
 	static bool checkLineOfSightInBuilding(SceneObject* object1, SceneObject* object2, SceneObject* building);
 	static bool checkLineOfSight(SceneObject* object1, SceneObject* object2);
 	static bool checkLineOfSightWorldToCell(const Vector3& rayOrigin, const Vector3& rayEnd, float distance, CellObject* cell);
-	static bool checkMovementCollision(CreatureObject* creature, float x, float z, float y, Zone* zone);
+	static bool checkMovementCollision(CreatureObject* creature, CloseObjectsVector* closeObjectsVector, Zone* zone, const Vector3& lastValidWorld, const Vector3& transformPosition);
 	static float getRayOriginPoint(CreatureObject* creature);
 
 	static float getWorldFloorCollision(float x, float y, Zone* zone, bool testWater);
@@ -82,6 +82,13 @@ public:
 
 	static bool checkLineOfSightInParentCell(SceneObject* object, Vector3& endPoint);
 
+	static float getPointIntersection(const Vector3& point, const Vector3& rayStart, const Vector3& rayEnd, float radius, float distance);
+
+	static float getAppearanceIntersection(SceneObject* target, const Vector3& rayStart, const Vector3& rayEnd, float radius, float distance);
+
+	static Ray getAxisAlignedRay(SceneObject* target, const Vector3& rayStart, const Vector3& rayEnd, float distance);
+
+	static Vector3 getAxisAlignedVector(const Vector3& vector, const Matrix4& rotation);
 };
 
 #endif /* COLLISIONMANAGER_H_ */

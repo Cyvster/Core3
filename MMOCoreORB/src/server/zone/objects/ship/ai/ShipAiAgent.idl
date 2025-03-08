@@ -11,6 +11,7 @@ import system.lang.Exception;
 import server.zone.Zone;
 
 import server.zone.objects.ship.FighterShipObject;
+import server.zone.objects.ship.ai.ShipAgentTemplate;
 include server.zone.objects.ship.ShipObject;
 import server.zone.objects.ship.ai.events.ShipAiBehaviorEvent;
 import server.zone.objects.ship.ai.events.DespawnAiShipOnNoPlayersInRange;
@@ -105,11 +106,24 @@ class ShipAiAgent extends FighterShipObject {
 	protected float coordinateMax;
 
 	private float lastSpeed;
+	private transient float escortSpeed;
 
 	@dereferenced
 	protected transient AtomicInteger numberOfPlayersInRange;
 
+	@dereferenced
+	protected transient AtomicInteger behaviorIntervalSchedule;
+
+	@dereferenced
+	protected transient AtomicInteger behaviorIntervalIterator;
+
 	protected transient DespawnAiShipOnNoPlayersInRange despawnEvent;
+
+	@dereferenced
+	protected Vector<unsigned int> alliedFactions;
+
+	@dereferenced
+	protected Vector<unsigned int> enemyFactions;
 
 	// btree bit
 	@dereferenced
@@ -139,6 +153,10 @@ class ShipAiAgent extends FighterShipObject {
 
 	protected unsigned int shipBitmask;
 
+	protected transient unsigned long updateZoneTime;
+
+	protected transient float lastDeltaTime;
+
 	protected transient float deltaTime;
 
 	protected transient float missileLockTime;
@@ -146,7 +164,10 @@ class ShipAiAgent extends FighterShipObject {
 	@weakReference
 	protected SceneObject homeObject;
 
-	public static final int BEHAVIORINTERVAL = 200; // msec
+	public static final int UPDATEZONEINTERVAL = 2000; // msec
+	public static final int BEHAVIORINTERVALMAX = 1000; // msec
+	public static final int BEHAVIORINTERVAL = 500; // msec
+	public static final int BEHAVIORINTERVALMIN = 200; // msec
 
 	public static final float DEFAULTAGGRORADIUS = 768.f;
 	public static final float MAX_ATTACK_DISTANCE = 1280.f;
@@ -174,6 +195,38 @@ class ShipAiAgent extends FighterShipObject {
 
 	protected transient unsigned long customShipAiMap;
 
+	protected transient ShipAgentTemplate agentTemplate;
+
+	protected transient int experienceValue;
+
+	protected transient float lootChance;
+	protected transient int lootRolls;
+
+	@dereferenced
+	protected transient string lootTable;
+
+	protected transient int minCredits;
+	protected transient int maxCredits;
+
+	protected transient int imperialFactionReward;
+	protected transient int rebelFactionReward;
+
+	protected transient unsigned int conversationTemplate;
+	protected transient unsigned int conversationMobile;
+	protected transient unsigned int conversationMessage;
+
+	protected transient float minGuardPatrol;
+	protected transient float maxGuardPatrol;
+
+	@dereferenced
+	protected transient Vector<unsigned int> fixedPatrolPoints;
+
+	@dereferenced
+	private transient Mutex enemyListMutex;
+
+	@dereferenced
+	protected transient Vector<unsigned long> enemyShipList;
+
 	public ShipAiAgent() {
 		movementState = OBLIVIOUS;
 
@@ -190,6 +243,30 @@ class ShipAiAgent extends FighterShipObject {
 
 		coordinateMin = -8192;
 		coordinateMax = 8192;
+
+		agentTemplate = null;
+
+		experienceValue = 0;
+
+		lootChance = 0;
+		lootRolls = 0;
+
+		lootTable = "";
+
+		minCredits = 0;
+		maxCredits = 0;
+
+		escortSpeed = 0.f;
+
+		imperialFactionReward = 0;
+		rebelFactionReward = 0;
+
+		conversationTemplate = 0;
+		conversationMobile = 0;
+		conversationMessage = 0;
+
+		minGuardPatrol = 0;
+		maxGuardPatrol = 0;
 	}
 
 	/**
@@ -202,7 +279,7 @@ class ShipAiAgent extends FighterShipObject {
 	public native abstract void loadTemplateData(SharedObjectTemplate templateData);
 
 	@local
-	public native abstract void loadTemplateData(SharedShipObjectTemplate shipTemp);
+	public native abstract void loadTemplateData(ShipAgentTemplate agentTemp);
 
 	/**
 	 * Initializes the transient members of SceneObject, must call the inherited object method first.
@@ -214,6 +291,8 @@ class ShipAiAgent extends FighterShipObject {
 	public void finalize() {
 	}
 
+	public native void notifyInsertToZone(Zone zone);
+
 	@local
 	public native void notifyInsert(TreeEntry entry);
 
@@ -221,7 +300,7 @@ class ShipAiAgent extends FighterShipObject {
 	public abstract native void notifyDissapear(TreeEntry entry);
 
 	@preLocked
-	public abstract native void notifyDespawn(Zone zone);
+	public abstract native void notifyDespawn();
 
 	@weakReference
 	public ShipObject getFollowShipObject() {
@@ -326,12 +405,16 @@ class ShipAiAgent extends FighterShipObject {
 
 	public native void setNextPosition();
 
+	public native void updateTransform(boolean lightUpdate = true);
+
 	public native void setDeltaTime();
+
+	public native int getNextBehaviorInterval();
 
 	@preLocked
 	public abstract native boolean findNextPosition(int maxDistance);
 
-	public abstract native boolean generatePatrol(int totalPoints, float distance, boolean randomize = true, int pathShape = 0);
+	public abstract native boolean generatePatrol(int totalPoints, float distance, int pathShape = 0);
 
 	public abstract native void updatePatrolPoints();
 
@@ -425,6 +508,31 @@ class ShipAiAgent extends FighterShipObject {
 
 	@dirty
 	public native boolean isAttackableBy(CreatureObject object);
+
+	public native boolean addEnemyShip(unsigned long enemyShipID);
+
+	public native boolean removeEnemyShip(unsigned long enemyShipID);
+
+	@dirty
+	public native boolean isEnemyShip(unsigned long shipID);
+
+	@dirty
+	public native boolean isPlayerFactionAlly(CreatureObject player);
+
+	@dirty
+	public native boolean isPlayerFactionEnemy(CreatureObject player);
+
+	@preLocked
+	public native void addSpaceFactionAlly(unsigned int factionHash);
+
+	@preLocked
+	public native void removeSpaceFactionAlly(unsigned int factionHash);
+
+	@preLocked
+	public native void addSpaceFactionEnemy(unsigned int factionHash);
+
+	@preLocked
+	public native void removeSpaceFactionEnemy(unsigned int factionHash);
 
 	/**
 	 * Evaluates if this creature is aggresive to the object
@@ -523,11 +631,47 @@ class ShipAiAgent extends FighterShipObject {
 		shipBitmask = mask;
 	}
 
+	@read
+	public native boolean isFixedPatrolShipAgent();
+
+	@dirty
+	@preLocked
+	public native boolean sendConversationStartTo(SceneObject player);
+
+	@preLocked
+	public native void tauntPlayer(CreatureObject player, final string message);
+
+	@dirty
+	public void setConversationTemplate(unsigned int convoTemplateCrc) {
+		conversationTemplate = convoTemplateCrc;
+	}
+
+	@dirty
+	public void setConversationMobile(unsigned int mobile) {
+		conversationMobile = mobile;
+	}
+
+	@dirty
+	public void setConversationMessage(unsigned int message) {
+		conversationMessage = message;
+	}
+
+	public void setMinimumGuardPatrol(float min) {
+		minGuardPatrol = min;
+	}
+
+	public void setMaximumGuardPatrol(float max) {
+		maxGuardPatrol = max;
+	}
+
 	@preLocked
 	public native void addShipFlag(unsigned int option);
 
 	@preLocked
 	public native void removeShipFlag(unsigned int option);
+
+	@preLocked
+	public native void addFixedPatrolPoint(unsigned int pointHash);
 
 	@preLocked
 	public void destroyObjectFromWorld(boolean sendSelfDestroy) {
@@ -568,8 +712,66 @@ class ShipAiAgent extends FighterShipObject {
 		return numberOfPlayersInRange.get();
 	}
 
+	public int getExperienceValue() {
+		return experienceValue;
+	}
+
+	public float getLootChance() {
+		return lootChance;
+	}
+
+	public int getLootRolls() {
+		return lootRolls;
+	}
+
+	@dereferenced
+	public native string getLootTable();
+
+	public int getMinLootCredits() {
+		return minCredits;
+	}
+
+	public int getMaxLootCredits() {
+		return maxCredits;
+	}
+
+	public int getImperialFactionReward() {
+		return imperialFactionReward;
+	}
+
+	public int getRebelFactionReward() {
+		return rebelFactionReward;
+	}
+
+	public unsigned int getConversationTemplate() {
+		return conversationTemplate;
+	}
+
+	public unsigned int getConversationMobile() {
+		return conversationMobile;
+	}
+
+	public unsigned int getConversationMessage() {
+		return conversationMessage;
+	}
+
+	public float getMinimumGuardPatrol() {
+		return minGuardPatrol;
+	}
+
+	public float getMaximumGuardPatrol() {
+		return maxGuardPatrol;
+	}
+
 	@preLocked
 	public native void setDespawnOnNoPlayerInRange(boolean val);
+
+	/**
+	 * Schedules despawn of the AiAgent.
+	 * @param timeToDespawn the time to despawn the AiAgent in seconds.
+	 */
+	@preLocked
+	public abstract native void scheduleDespawn(int timeToDespawn, boolean force = false);
 
 	@preLocked
 	public abstract void clearDespawnEvent() {
@@ -655,6 +857,18 @@ class ShipAiAgent extends FighterShipObject {
 	@preLocked
 	public native boolean validateTarget(ShipObject targetShip);
 
+	/**
+	* Is called when this object is destroyed
+	* @pre { this, attacker locked }
+	* @post { this, attacker locked }
+	*/
+	@preLocked
+	@arg1preLocked
+	public native int notifyObjectDestructionObservers(TangibleObject attacker, int condition, boolean isCombatAction);
+
+	@preLocked
+	public native void sendReactionChat(SceneObject object, int type, int state = 0, boolean force = false);
+
 	@local
 	@dereferenced
 	public native Vector<unsigned int> getActiveWeaponVector();
@@ -680,6 +894,10 @@ class ShipAiAgent extends FighterShipObject {
 	@local
 	@dereferenced
 	public native Vector3 getHomePosition();
+
+	@local
+	@dereferenced
+	public native Vector3 getNextStepPosition();
 
 	@read
 	@local
@@ -713,4 +931,19 @@ class ShipAiAgent extends FighterShipObject {
 
 	@read
 	public native float getLastSpeed();
+
+	@read
+	public float getEscortSpeed() {
+		return escortSpeed;
+	}
+
+	@preLocked
+	public void setEscortSpeed(float speed) {
+		escortSpeed = speed;
+	}
+
+	public native string getShipAgentTemplateName();
+
+	@dirty
+	public native abstract float getOutOfRangeDistance(unsigned long specialRangeObjectID = 0);
 }

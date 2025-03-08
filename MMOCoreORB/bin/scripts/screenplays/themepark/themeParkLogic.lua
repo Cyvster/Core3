@@ -84,6 +84,9 @@ function ThemeParkLogic:spawnNpcs()
 		if (npcSpawnData.mood ~= nil and npcSpawnData.mood ~= "") then
 			CreatureObject(pNpc):setMoodString(npcSpawnData.mood)
 		end
+		if (npcSpawnData.flags == AI_STATIC) then
+			AiAgent(pNpc):addObjectFlag(AI_STATIC)
+		end
 		if (self.npcMap[i].npcNumber > 0) then
 			CreatureObject(pNpc):setOptionBit(INTERESTING)
 		end
@@ -1599,7 +1602,7 @@ function ThemeParkLogic:updateWaypoint(pConversingPlayer, planetName, x, y, dire
 	local activeNpcNumber = self:getActiveNpcNumber(pConversingPlayer)
 	local missionNumber = self:getCurrentMissionNumber(activeNpcNumber, pConversingPlayer)
 	local stfFile = self:getStfFile(activeNpcNumber)
-	local waypointID = PlayerObject(pGhost):addWaypoint(planetName, self:getMissionDescription(pConversingPlayer, direction), "", x, y, WAYPOINTPURPLE, true, true, WAYPOINTTHEMEPARK, 0)
+	local waypointID = PlayerObject(pGhost):addWaypoint(planetName, self:getMissionDescription(pConversingPlayer, direction), "", x, 0, y, WAYPOINT_PURPLE, true, true, WAYPOINTTHEMEPARK, 0)
 	local pWaypoint = getSceneObject(waypointID)
 	if (pWaypoint == nil) then
 		return

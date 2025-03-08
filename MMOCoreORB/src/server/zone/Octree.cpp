@@ -18,7 +18,8 @@ using namespace server::zone;
 
 bool Octree::logTree = false;
 
-//#define OUTPUT_OT_ERRORS
+// #define OUTPUT_OT_ERRORS
+// #define DEBUG_OCTREE_AI
 
 Octree::Octree() {
 	root = nullptr;
@@ -53,7 +54,7 @@ void Octree::insert(TreeEntry *obj) {
 		auto  scno = cast<SceneObject*>(obj);
 		auto objParent = obj->getParent().get().castTo<SceneObject*>();
 
-		Logger::console.info(true) << "Object Inserted to Octree still has a parent Object: " << scno->getDisplayedName() << " ID: " << scno->getObjectID() << " Parent: " << objParent->getDisplayedName() << " ID: " << objParent->getObjectID();
+		Logger::console.info(true) << "Octree::insert - Object Inserted to Octree still has a parent Object: " << scno->getDisplayedName() << " ID: " << scno->getObjectID() << " Parent: " << objParent->getDisplayedName() << " ID: " << objParent->getObjectID();
 
 		E3_ASSERT(obj->getParent() == nullptr);
 	}
@@ -63,7 +64,7 @@ void Octree::insert(TreeEntry *obj) {
 	try {
 		if (Octree::doLog()) { //--------------------------------------- HERE
 			SceneObject* scno = cast<SceneObject*>(obj);
-			Logger::console.info(true) << "Octree - Object ID " << scno->getObjectID() << " " << scno->getDisplayedName() <<  " inserting at: (" << obj->getPositionX() << ", " << obj->getPositionZ() << ", " << obj->getPositionY() << ")";
+			Logger::console.info(true) << "Octree::insert[" << scno->getObjectID() << "] " << scno->getDisplayedName() <<  " inserting at: (" << obj->getPositionX() << ", " << obj->getPositionZ() << ", " << obj->getPositionY() << ")";
 		}
 
 		if (obj->getNode() != nullptr) {
@@ -72,62 +73,49 @@ void Octree::insert(TreeEntry *obj) {
 
 		_insert(root, obj);
 
-		SceneObject* scno = cast<SceneObject*>(obj);
+#ifdef DEBUG_OCTREE_AI
+		SceneObject* shipScno = cast<SceneObject*>(obj);
 
-		if (Octree::doLog())
-			Logger::console.info(true) << "Octree - Object ID # [" << scno->getObjectID() <<  "] finished inserting " << scno->getDisplayedName() << " Total Objects in Node: " << root->objects.size();
+		if (shipScno->isShipAiAgent()) {
+			Logger::console.info(true) << "Octree::insert[" << shipScno->getObjectID() <<  "] finished inserting " << shipScno->getDisplayedName() << " " << obj->getNode()->toStringData();
+		}
+#endif // DEBUG_OCTREE_AI
+
+		if (Octree::doLog()) {
+			SceneObject* scno = cast<SceneObject*>(obj);
+
+			Logger::console.info(true) << "Octree::insert[" << scno->getObjectID() <<  "] finished inserting " << scno->getDisplayedName() << " Total Objects in Node: " << root->objects.size();
+		}
 	} catch (Exception& e) {
 		Logger::console.info(true) << "[Octree] error - " << e.getMessage() << "\n";
 		e.printStackTrace();
 	}
 }
 
-bool Octree::update(TreeEntry *obj) {
-	//assert(obj->getParent() == nullptr);
-
-	if (Octree::doLog())
+bool Octree::update(TreeEntry* obj) {
+	if (Octree::doLog()) {
 		Logger::console.info(true) << "Octree::update";
+	}
 
 	Locker locker(&mutex);
 
 	try {
 		if (Octree::doLog()) {
 			SceneObject* scno = cast<SceneObject*>(obj);
-			Logger::console.info(true) << "Octree - Object ID # [" << scno->getDisplayedName() << "] " << "Current Position:" << "(" << String::valueOf(scno->getPositionX())
-					<< ", " << scno->getPositionZ() << ", " << scno->getPositionY() << ")\n";
+
+			Logger::console.info(true) << "Octree::update[" << obj->getObjectID() << "] " << "Current Position:" << obj->getPosition().toString();
 		}
 
-		TreeNode* node = obj->getNode();
-
-		// Print COV
-		/*
-		SceneObject* scno = cast<SceneObject*>(obj);
-
-		Locker locker(obj);
-
-		CloseObjectsVector* closeObjectsVector = scno->getCloseObjects();
-		Logger::console.info(true) << "\n\nClose objects for: " + scno->getDisplayedName();
-
-		if (closeObjectsVector != nullptr) {
-			for (int i = 0; i < closeObjectsVector->size(); ++i) {
-				TreeEntry* obj = closeObjectsVector->get(i);
-
-				if (obj == nullptr)
-					continue;
-
-				SceneObject* sceneO = cast<SceneObject*>(obj);
-
-				if (sceneO != nullptr)
-					Logger::console.info(true) << "Object #" << i << ": " + sceneO->getDisplayedName();
-			}
-		}
-
-		Logger::console.info(true) << "End Close Objects \n\n";
-		*/
+		auto node = obj->getNode();
 
 		if (node == nullptr) {
 #ifdef OUTPUT_OT_ERRORS
-			Logger::console.info(true) << "Octree - Object ID # [" << obj->getObjectID() <<  "] updating error\n";
+			SceneObject* scno = cast<SceneObject*>(obj);
+
+			if (scno->isShipAiAgent()) {
+				Logger::console.info(true) << "";
+				Logger::console.error() << "Octree::update[" << obj->getObjectID() <<  "] ERROR -- updating error, object has a null node!\n";
+			}
 #endif
 			return false;
 		}
@@ -146,15 +134,13 @@ bool Octree::update(TreeEntry *obj) {
 	}
 }
 
-void Octree::inRange(TreeEntry *obj, float range) {
+void Octree::inRange(TreeEntry* obj, float range) {
 	if (Octree::doLog())
 		Logger::console.info(true) << "Octree::inRange-1";
 
 	ReadLocker locker(&mutex);
 
 	CloseObjectsVector* closeObjects = obj->getCloseObjects();
-
-	int rangesq = range * range;
 
 	float x = obj->getPositionX();
 	float y = obj->getPositionY();
@@ -163,6 +149,8 @@ void Octree::inRange(TreeEntry *obj, float range) {
 	float oldx = obj->getPreviousPositionX();
 	float oldy = obj->getPreviousPositionY();
 	float oldz = obj->getPreviousPositionZ();
+
+	uint64 objectID = obj->getObjectID();
 
 	try {
 		if (closeObjects != nullptr) {
@@ -175,18 +163,22 @@ void Octree::inRange(TreeEntry *obj, float range) {
 					o = rootParent;
 
 				if (o != obj) {
+					float nearEntryOutOfRange = Math::max(o->getOutOfRangeDistance(objectID), obj->getOutOfRangeDistance(o->getObjectID()));
+					float outOfRangeSqr = Math::sqr(nearEntryOutOfRange);
+
 					float deltaX = x - o->getPositionX();
 					float deltaY = y - o->getPositionY();
 					float deltaZ = z - o->getPositionZ();
 					int deltaCalc = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
 
-					if (deltaCalc > rangesq) {
+					if (deltaCalc > outOfRangeSqr) {
 						float oldDeltaX = oldx - o->getPositionX();
 						float oldDeltaY = oldy - o->getPositionY();
 						float oldDeltaZ = oldz - o->getPositionZ();
+
 						int deltaCalc2 = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
 
-						if (deltaCalc2 <= rangesq) {
+						if (deltaCalc2 <= outOfRangeSqr) {
 							obj->removeInRangeObject(objectToRemove);
 
 							CloseObjectsVector* objCloseObjects = objectToRemove->getCloseObjects();
@@ -221,8 +213,9 @@ void Octree::inRange(TreeEntry *obj, float range) {
 int Octree::inRange(float x, float y, float z, float range, SortedVector<ManagedReference<TreeEntry*> >& objects) const {
 	ReadLocker locker(&mutex);
 
-	if (Octree::doLog())
+	if (Octree::doLog()) {
 		Logger::console.info(true) << "Octree::inRange-2";
+	}
 
 	try {
 		return _inRange(root, x, y, z, range, objects);
@@ -254,14 +247,17 @@ int Octree::inRange(float x, float y, float z, float range, SortedVector<TreeEnt
 void Octree::remove(TreeEntry *obj) {
 	Locker locker(&mutex);
 
-	if (Octree::doLog())
-		Logger::console.info(true) << "Octree - Object ID # [" << obj->getObjectID() <<  "] removing\n";
+	if (Octree::doLog()) {
+		SceneObject* scno = cast<SceneObject*>(obj);
 
-	TreeNode* node = obj->getNode().castTo<TreeNode*>();
+		Logger::console.info(true) << "Octree::remove - Object ID # [" << obj->getObjectID() <<  "] removing";
+	}
+
+	auto node = obj->getNode();
 
 	if (node != nullptr) {
 		if (!node->validateNode()) {
-			Logger::console.info(true) << "Octree - Object ID # " << obj->getObjectID() << " error on remove() - invalid Node" << node->toStringData();
+			Logger::console.info(true) << "Octree::remove - Object ID # " << obj->getObjectID() << " error on remove() - invalid Node" << node->toStringData();
 		}
 
 		node->removeObject(obj);
@@ -269,12 +265,13 @@ void Octree::remove(TreeEntry *obj) {
 		node->check();
 		obj->setNode(nullptr);
 	} else {
-		Logger::console.info(true) << "Octree - Object ID # [" << obj->getObjectID() <<  "] ERROR - removing the node\n";
+		Logger::console.info(true) << "Octree::remove - Object ID # [" << obj->getObjectID() <<  "] ERROR - removing the node\n";
 		StackTrace::printStackTrace();
 	}
 
-	if (Octree::doLog())
-		Logger::console.info(true) << "Octree - Object ID # " << obj->getObjectID() <<  " finished removing\n";
+	if (Octree::doLog()) {
+		Logger::console.info(true) << "Octree::remove - Object ID # " << obj->getObjectID() <<  " finished removing\n";
+	}
 }
 
 void Octree::removeAll() {
@@ -287,8 +284,13 @@ void Octree::removeAll() {
 }
 
 void Octree::_insert(const Reference<TreeNode*>& node, TreeEntry* obj) {
+#ifdef DEBUG_OCTREE_AI
+	auto sceneO = static_cast<SceneObject*>(obj);
+	bool isShipAgent = sceneO->isShipAiAgent();
+#endif // DEBUG_OCTREE_AI
+
 	if (Octree::doLog()) {
-		Logger::console.info(true) << "Octree::_insert -- Node: " << node->toStringData() << " for Object ID # " << obj->getObjectID();
+		Logger::console.info(true) << "Octree::_insert -- " << node->toStringData() << " for Object ID # " << obj->getObjectID();
 	}
 
 	/*
@@ -314,7 +316,11 @@ void Octree::_insert(const Reference<TreeNode*>& node, TreeEntry* obj) {
 		* all the Objects that arent locked (cause they cross a boundary) down.
 		*/
 
-		if ((node->maxX - node->minX < 16) && (node->maxY - node->minY < 16) && (node->maxZ - node->minZ < 16)) {
+		float xDiff = node->maxX - node->minX;
+		float yDiff = node->maxY - node->minY;
+		float zDiff = node->maxZ - node->minZ;
+
+		if ((xDiff < 64.f) && (yDiff < 64.f) && (zDiff < 64.f)) {
 			/*
 			* This protects from killing the stack. If something is messed up it may
 			* blow the stack because the recursion runs forever. Stop squaring when
@@ -322,6 +328,12 @@ void Octree::_insert(const Reference<TreeNode*>& node, TreeEntry* obj) {
 			* we add the new one to the map. The search is linear for objects inside
 			* .1 Unit. So what.
 			*/
+
+#ifdef DEBUG_OCTREE_AI
+			if (isShipAgent) {
+				Logger::console.info(true) << "Octree::_insert[" << obj->getObjectID() << "] -- @ lowest node diff " << node->toStringData();
+			}
+#endif // DEBUG_OCTREE_AI
 
 			node->addObject(obj);
 			return;
@@ -340,80 +352,90 @@ void Octree::_insert(const Reference<TreeNode*>& node, TreeEntry* obj) {
 				continue;
 			}
 
-			node->removeObject(i);
-
-			if (Octree::doLog()) {
-				Logger::console.info(true) << "Octree::_insert -- Node: " << node->toStringData() << " - Object ID # " << obj->getObjectID() << " is Removing Object #" << existing->getObjectID();
+#ifdef DEBUG_OCTREE_AI
+			if (isShipAgent) {
+				Logger::console.info(true) << "Octree::_insert[" << obj->getObjectID() << "] checking existing object for recursive node update ID: " << existing->getObjectID();
 			}
+#endif // DEBUG_OCTREE_AI
 
-			// First find out which square it needs, then Insert it into it
+			// First find out which cube it needs, then Insert it into it
 			// We divide the Node area into 8 squares, reusing existing children
+			// octree node ctor TreeNode(float minx, float miny, float minz, float maxx, float maxy, float maxz, server::zone::TreeNode *parent)
 
 			if (existing->isInSWArea(node)) {
 				if (node->swNode == nullptr) {
 					node->swNode = new TreeNode(node->minX, node->minY, node->minZ, node->dividerX, node->dividerY, node->dividerZ, node);
-
-					node->swNode->nodeName = "swNode";
 				}
+
+				node->removeObject(i);
 
 				_insert(node->swNode, existing);
 			} else if (existing->isInSEArea(node)) {
 				if (node->seNode == nullptr) {
 					node->seNode = new TreeNode(node->dividerX, node->minY, node->minZ, node->maxX, node->dividerY, node->dividerZ, node);
-
-					node->seNode->nodeName = "seNode";
 				}
+
+				node->removeObject(i);
 
 				_insert(node->seNode, existing);
 			} else if (existing->isInNWArea(node)) {
 				if (node->nwNode == nullptr) {
 					node->nwNode = new TreeNode(node->minX, node->dividerY, node->minZ, node->dividerX, node->maxY, node->dividerZ, node);
-
-					node->nwNode->nodeName = "nwNode";
 				}
+
+				node->removeObject(i);
 
 				_insert(node->nwNode, existing);
 			} else if (existing->isInNEArea(node)) {
 				if (node->neNode == nullptr) {
 					node->neNode = new TreeNode(node->dividerX, node->dividerY, node->minZ, node->maxX, node->maxY, node->dividerZ, node);
-
-					node->neNode->nodeName = "neNode";
 				}
+
+				node->removeObject(i);
 
 				_insert(node->neNode, existing);
 			//////////////////////////////////////////////////////
 			} else if (existing->isInSW2Area(node)) {
 				if (node->swNode2 == nullptr) {
 					node->swNode2 = new TreeNode(node->minX, node->minY, node->dividerZ, node->dividerX, node->dividerY, node->maxZ, node);
-
-					node->swNode2->nodeName = "swNode2";
 				}
+
+				node->removeObject(i);
 
 				_insert(node->swNode2, existing);
 			} else if (existing->isInSE2Area(node)) {
 				if (node->seNode2 == nullptr) {
 					node->seNode2 = new TreeNode(node->dividerX, node->minY, node->dividerZ, node->maxX, node->dividerY, node->maxZ, node);
-
-					node->seNode2->nodeName = "seNode2";
 				}
+
+				node->removeObject(i);
 
 				_insert(node->seNode2, existing);
 			} else if (existing->isInNW2Area(node)) {
 				if (node->nwNode2 == nullptr) {
 					node->nwNode2 = new TreeNode(node->minX, node->dividerY, node->dividerZ, node->dividerX, node->maxY, node->maxZ, node);
-
-					node->nwNode2->nodeName = "nwNode2";
 				}
+
+				node->removeObject(i);
 
 				_insert(node->nwNode2, existing);
 			} else if (existing->isInNE2Area(node)) {
 				if (node->neNode2 == nullptr) {
 					node->neNode2 = new TreeNode(node->dividerX, node->dividerY, node->dividerZ, node->maxX, node->maxY, node->maxZ, node);
-
-					node->neNode2->nodeName = "neNode2";
 				}
 
+				node->removeObject(i);
+
 				_insert(node->neNode2, existing);
+			// Object is not in any of the children, keep it in the current node
+			} else {
+				existing->setBounding();
+
+#ifdef DEBUG_OCTREE_AI
+				if (isShipAgent) {
+					Logger::console.info(true) << "Octree::_insert[" << existing->getObjectID() << "] object was not in any children nodes, keeping current - Position: " << existing->getPosition().toString();
+				}
+#endif // DEBUG_OCTREE_AI
 			}
 		}
 	}
@@ -427,9 +449,11 @@ void Octree::_insert(const Reference<TreeNode*>& node, TreeEntry* obj) {
 		obj->setBounding();
 		node->addObject(obj);
 
-		if (Octree::doLog()) {
-			Logger::console.info(true) << "Octree::_insert -- Node: " << node->toStringData() << " Object ID # " << obj->getObjectID() << " is in area, ADDDING to node and setBounding due to crossing node boundaries";
+#ifdef DEBUG_OCTREE_AI
+		if (isShipAgent) {
+			Logger::console.info(true) << "Octree::_insert [" << obj->getObjectID() << "] -- Node: " << node->toStringData() << " is in area, ADDDING to node and setBounding due to crossing node boundaries";
 		}
+#endif // DEBUG_OCTREE_AI
 		return;
 	}
 
@@ -440,38 +464,30 @@ void Octree::_insert(const Reference<TreeNode*>& node, TreeEntry* obj) {
 	*/
 	if (node->hasSubNodes()) {
 		if (Octree::doLog()) {
-			Logger::console.info(true) << "Octree::_insert -- Node: " << node->toStringData() << " -- Object ID # " << obj->getObjectID() << " node has subnodes";
+			Logger::console.info(true) << "Octree::_insert [" << obj->getObjectID() << "] -- has subnodes for " << node->toStringData();
 		}
 
 		if (obj->isInSWArea(node)) {
 			if (node->swNode == nullptr) {
 				node->swNode = new TreeNode(node->minX, node->minY, node->minZ, node->dividerX, node->dividerY, node->dividerZ, node);
-
-				node->swNode->nodeName = "swNode";
 			}
 
 			_insert(node->swNode, obj);
 		} else if (obj->isInSEArea(node)) {
 			if (node->seNode == nullptr) {
 				node->seNode = new TreeNode(node->dividerX, node->minY, node->minZ, node->maxX, node->dividerY, node->dividerZ, node);
-
-				node->seNode->nodeName = "seNode";
 			}
 
 			_insert(node->seNode, obj);
 		} else if (obj->isInNWArea(node)) {
 			if (node->nwNode == nullptr) {
 				node->nwNode = new TreeNode(node->minX, node->dividerY, node->minZ, node->dividerX, node->maxY, node->dividerZ, node);
-
-				node->nwNode->nodeName = "nwNode";
 			}
 
 			_insert(node->nwNode, obj);
 		} else if (obj->isInNEArea(node)) {
 			if (node->neNode == nullptr) {
 				node->neNode = new TreeNode(node->dividerX, node->dividerY, node->minZ, node->maxX, node->maxY, node->dividerZ, node);
-
-				node->neNode->nodeName = "neNode";
 			}
 
 			_insert(node->neNode, obj);
@@ -479,36 +495,35 @@ void Octree::_insert(const Reference<TreeNode*>& node, TreeEntry* obj) {
 		} else if (obj->isInSW2Area(node)) {
 			if (node->swNode2 == nullptr) {
 				node->swNode2 = new TreeNode(node->minX, node->minY, node->dividerZ, node->dividerX, node->dividerY, node->maxZ, node);
-
-				node->swNode2->nodeName = "swNode2";
 			}
 
 			_insert(node->swNode2, obj);
 		} else if (obj->isInSE2Area(node)) {
 			if (node->seNode2 == nullptr) {
 				node->seNode2 = new TreeNode(node->dividerX, node->minY, node->dividerZ, node->maxX, node->dividerY, node->maxZ, node);
-
-				node->seNode2->nodeName = "seNode2";
 			}
 
 			_insert(node->seNode2, obj);
 		} else if (obj->isInNW2Area(node)) {
 			if (node->nwNode2 == nullptr) {
 				node->nwNode2 = new TreeNode(node->minX, node->dividerY, node->dividerZ, node->dividerX, node->maxY, node->maxZ, node);
-
-				node->nwNode2->nodeName = "nwNode2";
 			}
 
 			_insert(node->nwNode2, obj);
 		} else if (obj->isInNE2Area(node)) {
 			if (node->neNode2 == nullptr) {
 				node->neNode2 = new TreeNode(node->dividerX, node->dividerY, node->dividerZ, node->maxX, node->maxY, node->maxZ, node);
-
-				node->neNode2->nodeName = "neNode2";
 			}
 
 			_insert(node->neNode2, obj);
 		}
+#ifdef DEBUG_OCTREE_AI
+		else {
+			if (isShipAgent) {
+				Logger::console.info(true) << "Octree::_insert [" << obj->getObjectID() << "] -- Node: " << node->toStringData() << " --  Object was not in any node area.";
+			}
+		}
+#endif // DEBUG_OCTREE_AI
 
 		if (Octree::doLog()) {
 			Logger::console.info(true) << "Octree::_insert -- Node: " << node->toStringData() << " -- Object ID # " << obj->getObjectID() << " HITTING RETURN, object not added!";
@@ -523,7 +538,7 @@ void Octree::_insert(const Reference<TreeNode*>& node, TreeEntry* obj) {
 	node->addObject(obj);
 
 	if (Octree::doLog()) {
-		Logger::console.info(true) << "Octree::_insert -- Node: " << node->toStringData() << " --  Object ID # " << obj->getObjectID() << " node added object - Total Objects: " << node->objects.size() << " Node: " << node->toStringData();
+		Logger::console.info(true) << "Octree::_insert [" << obj->getObjectID() << "] -- Node: " << obj->getNode()->toStringData() << " -- node added object - Total Objects: " << obj->getNode()->objects.size();
 	}
 }
 
@@ -554,9 +569,13 @@ bool Octree::_update(const Reference<TreeNode*>& node, TreeEntry* obj) {
 		_insert(currentNode, obj);
 	}
 #ifdef OUTPUT_OT_ERRORS
-	else
-		Logger::console.info(true) << "[Octree] error on update() - invalid Node\n";
-#endif
+	else {
+		SceneObject* scno = cast<SceneObject*>(obj);
+
+		if (scno->isShipAiAgent())
+			Logger::console.info(true) << "Octree::_update[" << obj->getObjectID() << "] ERROR -- currentNode is a nullptr";
+	}
+#endif // OUTPUT_OT_ERRORS
 
 	// Return true if the new node is not null
 	return (currentNode != nullptr);
@@ -578,71 +597,81 @@ void Octree::safeInRange(TreeEntry* obj, float range) {
 		closeObjectsVector->safeCopyTo(closeObjectsCopy);
 	}
 
-	int rangeSq = range * range;
-
 	float x = obj->getPositionX();
 	float y = obj->getPositionY();
 	float z = obj->getPositionZ();
+	uint64 objectID = obj->getObjectID();
+
+	if (obj->getReceiverFlags() & CloseObjectsVector::CREOTYPE) {
+		x = obj->getWorldPositionX();
+		y = obj->getWorldPositionY();
+		z = obj->getWorldPositionZ();
+	}
 
 #ifdef NO_ENTRY_REF_COUNTING
-	SortedVector<TreeEntry*> inRangeObjects(500, 250);
+	SortedVector<TreeEntry*> inRangeObjects(1000, 250);
 #else
-	SortedVector<ManagedReference<TreeEntry*> > inRangeObjects(500, 250);
+	SortedVector<ManagedReference<TreeEntry*> > inRangeObjects(1000, 250);
 #endif
 
 	ReadLocker locker(&mutex);
 
-	copyObjects(root, x, y, z, range, inRangeObjects);
+	// Space has a much lower number of objects and we need to be able to add space stations and special mission ships to cov at all times.
+	copyObjects(root, x, y, z, 32768.f, inRangeObjects);
 
 	locker.release();
 
 	if (Octree::doLog()) {
 		SceneObject* sceneO = cast<SceneObject*>(obj);
-		Logger::console.info(true) << "Octree::safeInRange -- " << sceneO->getDisplayedName() << " Range: " << range << " Objects: " << inRangeObjects.size();
+		Logger::console.info(true) << "Octree::safeInRange -- " << sceneO->getDisplayedName() << " Range: " << range << " Objects: " << inRangeObjects.size() << "\n";
 	}
 
 	for (int i = 0; i < inRangeObjects.size(); ++i) {
 		TreeEntry* nearEntry = inRangeObjects.getUnsafe(i);
 
-		if (nearEntry != obj) {
-			Vector3 nearObjPos = nearEntry->getPosition();
+		if (nearEntry == obj) {
+			if (obj->getCloseObjects() != nullptr) {
+				obj->addInRangeObject(obj, false);
+			}
 
-			float deltaX = x - nearObjPos.getX();
-			float deltaY = y - nearObjPos.getY();
-			float deltaZ = z - nearObjPos.getZ();
-			int deltaCalc = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+			continue;
+		}
 
-			try {
-				float outOfRangeSqr = Math::sqr(Math::max(range, nearEntry->getOutOfRangeDistance()));
+		Vector3 nearObjPos = nearEntry->getPosition();
 
-				if (Octree::doLog()) {
-					SceneObject* nearSceneO = cast<SceneObject*>(nearEntry);
-					Logger::console.info(true) << "Octree::safeInRange -- Close Object #" << i << " " << nearSceneO->getDisplayedName() << " Out of Range Sq: " << outOfRangeSqr << " Delta Calc: " << deltaCalc << " Obj Position: " << nearObjPos.getX() << " " << nearObjPos.getZ() << " " << nearObjPos.getY();
-				}
+		float deltaX = x - nearObjPos.getX();
+		float deltaY = y - nearObjPos.getY();
+		float deltaZ = z - nearObjPos.getZ();
+		int deltaCalc = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
 
-				if (deltaCalc < outOfRangeSqr) {
-					CloseObjectsVector* objCloseObjects = obj->getCloseObjects();
+		try {
+			float nearEntryOutOfRange = Math::max(nearEntry->getOutOfRangeDistance(objectID), obj->getOutOfRangeDistance(nearEntry->getObjectID()));
+			float outOfRangeSqr = Math::sqr(nearEntryOutOfRange);
 
-					if (objCloseObjects != nullptr) {
-						if (Octree::doLog()) {
-							SceneObject* nearSceneO = cast<SceneObject*>(nearEntry);
-							Logger::console.info(true) << "Added Object to COV: " << nearSceneO->getDisplayedName();
-						}
+			if (Octree::doLog()) {
+				SceneObject* nearSceneO = cast<SceneObject*>(nearEntry);
+				Logger::console.info(true) << "Octree::safeInRange -- Close Object #" << i << " " << nearSceneO->getDisplayedName() << " Out of Range Sq: " << outOfRangeSqr << " Delta Calc: " << deltaCalc << " Obj Position: " << nearObjPos.getX() << " " << nearObjPos.getZ() << " " << nearObjPos.getY();
+			}
 
-						obj->addInRangeObject(nearEntry, false);
+			if (deltaCalc < outOfRangeSqr) {
+				CloseObjectsVector* objCloseObjects = obj->getCloseObjects();
+
+				if (objCloseObjects != nullptr) {
+					if (Octree::doLog()) {
+						SceneObject* nearSceneO = cast<SceneObject*>(nearEntry);
+						Logger::console.info(true) << "Added Object to COV: " << nearSceneO->getDisplayedName();
 					}
 
-					CloseObjectsVector* oCloseObjects = nearEntry->getCloseObjects();
-
-					if (oCloseObjects != nullptr)
-						nearEntry->addInRangeObject(obj);
+					obj->addInRangeObject(nearEntry, false);
 				}
-			} catch (...) {
-				Logger::console.info(true) << "unreported exception caught in Octree::safeInRange()\n";
+
+				CloseObjectsVector* oCloseObjects = nearEntry->getCloseObjects();
+
+				if (oCloseObjects != nullptr)
+					nearEntry->addInRangeObject(obj);
 			}
-		} else {
-			if (obj->getCloseObjects() != nullptr)
-				obj->addInRangeObject(obj, false);
+		} catch (...) {
+			Logger::console.info(true) << "unreported exception caught in Octree::safeInRange()\n";
 		}
 	}
 }
@@ -677,10 +706,6 @@ void Octree::copyObjects(const Reference<TreeNode*>& node, float x, float y, flo
 }
 
 void Octree::copyObjects(const Reference<TreeNode*>& node, float x, float y, float z, float range, SortedVector<server::zone::TreeEntry*>& objects) {
-
-	if (Octree::doLog())
-		Logger::console.info(true) << "Octree::copyObjects -- called";
-
 	for (int i = 0; i < node->objects.size(); ++i) {
 		objects.add(node->objects.getUnsafe(i).get());
 	}
@@ -712,8 +737,6 @@ void Octree::_inRange(const Reference<TreeNode*>& node, TreeEntry *obj, float ra
 	if (Octree::doLog())
 		Logger::console.info(true) << "Octree::_inRange-1 -- Total Objects = " << node->objects.size();
 
-	int rangesq = range * range;
-
 	float x = obj->getPositionX();
 	float y = obj->getPositionY();
 	float z = obj->getPositionZ();
@@ -721,17 +744,21 @@ void Octree::_inRange(const Reference<TreeNode*>& node, TreeEntry *obj, float ra
 	float oldx = obj->getPreviousPositionX();
 	float oldy = obj->getPreviousPositionY();
 	float oldz = obj->getPreviousPositionZ();
+	uint64 objectID = obj->getObjectID();
 
 	for (int i = 0; i < refNode->objects.size(); i++) {
 		TreeEntry* treeEntry = refNode->objects.get(i);
 
 		if (treeEntry != obj) {
+			float nearEntryOutOfRange = Math::max(treeEntry->getOutOfRangeDistance(objectID), obj->getOutOfRangeDistance(treeEntry->getObjectID()));
+			float outOfRangeSqr = Math::sqr(nearEntryOutOfRange);
+
 			float deltaX = x - treeEntry->getPositionX();
 			float deltaY = y - treeEntry->getPositionY();
 			float deltaZ = z - treeEntry->getPositionZ();
 			int deltaCalc = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
 
-			if (deltaCalc < rangesq) {
+			if (deltaCalc < outOfRangeSqr) {
 				CloseObjectsVector* objCloseObjects = obj->getCloseObjects();
 
 				if (objCloseObjects != nullptr && !objCloseObjects->contains(treeEntry)) {
@@ -757,7 +784,7 @@ void Octree::_inRange(const Reference<TreeNode*>& node, TreeEntry *obj, float ra
 
 				int deltaCalc2 = (oldDeltaX * oldDeltaX) + (oldDeltaY * oldDeltaY) + (oldDeltaZ * oldDeltaZ);
 
-				if (deltaCalc2 < rangesq) {
+				if (deltaCalc2 < outOfRangeSqr) {
 					CloseObjectsVector* objCloseObjects = obj->getCloseObjects();
 
 					if (objCloseObjects != nullptr) {

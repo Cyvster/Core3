@@ -43,6 +43,7 @@
 #include "server/zone/objects/scene/SceneObjectType.h"
 #include "server/zone/objects/ship/ShipObject.h"
 #include "server/zone/objects/ship/ai/SpaceStationObject.h"
+#include "server/zone/objects/ship/ai/CapitalShipObject.h"
 #include "server/zone/objects/ship/PobShipObject.h"
 //#include "PositionUpdateTask.h"
 
@@ -991,8 +992,9 @@ void SceneObjectImplementation::notifyInsertToZone(Zone* newZone) {
 void SceneObjectImplementation::teleport(float newPositionX, float newPositionZ, float newPositionY, uint64 parentID) {
 	auto zone = getZone();
 
-	if (zone == nullptr)
+	if (zone == nullptr) {
 		return;
+	}
 
 	if (zone->isSpaceZone()) {
 		spaceZoneComponent->teleport(asSceneObject(), newPositionX, newPositionZ, newPositionY, parentID);
@@ -1002,10 +1004,11 @@ void SceneObjectImplementation::teleport(float newPositionX, float newPositionZ,
 }
 
 void SceneObjectImplementation::switchZone(const String& newTerrainName, float newPostionX, float newPositionZ, float newPositionY, uint64 parentID, bool toggleInvisibility, int playerArrangement) {
-	if (newTerrainName.contains("space"))
+	if (newTerrainName.contains("space")) {
 		spaceZoneComponent->switchZone(asSceneObject(), newTerrainName, newPostionX, newPositionZ, newPositionY, parentID, toggleInvisibility, playerArrangement);
-	else
+	} else {
 		groundZoneComponent->switchZone(asSceneObject(), newTerrainName, newPostionX, newPositionZ, newPositionY, parentID, toggleInvisibility, playerArrangement);
+	}
 }
 
 void SceneObjectImplementation::updateDirection(float fw, float fx, float fy, float fz) {
@@ -1301,6 +1304,17 @@ bool SceneObjectImplementation::isInRange3d(SceneObject* object, float range) {
 
 	if (thisPos.squaredDistanceTo(worldPos) <= range * range)
 		return true;
+
+	return false;
+}
+
+bool SceneObjectImplementation::isInRange3dZoneless(SceneObject* object, float range) {
+	Vector3 worldPos = object->getWorldPosition();
+	Vector3 thisPos = getWorldPosition();
+
+	if (thisPos.squaredDistanceTo(worldPos) <= range * range) {
+		return true;
+	}
 
 	return false;
 }
@@ -2159,6 +2173,14 @@ SpaceStationObject* SceneObjectImplementation::asSpaceStationObject() {
 	return nullptr;
 }
 
+CapitalShipObject* SceneObject::asCapitalShipObject() {
+	return nullptr;
+}
+
+CapitalShipObject* SceneObjectImplementation::asCapitalShipObject() {
+	return nullptr;
+}
+
 PobShipObject* SceneObject::asPobShip() {
 	return nullptr;
 }
@@ -2450,7 +2472,6 @@ String SceneObjectImplementation::getGameObjectTypeStringID() {
 }
 
 bool SceneObjectImplementation::isNearBank() {
-
 	SortedVector<ManagedReference<TreeEntry*> > closeObjects;
 	CloseObjectsVector* closeObjectsVector = (CloseObjectsVector*) getCloseObjects();
 
@@ -2510,4 +2531,20 @@ void SceneObjectImplementation::setSyncStamp(uint32 value) {
 uint32 SceneObjectImplementation::getSyncStamp() {
 	long deltaTime = System::getMiliTime() - syncTime;
 	return syncStamp + deltaTime;
+}
+
+const AppearanceTemplate* SceneObjectImplementation::getAppearanceTemplate() const {
+	const auto shot = getObjectTemplate();
+
+	if (shot == nullptr) {
+		return nullptr;
+	}
+
+	const auto pob = shot->getPortalLayout();
+
+	if (pob != nullptr && pob->getAppearanceTemplatesSize() > 0) {
+		return pob->getAppearanceTemplate(0);
+	}
+
+	return shot->getAppearanceTemplate();
 }

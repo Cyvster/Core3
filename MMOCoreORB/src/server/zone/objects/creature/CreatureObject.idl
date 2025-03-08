@@ -23,6 +23,7 @@ include server.zone.objects.creature.variables.CooldownTimerMap;
 include server.zone.objects.creature.buffs.BuffList;
 include server.zone.objects.creature.damageovertime.DamageOverTimeList;
 include server.zone.objects.scene.variables.DeltaVector;
+include server.zone.objects.scene.variables.DeltaSet;
 include server.zone.objects.creature.variables.SkillList;
 include server.zone.objects.creature.variables.SkillModList;
 include templates.params.creature.CreaturePosture;
@@ -136,6 +137,15 @@ class CreatureObject extends TangibleObject {
 	@dereferenced
 	protected DeltaVector<int> maxHamList;
 
+	@dereferenced
+	protected transient DeltaSet<unsigned long, unsigned long> spaceMissionObjects;
+
+	@dereferenced
+	private transient Mutex missionRangeObjectsMutex;
+
+	@dereferenced
+	protected transient SortedVector<unsigned int> missionRangeObjects;
+
 	protected byte frozen;
 
 	protected string templateString;
@@ -207,7 +217,7 @@ class CreatureObject extends TangibleObject {
 	public static final int RODIAN = 1;
 	public static final int TRANDOSHAN = 2;
 	public static final int MONCAL = 3;
-	public static final int WOOKIE = 4;
+	public static final int WOOKIEE = 4;
 	public static final int BOTHAN = 5;
 	public static final int TWILEK = 6;
 	public static final int ZABRAK = 7;
@@ -1122,6 +1132,29 @@ class CreatureObject extends TangibleObject {
 	 */
 	@dirty
 	public native boolean hasBountyMissionFor(CreatureObject target);
+
+	/**
+	 * DeltaVectorMap of objects of CreO and Group for JTL Misisons.
+	 * @param object ID of the mission object to add.
+	 */
+	@preLocked
+	public native void addSpaceMissionObject(unsigned long missionOwnerID, unsigned long objectID, boolean notifyClient, boolean notifyGroup = false);
+
+	/**
+	 * DeltaVectorMap of objects of CreO and Group for JTL Misisons.
+	 * @param object ID of the mission object to remove.
+	 */
+	@preLocked
+	public native void removeSpaceMissionObject(unsigned long missionOwnerID, unsigned long objectID, boolean notifyClient, boolean notifyGroup = false);
+
+	@preLocked
+	public native void removeAllSpaceMissionObjects(boolean notifyClient = false);
+
+	@local
+	@read
+	public final DeltaSet<unsigned long, unsigned long> getSpaceMissionObjects() {
+		return spaceMissionObjects;
+	}
 
 	/**
 	 * sends the conversation list
@@ -2363,4 +2396,7 @@ class CreatureObject extends TangibleObject {
 	public native void setQueueCommandDeltaTime(@dereferenced final String commandName, @dereferenced final String commandGroup);
 
 	public native unsigned long getQueueCommandDeltaTime(@dereferenced final String commandName);
+
+	@dirty
+	public native abstract float getOutOfRangeDistance(unsigned long specialRangeObjectID = 0);
 }

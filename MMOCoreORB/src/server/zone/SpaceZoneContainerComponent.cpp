@@ -201,12 +201,15 @@ bool SpaceZoneContainerComponent::transferObject(SceneObject* sceneObject, Scene
 	if (notifyClient)
 		object->sendToOwner(true);
 
-	if (parent == nullptr)
+	if (parent == nullptr) {
 		object->initializePosition(object->getPositionX(), object->getPositionZ(), object->getPositionY());
+	}
 
+	// Inserts object into the Octree node for its given location
 	newSpaceZone->insert(object);
 
-	newSpaceZone->inRange(object, newSpaceZone->getZoneObjectRange());
+	// Updates objects in range
+	newSpaceZone->inRange(object, ZoneServer::SPACESTATIONRANGE);
 
 	TangibleObject* tanoObject = object->asTangibleObject();
 
@@ -262,7 +265,8 @@ bool SpaceZoneContainerComponent::removeObject(SceneObject* sceneObject, SceneOb
 #endif
 			SortedVector<ManagedReference<TreeEntry*> > closeSceneObjects;
 
-			spaceZone->getInRangeObjects(object->getPositionX(), object->getPositionZ(), object->getPositionY(), spaceZone->getZoneObjectRange(), &closeSceneObjects, false);
+			// Updates objects in range
+			spaceZone->getInRangeObjects(object->getPositionX(), object->getPositionZ(), object->getPositionY(), ZoneServer::SPACESTATIONRANGE, &closeSceneObjects, false);
 
 			for (int i = 0; i < closeSceneObjects.size(); ++i) {
 				TreeEntry* obj = closeSceneObjects.get(i);

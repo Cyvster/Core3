@@ -41,6 +41,7 @@ import server.zone.managers.auction.AuctionManager;
 import server.zone.managers.mission.MissionManager;
 import server.zone.managers.stringid.StringIdManager;
 import server.zone.managers.creature.CreatureTemplateManager;
+import server.zone.managers.ship.ShipAgentTemplateManager;
 import server.zone.managers.creature.DnaManager;
 import server.zone.managers.creature.PetManager;
 import server.zone.managers.guild.GuildManager;
@@ -84,6 +85,8 @@ class ZoneServer extends ManagedService implements Logger {
 
 	private transient CreatureTemplateManager creatureTemplateManager;
 
+	private transient ShipAgentTemplateManager shipAgentTemplateManager;
+
 	private transient DnaManager dnaManager;
 
 	private unsigned long totalSentPackets;
@@ -123,8 +126,10 @@ class ZoneServer extends ManagedService implements Logger {
 
 	// The range of objects kept within closeObjects vectors.
 	// Changing this will have a large impact on performance.
-	public static final float CLOSEOBJECTRANGE = 512;//192;
-	public static final float SPACEOBJECTRANGE = 10240;
+	public static final float CLOSEOBJECTRANGE = 192;
+	public static final float SPACECLOSEOBJECTRANGE = 2048;
+	public static final float CAPITALSHIPRANGE = 8192;
+	public static final float SPACESTATIONRANGE = 32768;
 
 	public native ZoneServer(ConfigManager config);
 

@@ -57,6 +57,7 @@ include server.zone.objects.scene.variables.ContainerObjectsMap;
 import server.zone.objects.tangible.TangibleObject;
 import server.zone.objects.creature.ai.AiAgent;
 include templates.appearance.MeshData;
+include templates.appearance.AppearanceTemplate;
 include templates.collision.BaseBoundingVolume;
 include server.zone.objects.scene.variables.StdFunction;
 include server.metrics.Metrics;
@@ -68,6 +69,7 @@ import server.zone.objects.ship.MultiPassengerShipObject;
 import server.zone.objects.ship.FighterShipObject;
 import server.zone.objects.ship.ai.ShipAiAgent;
 import server.zone.objects.ship.ai.SpaceStationObject;
+import server.zone.objects.ship.ai.CapitalShipObject;
 
 @mock
 @json
@@ -307,6 +309,7 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	@mock
 	@dirty
 	public abstract native boolean isInRange(SceneObject obj, float range);
+
 	/**
 	 * Evaluates if the object is in range without checking zone
 	 * @pre { this object is locked, obj is locked}
@@ -317,6 +320,7 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	 */
 	@dirty
 	public native boolean isInRangeZoneless(SceneObject obj, float range);
+
 	/**
 	 * Evaluates if the object is in range using 3 dimensions
 	 * @pre { this object is locked, obj is locked}
@@ -327,6 +331,17 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	 */
 	@dirty
 	public native boolean isInRange3d(SceneObject obj, float range);
+
+		/**
+	 * Evaluates if the object is in range without checking zone
+	 * @pre { this object is locked, obj is locked}
+	 * @post { thisobject is locked, obj is locked }
+	 * @param obj object that will be checked against
+	 * @param range range to check
+	 * @return returns true if this object is in range with obj
+	 */
+	@dirty
+	public native boolean isInRange3dZoneless(SceneObject obj, float range);
 
 	/**
 	 * Tries to add/link object
@@ -1602,6 +1617,13 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	@virtualStub
 	public native abstract SpaceStationObject asSpaceStationObject();
 
+	@mock
+	@dirty
+	@local
+	@nativeStub
+	@virtualStub
+	public native abstract CapitalShipObject asCapitalShipObject();
+
 	@dirty
 	@local
 	@nativeStub
@@ -1652,6 +1674,16 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	@nativeStub
 	@virtualStub
 	public native abstract boolean isVehicleObject();
+
+	@dirty
+	public abstract boolean isShipComponentObject() {
+		return false;
+	}
+
+	@dirty
+	public abstract boolean isSchematicFragmentObject() {
+		return false;
+	}
 
 	@dirty
 	public abstract boolean isDroidObject() {
@@ -1965,6 +1997,21 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	@read
 	public boolean isShipTurret() {
 		return gameObjectType == SceneObjectType.TURRETACCESSLADDER;
+	}
+
+	@read
+	public boolean isShipComponentRepairKit() {
+		return gameObjectType == SceneObjectType.SHIPCOMPONENTREPAIRITEM;
+	}
+
+	@read
+	public boolean isShipInteriorComponent() {
+		return gameObjectType == SceneObjectType.SHIPINTERIORCOMPONENT || gameObjectType == SceneObjectType.SHIPPLASMACONDUIT;
+	}
+
+	@read
+	public native boolean isShipPlasmaConduit() {
+		return gameObjectType == SceneObjectType.SHIPPLASMACONDUIT;
 	}
 
 	@dirty
@@ -2409,4 +2456,8 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 	public abstract unsigned int getMaximumNumberOfPlayerItems() {
 		return 0;
 	}
+
+	@read
+	@local
+	public native final AppearanceTemplate getAppearanceTemplate();
 }

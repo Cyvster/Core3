@@ -51,7 +51,6 @@ legendaryChance = 0 --1000000
 
 --Multiplier values for bonus modifiers
 baseModifier = 1
-
 yellowModifier = 4.5
 exceptionalModifier = 4.5
 legendaryModifier = 4.5

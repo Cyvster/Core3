@@ -601,6 +601,7 @@ void GroupObjectImplementation::calculateGroupLevel() {
 				if (pcd != nullptr && pcd->getPetType() == PetManager::FACTIONPET) {
 					factionPetLevel += (memberLevel / 5.f);
 				}
+
 				newLevel += (memberLevel / 5.f);
 		} else if (member->isPlayerCreature()) {
 			if (memberLevel > highestPlayer) {
@@ -703,6 +704,38 @@ bool GroupObjectImplementation::isOtherMemberPlayingMusic(CreatureObject* player
 	}
 
 	return false;
+}
+
+void GroupObjectImplementation::addSpaceMissionObject(uint64 missionOwnerID, uint64 missionObjectID, bool notifyClient) {
+	auto thisGroup = _this.getReferenceUnsafeStaticCast();
+
+	for (int i = 0; i < getGroupSize(); ++i) {
+		Reference<CreatureObject*> member = getGroupMember(i);
+
+		if (member == nullptr || !member->isPlayerCreature() || missionOwnerID == member->getObjectID()) {
+			continue;
+		}
+
+		Locker memberClock(member, thisGroup);
+
+		member->addSpaceMissionObject(missionOwnerID, missionObjectID, notifyClient, false);
+	}
+}
+
+void GroupObjectImplementation::removeSpaceMissionObject(uint64 missionOwnerID, uint64 missionObjectID, bool notifyClient) {
+	auto thisGroup = _this.getReferenceUnsafeStaticCast();
+
+	for (int i = 0; i < getGroupSize(); ++i) {
+		Reference<CreatureObject*> member = getGroupMember(i);
+
+		if (member == nullptr || !member->isPlayerCreature() || missionOwnerID == member->getObjectID()) {
+			continue;
+		}
+
+		Locker memberClock(member, thisGroup);
+
+		member->removeSpaceMissionObject(missionOwnerID, missionObjectID, notifyClient, false);
+	}
 }
 
 void GroupObjectImplementation::scheduleUpdateNearestMissionForGroup(unsigned int planetCRC) {

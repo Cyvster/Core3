@@ -38,9 +38,10 @@ void SpaceManagerImplementation::initialize() {
 	stationMap.setNoDuplicateInsertPlan();
 	stationMap.setNullValue(Vector3::ZERO);
 
-	spaceStationMap.put("rebel", stationMap);
-	spaceStationMap.put("neutral", stationMap);
-	spaceStationMap.put("imperial", stationMap);
+	spaceStationMap.put(STRING_HASHCODE("rebel"), stationMap);
+	spaceStationMap.put(STRING_HASHCODE("station"), stationMap);
+	spaceStationMap.put(STRING_HASHCODE("stationDeepSpace"), stationMap);
+	spaceStationMap.put(STRING_HASHCODE("imperial"), stationMap);
 
 	info(true) << "loading space manager " << spaceZoneName;
 
@@ -386,11 +387,6 @@ void SpaceManagerImplementation::loadLuaConfig() {
 
 			String templateFile = stationObject.getStringField("templateFile");
 
-			auto shipTemp = dynamic_cast<SharedShipObjectTemplate*>(TemplateManager::instance()->getTemplate(templateFile.hashCode()));
-
-			if (shipTemp == nullptr)
-				continue;
-
 			ManagedReference<ShipAiAgent*> shipAgent = ShipManager::instance()->createAiShip(templateFile);
 
 			if (shipAgent == nullptr)
@@ -413,27 +409,18 @@ void SpaceManagerImplementation::loadLuaConfig() {
 
 			shipAgent->initializePosition(x, z, y);
 			shipAgent->setDirection(direction);
+			shipAgent->initializeTransform(Vector3(x,y,z), direction);
 
 			// Transfer into the zone
 			spaceZone->transferObject(shipAgent, -1, true);
 
 			shipAgent->createChildObjects();
 
-			shipAgent->setRotationMatrix(direction);
-
-			String faction = shipAgent->getShipFaction();
-
-			if (faction.isEmpty() || !spaceStationMap.contains(faction)) {
-				faction = "neutral";
-
-				shipAgent->setFaction(Factions::FACTIONNEUTRAL);
-				shipAgent->setOptionBit(OptionBitmask::INVULNERABLE, false);
-			}
-
+			uint32 factionHash = shipAgent->getShipFaction();
 			uint64 stationID = shipAgent->getObjectID();
 			Vector3 stationPosition = shipAgent->getPosition();
 
-			spaceStationMap.get(faction).put(stationID, stationPosition);
+			spaceStationMap.get(factionHash).put(stationID, stationPosition);
 
 			// info(true) << "SpaceStation Added: " << shipAgent->getDisplayedName() << " Location: " + shipAgent->getPosition().toString();
 
@@ -441,25 +428,8 @@ void SpaceManagerImplementation::loadLuaConfig() {
 		}
 
 		try {
-			LuaObject travelPoints = luaObject.getObjectField("jtlTravelPoints");
-
-			loadJTLData(&travelPoints);
-			travelPoints.pop();
-
 			LuaObject launchLocation = luaObject.getObjectField("jtlLaunchPoint");
-
-			if (!launchLocation.isValidTable()) {
-				return;
-			}
-
-			jtlZoneName = launchLocation.getStringAt(1);
-
-			float x = launchLocation.getFloatAt(2);
-			float z = launchLocation.getFloatAt(3);
-			float y = launchLocation.getFloatAt(4);
-
-			jtlLaunchLocation = Vector3(x, y, z);
-
+			loadJTLData(&launchLocation);
 			launchLocation.pop();
 		} catch (Exception& e) {
 			error(e.getMessage());
@@ -469,24 +439,18 @@ void SpaceManagerImplementation::loadLuaConfig() {
 	}
 }
 
-void SpaceManagerImplementation::loadJTLData(LuaObject* luaObject) {
-	if (!luaObject->isValidTable())
+void SpaceManagerImplementation::loadJTLData(LuaObject* launchLocation) {
+	if (launchLocation == nullptr || !launchLocation->isValidTable()) {
 		return;
-
-	for (int i = 1; i <= luaObject->getTableSize(); ++i) {
-		lua_State* L = luaObject->getLuaState();
-		lua_rawgeti(L, -1, i);
-
-		LuaObject location(L);
-
-		String locationName = location.getStringAt(1);
-		float x = location.getFloatAt(2);
-		float z = location.getFloatAt(3);
-		float y = location.getFloatAt(4);
-
-		jtlTravelDestinations.put(locationName, Vector3(x, y, z));
-		location.pop();
 	}
+
+	jtlZoneName = launchLocation->getStringAt(1);
+
+	float x = launchLocation->getFloatAt(2);
+	float z = launchLocation->getFloatAt(3);
+	float y = launchLocation->getFloatAt(4);
+
+	jtlLaunchLocation = Vector3(x, y, z);
 }
 
 Vector3 SpaceManagerImplementation::getJtlLaunchLocationss() {
@@ -494,16 +458,16 @@ Vector3 SpaceManagerImplementation::getJtlLaunchLocationss() {
 }
 
 Vector3 SpaceManagerImplementation::getClosestSpaceStationPosition(const Vector3& shipPosition, const String& shipFaction) {
-	uint64 objectID = getClosestSpaceStationObjectID(shipPosition, shipFaction);
+	uint64 objectID = getClosestSpaceStationObjectID(shipPosition, shipFaction.hashCode());
 
 	if (objectID == 0) {
 		return shipPosition;
 	}
 
-	return spaceStationMap.get(shipFaction).get(objectID);
+	return spaceStationMap.get(shipFaction.hashCode()).get(objectID);
 }
 
-uint64 SpaceManagerImplementation::getClosestSpaceStationObjectID(const Vector3& shipPosition, const String& shipFaction) {
+uint64 SpaceManagerImplementation::getClosestSpaceStationObjectID(const Vector3& shipPosition, const uint32 factionHash) {
 	uint64 stationObjectID = 0;
 	float stationDistance = FLT_MAX;
 
@@ -511,7 +475,7 @@ uint64 SpaceManagerImplementation::getClosestSpaceStationObjectID(const Vector3&
 		const auto& stationKey = spaceStationMap.elementAt(i).getKey();
 		const auto& stationMap = spaceStationMap.elementAt(i).getValue();
 
-		if (shipFaction != stationKey) {
+		if (factionHash != stationKey) {
 			continue;
 		}
 
@@ -571,7 +535,7 @@ SceneObject* SpaceManagerImplementation::spaceDynamicSpawn(uint32 shipCRC, Zone*
 		return nullptr;
 	}
 
-	ManagedReference<ShipAiAgent*> shipAgent = shipManager->createAiShip(shipCRC);
+	ManagedReference<ShipAiAgent*> shipAgent = shipManager->createAiShip("", shipCRC);
 
 	if (shipAgent == nullptr) {
 		return nullptr;
@@ -644,7 +608,7 @@ bool SpaceManagerImplementation::findNearbySpawner(float x, float z, float y, fl
 
 	SortedVector<TreeEntry*> closeObjects;
 
-	spaceZone->getInRangeObjects(targetPos.getX(), targetPos.getZ(), targetPos.getY(), ZoneServer::SPACEOBJECTRANGE, &closeObjects, true, false);
+	spaceZone->getInRangeObjects(targetPos.getX(), targetPos.getZ(), targetPos.getY(), ZoneServer::SPACECLOSEOBJECTRANGE, &closeObjects, true, false);
 
 	// info(true) << " -- findNearbySpawner - X: " << targetPos.getX() << " Z: " << targetPos.getZ() << " Y: " << targetPos.getY() << " Distance: " << distance << " Nearby Object Size: " << closeObjects.size();
 

@@ -34,6 +34,10 @@
 #include "server/chat/ChatManager.h"
 #include "server/zone/managers/planet/PlanetManager.h"
 #include "SpaceSpawnGroup.h"
+#include "server/zone/managers/player/PlayerManager.h"
+#include "server/zone/objects/tangible/threat/ThreatMap.h"
+#include "server/zone/managers/ship/ShipAgentTemplateManager.h"
+
 
 int ShipManager::ERROR_CODE = NO_ERROR;
 
@@ -46,6 +50,9 @@ ShipManager::ShipManager() : Logger("ShipManger") {
 
 	lua->registerFunction("includeFile", includeFile);
 	lua->registerFunction("addShipSpawnGroup", addShipSpawnGroup);
+
+	updateTransformTask = new ShipAiAgentUpdateTransformTask(this);
+	updateTransformTask->schedule(60000);
 }
 
 void ShipManager::initialize() {
@@ -391,42 +398,57 @@ void ShipManager::loadShipTurretLuaData() {
 void ShipManager::loadShipCollisionData() {
 	info(true) << "Loading Ship Collision Data";
 
-	IffStream* iffStream = DataArchiveStore::instance()->openIffFile("datatables/space/ship_chassis.iff");
+	Lua* lua = new Lua();
+	lua->init();
 
-	if (iffStream == nullptr) {
-		fatal("datatables/space/ship_chassis.iff could not be found.");
-		return;
+	if (lua->runFile("scripts/managers/space/ship_chassis.lua")) {
+		LuaObject luaData = lua->getGlobalObject("chassisData");
+
+		if (luaData.isValidTable() && luaData.getTableSize() > 0) {
+			for (int i = 1; i <= luaData.getTableSize(); ++i) {
+				auto row = luaData.getObjectAt(i);
+
+				if (!row.isValidTable() || row.getTableSize() < 3) {
+					row.pop();
+					continue;
+				}
+
+				String chassisType = row.getStringAt(1);
+				String chassisName = row.getStringAt(2);
+				String chassisPath = row.getStringAt(3);
+				row.pop();
+
+				if (chassisType == "" || chassisName == "" || chassisPath == "") {
+					continue;
+				}
+
+				auto chassisData = getChassisData(chassisName);
+
+				if (chassisData == nullptr) {
+					continue;
+				}
+
+				uint32 templateCRC = chassisPath.hashCode();
+
+				auto templateObject = TemplateManager::instance()->getTemplate(templateCRC);
+
+				if (templateObject == nullptr) {
+					continue;
+				}
+
+				auto chassisTemplate = dynamic_cast<SharedShipObjectTemplate*>(templateObject);
+
+				if (chassisTemplate == nullptr) {
+					continue;
+				}
+
+				Reference<ShipCollisionData*> data = new ShipCollisionData(chassisTemplate, chassisData);
+				shipCollisionData.put(templateCRC, data);
+			}
+		}
 	}
 
-	DataTableIff dtiff;
-	dtiff.readObject(iffStream);
-
-	for (int i = 0; i < dtiff.getTotalRows(); ++i) {
-		DataTableRow* row = dtiff.getRow(i);
-		if (row == nullptr || row->getCellsSize() == 0) {
-			continue;
-		}
-
-		DataTableCell* cell = row->getCell(0);
-		if (cell == nullptr) {
-			continue;
-		}
-
-		String key = cell->toString();
-		if (key == "") {
-			continue;
-		}
-
-		auto shipData = getChassisData(key);
-		if (shipData == nullptr) {
-			continue;
-		}
-
-		Reference<ShipCollisionData*> data = new ShipCollisionData(key, shipData);
-		shipCollisionData.put(key, data);
-	}
-
-	delete iffStream;
+	delete lua;
 
 	info(true) << "Ship Collision Data Loading Complete - Total: " << shipCollisionData.size();
 }
@@ -446,26 +468,32 @@ void ShipManager::loadShipComponentObjects(ShipObject* ship) {
 
 	for (uint32 slot = 0; slot <= Components::FIGHTERSLOTMAX; slot++) {
 		String slotName = Components::shipComponentSlotToString(slot);
+
 		if (slotName == "") {
 			continue;
 		}
 
 		String dataName = componentNames.get(slotName);
+
 		if (dataName == "") {
 			continue;
 		}
 
 		auto compData = getShipComponent(dataName);
+
 		if (compData == nullptr) {
 			continue;
 		}
 
-		auto compShot = TemplateManager::instance()->getTemplate(compData->getObjectTemplate().hashCode());
+		auto componentTempName = compData->getObjectTemplate();
+		auto compShot = TemplateManager::instance()->getTemplate(componentTempName.hashCode());
+
 		if (compShot == nullptr || !(compShot->getGameObjectType() & SceneObjectType::SHIPATTACHMENT)) {
 			continue;
 		}
 
-		ManagedReference<ShipComponent*> component = ServerCore::getZoneServer()->createObject(compData->getObjectTemplate().hashCode(), ship->getPersistenceLevel()).castTo<ShipComponent*>();
+		ManagedReference<ShipComponent*> component = ServerCore::getZoneServer()->createObject(componentTempName.hashCode(), ship->getPersistenceLevel()).castTo<ShipComponent*>();
+
 		if (component != nullptr) {
 			ship->install(nullptr, component, slot, false);
 		}
@@ -589,15 +617,22 @@ ShipControlDevice* ShipManager::createShipControlDevice(ShipObject* ship) {
 }
 
 ShipAiAgent* ShipManager::createAiShip(const String& shipName) {
-	return createAiShip(shipName.hashCode());
+	// info(true) << "ShipManager::createAiShip -- Create Chassis Name: " << shipName;
+
+	return createAiShip(shipName, shipName.hashCode());
 }
 
-ShipAiAgent* ShipManager::createAiShip(uint32 shipCRC) {
-	//info(true) << "ShipManager::createAiShip -- Create Chassis Name: " << shipName;
+ShipAiAgent* ShipManager::createAiShip(const String& shipName, uint32 shipCRC) {
+	auto shipTemplateManager = ShipAgentTemplateManager::instance();
 
-	auto shipTemp = dynamic_cast<SharedShipObjectTemplate*>(TemplateManager::instance()->getTemplate(shipCRC));
+	if (shipTemplateManager == nullptr) {
+		return nullptr;
+	}
 
-	if (shipTemp == nullptr) {
+	Reference<ShipAgentTemplate*> agentTemplate = shipTemplateManager->getTemplate(shipCRC);
+
+	if (agentTemplate == nullptr) {
+		error() << "Ship Agent template is null -- " << shipName;
 		return nullptr;
 	}
 
@@ -607,15 +642,32 @@ ShipAiAgent* ShipManager::createAiShip(uint32 shipCRC) {
 		return nullptr;
 	}
 
-	ManagedReference<ShipAiAgent*> shipAgent = zoneServer->createObject(shipTemp->getServerObjectCRC(), 0).castTo<ShipAiAgent*>();
+	String shipTemplateName = agentTemplate->getShipTemplate();
+	shipTemplateName =  "object/ship/" + shipTemplateName + ".iff";
+
+	uint32 shipTempHash = shipTemplateName.hashCode();
+
+	auto shipTemp = dynamic_cast<SharedShipObjectTemplate*>(TemplateManager::instance()->getTemplate(shipTempHash));
+
+	if (shipTemp == nullptr) {
+		error() << "Ship Object template is null for: " << shipTemplateName;
+		return nullptr;
+	}
+
+	// info(true) << "Trying to spawn ship object: " << shipTemplateName;
+
+	ManagedReference<ShipAiAgent*> shipAgent = zoneServer->createObject(shipTemplateName.hashCode(), 0).castTo<ShipAiAgent*>();
 
 	if (shipAgent == nullptr) {
 		return nullptr;
 	}
 
-	// info(true) << "ShipManager::createAiShip -- ShipName: " << shipName << " Game Object Type: " << shipTemp->getGameObjectType() << " Ship Hash: " << shipTemp->getServerObjectCRC() << " Full Template: " << shipTemp->getFullTemplateString();
+	Locker lock(shipAgent);
 
-	shipAgent->loadTemplateData(shipTemp);
+	// info(true) << "ShipManager::createAiShip -- ShipName: " << agentTemplate->getTemplateName() << " Game Object Type: " << shipTemp->getGameObjectType() << " Ship Hash: " << shipTemp->getServerObjectCRC() << " Full Template: " << shipTemp->getFullTemplateString();
+
+	// Load data from ShipAgentTemplate
+	shipAgent->loadTemplateData(agentTemplate);
 
 	shipAgent->setShipAiTemplate();
 
@@ -660,6 +712,9 @@ ShipObject* ShipManager::createPlayerShip(CreatureObject* owner, const String& s
 
 	Locker shipLock(ship, owner);
 
+	// Set ship owner
+	ship->setOwner(owner);
+
 	// Load ship template data
 	ship->loadTemplateData(shipTemp);
 
@@ -699,8 +754,6 @@ ShipObject* ShipManager::createPlayerShip(CreatureObject* owner, const String& s
 	}
 
 	owner->sendSystemMessage("@chassis_npc:succeed"); // You successfully add a ship control device to your datapad.
-
-	ship->setOwner(owner);
 
 	shipControlDevice->sendTo(owner, true);
 
@@ -808,7 +861,7 @@ bool ShipManager::createDeedFromChassis(CreatureObject* player, ShipChassisCompo
 		auto planetManager = zone->getPlanetManager();
 
 		if (planetManager != nullptr) {
-			auto travelPoint = planetManager->getNearestPlanetTravelPoint(player->getWorldPosition(), 128.f);
+			auto travelPoint = planetManager->getNearestPlanetTravelPoint(player->getWorldPosition());
 
 			if (travelPoint != nullptr) {
 				auto travelPointName = travelPoint->getPointName();
@@ -843,6 +896,183 @@ bool ShipManager::createDeedFromChassis(CreatureObject* player, ShipChassisCompo
 
 	return true;
 }
+
+int ShipManager::notifyDestruction(ShipObject* destructorShip, ShipAiAgent* destructedShip, int condition, bool isCombatAction) {
+	if (destructedShip == nullptr) {
+		return 1;
+	}
+
+	// info(true) << "ShipManager::notifyDestruction -- called for: " << destructedShip->getDisplayedName() << " Attacker: " << destructorShip->getDisplayedName();
+
+	destructedShip->cancelBehaviorEvent();
+	destructedShip->cancelRecovery();
+
+	destructedShip->wipeBlackboard();
+	destructedShip->clearRunningChain();
+
+	auto zoneServer = destructorShip->getZoneServer();
+
+	if (zoneServer == nullptr || zoneServer->isServerShuttingDown()) {
+		return 1;
+	}
+
+	// Create copy of current threat map
+	ThreatMap* threatMap = destructedShip->getThreatMap();
+	ThreatMap copyThreatMap(*threatMap);
+
+	threatMap->removeObservers();
+	threatMap->removeAll(true);
+
+	auto destructorObjectID = destructorShip->getObjectID();
+
+	// lets unlock destructor so we dont get into complicated deadlocks
+	if (destructedShip != destructorShip) {
+		destructorShip->unlock();
+	}
+
+	try {
+		/* Order of priority
+			1. Credit chip Granted
+			2. Loot Given
+			3. Quest Kill
+			4. Ship Destroyed (killed creature style observer if needed)
+			5. FP Awarded
+			5. XP awarded
+		*/
+
+		// This function will return a player ship that either has the highest single damage or highest group damage.
+		auto highestShip = copyThreatMap.getHighestDamagePlayerShip();
+
+		if (highestShip != nullptr) {
+			Locker highestLock(highestShip, destructedShip);
+
+			int minCredits = destructedShip->getMinLootCredits();
+			int maxCredits = destructedShip->getMaxLootCredits();
+			int randomPayout = 0;
+
+			if (maxCredits > 0) {
+				randomPayout = System::random(maxCredits - minCredits) + minCredits;
+			}
+
+			highestShip->awardLootItems(destructedShip, randomPayout);
+		}
+
+		// Quest Kill Observers
+		SortedVector<ManagedReference<Observer* > > observers = destructedShip->getObservers(ObserverEventType::QUESTKILL);
+
+		if (observers.size() > 0) {
+			for (int i = 0; i < copyThreatMap.size(); ++i) {
+				TangibleObject* attacker = copyThreatMap.elementAt(i).getKey();
+
+				if (attacker == nullptr || !attacker->isPlayerShip())
+					continue;
+
+				auto attackerShip = attacker->asShipObject();
+
+				if (attackerShip == nullptr || !attackerShip->isPlayerShip()) {
+					continue;
+				}
+
+				auto pilot = attackerShip->getPilot();
+
+				if (pilot == nullptr) {
+					continue;
+				}
+
+				pilot->notifyObservers(ObserverEventType::QUESTKILL, destructedShip);
+			}
+		}
+
+		ManagedReference<ShipObject*> playerShip = copyThreatMap.getHighestDamageGroupShip();
+
+		if (playerShip != nullptr) {
+			ManagedReference<CreatureObject*> pilot = playerShip->getPilot();
+
+			if (pilot != nullptr) {
+				if (pilot->isGrouped()) {
+					ManagedReference<GroupObject*> group = pilot->getGroup();
+
+					if (group != nullptr) {
+						for (int i = 0; i < group->getGroupSize(); i++) {
+							ManagedReference<CreatureObject*> groupMember = group->getGroupMember(i);
+
+							if (groupMember == nullptr || !groupMember->isPlayerCreature()) {
+								continue;
+							}
+
+							Locker locker(groupMember, destructedShip);
+
+							groupMember->notifyObservers(ObserverEventType::DESTROYEDSHIP, destructedShip);
+						}
+					}
+				} else {
+					Locker locker(pilot, destructedShip);
+					pilot->notifyObservers(ObserverEventType::DESTROYEDSHIP, destructedShip);
+				}
+			}
+		}
+
+		// Handle Awarding XP
+		ManagedReference<PlayerManager*> playerManager = zoneServer->getPlayerManager();
+
+		if (playerManager != nullptr) {
+			playerManager->disseminateSpaceExperience(destructedShip, &copyThreatMap);
+		}
+	} catch (Exception& e) {
+		destructedShip->scheduleDespawn(10, true);
+
+		// now we can safely lock destructor again
+		if (destructedShip != destructorShip) {
+			destructorShip->wlock(destructedShip);
+		}
+
+		throw;
+	}
+
+	// now we can safely lock destructor again
+	if (destructedShip != destructorShip) {
+		destructorShip->wlock(destructedShip);
+
+		ThreatMap* destructorThreatMap = destructorShip->getThreatMap();
+
+		if (destructorThreatMap != nullptr) {
+			uint64 destructedID = destructedShip->getObjectID();
+
+			for (int i = 0; i < destructorThreatMap->size(); i++) {
+				TangibleObject* threatTano = destructorThreatMap->elementAt(i).getKey();
+
+				if (threatTano == nullptr || threatTano->getObjectID() != destructedID) {
+					continue;
+				}
+
+				destructorThreatMap->remove(i);
+			}
+		}
+
+		if (destructorShip->hasDefender(destructedShip)) {
+			destructorShip->removeDefender(destructedShip);
+		}
+
+		// Finally if the destructor has no more defenders, clear their combat state
+		if (!destructorShip->hasDefenders()) {
+			destructorShip->clearCombatState(false);
+		}
+
+		// Remove the destucted ship agent from the destructors enemy list
+		if (destructorShip->isShipAiAgent()) {
+			auto agentDestructor = destructorShip->asShipAiAgent();
+
+			if (agentDestructor != nullptr) {
+				agentDestructor->removeEnemyShip(destructedShip->getObjectID());
+			}
+		}
+	}
+
+	// info(true) << "ShipManager::notifyDestruction -- COMPLETE - for: " << destructedShip->getDisplayedName() << " Attacker: " << destructorShip->getDisplayedName();
+
+	return 1;
+}
+
 
 void ShipManager::reportPobShipStatus(CreatureObject* player, PobShipObject* pobShip, SceneObject* terminal) {
 	if (player == nullptr || pobShip == nullptr) {
@@ -955,7 +1185,13 @@ void ShipManager::promptNameShip(CreatureObject* player, ShipControlDevice* ship
 	if (ghost == nullptr)
 		return;
 
-	auto ship = shipDevice->getControlledObject()->asShipObject();
+	auto controlledObject = shipDevice->getControlledObject();
+
+	if (controlledObject == nullptr) {
+		return;
+	}
+
+	auto ship = controlledObject->asShipObject();
 
 	if (ship == nullptr) {
 		return;

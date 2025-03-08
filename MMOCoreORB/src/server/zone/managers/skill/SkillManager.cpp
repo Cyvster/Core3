@@ -107,6 +107,36 @@ void SkillManager::loadClientData() {
 		}
 	}
 
+	// Load Droid Command Sizes
+	iffStream = TemplateManager::instance()->openIffFile("datatables/space_command/droid_program_size.iff");
+
+	if (iffStream != nullptr) {
+		DataTableIff datatableIff;
+		datatableIff.readObject(iffStream);
+
+		delete iffStream;
+
+		for (int i = 0; i < datatableIff.getTotalRows(); ++i) {
+			DataTableRow* row = datatableIff.getRow(i);
+
+			if (row == nullptr) {
+				continue;
+			}
+
+			String programName = "";
+			int programSize = 1;
+
+			row->getValue(0, programName);
+			row->getValue(1, programSize);
+
+			if (programName.isEmpty()) {
+				continue;
+			}
+
+			droidProgramSizes.put(programName.hashCode(), programSize);
+		}
+	}
+
 	loadFromLua();
 
 	//If the admin ability isn't in the ability map, then we want to add it manually.
@@ -123,8 +153,8 @@ void SkillManager::loadClientData() {
 
 	loadXpLimits();
 
-	info(true) << "Successfully loaded " << skillMap.size() <<
-	       	" skills and " << abilityMap.size() << " abilities.";
+	info(true) << "Loaded " << skillMap.size() << " skills and " << abilityMap.size() << " abilities.";
+	info(true) << "Loaded " << droidProgramSizes.size() << " Droid Space Command Sizes.";
 }
 
 void SkillManager::loadFromLua() {
@@ -605,7 +635,7 @@ bool SkillManager::surrenderSkill(const String& skillName, CreatureObject* creat
 	return true;
 }
 
-void SkillManager::surrenderAllSkills(CreatureObject* creature, bool notifyClient, bool removeForceProgression) {
+void SkillManager::surrenderAllSkills(CreatureObject* creature, bool notifyClient, bool removeForceProgression, bool removePilot) {
 	ManagedReference<PlayerObject*> ghost = creature->getPlayerObject();
 
 	const SkillList* skillList = creature->getSkillList();
@@ -616,10 +646,14 @@ void SkillManager::surrenderAllSkills(CreatureObject* creature, bool notifyClien
 
 	copyOfList.loadFromNames(listOfNames);
 
+	bool surrenderedPilot = false;
+
 	for (int i = 0; i < copyOfList.size(); i++) {
 		Skill* skill = copyOfList.get(i);
 
-		if (skill->getSkillPointsRequired() > 0) {
+		surrenderedPilot = (removePilot && skill->getSkillName().contains("pilot"));
+
+		if (skill->getSkillPointsRequired() > 0 || surrenderedPilot) {
 			if (!removeForceProgression and skill->getSkillName().contains("force_"))
 				continue;
 
@@ -649,6 +683,11 @@ void SkillManager::surrenderAllSkills(CreatureObject* creature, bool notifyClien
 				JediManager::instance()->onSkillRevoked(creature, skill);
 			}
 		}
+	}
+
+	// Reset players pilot tier
+	if (surrenderedPilot) {
+		ghost->resetPilotTier();
 	}
 
 	SkillModManager::instance()->verifySkillBoxSkillMods(creature);

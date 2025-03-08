@@ -12,6 +12,7 @@
 #include "server/zone/objects/ship/ShipProjectileData.h"
 
 #include "server/zone/objects/ship/ShipObject.h"
+#include "server/zone/objects/ship/ai/ShipAiAgent.h"
 #include "server/zone/objects/ship/ComponentSlots.h"
 #include "server/zone/objects/intangible/ShipControlDevice.h"
 #include "server/zone/objects/ship/ShipAppearanceData.h"
@@ -29,6 +30,75 @@ namespace managers {
 namespace ship {
 
 class ShipManager : public Singleton<ShipManager>, public Object, public Logger {
+private:
+	class ShipAiAgentUpdateTransformTask: public Task, public Logger {
+	protected:
+		Vector<ManagedWeakReference<ShipObject*>> uniqueIdMapCopy;
+		Reference<ShipManager*> shipManagerRef;
+		int64 iteration;
+
+	public:
+		const static int INTERVALMAX = 200;
+		const static int INTERVALMIN = 100;
+		const static int PRIORITYMAX = 5;
+
+		ShipAiAgentUpdateTransformTask(ShipManager* shipManager) : Task() {
+			setLoggingName("UpdateShipAiAgentTransformTask");
+
+			shipManagerRef = shipManager;
+			iteration = 0;
+		}
+
+		void run() {
+			auto shipManager = shipManagerRef.get();
+
+			if (shipManager == nullptr) {
+				return;
+			}
+
+			int64 startTime = System::getMiliTime();
+
+			try {
+			int priority = ++iteration % PRIORITYMAX;
+
+			if (priority == 0) {
+				const auto uniqueIdMap = shipManager->getShipUniqueIdMap();
+
+				if (uniqueIdMap == nullptr) {
+					return;
+				}
+
+				uniqueIdMap->safeCopyTo(uniqueIdMapCopy);
+			}
+
+			for (int i = 0; i < uniqueIdMapCopy.size(); ++i) {
+				auto ship = uniqueIdMapCopy.get(i).get();
+
+				if (ship == nullptr || !ship->isShipAiAgent()) {
+					continue;
+				}
+
+				auto agent = ship->asShipAiAgent();
+
+				if (agent == nullptr) {
+					continue;
+				}
+
+				Locker lock(agent);
+
+				bool lightUpdate = (i % PRIORITYMAX) != priority;
+				agent->updateTransform(lightUpdate);
+			}
+			} catch (...) {
+			}
+
+			int64 deltaTime = System::getMiliTime() - startTime;
+			int64 interval = Math::max(INTERVALMAX - deltaTime, (int64)INTERVALMIN);
+
+			reschedule(interval);
+		}
+	};
+
 protected:
 	Reference<Lua*> lua;
 
@@ -37,7 +107,7 @@ protected:
 	HashTable<String, Reference<ShipAppearanceData*>> shipAppearanceData;
 	HashTable<uint32, Reference<ShipProjectileData*>> shipProjectileData;
 	HashTable<String, ShipProjectileData*> shipProjectiletTemplateNames;
-	HashTable<String, Reference<ShipCollisionData*>> shipCollisionData;
+	HashTable<uint32, Reference<ShipCollisionData*>> shipCollisionData;
 	HashTable<String, Reference<ShipChassisData*>> chassisData;
 
 	HashTable<uint32, Reference<ShipMissileData*>> missileData;
@@ -50,6 +120,7 @@ protected:
 	HashTable<uint32, Reference<SpaceSpawnGroup*>> spawnGroupMap;
 
 	ShipUniqueIdMap shipUniqueIdMap;
+	ShipAiAgentUpdateTransformTask* updateTransformTask;
 
 	void checkProjectiles();
 	void loadShipComponentData();
@@ -89,10 +160,7 @@ public:
 	void initialize();
 	void stop();
 
-	int loadShipSpawnGroups();
-
 	static int checkArgumentCount(lua_State* L, int args);
-
 	static int includeFile(lua_State* L);
 	static int addShipSpawnGroup(lua_State* L);
 
@@ -145,7 +213,7 @@ public:
 			return nullptr;
 		}
 
-		return shipCollisionData.get(ship->getShipChassisName());
+		return shipCollisionData.get(ship->getServerObjectCRC());
 	}
 
 	const ShipMissileData* getMissileData(uint32 ammoType) const {
@@ -156,17 +224,30 @@ public:
 		return countermeasureData.get(ammoType);
 	}
 
-private:
-	void loadShipComponentObjects(ShipObject* ship);
+	ShipUniqueIdMap* getShipUniqueIdMap() {
+		return &shipUniqueIdMap;
+	}
 
+private:
+	int loadShipSpawnGroups();
+	void loadShipComponentObjects(ShipObject* ship);
 	ShipControlDevice* createShipControlDevice(ShipObject* ship);
 
 public:
 	ShipAiAgent* createAiShip(const String& shipName);
-	ShipAiAgent* createAiShip(uint32 shipCRC);
+	ShipAiAgent* createAiShip(const String& shipName, uint32 shipCRC);
 	ShipObject* createPlayerShip(CreatureObject* owner, const String& shipName, const String& certificationRequired, bool loadComponents = false);
 
 	bool createDeedFromChassis(CreatureObject* owner, ShipChassisComponent* chassisBlueprint, CreatureObject* chassisDealer);
+
+	/**
+	* @pre { destructor and destructedObject locked }
+	* @post { destructor and destructedObject locked }
+	* @param destructorShip pre-locked
+	* @param destructedShip pre-locked
+	*/
+
+	int notifyDestruction(ShipObject* destructorShip, ShipAiAgent* destructedShip, int condition, bool isCombatAction);
 
 	/**
 	 * Sends a sui list box containing information about the structure.

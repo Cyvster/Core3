@@ -11,6 +11,9 @@ import server.zone.objects.ship.components.ShipComponent;
 import server.zone.objects.ship.events.ShipRecoveryEvent;
 import server.zone.Zone;
 import engine.service.proto.BaseMessage;
+import server.zone.objects.ship.ai.ShipAiAgent;
+import system.util.SortedVector;
+import system.lang.String;
 
 include server.zone.TreeEntry;
 include server.zone.objects.scene.SceneObject;
@@ -34,7 +37,6 @@ include server.zone.objects.ship.ShipTargetVector;
 include engine.util.u3d.Quaternion;
 include engine.util.u3d.Matrix4;
 include server.zone.objects.player.variables.SpaceLaunchPoint;
-import system.util.SortedVector;
 include system.util.Vector;
 include engine.util.u3d.Vector3;
 
@@ -96,15 +98,6 @@ class ShipObject extends TangibleObject {
 	protected boolean hasWings;
 
 	@dereferenced
-	protected string conversationTemplate;
-
-	@dereferenced
-	protected string conversationMobile;
-
-	@dereferenced
-	protected string conversationMessage;
-
-	@dereferenced
 	protected string chassisDataName;
 
 	@dereferenced
@@ -130,6 +123,10 @@ class ShipObject extends TangibleObject {
 
 	@dereferenced
 	protected Matrix4 conjugateMatrix;
+
+	protected transient float staffModifiedSpeed;
+
+	protected unsigned int shipFaction;
 
 	// DeltaAutoVariable template <class K, class V, int BaselineName, uint8 DeltaType, int DeltaIndex>
 
@@ -315,7 +312,7 @@ class ShipObject extends TangibleObject {
 
 	@rawTemplate(value = "String, 'SHIP', 6, 19")
 	@dereferenced
-	protected DeltaAutoVariable shipFaction;
+	protected DeltaAutoVariable shipFactionString;
 
 	@rawTemplate(value = "float, 'SHIP', 6, 20")
 	@dereferenced
@@ -428,10 +425,14 @@ class ShipObject extends TangibleObject {
 
 	protected string certificationRequired;
 
+	float wingsOpenSpeed;
+
 	public ShipObject() {
 		Logger.setLoggingName("ShipObject");
 
 		super.objectVisible = 1;
+
+		ownerID = 0;
 
 		super.closeobjects = new CloseObjectsVector();
 		super.closeobjects.setNoDuplicateInsertPlan();
@@ -445,11 +446,14 @@ class ShipObject extends TangibleObject {
 
 		boundingRadius = 1.f;
 		currentSpeed = 0.f;
+		staffModifiedSpeed = 0.f;
 		speedRotationFactorMax = 1.f;
 		speedRotationFactorMin = 1.f;
 		speedRotationFactorOptimal = 0.5f;
 
 		chassisSpeed.set(1.f);
+
+		certificationRequired = "";
 	}
 
 	public native void notifyLoadFromDatabase();
@@ -459,6 +463,7 @@ class ShipObject extends TangibleObject {
 
 	public native void initializeTransientMembers();
 
+	@preLocked
 	public native void doRecovery(int latency);
 
 	@preLocked
@@ -785,19 +790,22 @@ class ShipObject extends TangibleObject {
 
 	// 6:19
 	@local
-	public void setShipFaction(@dereferenced final string value, boolean notifyClient = true, DeltaMessage delta = null, ShipDeltaVector vector = null) {
-		if (value == "rebel") {
-			super.setFaction(0x16148850);
-		} else if (value == "imperial") {
-			super.setFaction(0xDB4ACC54);
+	public void setShipFactionString(@dereferenced final string factionString, boolean notifyClient = true, DeltaMessage delta = null, ShipDeltaVector vector = null) {
+		if (factionString == "rebel") {
+			super.setFaction(String.hashCode(factionString));
+		} else if (factionString == "imperial") {
+			super.setFaction(String.hashCode(factionString));
 		} else {
 			super.setFaction(0);
 		}
 
-		shipFaction.update(value, notifyClient, this, delta, vector);
+		shipFactionString.update(factionString, notifyClient, this, delta, vector);
+		setShipFaction(String.hashCode(factionString));
 	}
 
-	public native void setShipFaction(unsigned int value, boolean notifyClient = true);
+	public void setShipFaction(unsigned int value) {
+		shipFaction = value;
+	}
 
 	// 6:20
 	@local
@@ -993,20 +1001,6 @@ class ShipObject extends TangibleObject {
 
 	public native void setShipName(@dereferenced final string name, boolean notifyClient = true);
 
-	@dirty
-	public void setConversationTemplate(final string convoTemplate) {
-		conversationTemplate = convoTemplate;
-	}
-
-	@dirty
-	public void setConversationMobile(final string mobile) {
-		conversationMobile = mobile;
-	}
-
-	@dirty
-	public void setConversationMessage(final string message) {
-		conversationMessage = message;
-	}
 
 	@local
 	public void setChassisCategory(@dereferenced final string value) {
@@ -1044,6 +1038,11 @@ class ShipObject extends TangibleObject {
 
 	public void setSpeedRotationFactorOptimal(float value) {
 		speedRotationFactorOptimal = value;
+	}
+
+	@preLocked
+	public void setStaffShipSpeed(float speed) {
+		staffModifiedSpeed = speed;
 	}
 
 	@preLocked
@@ -1461,8 +1460,8 @@ class ShipObject extends TangibleObject {
 	// 6:19
 	@read
 	@dereferenced
-	public string getShipFaction() {
-		return shipFaction.get();
+	public string getShipFactionString() {
+		return shipFactionString.get();
 	}
 
 	// 6:20
@@ -1527,6 +1526,11 @@ class ShipObject extends TangibleObject {
 		return turretLadder;
 	}
 
+	@dirty
+	public unsigned int getShipFaction() {
+		return shipFaction;
+	}
+
 	@preLocked
 	public native void installAmmo(CreatureObject owner, SceneObject component, int slot, boolean notifyClient = false);
 
@@ -1544,9 +1548,6 @@ class ShipObject extends TangibleObject {
 
 	@local
 	public native abstract void loadTemplateData(SharedObjectTemplate templateData);
-
-	@local
-	public native abstract void loadTemplateData(SharedShipObjectTemplate shipTemp);
 
 	@dirty
 	@local
@@ -1566,18 +1567,6 @@ class ShipObject extends TangibleObject {
 	@dirty
 	public boolean isBoosterActive() {
 		return hasComponentFlag(7,4);
-	}
-
-	public string getConversationTemplate() {
-		return conversationTemplate;
-	}
-
-	public string getConversationMobile() {
-		return conversationMobile;
-	}
-
-	public string getConversationMessage() {
-		return conversationMessage;
 	}
 
 	public final string getChassisCategory() {
@@ -1651,6 +1640,10 @@ class ShipObject extends TangibleObject {
 
 	public native CreatureObject getShipOperator();
 
+	public native CreatureObject getTurretOperatorTop();
+
+	public native CreatureObject getTurretOperatorBottom();
+
 	/**
 	 * Evaluates if this can be attacked by object
 	 * @pre { }
@@ -1718,7 +1711,11 @@ class ShipObject extends TangibleObject {
 
 	@dirty
 	@local
-	public native void sendMembersBaseMessage(BaseMessage message);
+	public native void sendMembersBaseMessage(BaseMessage message, boolean sendSelf = true);
+
+	@preLocked
+	@arg1preLocked
+	public abstract native void awardLootItems(ShipAiAgent destructedShip, int payout);
 
 	public native boolean isShipLaunched();
 
@@ -1738,6 +1735,9 @@ class ShipObject extends TangibleObject {
 	public native float calculateActualDecelerationRate();
 
 	public native float calculateActualMaxSpeed();
+
+	@dirty
+	public native abstract float getOutOfRangeDistance(unsigned long specialRangeObjectID = 0);
 
 	@preLocked
 	@local

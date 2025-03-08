@@ -91,10 +91,11 @@ void SpaceZoneComponent::updateZone(SceneObject* sceneObject, bool lightUpdate, 
 	Locker _locker(spaceZone);
 	bool zoneUnlocked = false;
 
+	// Updates objects in range
 	try {
 		if (sceneObject->isShipObject()) {
 			spaceZone->update(sceneObject);
-			spaceZone->inRange(sceneObject, spaceZone->getZoneObjectRange());
+			spaceZone->inRange(sceneObject, ZoneServer::SPACESTATIONRANGE);
 
 			spaceZone->unlock();
 			zoneUnlocked = true;

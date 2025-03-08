@@ -50,6 +50,8 @@ import server.zone.objects.player.events.OnlinePlayerLogTask;
 import system.lang.Time;
 include server.zone.managers.player.PlayerNameIterator;
 include server.zone.objects.region.CityRegion;
+include server.zone.objects.ship.ai.ShipAiAgent;
+import engine.util.u3d.Vector3;
 
 @dirty
 class PlayerManager extends Observer implements Logger {
@@ -129,6 +131,18 @@ class PlayerManager extends Observer implements Logger {
 	@dereferenced
 	private transient OnlineZoneClientMap onlineZoneClientMap;
 
+	public static final float DELTA_SPEED_CHECK = 1000.f;
+
+	public static final unsigned int CORSEC_SQUADRON = 1;
+	public static final unsigned int RSF_SQUADRON = 2;
+	public static final unsigned int SMUGGLER_SQUADRON = 3;
+	public static final unsigned int BLACK_EPSILON_SQUADRON = 4;
+	public static final unsigned int STORM_SQUADRON = 5;
+	public static final unsigned int INQUISITION_SQUADRON = 6;
+	public static final unsigned int CRIMSON_PHOENIX_SQUADRON = 7;
+	public static final unsigned int VORTEX_SQUADRON = 8;
+	public static final unsigned int HAVOC_SQUADRON = 9;
+
 	public native PlayerManager(ZoneServer zoneServer, ZoneProcessServer impl, boolean trackOnlineUsers);
 	public native void loadNameMap();
 
@@ -206,7 +220,7 @@ class PlayerManager extends Observer implements Logger {
 	public native void awardBadge(PlayerObject ghost, final Badge badge);
 
 	public native void setExperienceMultiplier(float globalMultiplier);
-	public native int awardExperience(CreatureObject player, final string xpType, int amount, boolean sendSystemMessage = true, float localMultiplier = 1.0f, boolean applyModifiers = true);
+	public native int awardExperience(CreatureObject player, final string xpType, int amount, boolean sendSystemMessage = true, float localMultiplier = 1.0f, boolean applyModifiers = true, boolean spaceBonus = false);
 
 	@local @dereferenced
 	public native SortedVector<SceneObject> getInsurableItems(CreatureObject player, boolean onlyInsurable = true);
@@ -382,6 +396,10 @@ class PlayerManager extends Observer implements Logger {
 	@local
 	public native void disseminateExperience(TangibleObject destructedObject, ThreatMap threatMap, SynchronizedVector<CreatureObject> lairSpawnedCreatures = null,Zone lairZone=null);
 
+	@local
+	@arg1preLocked
+	public native void disseminateSpaceExperience(ShipAiAgent destructedObject, ThreatMap threatMap);
+
 	public native int calculatePlayerLevel(CreatureObject player);
 	public native int calculatePlayerLevel(CreatureObject player, string xpType);
 
@@ -401,9 +419,12 @@ class PlayerManager extends Observer implements Logger {
 
 	@local
 	public native void updateSwimmingState(CreatureObject player, float newZ, IntersectionResults intersections = null, CloseObjectsVector closeObjects = null);
+
 	@local
-	public native int checkSpeedHackFirstTest(CreatureObject player, float parsedSpeed, @dereferenced ValidatedPosition teleportPosition, float errorMultiplier = 1);
-	public native int checkSpeedHackSecondTest(CreatureObject player, float newX, float newZ, float newY, unsigned int newStamp, SceneObject newParent = null, boolean spaceZone = false);
+	public native boolean checkPlayerSpeedTest(CreatureObject player, SceneObject parent, float parsedSpeed, ValidatedPosition lastValidPosition, @dereferenced final Vector3 lastValidatedWorldPosition, @dereferenced final Vector3 newWorldPosition, float errorMultiplier = 1);
+
+	@local
+	public native int checkSpeedHackTests(CreatureObject player, PlayerObject ghost, ValidatedPosition lastValidPosition, @dereferenced final Vector3 newWorldPosition, unsigned int newStamp, float floorZ, SceneObject newParent = null);
 
 	@dirty
 	public native boolean existsName(final string name);

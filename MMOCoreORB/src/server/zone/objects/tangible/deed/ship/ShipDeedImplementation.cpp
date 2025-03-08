@@ -15,6 +15,7 @@
 #include "server/zone/managers/player/PlayerManager.h"
 #include "server/zone/Zone.h"
 #include "server/zone/managers/ship/ShipManager.h"
+#include "server/zone/managers/planet/PlanetManager.h"
 
 void ShipDeedImplementation::loadTemplateData(SharedObjectTemplate* templateData) {
 	DeedImplementation::loadTemplateData(templateData);
@@ -110,6 +111,24 @@ int ShipDeedImplementation::handleObjectMenuSelect(CreatureObject* player, byte 
 			return 1;
 		}
 
+		auto zone = player->getZone();
+
+		if (zone == nullptr) {
+			return 1;
+		}
+
+		auto planetManager = zone->getPlanetManager();
+
+		if (planetManager == nullptr) {
+			return 1;
+		}
+
+		auto travelPoint = planetManager->getNearestPlanetTravelPoint(player->getWorldPosition(), 16000.f, true);
+
+		if (travelPoint == nullptr) {
+			return 1;
+		}
+
 		// Sorosuub Luxury Yacht veteran reward deed check
 		bool isYachtDeed = generatedObjectTemplate.hashCode() == 388127163; // object/ship/player/player_sorosuub_space_yacht.iff
 
@@ -158,13 +177,10 @@ int ShipDeedImplementation::handleObjectMenuSelect(CreatureObject* player, byte 
 		// Player is locked, cross lock the ship to the player
 		Locker slocker(ship, player);
 
-		ship->setMaxCondition(getMaxHitPoints(), false);
-		ship->setConditionDamage(getHitPointsDamage(), false);
+		ship->setChassisMaxHealth(getMaxHitPoints(), true);
+		ship->setCurrentChassisHealth(getMaxHitPoints() - getHitPointsDamage(), true);
 
-		ship->setChassisMaxMass(getMass(), false);
-
-		// release ship cross lock
-		slocker.release();
+		ship->setChassisMaxMass(getMass(), true);
 
 		uint64 controlDeviceID = ship->getControlDeviceID();
 
@@ -180,7 +196,11 @@ int ShipDeedImplementation::handleObjectMenuSelect(CreatureObject* player, byte 
 
 		Locker deviceLock(shipControlDevice, player);
 
-		shipControlDevice->setParkingLocation(getParkingLocation());
+		if (isYachtDeed) {
+			shipControlDevice->setParkingLocation(travelPoint->getPointName());
+		} else {
+			shipControlDevice->setParkingLocation(getParkingLocation());
+		}
 
 		for (int i = 0; i < getTotalSkillsRequired(); i++) {
 			auto skillName = getSkillRequired(i);

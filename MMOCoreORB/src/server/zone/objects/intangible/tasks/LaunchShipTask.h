@@ -11,15 +11,21 @@
 #include "server/zone/managers/planet/PlanetManager.h"
 #include "server/zone/objects/ship/events/InsertPilotIntoShipTask.h"
 #include "server/zone/objects/ship/events/InsertGroupMemberIntoShipTask.h"
+#include "server/zone/objects/ship/events/InsertAstromechIntoShipTask.h"
 #include "templates/params/creature/PlayerArrangement.h"
 
 class LaunchShipTask : public Task, public Logger {
 	ManagedWeakReference<CreatureObject*> play;
 	ManagedWeakReference<ShipControlDevice*> shipDev;
 	Vector<uint64> groupMembers;
+	String chosenZone;
 
 public:
 	LaunchShipTask(CreatureObject* creo, ShipControlDevice* controlDevice, Vector<uint64> group) : play(creo), shipDev(controlDevice), groupMembers(group) {
+		setLoggingName("LaunchShipTask");
+	}
+
+	LaunchShipTask(CreatureObject* creo, ShipControlDevice* controlDevice, Vector<uint64> group, String zoneName) : play(creo), shipDev(controlDevice), groupMembers(group), chosenZone(zoneName) {
 		setLoggingName("LaunchShipTask");
 	}
 
@@ -43,6 +49,10 @@ public:
 		}
 
 		String jtlZoneName = planetManager->getJtlZoneName();
+
+		if (!chosenZone.isEmpty()) {
+			jtlZoneName = chosenZone;
+		}
 
 		if (jtlZoneName == "") {
 			return;
@@ -78,6 +88,14 @@ public:
 
 		if (pilotTask != nullptr) {
 			pilotTask->schedule(100);
+		}
+
+		if (ship->getShipDroidID() != 0) {
+			auto droidTask = new InsertAstromechIntoShipTask(ship);
+
+			if (droidTask != nullptr) {
+				droidTask->schedule(150);
+			}
 		}
 
 		if (groupMembers.size() > 0 && (ship->isPobShip() || ship->isMultiPassengerShip())) {

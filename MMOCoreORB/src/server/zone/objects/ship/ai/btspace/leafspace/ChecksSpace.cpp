@@ -1,6 +1,7 @@
 #include "ChecksSpace.h"
 #include "server/zone/objects/ship/ai/ShipAiAgent.h"
 #include "server/zone/objects/ship/ShipComponentFlag.h"
+#include "templates/params/ship/ShipFlag.h"
 
 // full template specializations need to go in cpp so they don't get
 // defined multiple times.
@@ -56,8 +57,15 @@ template<> bool CheckHasFollow::check(ShipAiAgent* agent) const {
 }
 
 template<> bool CheckRetreat::check(ShipAiAgent* agent) const {
-	if (agent->isRetreating())
+	if (agent->isRetreating()) {
 		return false;
+	}
+
+	uint32 shipBitmask = agent->getShipBitmask();
+
+	if ((shipBitmask & ShipFlag::FIXED_PATROL) || (shipBitmask & ShipFlag::ESCORT)) {
+		return false;
+	}
 
 	SpacePatrolPoint* homeLocation = agent->getHomeLocation();
 

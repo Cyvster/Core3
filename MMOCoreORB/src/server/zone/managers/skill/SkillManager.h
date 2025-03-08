@@ -50,6 +50,8 @@ class SkillManager : public Singleton<SkillManager>, public Logger, public Objec
 
 	VectorMap<String, int> defaultXpLimits;
 
+	VectorMap<uint32, int> droidProgramSizes;
+
 	bool apprenticeshipEnabled;
 
 public:
@@ -75,7 +77,7 @@ public:
 	void awardDraftSchematics(Skill* skill, PlayerObject* ghost, bool notifyClient = true);
 
 	bool surrenderSkill(const String& skillName, CreatureObject* creature, bool notifyClient = true, bool verifyFrs = true, bool allowPilot = false);
-	void surrenderAllSkills(CreatureObject* creature, bool notifyClient = true, bool removeForceProgression = true);
+	void surrenderAllSkills(CreatureObject* creature, bool notifyClient = true, bool removeForceProgression = true, bool removePilot = false);
 
 	/**
 	 * Checks if the player can learn the skill (fulfills skill prerequisites, enough skill points and enough XP).
@@ -130,6 +132,10 @@ public:
 	}
 
 	void removeSkillRelatedMissions(CreatureObject* creature, Skill* skill);
+
+	int getDroidProgramSize(uint32 programHash) {
+		return droidProgramSizes.get(programHash);
+	}
 };
 
 }

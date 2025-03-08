@@ -6,12 +6,14 @@ function jPaiBrekConvoHandler:getInitialScreen(pPlayer, pNpc, pConvTemplate)
 	local convoTemplate = LuaConversationTemplate(pConvTemplate)
 
 	local faction = CreatureObject(pPlayer):getFaction()
+	local playerFactionStatus = CreatureObject(pPlayer):getFactionStatus()
 
-	-- Does not have JTL check??
-	-- return convoTemplate:getScreen("nothing_i_can")
+	if (not isJtlEnabled()) then
+		return convoTemplate:getScreen("nothing_i_can")
+	end
 
 	-- Player is a Rebel pilot
-	if (SpaceHelpers:isRebelPilot(pPlayer) and CreatureObject(pPlayer):getFactionStatus() > ONLEAVE) then
+	if (SpaceHelpers:isRebelPilot(pPlayer) and faction == FACTIONREBEL and playerFactionStatus > ONLEAVE) then
 		CreatureObject(pNpc):doAnimation("greet")
 
 		return convoTemplate:getScreen("hello_rebel_pilot")
@@ -20,7 +22,7 @@ function jPaiBrekConvoHandler:getInitialScreen(pPlayer, pNpc, pConvTemplate)
 		CreatureObject(pNpc):doAnimation("stretch")
 
 		return convoTemplate:getScreen("is_there_something")
-	-- Player is a pilot, but could be wrong faction status rebel pilot as well
+	-- Player is a pilot
 	elseif (SpaceHelpers:isPilot(pPlayer)) then
 		return convoTemplate:getScreen("hello_friend_good")
 	end
@@ -90,7 +92,7 @@ function jPaiBrekConvoHandler:runScreenHandlers(pConvTemplate, pPlayer, pNpc, se
 	elseif (screenID == "confirm_retirement") then
 		CreatureObject(pNpc):doAnimation("sigh_deeply")
 
-		SpaceHelpers:surrenderPilot(pPlayer, "rebelPilot")
+		SpaceHelpers:surrenderPilot(pPlayer)
 	end
 
 	return pConvScreen

@@ -170,18 +170,20 @@ bool GroundZoneContainerComponent::transferObject(SceneObject* sceneObject, Scen
 
 	ManagedReference<SceneObject*> parent = object->getParent().get();
 
-	if (parent != nullptr/* && parent->isCellObject()*/) {
+	if (parent != nullptr) {
 		uint64 parentID = object->getParentID();
 
-		if (containmentType == -2)
+		if (containmentType == -2) {
 			parent->removeObject(object, sceneObject, false);
-		else
+		} else {
 			parent->removeObject(object, sceneObject, true);
+		}
 
-		if (object->getParent() != nullptr && parent->containsChildObject(object))
+		object->setParent(nullptr);
+
+		if (object->getParent().get() != nullptr && parent->hasObjectInContainer(object->getObjectID())) {
 			return false;
-		else
-			object->setParent(nullptr, false);
+		}
 
 		if (parent->isCellObject()) {
 			ManagedReference<BuildingObject*> build = cast<BuildingObject*>(parent->getParent().get().get());
@@ -189,8 +191,9 @@ bool GroundZoneContainerComponent::transferObject(SceneObject* sceneObject, Scen
 			if (build != nullptr) {
 				CreatureObject* creature = cast<CreatureObject*>(object);
 
-				if (creature != nullptr)
+				if (creature != nullptr) {
 					build->onExit(creature, parentID);
+				}
 			}
 		}
 	} else {
@@ -202,14 +205,18 @@ bool GroundZoneContainerComponent::transferObject(SceneObject* sceneObject, Scen
 
 	zone->addSceneObject(object);
 
-	if (notifyClient)
+	if (notifyClient) {
 		object->sendToOwner(true);
+	}
 
-	if (parent == nullptr)
+	if (parent == nullptr) {
 		object->initializePosition(object->getPositionX(), object->getPositionZ(), object->getPositionY());
+	}
 
+	// Insert the object into the zone and quadtree
 	zone->insert(object);
 
+	// Update the in range objects
 	zone->inRange(object, zone->getZoneObjectRange());
 
 	TangibleObject* tanoObject = object->asTangibleObject();

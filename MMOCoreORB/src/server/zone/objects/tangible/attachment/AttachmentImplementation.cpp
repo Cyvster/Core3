@@ -78,6 +78,7 @@ void AttachmentImplementation::updateCraftingValues(CraftingValues* values, bool
 	}*/
 
   modCount = 1;
+
 	for (int i = 0; i < modCount; ++i) {
 		float step = 1.f - ((i / (float)modCount) * 0.5f);
 		int min = Math::clamp(-1, (int)round(0.075f * level) - 1, 25) * step;

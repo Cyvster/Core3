@@ -30,6 +30,7 @@
 #include "server/zone/managers/creature/PetManager.h"
 #include "server/zone/objects/intangible/PetControlDevice.h"
 #include "server/zone/objects/tangible/tool/antidecay/AntiDecayKit.h"
+#include "server/zone/objects/tangible/tool/componentanalysis/ComponentAnalysisTool.h"
 #include "server/zone/objects/player/events/StoreSpawnedChildrenTask.h"
 #include "server/zone/managers/gcw/GCWManager.h"
 #include "templates/faction/Factions.h"
@@ -87,15 +88,27 @@ void TangibleObjectImplementation::notifyLoadFromDatabase() {
 	SceneObjectImplementation::notifyLoadFromDatabase();
 
 	if (activeAreas.size() > 0) {
-		TangibleObject* tano = asTangibleObject();
+		Reference<TangibleObject*> refTano = asTangibleObject();
 
 		for (int i = activeAreas.size() - 1; i >= 0; i--) {
 			auto& area = activeAreas.get(i);
 
-			if (!area->isNavArea()) {
-				area->notifyExit(tano);
-				activeAreas.remove(i);
+			if (area == nullptr || area->isNavArea()) {
+				continue;
 			}
+
+			activeAreas.remove(i);
+
+			Core::getTaskManager()->scheduleTask([refTano, area] () {
+				if (refTano == nullptr || area == nullptr) {
+					return;
+				}
+
+				Locker lock(area);
+				Locker clock(refTano, area);
+
+				area->notifyExit(refTano);
+			}, "notifyLoadAAExitLambda", 200);
 		}
 	}
 
@@ -313,7 +326,10 @@ void TangibleObjectImplementation::sendPvpStatusTo(CreatureObject* player) {
 	auto thisFaction = getFaction();
 	auto playerFaction = player->getFaction();
 
-	if (((isAiAgent() && !isPet() && (thisFactionStatus >= FactionStatus::COVERT)) || isShipAiAgent() || (isShipObject() && !isShipAiAgent())) && (thisFaction > 0) && (playerFaction > 0) && (thisFaction != playerFaction)) {
+	bool isShipAgent = isShipAiAgent();
+
+	// Handle enemy flagging for Rebel/Imperial
+	if (((isAiAgent() && !isPet() && (thisFactionStatus >= FactionStatus::COVERT)) || isShipAgent || (isShipObject() && !isShipAgent)) && (thisFaction > 0) && (playerFaction > 0) && (thisFaction != playerFaction)) {
 		if (ConfigManager::instance()->useCovertOvertSystem()) {
 			PlayerObject* ghost = player->getPlayerObject();
 
@@ -327,6 +343,17 @@ void TangibleObjectImplementation::sendPvpStatusTo(CreatureObject* player) {
 				newPvpStatusBitmask |= ObjectFlag::ENEMY;
 			} else if (newPvpStatusBitmask & ObjectFlag::ENEMY) {
 				newPvpStatusBitmask &= ~ObjectFlag::ENEMY;
+			}
+		}
+	} else if (!(newPvpStatusBitmask & ObjectFlag::ENEMY) && isShipAgent && (player->isPilotingShip() || player->isOnboardPobShip() || player->isShipGunner())) {
+		auto thisShipAgent = asShipAiAgent();
+		auto playerRoot =  player->getRootParent();
+
+		if (thisShipAgent != nullptr) {
+			if (thisShipAgent->isPlayerFactionEnemy(player)) {
+				newPvpStatusBitmask |= ObjectFlag::ENEMY;
+			} else if (playerRoot != nullptr && thisShipAgent->isEnemyShip(playerRoot->getObjectID())) {
+				newPvpStatusBitmask |= ObjectFlag::ENEMY;
 			}
 		}
 	}
@@ -363,8 +390,9 @@ void TangibleObjectImplementation::broadcastPvpStatusBitmask() {
 		if (creo->isPlayerCreature())
 			sendPvpStatusTo(creo);
 
-		if (thisCreo != nullptr && thisCreo->isPlayerCreature())
+		if (thisCreo != nullptr && thisCreo->isPlayerCreature()) {
 			creo->sendPvpStatusTo(thisCreo);
+		}
 	}
 
 	if (thisCreo == nullptr)
@@ -491,7 +519,6 @@ void TangibleObjectImplementation::removeOutOfRangeObjects() {
 	float ourY = worldPos.getY();
 	float ourZ = worldPos.getZ();
 
-	float ourRange = rangeCheckObject->getOutOfRangeDistance();
 	bool objectIsShip = rangeCheckObject->isShipObject();
 
 	uint64 thisObjectID = getObjectID();
@@ -532,8 +559,8 @@ void TangibleObjectImplementation::removeOutOfRangeObjects() {
 		float deltaX = ourX - objectWorldPos.getX();
 		float deltaY = ourY - objectWorldPos.getY();
 
-		float outOfRangeDistance = covObject->getOutOfRangeDistance();
-		float outOfRangeSqr = Math::sqr(Math::max(ourRange, outOfRangeDistance));
+		float outOfRangeDistance = Math::max(covObject->getOutOfRangeDistance(thisObjectID), rangeCheckObject->getOutOfRangeDistance(covObject->getObjectID()));
+		float outOfRangeSqr = Math::sqr(outOfRangeDistance);
 		float deltaDistance = 0.f;
 
 		// This range calculation is used for everything in GroundZone
@@ -1288,12 +1315,12 @@ void TangibleObjectImplementation::repair(CreatureObject* player, RepairTool * r
 	}
 
 	//Condition is unrepairable
-	/*if ((getMaxCondition() - getConditionDamage()) <= 0) {
+	if ((getMaxCondition() - getConditionDamage()) <= 0) {
 		StringIdChatParameter cantrepair("error_message", "sys_repair_unrepairable");
 		cantrepair.setTT(getDisplayedName());
 		player->sendSystemMessage(cantrepair); //%TT's condition is beyond repair even for your skills.
 		return;
-	}*/
+	}
 
 	Reference<RepairToolTemplate*> repairTemplate = nullptr;
 
