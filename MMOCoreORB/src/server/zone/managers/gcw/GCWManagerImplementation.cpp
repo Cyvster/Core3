@@ -2779,63 +2779,6 @@ void GCWManagerImplementation::sendSelectMineToDonate(InstallationObject* instal
 	}
 }
 
-void GCWManagerImplementation::sendSelectMineToDonate(InstallationObject* installation, CreatureObject* player) {
-	if (installation == nullptr || player == nullptr)
-		return;
-
-	if (player->getFaction() == Factions::FACTIONNEUTRAL || (installation->getFactionStatus() > player->getFactionStatus())) {
-		return;
-	}
-
-	auto ghost = player->getPlayerObject();
-
-	if (ghost == nullptr) {
-		return;
-	}
-
-	if (ghost->hasSuiBoxWindowType(SuiWindowType::HQ_TERMINAL)) {
-		ghost->closeSuiWindowType(SuiWindowType::HQ_TERMINAL);
-	}
-
-	ManagedReference<SceneObject*> inventory = player->getInventory();
-
-	if (inventory == nullptr) {
-		return;
-	}
-
-	ManagedReference<SuiListBox*> donate = new SuiListBox(player, SuiWindowType::HQ_TERMINAL);
-
-	if (donate == nullptr) {
-		return;
-	}
-
-	donate->setPromptTitle("Donate Mines");
-	donate->setPromptText("Which mine would you like to donate?");
-
-	donate->setUsingObject(installation);
-	donate->setOkButton(true, "@ok");
-	donate->setCancelButton(true, "@cancel");
-
-	donate->setCallback(new DonateMineSuiCallback(zone->getZoneServer()));
-
-	for (int i = 0; i < inventory->getContainerObjectsSize(); ++i) {
-		ManagedReference<SceneObject*> inventoryObject = inventory->getContainerObject(i);
-
-		if (inventoryObject == nullptr || inventoryObject->isFactoryCrate() || (inventoryObject->getGameObjectType() != SceneObjectType::MINE)) {
-			continue;
-		}
-
-		donate->addMenuItem(inventoryObject->getDisplayedName(), inventoryObject->getObjectID());
-	}
-
-	if (donate->getMenuSize() == 0) {
-		player->sendSystemMessage("You do not possess any mines to donate.");
-	} else {
-		ghost->addSuiBox(donate);
-		player->sendMessage(donate->generateMessage());
-	}
-}
-
 void GCWManagerImplementation::performDefenseDonation(BuildingObject* building, CreatureObject* creature, uint64 deedOID) {
 	if (building == nullptr || creature == nullptr)
 		return;
