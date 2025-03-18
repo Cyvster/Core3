@@ -2119,7 +2119,7 @@ void PlayerManagerImplementation::disseminateExperience(TangibleObject* destruct
 				xpAmount *= (float) damage / totalDamage;
 
 				//Cap xp based on level
-				xpAmount = Math::min(xpAmount, playerLevel * 300.f);
+				//xpAmount = Math::min(xpAmount, playerLevel * 300.f);
 
 				//Apply group bonus if in group
 				if (group != nullptr)
