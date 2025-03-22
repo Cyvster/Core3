@@ -49,11 +49,11 @@ TauntCommand = {
 
 	splashDamage = true,
 	areaAction = true,
-	areaRange = 16,
+	areaRange = 24,
 
 	poolsToDamage = NO_ATTRIBUTE,
 
-	range = 64
+	range = -1
 }
 
 AddCommand(TauntCommand)
