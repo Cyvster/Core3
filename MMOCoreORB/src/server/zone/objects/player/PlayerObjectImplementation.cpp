@@ -2852,7 +2852,7 @@ void PlayerObjectImplementation::deleteAllWaypoints() {
 		}
 	}
 }
-
+/*
 int PlayerObjectImplementation::getLotsRemaining() {
 	Locker locker(asPlayerObject());
 
@@ -2870,39 +2870,42 @@ int PlayerObjectImplementation::getLotsRemaining() {
 
 	return lotsRemaining;
 }
-/*
+*/
 //begin custom lots remaining code provided by Bagsie. sets lots count to be shared across all characters on account
 int PlayerObjectImplementation::getLotsRemaining() {
-    ManagedReference<PlayerManager> playerManager = server->getZoneServer()->getPlayerManager();
-
-    if (playerManager == nullptr)
+    if (account == nullptr) {
         return 0;
+    }
 
-    Reference<const CharacterList> characters = account->getCharacterList();
+    Reference<CharacterList> characters = account->getCharacterList();
+    ZoneServer zoneServer = server->getZoneServer();
 
-int lotsRemaining = maximumLots * characters->size();
+    if (characters == nullptr || zoneServer == nullptr) {
+        return 0;
+    }
 
-if (lotsRemaining < maximumLots)
-     lotsRemaining = maximumLots;
+    int lotsRemaining = maximumLots * characters->size();
 
     for (int i = 0; i < characters->size(); ++i) {
-        const CharacterListEntry* entry = &characters->get(i);
-        if(entry->getGalaxyID() == getZoneServer()->getGalaxyID()) {
-            ManagedReference<CreatureObject> targetChar = playerManager->getPlayer(entry->getFirstName());
-            if (targetChar == nullptr)
-                return 0;
-            Reference<PlayerObject> ghost = targetChar->getPlayerObject();
-            if (ghost == nullptr)
-                return 0;
-            Locker lock(ghost);
+        CharacterListEntry entry = characters->get(i);
+        uint64 oid = entry.getObjectID();
 
-            for(int j = 0; j < ghost->getTotalOwnedStructureCount(); ++j) {
-                auto oid = ghost->getOwnedStructure(j);
+        Reference<CreatureObject> obj = zoneServer->getObject(oid).castTo<CreatureObject>();
 
-                Reference<StructureObject> structure = getZoneServer()->getObject(oid).castTo<StructureObject>();
+        if (obj != nullptr) {
+            Reference<PlayerObject> ghost = obj->getPlayerObject();
 
-                if (structure != nullptr) {
-                    lotsRemaining = lotsRemaining - structure->getLotSize();
+            if (ghost != nullptr) {
+                int ownedStructureCount = ghost->getTotalOwnedStructureCount();
+
+                for (int j = 0; j < ownedStructureCount; ++j) {
+                    auto oid = ghost->getOwnedStructure(j);
+                    Reference<StructureObject> structure = getZoneServer()->getObject(oid).castTo<StructureObject*>();
+
+
+                    if (structure != nullptr) {
+                        lotsRemaining -= structure->getLotSize();
+                    }
                 }
             }
         }
@@ -2911,7 +2914,6 @@ if (lotsRemaining < maximumLots)
     return lotsRemaining;
 }
 //end custom lots remaining code provided by Bagsie
-*/
 
 int PlayerObjectImplementation::getOwnedChatRoomCount() {
 	ManagedReference<ChatManager*> chatManager = getZoneServer()->getChatManager();
