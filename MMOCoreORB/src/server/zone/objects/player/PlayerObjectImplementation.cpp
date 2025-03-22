@@ -2852,7 +2852,7 @@ void PlayerObjectImplementation::deleteAllWaypoints() {
 		}
 	}
 }
-/*
+
 int PlayerObjectImplementation::getLotsRemaining() {
 	Locker locker(asPlayerObject());
 
@@ -2870,9 +2870,9 @@ int PlayerObjectImplementation::getLotsRemaining() {
 
 	return lotsRemaining;
 }
-*/
+
 //begin custom lots remaining code provided by Bagsie. sets lots count to be shared across all characters on account
-int PlayerObjectImplementation::getLotsRemaining() {
+/*int PlayerObjectImplementation::getLotsRemaining() {
     if (account == nullptr) {
         return 0;
     }
@@ -2912,7 +2912,7 @@ int PlayerObjectImplementation::getLotsRemaining() {
     }
 
     return lotsRemaining;
-}
+}*/
 //end custom lots remaining code provided by Bagsie
 
 int PlayerObjectImplementation::getOwnedChatRoomCount() {
