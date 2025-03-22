@@ -53,7 +53,7 @@ TauntCommand = {
 
 	poolsToDamage = NO_ATTRIBUTE,
 
-	range = -1
+	range = 64
 }
 
 AddCommand(TauntCommand)
