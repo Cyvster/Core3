@@ -51,7 +51,7 @@
 #include "templates/building/CampStructureTemplate.h"
 #include "templates/customization/CustomizationIdManager.h"
 //custom admin list code to include all characters on account, start
-#include "server/login/account/AccountManager.h"
+//#include "server/login/account/AccountManager.h"
 //custom admin list code to include all characters on account, end
 
 namespace StorageManagerNamespace {
@@ -542,8 +542,8 @@ StructureObject* StructureManager::placeStructure(CreatureObject* creature, cons
 	Locker sLocker(structureObject);
 
 	//begin custom admin list changes for structures
-	//structureObject->grantPermission("ADMIN", creature->getObjectID());
-	Reference<PlayerObject> ghost = creature->getPlayerObject();
+	structureObject->grantPermission("ADMIN", creature->getObjectID());
+	/*Reference<PlayerObject> ghost = creature->getPlayerObject();
 
 	    if (ghost != nullptr) {
 	        ManagedReference<Account> account = ghost->getAccount();
@@ -560,10 +560,10 @@ StructureObject* StructureManager::placeStructure(CreatureObject* creature, cons
 	                }
 	            }
 	        }
-	    }
+	    }*/
 	structureObject->setOwner(creature->getObjectID());
 
-	//ManagedReference<PlayerObject*> ghost = creature->getPlayerObject();
+	ManagedReference<PlayerObject*> ghost = creature->getPlayerObject();
 	//end custom changes to add all characters on account to structure admin list on creation
 	if (ghost != nullptr) {
 		ghost->addOwnedStructure(structureObject);
