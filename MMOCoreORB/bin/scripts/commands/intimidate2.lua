@@ -49,6 +49,9 @@ Intimidate2Command = {
 	healthCostMultiplier = 0,
 	actionCostMultiplier = 0,
 	mindCostMultiplier = 0,
+	areaAction = true,
+	splashDamage = true,
+        areaRange = 24,
 	
 	accuracySkillMod = "intimidate",
 
@@ -68,9 +71,7 @@ Intimidate2Command = {
 	animation = "intimidate",
 	effectString = "clienteffect/combat_special_attacker_intimidate.cef",
 	range = 24,
-	areaAction = true,
-        areaRange = 24,
-
+	
 	poolsToDamage = NO_ATTRIBUTE
 }
 
