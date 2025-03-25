@@ -51,7 +51,7 @@
 #include "templates/building/CampStructureTemplate.h"
 #include "templates/customization/CustomizationIdManager.h"
 //custom admin list code to include all characters on account, start
-//#include "server/login/account/AccountManager.h"
+#include "server/login/account/AccountManager.h"
 //custom admin list code to include all characters on account, end
 
 namespace StorageManagerNamespace {
@@ -542,28 +542,28 @@ StructureObject* StructureManager::placeStructure(CreatureObject* creature, cons
 	Locker sLocker(structureObject);
 
 	//begin custom admin list changes for structures
-	structureObject->grantPermission("ADMIN", creature->getObjectID());
-	/*Reference<PlayerObject> ghost = creature->getPlayerObject();
-
-	    if (ghost != nullptr) {
-	        ManagedReference<Account> account = ghost->getAccount();
+	//structureObject->grantPermission("ADMIN", creature->getObjectID());
+	ManagedReference<PlayerObject*> ghost = creature->getPlayerObject();
 	
-	        if (account != nullptr) {
-	            Reference<CharacterList> characters = account->getCharacterList();
+	if (ghost != nullptr) {
+	ManagedReference<Account*> account = ghost->getAccount();
 	
-	            if (characters != nullptr) {
-	                for (int i = 0; i < characters->size(); ++i) {
-	                    CharacterListEntry entry = characters->get(i);
-	                    uint64 characterId = entry.getObjectID();
-	
-	                    structureObject->grantPermission("ADMIN", characterId);
-	                }
-	            }
-	        }
-	    }*/
+		if (account != nullptr) {
+		    Reference<CharacterList*> characters = account->getCharacterList();
+		
+			if (characters != nullptr) {
+				for (int i = 0; i < characters->size(); ++i) {
+					CharacterListEntry& entry = characters->get(i);
+					uint64 characterId = entry.getObjectID();
+		
+			   	 	structureObject->grantPermission("ADMIN", characterId);
+				}
+		    	}
+		}
+	}
 	structureObject->setOwner(creature->getObjectID());
 
-	ManagedReference<PlayerObject*> ghost = creature->getPlayerObject();
+	//ManagedReference<PlayerObject*> ghost = creature->getPlayerObject();
 	//end custom changes to add all characters on account to structure admin list on creation
 	if (ghost != nullptr) {
 		ghost->addOwnedStructure(structureObject);
