@@ -131,6 +131,6 @@ function DathomirStaticSpawnsSeScreenPlay:spawnMobiles()
 	spawnMobile("dathomir", "acklay", 1800, 4446.0, 79.3, -3798.6, -73, 0)
 	spawnMobile("dathomir", "nightsister_elder", 1800, 4320.2, 90.6, -3928.7, -24, 0)
 	spawnMobile("dathomir", "kiin_dray", 1800, 4320.2, 90.6, -3928.7, -24, 0)
-	--spawnMobile("dathomir", "giant_canyon_krayt_dragon", 1800, 4159.3, 37.1, -4060.2, -11, 0)
+	spawnMobile("dathomir", "giant_canyon_krayt_dragon", 1800, 4667.2, 84.4, -3677.0, -92, 0)
 
 end
