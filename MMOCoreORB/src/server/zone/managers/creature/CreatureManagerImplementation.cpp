@@ -684,7 +684,9 @@ int CreatureManagerImplementation::notifyDestruction(TangibleObject* destructor,
 		if (creatureInventory != nullptr && player != nullptr && player->isPlayerCreature()) {
 			LootManager* lootManager = zoneServer->getLootManager();
 
-			if (destructedObject->isNonPlayerCreatureObject() && !destructedObject->isEventMob()) {
+			//make all mobs drop credits
+			//if (destructedObject->isNonPlayerCreatureObject() && !destructedObject->isEventMob()) {
+			if (!destructedObject->isEventMob()) {
 				destructedObject->clearCashCredits();
 				int credits = lootManager->calculateLootCredits(destructedObject->getLevel());
 				TransactionLog trx(TrxCode::NPCLOOT, destructedObject, credits, true);
