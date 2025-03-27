@@ -693,12 +693,12 @@ int CreatureManagerImplementation::notifyDestruction(TangibleObject* destructor,
 				trx.addState("destructor", destructorObjectID);
 				//award credits directly to the corpse owner instead of placing on corpse
 				//destructedObject->addCashCredits(credits);
-				Player* killer = getHighestDamageGroupLeader();
-				if (killer) {
-				    killer->addCashCredits(credits);
+				if (player) {
+				    player->addCashCredits(credits); // Award credits to the killer
 				} else {
 				    destructedObject->addCashCredits(credits); // Fallback if no valid killer is found
 				}
+
 
 			}
 
