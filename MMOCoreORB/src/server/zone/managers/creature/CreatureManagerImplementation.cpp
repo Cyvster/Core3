@@ -693,11 +693,12 @@ int CreatureManagerImplementation::notifyDestruction(TangibleObject* destructor,
 				trx.addState("destructor", destructorObjectID);
 				//award credits directly to the corpse owner instead of placing on corpse
 				//destructedObject->addCashCredits(credits);
-				if (player) {
-				    player->addCashCredits(credits); // Award credits to the killer
-				} else {
-				    destructedObject->addCashCredits(credits); // Fallback if no valid killer is found
+				ManagedReference<CreatureObject*> highestDamagePlayer = copyThreatMap.getHighestDamagePlayer(); // Get the player who did the most damage
+				if (highestDamagePlayer && highestDamagePlayer->isPlayerCreature()) {
+				        highestDamagePlayer->addCashCredits(credits); // Award credits to the highest damage player
+				        return;
 				}
+				destructedObject->addCashCredits(credits); // Fallback if no valid player is found
 
 
 			}
