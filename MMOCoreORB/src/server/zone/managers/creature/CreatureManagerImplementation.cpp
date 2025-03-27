@@ -696,8 +696,9 @@ int CreatureManagerImplementation::notifyDestruction(TangibleObject* destructor,
 				ManagedReference<CreatureObject*> highestDamagePlayer = copyThreatMap.getHighestDamagePlayer(); // Get the player who did the most damage
 				if (highestDamagePlayer && highestDamagePlayer->isPlayerCreature()) {
 				        highestDamagePlayer->addCashCredits(credits); // Award credits to the highest damage player
+				} else {
+				    destructedObject->addCashCredits(credits); // Fallback if no valid player is found
 				}
-				destructedObject->addCashCredits(credits); // Fallback if no valid player is found
 
 
 			}
