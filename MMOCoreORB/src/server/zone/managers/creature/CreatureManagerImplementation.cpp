@@ -691,7 +691,15 @@ int CreatureManagerImplementation::notifyDestruction(TangibleObject* destructor,
 				int credits = lootManager->calculateLootCredits(destructedObject->getLevel());
 				TransactionLog trx(TrxCode::NPCLOOT, destructedObject, credits, true);
 				trx.addState("destructor", destructorObjectID);
-				destructedObject->addCashCredits(credits);
+				//award credits directly to the corpse owner instead of placing on corpse
+				//destructedObject->addCashCredits(credits);
+				Player* killer = getHighestDamageGroupLeader();
+				if (killer) {
+				    killer->addCashCredits(credits);
+				} else {
+				    destructedObject->addCashCredits(credits); // Fallback if no valid killer is found
+				}
+
 			}
 
 			Locker invLocker(creatureInventory, destructedObject);
