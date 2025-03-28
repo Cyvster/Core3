@@ -107,7 +107,7 @@ void SkillManager::loadClientData() {
 		}
 	}
 
-	// Load Droid Command Sizes
+	// Load Droid Commands
 	iffStream = TemplateManager::instance()->openIffFile("datatables/space_command/droid_program_size.iff");
 
 	if (iffStream != nullptr) {
@@ -134,6 +134,13 @@ void SkillManager::loadClientData() {
 			}
 
 			droidProgramSizes.put(programName.hashCode(), programSize);
+
+			String droidCommand = "droid+" + programName;
+			if (!abilityMap.containsKey(droidCommand))
+				abilityMap.put(droidCommand, new Ability(droidCommand));
+
+			if (!droidCommands.contains(programName))
+				droidCommands.put(programName);
 		}
 	}
 
@@ -260,6 +267,17 @@ void SkillManager::removeAbilities(PlayerObject* ghost, const Vector<String>& ab
 	}
 
 	ghost->removeAbilities(abilities, notifyClient);
+}
+
+void SkillManager::addDroidCommand(PlayerObject* ghost, const String& abilityName) {
+	Ability* ability = abilityMap.get(abilityName);
+
+	if (ability != nullptr)
+		ghost->addDroidCommand(ability);
+}
+
+void SkillManager::removeDroidCommands(PlayerObject* ghost) {
+	ghost->removeDroidCommands();
 }
 
 /*bool SkillManager::checkPrerequisiteSkill(const String& skillName, CreatureObject* creature) {
@@ -938,4 +956,15 @@ bool SkillManager::villageKnightPrereqsMet(CreatureObject* creature, const Strin
 	}
 
 	return fullTrees >= 2 && totalJediPoints >= 206;
+}
+
+void SkillManager::getPlayerDroidCommands(PlayerObject* ghost, Vector<String>& playerDroidCommands) {
+	if (ghost == nullptr) {
+		return;
+	}
+
+	for (int i = 0; i < droidCommands.size(); ++i) {
+		if (ghost->hasAbility(droidCommands.get(i)))
+			playerDroidCommands.add(droidCommands.get(i));
+	}
 }
