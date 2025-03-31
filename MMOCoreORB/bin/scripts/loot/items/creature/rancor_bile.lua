@@ -6,7 +6,7 @@ rancor_bile = {
 	customObjectName = "",
 	directObjectTemplate = "object/tangible/component/chemistry/rancor_bile.iff",
 	craftingValues = {
-		{"power",5,30,0},
+		{"power",90,180,0},
 		{"charges",70,140,0},
 		{"useCount",1,11,0},
 	},
