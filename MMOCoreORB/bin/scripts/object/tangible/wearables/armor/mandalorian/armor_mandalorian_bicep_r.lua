@@ -103,7 +103,7 @@ object_tangible_wearables_armor_mandalorian_armor_mandalorian_bicep_r = object_t
 	mindEncumbrance = 0,
 
 	-- LIGHT, MEDIUM, HEAVY
-	rating = LIGHT,
+	rating = MEDIUM,
 	maxCondition = 250000,
 
 	kinetic = 80,
