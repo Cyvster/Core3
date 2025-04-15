@@ -6,6 +6,7 @@ janta_hides = {
 	customObjectName = "",
 	directObjectTemplate = "object/tangible/component/armor/armor_segment_enhancement_janta.iff",
 	craftingValues = {
+		{"armor_integrity",150000,200000,0},
 		{"armor_effectiveness",30,60,10},
 		{"armor_health_encumbrance",-100,-250,0},
 	        {"armor_action_encumbrance",-100,-250,0},
