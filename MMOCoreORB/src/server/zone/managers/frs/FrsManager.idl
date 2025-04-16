@@ -56,7 +56,7 @@ class FrsManager extends ManagedService implements Logger {
 
 	public static final int ARENA_CELL = 3435643;
 
-	public static final unsigned long VOTE_STATUS_TICK = 1000;//300000; // 5 mins
+	public static final unsigned long VOTE_STATUS_TICK = 30000;//300000; // 5 mins
 
 	private transient FrsManagerData managerData;
 
