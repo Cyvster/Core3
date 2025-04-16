@@ -285,8 +285,8 @@ float ArmorObjectImplementation::getTypeValue(int type, float value) const {
 	if (vulnerabilites & type)
 		newValue = value;
 
-		if (newValue > 90)
-			newValue = 90;
+	if (newValue > 90)
+		newValue = 90;
 
 	else if (isSpecial(type)) {
 		newValue = specialProtection + value;
