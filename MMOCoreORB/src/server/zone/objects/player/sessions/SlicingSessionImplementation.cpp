@@ -537,6 +537,7 @@ void SlicingSessionImplementation::handleWeaponSlice() {
 	switch(0) {//(System::random(1)) {
 	case 0:
 		handleSliceDamage(percentage);
+		handleSliceSpeed(percentage);
 		break;
 	case 1:
 		handleSliceSpeed(percentage);
@@ -643,6 +644,7 @@ void SlicingSessionImplementation::handleArmorSlice() {
 	switch (sliceType) {
 	case 0:
 		handleSliceEffectiveness(percent);
+		handleSliceEncumbrance(percent);
 		break;
 	case 1:
 		handleSliceEncumbrance(percent);
