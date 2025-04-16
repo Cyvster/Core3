@@ -107,6 +107,8 @@ String ArmorComponentImplementation::getStringType(int type) {
 
 void ArmorComponentImplementation::setProtectionValue(int type, float value) {
 
+	if (value > 90.0f)
+    		value = 90.0f;
 	if (type & SharedWeaponObjectTemplate::KINETIC)
 		setKinetic(value);
 	if (type & SharedWeaponObjectTemplate::ENERGY)
