@@ -446,6 +446,33 @@ TangibleObject* LootManagerImplementation::createLootObject(TransactionLog& trx,
 	trx.addState("lootConditionDmg", prototype->getConditionDamage());
 	trx.addState("lootConditionMax", prototype->getMaxCondition());
 
+	//custom AA/CA attachment name code stolen from SWGEMU discord, SWGFLURRY github, SWGInfinity github
+
+	if (prototype != nullptr && prototype->isAttachment()) {
+	        Attachment* attachment = cast<Attachment*>(prototype.get());
+	        VectorMap<String, int>* skillModifiers = attachment->getSkillMods();
+	        StringId attachmentName;
+	        String key = "";
+	        String attachmentType = "[AA] ";
+	        String attachmentCustomName = "";
+	        int highest = -1;
+	        if (attachment->isClothingAttachment()) {
+	            attachmentType = "[CA] ";
+	        }
+	        for (int i = 0; i < skillModifiers->size(); i++) {
+	            auto key = skillModifiers->elementAt(i).getKey();
+	            auto value = skillModifiers->elementAt(i).getValue();
+	            if (value > highest){
+	                highest = value;
+	                attachmentName.setStringId("stat_n", key);
+	                prototype->setObjectName(attachmentName, false);
+	                attachmentCustomName =  prototype->getDisplayedName() + " :" + String::valueOf(value) + " " + attachmentType;
+	            }
+		}
+        prototype->setCustomObjectName(attachmentCustomName, false);
+    	}
+	//end custom AA/CA attachment code
+	
 #ifdef DEBUG_LOOT_MAN
 	info(true) << " ---------- LootManagerImplementation::createLootObject -- COMPLETE ----------";
 #endif
