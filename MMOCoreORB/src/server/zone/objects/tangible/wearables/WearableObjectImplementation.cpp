@@ -98,7 +98,7 @@ void WearableObjectImplementation::generateSockets(CraftingValues* craftingValue
 
 	if (generatedCount > MAXSOCKETS)
 		generatedCount = MAXSOCKETS;
-	else if (generatedCount > 3 && generatedCount <= 3.75f)
+	else if (generatedCount > 5 && generatedCount <= 5.75f)
 		generatedCount = floor(generatedCount);
 
 	usedSocketCount = 0;
