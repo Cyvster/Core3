@@ -6,7 +6,7 @@ peko_albatross_feather = {
 	customObjectName = "",
 	directObjectTemplate = "object/tangible/component/armor/feather_peko_albatross.iff",
 	craftingValues = {
-		{"useCount",1,11,0},
+		{"useCount",100,300,0},
 	},
 	customizationStringNames = {},
 	customizationValues = {}
