@@ -466,7 +466,7 @@ TangibleObject* LootManagerImplementation::createLootObject(TransactionLog& trx,
 	                highest = value;
 	                attachmentName.setStringId("stat_n", key);
 	                prototype->setObjectName(attachmentName, false);
-	                attachmentCustomName =  prototype->getDisplayedName() + " :" + String::valueOf(value) + " " + attachmentType;
+	                attachmentCustomName =  prototype->getDisplayedName() + ": " + String::valueOf(value) + " " + attachmentType;
 	            }
 		}
         prototype->setCustomObjectName(attachmentCustomName, false);
