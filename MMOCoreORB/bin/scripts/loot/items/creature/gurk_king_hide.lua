@@ -6,7 +6,7 @@ gurk_king_hide = {
 	customObjectName = "",
 	directObjectTemplate = "object/tangible/component/armor/hide_gurk_king.iff",
 	craftingValues = {
-		{"useCount",1,11,0},
+		{"useCount",100,300,0},
 	},
 	customizationStringNames = {},
 	customizationValues = {}
