@@ -121,8 +121,8 @@ object_tangible_wearables_armor_mandalorian_armor_mandalorian_bicep_l = object_t
 	experimentalWeights = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 	experimentalGroupTitles = {"null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null"},
 	experimentalSubGroupTitles = {"null", "null", "sockets", "hit_points", "armor_effectiveness", "armor_integrity", "armor_health_encumbrance", "armor_action_encumbrance", "armor_mind_encumbrance", "armor_rating", "armor_special_type", "armor_special_effectiveness", "armor_special_integrity"},
-	experimentalMin = {0, 0, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 0, 0, 0},
-	experimentalMax = {0, 0, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 0, 0, 0},
+	experimentalMin = {0, 0, 6, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 0, 0, 0},
+	experimentalMax = {0, 0, 6, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 0, 0, 0},
 	experimentalPrecision = {0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0},
 	experimentalCombineType = {0, 0, 4, 1, 1, 1, 1, 1, 1, 4, 4, 4, 1},
 }
