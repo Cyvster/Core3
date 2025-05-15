@@ -1657,7 +1657,7 @@ function DeathWatchBunkerScreenPlay:checkTime(pCreature)
 
 	local seconds = os.difftime(currentTime, receivedTime)
 
-	if (seconds > 216000) then --more then 60 hours passed
+	if (seconds > 60) then --more then 60 hours passed --reducing from 216000 to 60
 		return true
 	end
 
