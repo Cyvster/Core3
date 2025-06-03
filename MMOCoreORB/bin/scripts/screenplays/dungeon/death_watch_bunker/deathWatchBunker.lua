@@ -141,9 +141,6 @@ DeathWatchBunkerScreenPlay = ScreenPlay:new {
 	secondaryArmorColors = { 42, 90, 236, 244, 252, 253, 254, 255 }
 }
 
---set socket count on mando armor, thanks Bagsie
-TangibleObject(pReward):setSocketCount(6);
---set socket count on mando armor, thanks Bagsie
 registerScreenPlay("DeathWatchBunkerScreenPlay", true)
 
 function DeathWatchBunkerScreenPlay:start()
@@ -1744,6 +1741,9 @@ function DeathWatchBunkerScreenPlay:stopCraftingProcess(pCreature, pTerm, succes
 		if (number ~= 4) then
 			TangibleObject(pReward):setCustomizationVariable("/private/index_color_1", self.primaryArmorColors[getRandomNumber(1,8)])
 			TangibleObject(pReward):setCustomizationVariable("/private/index_color_2", self.secondaryArmorColors[getRandomNumber(1,8)])
+			--set socket count on mando armor, thanks Bagsie
+			TangibleObject(pReward):setSocketCount(6);
+			--set socket count on mando armor, thanks Bagsie
 		end
 	end
 
