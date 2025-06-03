@@ -67,6 +67,9 @@ namespace tangible {
 		int getMainDefender(lua_State* L);
 		int getConditionDamage(lua_State* L);
 		int isActivated(lua_State* L);
+		//set socket count on mando armor, thanks Bagsie
+		int setSocketCount(lua_State* L);
+		//set socket count on mando armor, thanks Bagsie
 
 	protected:
 		TangibleObject* realObject;
