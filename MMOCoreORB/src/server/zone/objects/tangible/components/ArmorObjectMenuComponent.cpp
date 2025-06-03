@@ -77,33 +77,46 @@ int ArmorObjectMenuComponent::handleObjectMenuSelect(SceneObject* sceneObject, C
 			VectorMap<String, Reference<CustomizationVariable*> > variables;
 			AssetCustomizationManagerTemplate::instance()->getCustomizationVariables(appearanceFilename.hashCode(), variables, false);
 
-			// The Sui Box.
-			ManagedReference<SuiColorBox*> cbox = new SuiColorBox(player, SuiWindowType::COLOR_ARMOR);
-			cbox->setCallback(new ColorArmorSuiCallback(server));
-			cbox->setColorPalette(variables.elementAt(1).getKey()); // First one seems to be the frame of it? Skip to 2nd.
-			cbox->setUsingObject(sceneObject);
+			//set socket count on mando armor, thanks Bagsie
+			for (VectorMap<String, Reference<CustomizationVariable*> >::iterator iter = variables.begin(); iter != variables.end(); ++iter) {
+				String varkey = iter->getKey();
 
-			int skillMod = 255; //player->getSkillMod("armor_customization");
+				if (varkey.contains("color")) {
 
-			/*
-			if (skillMod < 64)
-				skillMod = 64;
-			else if (skillMod > 255)
-				skillMod = 255;
-			*/
+					// The Sui Box.
+					ManagedReference<SuiColorBox*> cbox = new SuiColorBox(player, SuiWindowType::COLOR_ARMOR);
+					cbox->setCallback(new ColorArmorSuiCallback(server));
+					cbox->setColorPalette(varkey);
+					// if (selectedID == 81) {
+					// 	cbox->setColorPalette(variables.elementAt(1).getKey()); // First one seems to be the frame of it? Skip to 2nd.
+					// } else {
+					// 	cbox->setColorPalette(variables.elementAt(0).getKey());
+					// }
+					cbox->setUsingObject(sceneObject);
+					
+					int skillMod = 255; //player->getSkillMod("armor_customization");
+					
+					/*
+					if (skillMod < 64)
+						skillMod = 64;
+					else if (skillMod > 255)
+						skillMod = 255;
+					*/
 
-			cbox->setSkillMod(skillMod);
+					cbox->setSkillMod(skillMod);
+					
+					// Add to player.
+					ManagedReference<PlayerObject*> ghost = player->getPlayerObject();
 
-			// Add to player.
-			ManagedReference<PlayerObject*> ghost = player->getPlayerObject();
-
-			if (ghost != nullptr) {
-				ghost->addSuiBox(cbox);
-				player->sendMessage(cbox->generateMessage());
+					if (ghost != nullptr) {
+						ghost->addSuiBox(cbox);
+						player->sendMessage(cbox->generateMessage());
+					}
+				}
 			}
 		}
-
 	}
+	//set socket count on mando armor, thanks Bagsie
 
 	return WearableObjectMenuComponent::handleObjectMenuSelect(sceneObject, player, selectedID);
 }
