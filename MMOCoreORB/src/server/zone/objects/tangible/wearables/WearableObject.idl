@@ -109,4 +109,9 @@ class WearableObject extends TangibleObject {
 		socketCount = maxSockets;
 		socketsGenerated = true;
 	}
+	/* set socket count on mando armor, thanks Bagsie */
+	public void setSockets(int count) {
+		socketCount = count;
+	}
+	/* set socket count on mando armor, thanks Bagsie */
 }
