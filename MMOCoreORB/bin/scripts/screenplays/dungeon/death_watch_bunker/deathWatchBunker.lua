@@ -138,7 +138,7 @@ DeathWatchBunkerScreenPlay = ScreenPlay:new {
 	debrisRespawnTime = 10 * 60 * 1000, -- 10 minutes
 
 	primaryArmorColors = { 48, 48, 48, 48, 48, 48, 48, 48 },--{ 48, 55, 60, 95, 111, 127, 135, 143 },
-	secondaryArmorColors = { 42, 90, 236, 244, 252, 253, 254, 255 }
+	secondaryArmorColors = { 42, 90, 236, 244, 252, 253, 254, 255 },
 	--set socket count on mando armor, thanks Bagsie
 	TangibleObject(pReward):setSocketCount(6);
 	--set socket count on mando armor, thanks Bagsie
