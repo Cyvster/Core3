@@ -11,6 +11,9 @@
 #include "templates/customization/AssetCustomizationManagerTemplate.h"
 #include "templates/appearance/PaletteTemplate.h"
 #include "server/zone/objects/player/FactionStatus.h"
+//set socket count on mando armor, thanks Bagsie
+#include "server/zone/objects/tangible/wearables/WearableObject.h"
+//set socket count on mando armor, thanks Bagsie
 
 const char LuaTangibleObject::className[] = "LuaTangibleObject";
 
@@ -57,6 +60,9 @@ Luna<LuaTangibleObject>::RegType LuaTangibleObject::Register[] = {
 		{ "getMainDefender", &LuaTangibleObject::getMainDefender},
 		{ "getConditionDamage", &LuaTangibleObject::getConditionDamage},
 		{ "isActivated", &LuaTangibleObject::isActivated},
+		//set socket count on mando armor, thanks Bagsie
+		{ "setSocketCount", &LuaTangibleObject::setSocketCount },
+		//set socket count on mando armor, thanks Bagsie
 		{ 0, 0 }
 };
 
@@ -449,3 +455,24 @@ int LuaTangibleObject::isActivated(lua_State* L){
 
 	return 1;
 }
+//set socket count on mando armor, thanks Bagsie
+int LuaTangibleObject::setSocketCount(lua_State* L) {
+	int count = lua_tointeger(L, -1);
+
+	if (realObject->isWearableObject() && realObject != nullptr) {
+		Locker locker(realObject);
+
+		WearableObject* wo = cast<WearableObject*>(realObject);
+
+		if (count > 6) {
+			count = 6;
+		} else if (count < 0) {
+			count = 0;
+		}
+
+		wo->setSockets(count);
+	}
+
+	return 0;
+}
+//set socket count on mando armor, thanks Bagsie
