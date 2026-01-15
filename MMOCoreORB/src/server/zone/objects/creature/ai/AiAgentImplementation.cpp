@@ -4067,6 +4067,10 @@ bool AiAgentImplementation::isAggressive(TangibleObject* target) {
 	if (target == nullptr)
 		return false;
 
+	// Baby creatures are never aggressive
+	if (creatureBitmask & ObjectFlag::BABY)
+		return false;
+
 	if (target->isInvisible())
 		return false;
 

@@ -411,6 +411,13 @@ void CreatureImplementation::loadTemplateDataForBaby(CreatureTemplate* templateD
 
 	clearPvpStatusBit(ObjectFlag::AGGRESSIVE, false);
 	clearPvpStatusBit(ObjectFlag::ENEMY, false);
+
+	// Clear potential parent bits
+	removeObjectFlag(ObjectFlag::STALKER);
+	removeObjectFlag(ObjectFlag::KILLER);
+	removeObjectFlag(ObjectFlag::HEALER);
+
+	// Add baby bit
 	addObjectFlag(ObjectFlag::BABY);
 
 	/*

@@ -47,6 +47,7 @@ enum CheckType {
 	CHECK_PROSPECTISINCAPACITATED,
 	CHECK_ISKILLER,
 	CHECK_ISSTALKER,
+	CHECK_ISBABY,
 	CHECK_FLEE,
 	CHECK_OWNERINRANGE,
 	CHECK_TARGETINOWNERRANGE,
@@ -226,6 +227,9 @@ template<> bool CheckIsKiller::check(AiAgent* agent) const;
 
 typedef _Check<bool, CHECK_ISSTALKER> CheckIsStalker;
 template<> bool CheckIsStalker::check(AiAgent* agent) const;
+
+typedef _Check<bool, CHECK_ISBABY> CheckIsBaby;
+template<> bool CheckIsBaby::check(AiAgent* agent) const;
 
 typedef _Check<float, CHECK_OWNERINRANGE> CheckOwnerInRange;
 template<> bool CheckOwnerInRange::check(AiAgent* agent) const;

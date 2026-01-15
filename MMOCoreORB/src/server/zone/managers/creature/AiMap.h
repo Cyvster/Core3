@@ -434,6 +434,7 @@ private:
 		_REGISTERLEAF(CheckIsHealer);
 		_REGISTERLEAF(CheckHealChance);
 		_REGISTERLEAF(CheckIsStalker);
+		_REGISTERLEAF(CheckIsBaby);
 		_REGISTERLEAF(CheckFlee);
 		_REGISTERLEAF(CheckOwnerInRange);
 		_REGISTERLEAF(CheckTargetInOwnerRange);
