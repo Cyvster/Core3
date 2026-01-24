@@ -171,14 +171,14 @@ naboo_rebel = ConvoScreen:new {
 }
 j_pai_brek_convo_template:addScreen(naboo_rebel);
 
--- Corellia - Akron's Havok Squad
+-- Corellia - Arkon's Havok Squad
 
 corellia_rebel = ConvoScreen:new {
 	id = "corellia_rebel",
 	leftDialog = "@conversation/rebel_broker:s_98a75031", -- Corellia's official stance is to remain neutral in the war against the Empire, but that has made it a useful place for us to marshal our forces.
 	stopConversation = "false",
 	options = {
-		{"@conversation/rebel_broker:s_159911f5", "akron_location"}, -- Tell me more.
+		{"@conversation/rebel_broker:s_159911f5", "arkon_location"}, -- Tell me more.
 		{"@conversation/rebel_broker:s_70f18874", "no_interest_corellia"}, -- I'm not interested in that.
 	}
 }
@@ -298,13 +298,13 @@ vortex_location = ConvoScreen:new {
 }
 j_pai_brek_convo_template:addScreen(vortex_location);
 
-akron_location = ConvoScreen:new {
-	id = "akron_location",
+arkon_location = ConvoScreen:new {
+	id = "arkon_location",
 	leftDialog = "@conversation/rebel_broker:s_31bc521f", -- Then let me add this location to your datapad. We have an operative stationed in a 'safe house' here in Tyrena... in the slums not far from here.
 	stopConversation = "true",
 	options = {}
 }
-j_pai_brek_convo_template:addScreen(akron_location);
+j_pai_brek_convo_template:addScreen(arkon_location);
 
 crimson_location = ConvoScreen:new {
 	id = "crimson_location",

@@ -217,7 +217,7 @@ function SpaceHelpers:isRebelPilot(pPlayer)
 	return CreatureObject(pPlayer):isRebelPilot()
 end
 
--- @param pPlayer pointer checked if is in Akron's Havoc Squadron
+-- @param pPlayer pointer checked if is in Arkon's Havoc Squadron
 function SpaceHelpers:isHavocSquadron(pPlayer)
 	if (pPlayer == nil) then
 		return false
@@ -577,8 +577,8 @@ function SpaceHelpers:addVortexSquadWaypoint(pPlayer)
 	PlayerObject(pGhost):addWaypoint("naboo", "@npc_spawner_n:v3_fx", "@npc_spawner_n:v3_fx", 4764, 0, -4795, WAYPOINT_BLUE, true, true, 0)
 end
 
--- @param pPlayer pointer adds waypoint to the Rebel Akron's Havok Squad Tier1 Trainer
-function SpaceHelpers:addAkronSquadWaypoint(pPlayer)
+-- @param pPlayer pointer adds waypoint to the Rebel Arkon's Havok Squad Tier1 Trainer
+function SpaceHelpers:addArkonSquadWaypoint(pPlayer)
 	if (pPlayer == nil) then
 		return
 	end

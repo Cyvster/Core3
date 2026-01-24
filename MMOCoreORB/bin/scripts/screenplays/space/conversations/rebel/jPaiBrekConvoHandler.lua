@@ -66,13 +66,13 @@ function jPaiBrekConvoHandler:runScreenHandlers(pConvTemplate, pPlayer, pNpc, se
 
 		SpaceHelpers:addVortexSquadWaypoint(pPlayer)
 
-	-- Corellia - Akron's Havok Squad
+	-- Corellia - Arkon's Havok Squad
 	elseif (screenID == "corellia_rebel") then
 		CreatureObject(pNpc):doAnimation("explain")
-	elseif (screenID == "akron_location") then
+	elseif (screenID == "arkon_location") then
 		CreatureObject(pNpc):doAnimation("point_away")
 
-		SpaceHelpers:addAkronSquadWaypoint(pPlayer)
+		SpaceHelpers:addArkonSquadWaypoint(pPlayer)
 
 	-- Tatooine - Crimson Phoenix Squadron
 	elseif (screenID == "tatooine_rebel") then
