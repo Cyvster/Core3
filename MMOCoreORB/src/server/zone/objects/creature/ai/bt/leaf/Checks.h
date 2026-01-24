@@ -287,7 +287,7 @@ template<> bool CheckIsHarvester::check(AiAgent* agent) const;
 typedef _Check<bool, CHECK_HASHARVESTTARGETS> CheckHasHarvestTargets;
 template<> bool CheckHasHarvestTargets::check(AiAgent* agent) const;
 
-typedef _Check<bool, CHECK_SHOULDREST> CheckShouldRest;
+typedef _Check<float, CHECK_SHOULDREST> CheckShouldRest;
 template<> bool CheckShouldRest::check(AiAgent* agent) const;
 
 typedef _Check<bool, CHECK_STOPRESTING> CheckStopResting;

@@ -503,6 +503,8 @@ private:
 		_REGISTERLEAF(DroidHarvest);
 		_REGISTERLEAF(Rest);
 		_REGISTERLEAF(StopResting);
+		_REGISTERLEAF(RestHerd);
+		_REGISTERLEAF(StopHerdRest);
 	}
 
 	void putBitmask(Lua* lua, String key) {

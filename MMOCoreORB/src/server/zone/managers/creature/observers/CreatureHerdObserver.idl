@@ -34,8 +34,8 @@ class CreatureHerdObserver extends Observer implements Logger {
 
 		Logger.setLoggingName("CreatureHerdObserver");
 
-		// Default spacing: 50% buffer beyond touching, 10% jitter
-		spacingBuffer = 1.5f;
+		// Default spacing: 4x creature diameter, 10% jitter
+		spacingBuffer = 4.0f;
 		maxJitterPercent = 0.1f;
 	}
 
@@ -88,6 +88,22 @@ class CreatureHerdObserver extends Observer implements Logger {
 
 	@local
 	public native void despawnHerd();
+
+	/**
+	 * Make all herd members rest (sit or lie down)
+	 * Skips null, dead, or in-combat members
+	 * @return true if any members started resting
+	 */
+	@local
+	public native boolean restHerd();
+
+	/**
+	 * Wake all herd members from resting state
+	 * Sets posture to UPRIGHT and movement state to PATROLLING
+	 * @return true if any members were woken
+	 */
+	@local
+	public native boolean stopHerdRest();
 
 	/**
 	 * Calculate the local formation offset for a given position index

@@ -8,6 +8,10 @@
 #include "server/zone/managers/combat/CombatManager.h"
 #include "server/zone/objects/creature/ai/AiAgent.h"
 #include "server/zone/objects/tangible/TangibleObject.h"
+#include "server/zone/Zone.h"
+#include "server/zone/managers/creature/CreatureManager.h"
+#include "server/zone/managers/creature/AiSpeciesData.h"
+#include "templates/params/creature/CreaturePosture.h"
 
 void CreatureHerdObserverImplementation::addMember(AiAgent* member) {
 	if (member == nullptr)
@@ -91,35 +95,138 @@ void CreatureHerdObserverImplementation::despawnHerd() {
 	}
 }
 
+bool CreatureHerdObserverImplementation::restHerd() {
+	Locker lock(&herdLock);
+
+	int size = herdMembers.size();
+
+	if (size == 0)
+		return false;
+
+	// Get zone and creature manager from first valid member
+	Zone* zone = nullptr;
+	ManagedReference<CreatureManager*> creoManager = nullptr;
+
+	for (int i = 0; i < size; ++i) {
+		auto member = herdMembers.get(i);
+
+		if (member != nullptr) {
+			zone = member->getZone();
+
+			if (zone != nullptr) {
+				creoManager = zone->getCreatureManager();
+				break;
+			}
+		}
+	}
+
+	bool anyRested = false;
+
+	for (int i = 0; i < size; ++i) {
+		auto member = herdMembers.get(i);
+
+		if (member == nullptr || member->isDead() || member->isInCombat())
+			continue;
+
+		Locker clocker(member, &herdLock);
+
+		member->setMovementState(AiAgent::RESTING);
+
+		// Chance to stop resting from 45s up to 90s stored in ms
+		int delay = 300 * 1000;
+		int restingTime = delay - ((45 + System::random(45)) * 1000);
+		member->writeBlackboard("restingTime", restingTime);
+
+		// Check species to determine posture
+		bool canSitDown = false;
+
+		if (creoManager != nullptr) {
+			int speciesID = member->getSpecies();
+			AiSpeciesData* speciesData = creoManager->getAiSpeciesData(speciesID);
+
+			if (speciesData != nullptr) {
+				canSitDown = speciesData->canSitDown();
+			}
+		}
+
+		if (canSitDown && System::random(100) > 50) {
+			member->setPosture(CreaturePosture::SITTING, true);
+		} else {
+			member->setPosture(CreaturePosture::LYINGDOWN, true);
+		}
+
+		anyRested = true;
+	}
+
+	return anyRested;
+}
+
+bool CreatureHerdObserverImplementation::stopHerdRest() {
+	Locker lock(&herdLock);
+
+	int size = herdMembers.size();
+
+	if (size == 0)
+		return false;
+
+	bool anyWoken = false;
+
+	for (int i = 0; i < size; ++i) {
+		auto member = herdMembers.get(i);
+
+		if (member == nullptr || member->isDead())
+			continue;
+
+		Locker clocker(member, &herdLock);
+
+		member->setPosture(CreaturePosture::UPRIGHT, true);
+
+		// Leader patrols, followers follow
+		if (i == 0) {
+			member->setMovementState(AiAgent::PATROLLING);
+		} else {
+			member->setMovementState(AiAgent::FOLLOWING);
+		}
+
+		anyWoken = true;
+	}
+
+	return anyWoken;
+}
+
 Vector3 CreatureHerdObserverImplementation::getFormationOffset(int positionIndex, float followerRadius, float leaderRadius) {
 	if (positionIndex <= 0) {
-		// Leader gets no offset
 		return Vector3(0, 0, 0);
 	}
 
-	// Use configured spacing or defaults
-	float buffer = spacingBuffer > 0 ? spacingBuffer : 1.5f;
-	float jitterPercent = maxJitterPercent > 0 ? maxJitterPercent : 0.1f;
-
-	// Safe spacing calculations using both radii
+	float buffer = spacingBuffer > 0 ? spacingBuffer : 4.0f;
+	float spacing = (followerRadius * 2.0f) * buffer;
 	float combinedRad = leaderRadius + followerRadius;
 
-	// Row and side calculation (position 1 = first follower)
-	int side = (positionIndex % 2 == 0) ? -1 : 1;  // Odd positions = right, even = left
-	int row = (positionIndex - 1) / 2;              // 0-indexed row behind leader
+	// Staggered grid: row 0 has 2, row 1 has 3, row 2 has 2, row 3 has 3, etc.
+	// This creates a natural blob shape with some in the middle
+	int row = 0;
+	int count = 0;
 
-	// X offset: side spacing with slight row expansion to fan out
-	float sideSpacing = (followerRadius * 2.0f) * buffer;
-	float baseX = side * (sideSpacing + (row * followerRadius * 0.3f));
+	while (count + (row % 2 == 0 ? 2 : 3) < positionIndex) {
+		count += (row % 2 == 0) ? 2 : 3;
+		row++;
+	}
 
-	// Y offset: first row clears leader radius, subsequent rows clear previous row
-	float rowSpacing = (followerRadius * 2.0f) * buffer;
-	float baseY = -((combinedRad * buffer) + (row * rowSpacing));
+	int posInRow = positionIndex - count - 1;
+	int creaturesInRow = (row % 2 == 0) ? 2 : 3;
 
-	// Minimal jitter for natural look (won't cause clipping due to small percentage)
-	float maxJitter = followerRadius * jitterPercent;
-	float jitterX = (System::frandom(100) - 50) / 50.0f * maxJitter;
-	float jitterY = (System::frandom(100) - 50) / 50.0f * maxJitter;
+	// X offset: center the row, then position within it
+	float rowWidth = (creaturesInRow - 1) * spacing;
+	float baseX = -rowWidth / 2.0f + (posInRow * spacing);
+
+	// Y offset: distance behind leader
+	float baseY = -((combinedRad * buffer) + (row * spacing));
+
+	// Small jitter for natural look (safe amount)
+	float jitter = followerRadius * 0.15f;
+	float jitterX = (System::frandom(100) - 50) / 50.0f * jitter;
+	float jitterY = (System::frandom(100) - 50) / 50.0f * jitter;
 
 	return Vector3(baseX + jitterX, baseY + jitterY, 0);
 }

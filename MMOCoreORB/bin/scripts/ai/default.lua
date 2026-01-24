@@ -180,7 +180,7 @@ idleDefault = {
 	{id="328045801",	name="If",	pid="3817274653"},
 	{id="2722902584",	name="CheckMovementState",	pid="328045801",	args={condition=PATROLLING}},
 	{id="4052143469",	name="If",	pid="3817274653"},
-	{id="999959848",	name="CheckShouldRest",	pid="4052143469"},
+	{id="999959848",	name="CheckShouldRest",	pid="4052143469",	args={condition=5.0}},
 	{id="3419015031",	name="Rest",	pid="3817274653"},
 	{id="3620709194",	name="Sequence",	pid="3547969451"},
 	{id="47291811",	name="If",	pid="3620709194"},
@@ -210,7 +210,7 @@ idleDefault = {
 	{id="1384587681",	name="CheckMovementState",	pid="3807314026",	args={condition=PATHING_HOME}},
 	{id="3483017378",	name="If",	pid="4072235030"},
 	{id="776089883",	name="CheckOutdoors",	pid="3483017378"},
-	{id="1547268873",	name="GeneratePatrol",	pid="4072235030",	args={distFromHome=25.0, numPoints=5}}}
+	{id="1547268873",	name="GeneratePatrol",	pid="4072235030",	args={distFromHome=35.0, numPoints=5}}}
 addAiTemplate("idleDefault", idleDefault)
 
 killDefault = {

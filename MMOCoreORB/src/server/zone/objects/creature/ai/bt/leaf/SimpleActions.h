@@ -6,6 +6,7 @@
 #include "server/zone/objects/creature/ai/AiAgent.h"
 #include "server/zone/managers/gcw/GCWManager.h"
 #include "server/zone/managers/reaction/ReactionManager.h"
+#include "server/zone/managers/creature/observers/CreatureHerdObserver.h"
 
 namespace server {
 namespace zone {
@@ -1000,6 +1001,88 @@ public:
 		agent->setMovementState(AiAgent::PATROLLING);
 
 		return SUCCESS;
+	}
+
+	String print() const {
+		StringBuffer msg;
+		msg << className;
+
+		return msg.toString();
+	}
+};
+
+class RestHerd : public Behavior {
+public:
+	RestHerd(const String& className, const uint32 id, const LuaObject& args) : Behavior(className, id, args) {
+	}
+
+	RestHerd(const RestHerd& a) : Behavior(a) {
+	}
+
+	RestHerd& operator=(const RestHerd& a) {
+		if (this == &a)
+			return *this;
+		Behavior::operator=(a);
+		return *this;
+	}
+
+	Behavior::Status execute(AiAgent* agent, unsigned int startIdx = 0) const {
+		if (agent == nullptr)
+			return FAILURE;
+
+		ManagedReference<CreatureHerdObserver*> herdObserver = agent->getHerdObserver();
+
+		if (herdObserver == nullptr)
+			return FAILURE;
+
+		// Set rest delay on the leader (calling agent)
+		Time* restDelay = agent->getRestDelay();
+
+		if (restDelay == nullptr)
+			return FAILURE;
+
+		// Wait 5 minutes until we check if we should rest again
+		int delay = 300 * 1000;
+
+		restDelay->updateToCurrentTime();
+		restDelay->addMiliTime(delay);
+
+		return herdObserver->restHerd() ? SUCCESS : FAILURE;
+	}
+
+	String print() const {
+		StringBuffer msg;
+		msg << className;
+
+		return msg.toString();
+	}
+};
+
+class StopHerdRest : public Behavior {
+public:
+	StopHerdRest(const String& className, const uint32 id, const LuaObject& args) : Behavior(className, id, args) {
+	}
+
+	StopHerdRest(const StopHerdRest& a) : Behavior(a) {
+	}
+
+	StopHerdRest& operator=(const StopHerdRest& a) {
+		if (this == &a)
+			return *this;
+		Behavior::operator=(a);
+		return *this;
+	}
+
+	Behavior::Status execute(AiAgent* agent, unsigned int startIdx = 0) const {
+		if (agent == nullptr)
+			return FAILURE;
+
+		ManagedReference<CreatureHerdObserver*> herdObserver = agent->getHerdObserver();
+
+		if (herdObserver == nullptr)
+			return FAILURE;
+
+		return herdObserver->stopHerdRest() ? SUCCESS : FAILURE;
 	}
 
 	String print() const {

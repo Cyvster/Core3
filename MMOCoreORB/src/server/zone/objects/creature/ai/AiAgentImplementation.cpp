@@ -4608,7 +4608,7 @@ void AiAgentImplementation::setMovementState(int state) {
 
 	int oldState = movementState;
 
-	if (state != PATROLLING && state != WATCHING) {
+	if (state != PATROLLING && state != WATCHING && state != RESTING) {
 		clearPatrolPoints();
 	}
 

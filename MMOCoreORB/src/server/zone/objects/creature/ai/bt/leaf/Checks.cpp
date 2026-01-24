@@ -709,7 +709,7 @@ template<> bool CheckShouldRest::check(AiAgent* agent) const {
 	if (restDelay == nullptr || !restDelay->isPast())
 		return false;
 
-	int restChance = 5; // % chance out of 100
+	int restChance = checkVar; // % chance out of 100
 	int restRoll = System::random(100);
 
 	// Chance is less than the roll, fail and add time to check again
