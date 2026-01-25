@@ -482,7 +482,8 @@ function SpaceHelpers:surrenderPilot(pPlayer)
 	elseif (pilotSquadron == RSF_SQUADRON) then
 		pilotProfession = "neutralPilot"
 
-		-- TODO: Add RSFSquadronScreenplay reset functions
+		-- Tier 1
+		RsfSquadronScreenplay:resetDingeQuests(pPlayer)
 
 	-- Rebel Pilots
 	elseif (pilotSquadron == HAVOC_SQUADRON) then
