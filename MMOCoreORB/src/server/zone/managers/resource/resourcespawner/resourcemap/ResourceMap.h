@@ -111,7 +111,7 @@ public:
 	*/
 	inline ZoneResourceMap* getZoneResourceList(String zoneName) {
 		if(zoneResourceMap.contains(zoneName))
-			return 1;/**zoneResourceMap.get(zoneName); set density to always be 1(100%) */
+			return zoneResourceMap.get(zoneName);
 		else
 			return nullptr;
 	}
