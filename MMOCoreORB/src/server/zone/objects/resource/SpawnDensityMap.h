@@ -109,7 +109,7 @@ public:
 		float value = SimplexNoise::noise(x * modifier, y * modifier, seed * modifier);
 
 		if(value < 0)
-			return 0;
+			return 1;
 
 		return 1;/**value * density; attempt to set resource density to 100% across entire map */
 	}
