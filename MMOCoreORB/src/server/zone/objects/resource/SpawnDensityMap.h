@@ -111,7 +111,7 @@ public:
 		if(value < 0)
 			return 0;
 
-		return value * density;
+		return 1;/**value * density; attempt to set resource density to 100% across entire map */
 	}
 
 	void print() const {
