@@ -270,7 +270,7 @@ void MissionObjectiveImplementation::awardReward() {
 					memberPosition.setZ(0);
 				}
 
-				if (memberPosition.distanceTo(missionEndPoint) < 128) {
+				if (memberPosition.distanceTo(missionEndPoint) >= 0) {
 					players.add(groupMember);
 				}
 			} else if(groupMember->isPet()) {
