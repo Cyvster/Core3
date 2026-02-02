@@ -39,6 +39,8 @@ void PetManagerImplementation::loadLuaConfig() {
 				int gallopDuration = speedData.getIntAt(4);
 				int gallopCooldown = speedData.getIntAt(5);
 
+				runSpeed *= 3.0f; //triple run speed of pets
+
 				Reference<MountSpeedData*> data = new MountSpeedData(filename, runSpeed, gallopSpeedMultiplier, gallopDuration, gallopCooldown);
 
 				mountSpeedData.add(data);
