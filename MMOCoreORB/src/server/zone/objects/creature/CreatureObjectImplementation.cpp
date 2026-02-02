@@ -94,7 +94,7 @@
 #include "server/zone/managers/director/ScreenPlayObserver.h"
 #include "server/zone/objects/player/events/SpawnHelperDroidTask.h"
 
-float CreatureObjectImplementation::DEFAULTRUNSPEED = 5.376f;
+float CreatureObjectImplementation::DEFAULTRUNSPEED = 5.376f * 2.0f;
 
 void CreatureObjectImplementation::initializeTransientMembers() {
 	TangibleObjectImplementation::initializeTransientMembers();
