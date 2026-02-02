@@ -76,14 +76,14 @@ void PlayerVehicleBuffImplementation::updateRiderSpeeds() {
 		Locker lock(vehicle);
 
 		// get vehicle speed
-		float newSpeed = vehicle->getRunSpeed();
+		float newSpeed = vehicle->getRunSpeed() * 2.0f;
 
 		// get animal mount speeds
 		if (vehicle->isMount()) {
 			PetManager* petManager = vehicle->getZoneServer()->getPetManager();
 
 			if (petManager != nullptr) {
-				newSpeed = petManager->getMountedRunSpeed(vehicle);
+				newSpeed = petManager->getMountedRunSpeed(vehicle) * 2.0f;
 			}
 		}
 
