@@ -835,7 +835,7 @@ jediCrystalStats = {
 	},
 	lightsaber_module_krayt_dragon_pearl = {
 		minDamage = 35,
-		maxDamage = 50,
+		maxDamage = 150,
 		minHitpoints = 2700,
 		maxHitpoints = 4200,
 		minHealthSac = -6,
