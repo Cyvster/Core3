@@ -196,7 +196,7 @@ void EntertainingSessionImplementation::addHealingXpGroup(int xp) {
 					String healxptype("entertainer_healing");
 
 					if (playerManager != nullptr)
-						playerManager->awardExperience(groupMember, healxptype, (xp * 10), true); //add 10x healing experience multiplier to group
+						playerManager->awardExperience(groupMember, healxptype, (xp * 100), true); //add 100x healing experience multiplier to group
 				}
 			}
 		} catch (Exception& e) {
@@ -1088,7 +1088,7 @@ void EntertainingSessionImplementation::awardEntertainerExperience() {
 			xpAmount = ceil(xpAmount * totalBonus);
 
 			if (playerManager != nullptr)
-				playerManager->awardExperience(player, xptype, (xpAmount * 2), true);
+				playerManager->awardExperience(player, xptype, (xpAmount * 20), true);
 
 			oldFlourishXp = flourishXp;
 			flourishXp = 0;
@@ -1100,7 +1100,7 @@ void EntertainingSessionImplementation::awardEntertainerExperience() {
 			String healxptype("entertainer_healing");
 
 			if (playerManager != nullptr)
-				playerManager->awardExperience(player, healxptype, (healingXp * 10), true);
+				playerManager->awardExperience(player, healxptype, (healingXp * 100), true);
 
 			healingXp = 0;
 		}
