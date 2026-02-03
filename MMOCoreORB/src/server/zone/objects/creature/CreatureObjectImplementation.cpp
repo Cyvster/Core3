@@ -2151,7 +2151,7 @@ float CreatureObjectImplementation::getSlopeModPercent() const {
 }
 
 float CreatureObjectImplementation::getRunSpeed() {
-	float allowedSpeed = runSpeed * 2.0f;
+	float allowedSpeed = runSpeed;
 
 	if (isRidingMount()) {
 		auto parent = getParent().get();
@@ -2183,7 +2183,7 @@ float CreatureObjectImplementation::getRunSpeed() {
 		}
 	}
 
-	return allowedSpeed;
+	return allowedSpeed * 2.0f;
 }
 
 void CreatureObjectImplementation::sendCommand(const String& action, const UnicodeString& args, uint64 targetID, int priority) {
