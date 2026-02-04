@@ -152,6 +152,15 @@ lootableArmorAttachmentStatMods = {
 }
 
 lootableClothingAttachmentStatMods = {
+
+	--Jedi start
+	"onehandlightsaber_accuracy",
+	"twohandlightsaber_accuracy",
+	"polearmlightsaber_accuracy",
+	"jedi_force_power_regen",
+	"force_choke",
+	"jedi_state_defense",
+	--Jedi end
 	--"aim",
 	--"alert",
 	"armor_assembly",
