@@ -62,10 +62,10 @@ ForceLightningSingle1Command = {
 	forceAttack = true,
 	damageType = ELECTRICITY_DAMAGE,
 
-	frsLightMinDamageModifier = 25,
-	frsLightMaxDamageModifier = 50,
-	frsDarkMinDamageModifier = 25,
-	frsDarkMaxDamageModifier = 50,
+	frsLightMinDamageModifier = 250,
+	frsLightMaxDamageModifier = 500,
+	frsDarkMinDamageModifier = 250,
+	frsDarkMaxDamageModifier = 500,
 
 	range = 32
 }
