@@ -15,7 +15,7 @@ public:
 	constexpr static float EPSILON = 5e-7f;
 	constexpr static float DISTMAX = 0.95f;
 	constexpr static float DISTMIN = 0.15f;
-	constexpr static float LEVELMAX = 350;
+	constexpr static float LEVELMAX = 80;//350; //decrease level divisor for max legendary modifier
 	constexpr static float LEVELMIN = 0;
 	constexpr static float DISTNORMAL = 2.82333f;
 
