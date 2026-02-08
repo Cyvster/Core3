@@ -91,7 +91,7 @@ void PlayerVehicleBuffImplementation::updateRiderSpeeds() {
 		newSpeed *= vehicle->getSpeedMultiplierMod();
 
 		// Update Vehicles Speed
-		vehicle->setRunSpeed(newSpeed);
+		vehicle->setRunSpeed(newSpeed) * 2.0f; //attempt to double riding speed
 
 		ManagedReference<CreatureObject*> rider = vehicle->getSlottedObject("rider").castTo<CreatureObject*>();
 
