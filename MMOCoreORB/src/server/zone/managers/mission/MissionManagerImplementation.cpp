@@ -711,7 +711,7 @@ void MissionManagerImplementation::randomizeBountyTerminalMissions(CreatureObjec
 		}
 
 		float cityBonus = 1.f + player->getSkillMod("private_spec_missions") / 100.f;
-		mission->setRewardCredits(mission->getRewardCredits() * cityBonus * 10); //10x bounty credit reward bonus
+		mission->setRewardCredits(mission->getRewardCredits() * cityBonus * 100); //100x bounty credit reward bonus
 
 		mission->setRefreshCounter(counter, true);
 	}
