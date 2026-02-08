@@ -70,7 +70,7 @@ enable_factional_recon_missions = "true"
 
 enable_factional_entertainer_missions = "true"
 
-enable_same_account_bounty_missions = "false"
+enable_same_account_bounty_missions = "true"
 
 playerBountyKillBuffer = 30 * 60 * 1000 -- Buffer before player bounty can be put back on terminal after target is killed, set 0 to disable
 
@@ -80,9 +80,9 @@ playerBountyDebuffLength = 3 * 24 * 60 * 60 * 1000 -- Time before their bounty r
 -- Distance calculated as: 
 --    <BaseDistance> + <DifficultyDistanceFactor> * <difficultyLevel> + 
 --    rand(<RandomDistance>) + rand(<DifficutlyRandomDistance * <difficultyLevel>)
-destroyMissionBaseDistance = 1000
+destroyMissionBaseDistance = 800
 destroyMissionDifficultyDistanceFactor = 0
-destroyMissionRandomDistance = 1000
+destroyMissionRandomDistance = 300
 destroyMissionDifficultyRandomDistance = 0
 
 -- Mission payout calculated as: 
