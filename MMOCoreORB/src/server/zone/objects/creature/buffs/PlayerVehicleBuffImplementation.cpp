@@ -117,7 +117,7 @@ void PlayerVehicleBuffImplementation::updateRiderSpeeds() {
 			}
 
 			// Send riders speed update
-			rider->updateRunSpeed() * 2.0f; //attempt to double riding speed
+			rider->updateRunSpeed();
 		}
 	}, "UpdateRiderSpeedsLambda");
 }
