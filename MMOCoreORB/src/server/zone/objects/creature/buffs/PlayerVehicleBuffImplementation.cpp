@@ -89,7 +89,6 @@ void PlayerVehicleBuffImplementation::updateRiderSpeeds() {
 
 		// add speed multiplier mod
 		newSpeed *= vehicle->getSpeedMultiplierMod();
-		newSpeed *= 2.0f;//attempt to double riding speed
 
 		// Update Vehicles Speed
 		vehicle->setRunSpeed(newSpeed);
