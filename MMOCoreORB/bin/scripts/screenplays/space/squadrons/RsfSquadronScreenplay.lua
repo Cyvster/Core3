@@ -282,6 +282,9 @@ destroy_naboo_privateer_13a = SpaceDestroyScreenplay:new {
 	questZone = "space_naboo",
 
 	creditReward = 5000,
+	itemReward = {
+		{species = {-1}, item = "object/tangible/ship/components/booster/bst_mission_reward_neutral_mandal_m_series.iff"},
+	},
 
 	sideQuest = false,
 	sideQuestType = "",
@@ -311,7 +314,10 @@ escort_naboo_privateer_14 = SpaceEscortScreenplay:new {
 
 	questZone = "space_naboo",
 
-	creditReward = 6000,
+	creditReward = 5000,
+	itemReward = {
+		{species = {-1}, item = "object/tangible/ship/components/weapon/wpn_mission_reward_neutral_hk_military_blaster.iff"},
+	},
 
 	sideQuest = false,
 	sideQuestType = "",
@@ -345,7 +351,10 @@ inspect_naboo_privateer_15 = SpaceInspectScreenplay:new {
 
 	questZone = "space_naboo",
 
-	creditReward = 7000,
+	creditReward = 5000,
+	itemReward = {
+		{species = {-1}, item = "object/tangible/ship/components/shield_generator/shd_mission_reward_neutral_koensayr_ds23.iff"},
+	},
 
 	sideQuest = false,
 	sideQuestType = "",
@@ -369,9 +378,9 @@ assassinate_naboo_privateer_tier2_4a = SpaceAssassinateScreenplay:new {
 
 	questZone = "space_naboo",
 
-	creditReward = 10000,
+	creditReward = 5000,
 	itemReward = {
-		{species = {-1}, item = "object/tangible/ship/components/weapon/wpn_mission_reward_neutral_mandal_light_blaster.iff"},
+		{species = {-1}, item = "object/tangible/ship/components/droid_interface/ddi_mission_reward_neutral_sorosuub_w19.iff"},
 	},
 
 	sideQuest = false,
@@ -646,8 +655,10 @@ assassinate_naboo_privateer_tier3_1d = SpaceAssassinateScreenplay:new {
 	-- Saymonz Varg has fled to Naboo space after evading capture in Dantooine
 	questZone = "space_naboo",
 
-	creditReward = 0,
-	itemReward = {},
+	creditReward = 25000,
+	itemReward = {
+		{species = {-1}, item = "object/tangible/ship/components/reactor/rct_mission_reward_neutral_subpro_military.iff"},
+	},
 
 	parentQuest = "destroy_surpriseattack_naboo_privateer_tier3_1c",
 	parentQuestType = "destroy_surpriseattack",
@@ -721,7 +732,10 @@ rescue_naboo_privateer_tier3_2e = SpaceRescueScreenplay:new {
 
 	questZone = "space_corellia",  -- STF: Corellia System
 
-	creditReward = 0,
+	creditReward = 25000,
+	itemReward = {
+		{species = {-1}, item = "object/tangible/ship/components/engine/eng_mission_reward_neutral_mandal_inferno.iff"},
+	},
 
 	parentQuest = "space_battle_naboo_privateer_tier3_2d",
 	parentQuestType = "space_battle",
@@ -884,7 +898,10 @@ survival_naboo_privateer_tier3_3c = SpaceSurvivalScreenplay:new {
 
 	questZone = "space_lok",  -- STF: Lok System
 
-	creditReward = 0,
+	creditReward = 25000,
+	itemReward = {
+		{species = {-1}, item = "object/tangible/ship/components/weapon_capacitor/cap_mission_reward_neutral_sorosuub_v1.iff"},
+	},
 
 	parentQuest = "delivery_naboo_privateer_tier3_3b",
 	parentQuestType = "delivery",
@@ -1078,8 +1095,10 @@ assassinate_naboo_privateer_tier3_4f = SpaceAssassinateScreenplay:new {
 
 	questZone = "space_lok",
 
-	creditReward = 0,
-	itemReward = {},
+	creditReward = 25000,
+	itemReward = {
+		{species = {-1}, item = "object/tangible/ship/components/armor/arm_mission_reward_neutral_kse_handcrafted.iff"},
+	},
 
 	parentQuest = "survival_naboo_privateer_tier3_4c",
 	parentQuestType = "survival",
