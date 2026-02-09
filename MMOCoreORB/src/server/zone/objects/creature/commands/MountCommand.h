@@ -143,7 +143,7 @@ public:
 		}
 
 		// get vehicle speed
-		float newSpeed = vehicle->getRunSpeed() * 2.0f; // add 2x speed multiplier for vehicles
+		float newSpeed = vehicle->getRunSpeed();
 		float newAccel = vehicle->getAccelerationMultiplierMod();
 		float newTurn = vehicle->getTurnScale();
 
@@ -152,7 +152,7 @@ public:
 			PetManager* petManager = server->getZoneServer()->getPetManager();
 
 			if (petManager != nullptr) {
-				newSpeed = petManager->getMountedRunSpeed(vehicle) * 2.0f; // add 2x speed multiplier for mounts
+				newSpeed = petManager->getMountedRunSpeed(vehicle);
 			}
 		}
 
