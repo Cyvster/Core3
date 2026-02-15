@@ -44,7 +44,7 @@ void ShipCounterMeasureComponentImplementation::updateCraftingValues(CraftingVal
 		} else if (attribute == "fltrefirerate" || attribute == "refire_rate") {
 			refireRate = value * 0.001f;
 		} else if (attribute == "fltmaxammo" || attribute == "ammo") {
-			useCount = Math::max(value, 1.f);
+			setUseCount((int)Math::max(value, 1.f));
 		} else if (attribute == "energy_per_shot") {
 			energyPerShot = Math::max(value, 0.f);
 		}
