@@ -50,7 +50,7 @@ void ShipMissileComponentImplementation::updateCraftingValues(CraftingValues* va
 		} else if (attribute == "fltrefirerate" || attribute == "refire_rate") {
 			refireRate = value * 0.001f;
 		} else if (attribute == "fltmaxammo" || attribute == "ammo") {
-			useCount = Math::max(value, 1.f);
+			setUseCount((int)Math::max(value, 1.f));
 		}
 
 		if (firstUpdate && group == "misc") {
