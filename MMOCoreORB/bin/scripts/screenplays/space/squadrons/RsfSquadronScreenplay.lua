@@ -535,8 +535,6 @@ registerScreenPlay("recovery_duty_naboo_privateer_12", true)
 recovery_naboo_privateer_tier3_1a = SpaceRecoveryScreenplay:new {
 	className = "recovery_naboo_privateer_tier3_1a",
 
-	DEBUG_SPACE_RECOVERY = true,
-
 	questName = "naboo_privateer_tier3_1a",
 	questType = "recovery",
 
