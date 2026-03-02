@@ -12,7 +12,7 @@ import server.zone.objects.creature.buffs.SingleUseBuffObserver;
 
 @json
 class SingleUseBuff extends Buff {
-	protected SingleUseBuffObserver observer;
+	protected transient SingleUseBuffObserver observer;
 	protected CreatureObject player;
 	protected unsigned int commandCRC;
 
@@ -30,7 +30,6 @@ class SingleUseBuff extends Buff {
 	@preLocked
 	public void init(Vector<unsigned int> events) {
 		observer = new SingleUseBuffObserver(this);
-		ObjectManager.instance().persistObject(observer, 1, "buffs");
 
 		for(int i = 0; i < events.size(); ++i) {
 			eventTypes.add(events.get(i));
@@ -59,13 +58,30 @@ class SingleUseBuff extends Buff {
 		dropObservers();
 	}
 
+	@preLocked
+	public void initializeBuffObservers() {
+		addObservers();
+	}
+
 	private void addObservers() {
+		if (!player) {
+			return;
+		}
+
+		if (!observer) {
+			observer = new SingleUseBuffObserver(this);
+		}
+
 		for(int i = 0; i < eventTypes.size(); ++i) {
 			player.registerObserver(eventTypes.get(i), observer);
 		}
 	}
 
 	private void dropObservers() {
+		if (!player || !observer) {
+			return;
+		}
+
 		for(int i = 0; i < eventTypes.size(); ++i) {
 			player.dropObserver(eventTypes.get(i), observer);
 		}

@@ -105,6 +105,10 @@ class Buff extends ManagedObject implements Logger {
 
 	public native void loadBuffDurationEvent(CreatureObject creo);
 
+	@preLocked
+	public abstract void initializeBuffObservers() {
+	}
+
 	public native void init();
 
 	@dirty
