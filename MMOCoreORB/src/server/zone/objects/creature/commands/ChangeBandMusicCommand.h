@@ -128,7 +128,7 @@ public:
 				if (bandMemberSession == nullptr || !bandMemberSession->isPlayingMusic())
 					continue;
 
-				ManagedReference<Instrument*> memberInstrument = creature->getPlayableInstrument();
+				ManagedReference<Instrument*> memberInstrument = groupMember->getPlayableInstrument();
 
 				if (memberInstrument == nullptr)
 					continue;
