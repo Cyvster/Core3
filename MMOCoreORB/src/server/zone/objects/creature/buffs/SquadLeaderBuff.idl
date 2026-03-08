@@ -16,8 +16,8 @@ include server.zone.objects.scene.SceneObjectType;
 
 @json
 class SquadLeaderBuff extends Buff {
-	protected SquadLeaderBuffObserver playerObserver;
-	protected SquadLeaderBuffObserver leaderObserver;
+	protected transient SquadLeaderBuffObserver playerObserver;
+	protected transient SquadLeaderBuffObserver leaderObserver;
 	protected CreatureObject player;
 	protected CreatureObject leader;
 
@@ -89,11 +89,9 @@ class SquadLeaderBuff extends Buff {
 	@preLocked
 	public void addObservers() {
 		SquadLeaderBuffObserver playObserver = new SquadLeaderBuffObserver(this);
-		ObjectManager.instance().persistObject(playObserver, 1, "buffs");
 		playerObserver = playObserver;
 
 		SquadLeaderBuffObserver leadObserver = new SquadLeaderBuffObserver(this);
-		ObjectManager.instance().persistObject(leadObserver, 1, "buffs");
 		leaderObserver = leadObserver;
 
 		player.registerObserver(ObserverEventType.PARENTCHANGED, playerObserver);

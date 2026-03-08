@@ -2326,6 +2326,7 @@ void CreatureObjectImplementation::notifyLoadFromDatabase() {
 
 		if (buff != nullptr) {
 			buff->loadBuffDurationEvent(asCreatureObject());
+			buff->initializeBuffObservers();
 		}
 	}
 
