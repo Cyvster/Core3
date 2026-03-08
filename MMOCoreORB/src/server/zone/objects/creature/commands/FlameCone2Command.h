@@ -24,8 +24,9 @@ public:
 
 		ManagedReference<WeaponObject*> weapon = creature->getWeapon();
 
-		if (!weapon->isFlameThrower())
+		if (weapon == nullptr || !weapon->isFlameThrower()) {
 			return INVALIDWEAPON;
+		}
 
 		return doCombatAction(creature, target);
 	}
