@@ -2325,6 +2325,8 @@ void CreatureObjectImplementation::notifyLoadFromDatabase() {
 		ManagedReference<Buff*> buff = creatureBuffs.getBuffByIndex(i);
 
 		if (buff != nullptr) {
+			Locker clock(buff, asCreatureObject());
+
 			buff->loadBuffDurationEvent(asCreatureObject());
 			buff->initializeBuffObservers();
 		}
