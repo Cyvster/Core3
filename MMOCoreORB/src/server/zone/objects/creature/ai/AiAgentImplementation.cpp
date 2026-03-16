@@ -2745,7 +2745,7 @@ bool AiAgentImplementation::findNextPosition(float maxDistance, bool walk) {
 		return false;
 	} else if (path->size() < 2) {
 		currentFoundPath = nullptr;
-		path == nullptr;
+		path = nullptr;
 
 		return false;
 	}
