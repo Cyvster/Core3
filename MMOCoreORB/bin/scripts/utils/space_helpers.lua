@@ -849,7 +849,7 @@ function SpaceHelpers:activateSpaceQuest(pPlayer, pNpc, questType, questName, no
 
 	local pDatapad = SceneObject(pPlayer):getSlottedObject("datapad")
 
-	if (pDatapad == nullptr) then
+	if (pDatapad == nil) then
 		return
 	end
 
@@ -1290,7 +1290,7 @@ function SpaceHelpers:clearQuestWaypoint(pPlayer, questClass)
 
 	local pGhost = CreatureObject(pPlayer):getPlayerObject()
 
-	if (pGhost == nullptr) then
+	if (pGhost == nil) then
 		return
 	end
 
@@ -1313,7 +1313,7 @@ function SpaceHelpers:clearQuestWaypoints(pPlayer, questClass)
 
 	local pGhost = CreatureObject(pPlayer):getPlayerObject()
 
-	if (pGhost == nullptr) then
+	if (pGhost == nil) then
 		return
 	end
 

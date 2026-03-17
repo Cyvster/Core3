@@ -39,7 +39,7 @@ function SpaceDutyEscortScreenplay:resetDutyMission(pPlayer)
 
 	local pGhost = CreatureObject(pPlayer):getPlayerObject()
 
-	if (pGhost == nullptr) then
+	if (pGhost == nil) then
 		return
 	end
 
@@ -85,7 +85,7 @@ function SpaceDutyEscortScreenplay:setupEscort(pPlayer)
 
 	local pGhost = CreatureObject(pPlayer):getPlayerObject()
 
-	if (pGhost == nullptr) then
+	if (pGhost == nil) then
 		return
 	end
 

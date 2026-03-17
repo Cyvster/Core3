@@ -276,7 +276,7 @@ function SpaceInspectScreenplay:enteredZone(pPlayer, nill, zoneNameHash)
 
 	local pGhost = CreatureObject(pPlayer):getPlayerObject()
 
-	if (pGhost == nullptr) then
+	if (pGhost == nil) then
 		return 0
 	end
 

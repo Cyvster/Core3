@@ -278,7 +278,7 @@ function SpaceRecoveryScreenplay:setupRecover(pPlayer)
 
 	local pGhost = CreatureObject(pPlayer):getPlayerObject()
 
-	if (pGhost == nullptr) then
+	if (pGhost == nil) then
 		return
 	end
 
@@ -313,7 +313,7 @@ function SpaceRecoveryScreenplay:spawnRecoveryShip(pPlayer)
 	end
 	local pGhost = CreatureObject(pPlayer):getPlayerObject()
 
-	if (pGhost == nullptr) then
+	if (pGhost == nil) then
 		return
 	end
 
@@ -896,7 +896,7 @@ function SpaceRecoveryScreenplay:enteredZone(pPlayer, nill, zoneNameHash)
 
 	local pGhost = CreatureObject(pPlayer):getPlayerObject()
 
-	if (pGhost == nullptr) then
+	if (pGhost == nil) then
 		return 0
 	end
 
