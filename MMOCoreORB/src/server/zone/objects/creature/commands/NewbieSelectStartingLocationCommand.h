@@ -11,47 +11,52 @@
 
 class NewbieSelectStartingLocationCommand : public QueueCommand {
 public:
-
-	NewbieSelectStartingLocationCommand(const String& name, ZoneProcessServer* server)
-		: QueueCommand(name, server) {
-
+	NewbieSelectStartingLocationCommand(const String& name, ZoneProcessServer* server) : QueueCommand(name, server) {
 	}
 
-	int doQueueCommand(CreatureObject* creature, const uint64& target, const UnicodeString& arguments) const {
-
-		if (!checkStateMask(creature))
+	int doQueueCommand(CreatureObject* player, const uint64& target, const UnicodeString& arguments) const {
+		if (!checkStateMask(player))
 			return INVALIDSTATE;
 
-		if (!creature->isPlayerCreature())
+		if (!player->isPlayerCreature())
 			return GENERALERROR;
 
-		if (!checkInvalidLocomotions(creature))
+		if (!checkInvalidLocomotions(player))
 			return INVALIDLOCOMOTION;
 
-		CreatureObject* player = cast<CreatureObject*>(creature);
-
-		Zone* zone = player->getZone();
+		auto zone = player->getZone();
 
 		if (zone == nullptr || zone->getZoneName() != "tutorial")
 			return GENERALERROR;
 
-		ManagedReference<SceneObject*> cell = creature->getParent().get();
+		auto zoneServer = player->getZoneServer();
 
-		if (cell == nullptr)
-			return GENERALERROR;
-
-		ManagedReference<SceneObject*> tutorial = cell->getParent().get();
-
-		String city = arguments.toString();
-
-		StartingLocation* startingLocation = server->getPlayerManager()->getStartingLocation(city);
-
-		if (startingLocation == nullptr) {
-			player->info("Attempted to start at invalid starting location: " + city + ".", true);
+		if (zoneServer == nullptr) {
 			return GENERALERROR;
 		}
 
-		zone = server->getZoneServer()->getZone(startingLocation->getZoneName());
+		ManagedReference<SceneObject*> rootTutorial = player->getRootParent();
+
+		if (rootTutorial == nullptr) {
+			return GENERALERROR;
+		}
+
+		auto playerManager = zoneServer->getPlayerManager();
+
+		if (playerManager == nullptr) {
+			return GENERALERROR;
+		}
+
+		String city = arguments.toString();
+
+		StartingLocation* startingLocation = playerManager->getStartingLocation(city);
+
+		if (startingLocation == nullptr) {
+			player->info(true) << "Attempted to start at invalid starting location: " << city << ".";
+			return GENERALERROR;
+		}
+
+		zone = zoneServer->getZone(startingLocation->getZoneName());
 
 		if (zone == nullptr) {
 			player->sendSystemMessage("This starting location is disabled, please select a different one");
@@ -66,18 +71,23 @@ public:
 		if (ghost != nullptr) {
 			ghost->setCloningFacility(nullptr);
 
-			if (ghost->getBankLocation() != "")
+			if (ghost->getBankLocation() != "") {
 				ghost->setBankLocation(startingLocation->getZoneName());
+			}
 		}
 
+		if (rootTutorial != nullptr && rootTutorial->getGameObjectType() == SceneObjectType::TUTORIALBUILDING) {
+			auto tutorial = rootTutorial->asBuildingObject();
 
-		if (tutorial != nullptr)
-			StructureManager::instance()->destroyStructure(tutorial->asBuildingObject(), false);
+			if (tutorial != nullptr) {
+				StructureManager::instance()->destroyStructure(tutorial, false);
+			} else {
+				error() << "Failed to destroy tutorial building for Player: " << player->getFirstName() << " ID: " << player->getObjectID() << " Building ID: " << rootTutorial->getObjectID();
+			}
+		}
 
 		return SUCCESS;
 	}
-
 };
 
-#endif //NEWBIESELECTSTARTINGLOCATIONCOMMAND_H_
-
+#endif // NEWBIESELECTSTARTINGLOCATIONCOMMAND_H_
