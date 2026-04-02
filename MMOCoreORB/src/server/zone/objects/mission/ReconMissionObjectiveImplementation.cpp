@@ -93,23 +93,3 @@ void ReconMissionObjectiveImplementation::complete() {
 
 	MissionObjectiveImplementation::complete();
 }
-
-Vector3 ReconMissionObjectiveImplementation::getEndPosition() {
-	ManagedReference<MissionObject* > mission = this->mission.get();
-
-	Vector3 missionEndPoint;
-	if(mission == nullptr)
-		return missionEndPoint;
-
-	missionEndPoint.setX(mission->getStartPositionX());
-	missionEndPoint.setY(mission->getStartPositionY());
-
-	Zone* zone =  getPlayerOwner()->getZone();
-
-	if (zone != nullptr) {
-		TerrainManager* terrain = zone->getPlanetManager()->getTerrainManager();
-		missionEndPoint.setZ(terrain->getHeight(missionEndPoint.getX(), missionEndPoint.getY()));
-	}
-
-	return missionEndPoint;
-}

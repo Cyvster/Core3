@@ -307,23 +307,3 @@ int DestroyMissionObjectiveImplementation::notifyObserverEvent(MissionObserver* 
 
 	return 0;
 }
-
-Vector3 DestroyMissionObjectiveImplementation::getEndPosition() {
-	ManagedReference<MissionObject* > mission = this->mission.get();
-
-	Vector3 missionEndPoint;
-
-	if(mission == nullptr)
-		return missionEndPoint;
-
-	missionEndPoint.setX(mission->getStartPositionX());
-	missionEndPoint.setY(mission->getStartPositionY());
-
-	Zone* zone = getPlayerOwner()->getZone();
-
-	if (zone != nullptr) {
-		missionEndPoint.setZ(zone->getHeight(missionEndPoint.getX(), missionEndPoint.getY()));
-	}
-
-	return missionEndPoint;
-}

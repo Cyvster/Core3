@@ -911,6 +911,7 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 	mission->setMissionNumber(randTexts);
 
 	mission->setStartPosition(startPos.getX(), startPos.getY(), zone->getZoneName());
+	mission->setEndPosition(startPos.getX(), startPos.getY(), zone->getZoneName());
 	mission->setCreatorName(nm->makeCreatureName());
 
 	mission->setMissionTargetName("@lair_n:" + lairTemplateObject->getName());
@@ -1490,6 +1491,7 @@ void MissionManagerImplementation::randomizeGenericEntertainerMission(CreatureOb
 	mission->setCreatorName(nm->makeCreatureName());
 
 	mission->setStartPosition(target->getPositionX(), target->getPositionY(), zone->getZoneName());
+	mission->setEndPosition(target->getPositionX(), target->getPositionY(), zone->getZoneName());
 
 	if (missionType == MissionTypes::DANCER) {
 		mission->setMissionTargetName("@ui_mission:dancer_tab");
@@ -1592,6 +1594,7 @@ void MissionManagerImplementation::randomizeGenericHuntingMission(CreatureObject
 	mission->setCreatorName(creatorName);
 
 	mission->setStartPosition(player->getPositionX(), player->getPositionY(), playerZone->getZoneName());
+	mission->setEndPosition(player->getPositionX(), player->getPositionY(), playerZone->getZoneName());
 
 	mission->setMissionTargetName(creatureTemplate->getObjectName());
 	mission->setTargetTemplate(sharedTemplate);
@@ -1657,6 +1660,7 @@ void MissionManagerImplementation::randomizeGenericReconMission(CreatureObject* 
 	mission->setTargetTemplate(TemplateManager::instance()->getTemplate(STRING_HASHCODE("object/tangible/mission/mission_recon_target.iff")));
 
 	mission->setStartPosition(position.getX(), position.getY(), playerZone->getZoneName());
+	mission->setEndPosition(position.getX(), position.getY(), playerZone->getZoneName());
 
 	int reward = position.distanceTo(player->getWorldPosition()) / 5;
 

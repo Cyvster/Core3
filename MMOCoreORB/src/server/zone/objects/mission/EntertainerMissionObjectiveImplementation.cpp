@@ -178,18 +178,3 @@ int EntertainerMissionObjectiveImplementation::notifyObserverEvent(MissionObserv
 
 	return 0;
 }
-
-Vector3 EntertainerMissionObjectiveImplementation::getEndPosition() {
-	ManagedReference<MissionObject* > mission = this->mission.get();
-
-	Vector3 missionEndPoint;
-	if (mission == nullptr)
-		return missionEndPoint;
-
-	missionEndPoint.setX(mission->getStartPositionX());
-	missionEndPoint.setY(mission->getStartPositionY());
-	TerrainManager* terrain = getPlayerOwner()->getZone()->getPlanetManager()->getTerrainManager();
-	missionEndPoint.setZ(terrain->getHeight(missionEndPoint.getX(), missionEndPoint.getY()));
-
-	return missionEndPoint;
-}

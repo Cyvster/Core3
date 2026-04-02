@@ -383,15 +383,24 @@ void MissionObjectiveImplementation::awardReward() {
 }
 
 Vector3 MissionObjectiveImplementation::getEndPosition() {
-	ManagedReference<MissionObject* > mission = this->mission.get();
+	Vector3 missionEndPoint(0.f, 0.f, 0.f);
 
-	Vector3 missionEndPoint;
-	if (mission != nullptr) {
-		missionEndPoint.setX(mission->getEndPositionX());
-		missionEndPoint.setY(mission->getEndPositionY());
-		TerrainManager* terrain = getPlayerOwner()->getZone()->getPlanetManager()->getTerrainManager();
-		missionEndPoint.setZ(terrain->getHeight(missionEndPoint.getX(), missionEndPoint.getY()));
+	auto missionStrong = this->mission.get();
+
+	if (missionStrong == nullptr) {
+		return missionEndPoint;
 	}
+
+	missionEndPoint.setX(missionStrong->getEndPositionX());
+	missionEndPoint.setY(missionStrong->getEndPositionY());
+
+	auto zone = missionStrong->getZone();
+
+	if (zone == nullptr) {
+		return missionEndPoint;
+	}
+
+	missionEndPoint.setZ(zone->getHeight(missionEndPoint.getX(), missionEndPoint.getY()));
 
 	return missionEndPoint;
 }

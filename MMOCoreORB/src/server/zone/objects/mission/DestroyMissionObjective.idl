@@ -90,11 +90,6 @@ class DestroyMissionObjective extends MissionObjective {
 		difficulty = diff;
 	}
 
-	@dereferenced
-	@local
-	@dirty
-	public native Vector3 getEndPosition();
-
 	@local
 	@dirty
 	public native void addMissionStats(@dereferenced TransactionLog trx);
