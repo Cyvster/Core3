@@ -1438,7 +1438,7 @@ void PlayerObjectImplementation::addFriend(const String& name, bool notifyClient
 			strongParent->sendMessage(notifyStatus);
 		}
 
-		friendList.add(nameLower);
+		friendList.add(nameLower, nullptr, 0);
 
 		PlayerObjectDeltaMessage9* delta = new PlayerObjectDeltaMessage9(asPlayerObject());
 		friendList.insertToDeltaMessage(delta);
@@ -1452,7 +1452,7 @@ void PlayerObjectImplementation::addFriend(const String& name, bool notifyClient
 			(cast<CreatureObject*>(strongParent.get()))->sendSystemMessage(param);
 
 	} else {
-		friendList.add(nameLower);
+		friendList.add(nameLower, nullptr, 0);
 	}
 }
 
@@ -1602,7 +1602,7 @@ void PlayerObjectImplementation::addIgnore(const String& name, bool notifyClient
 		ChatOnChangeIgnoreStatus* add = new ChatOnChangeIgnoreStatus(parent->getObjectID(),	nameLower, server->getZoneServer()->getGalaxyName(), true);
 		parent->sendMessage(add);
 
-		ignoreList.add(nameLower);
+		ignoreList.add(nameLower, nullptr, 0);
 
 		PlayerObjectDeltaMessage9* delta = new PlayerObjectDeltaMessage9(asPlayerObject());
 		ignoreList.insertToDeltaMessage(delta);
@@ -1616,7 +1616,7 @@ void PlayerObjectImplementation::addIgnore(const String& name, bool notifyClient
 			(cast<CreatureObject*>(parent.get()))->sendSystemMessage(param);
 
 	} else {
-		ignoreList.add(nameLower);
+		ignoreList.add(nameLower, nullptr, 0);
 	}
 }
 
