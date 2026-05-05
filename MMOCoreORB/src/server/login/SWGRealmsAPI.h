@@ -90,8 +90,19 @@ namespace server {
 			SWGRealmsAPIResult();
 			virtual ~SWGRealmsAPIResult();
 
-			// Parse from JSON - implemented by subclasses
+			// Parse from JSON - implemented by subclasses.
+			// Runs on the cpprestsdk continuation thread, so MUST NOT acquire
+			// managed-object Lockers or do anything that can block. Populate
+			// POD member fields only; defer managed-object mutation to
+			// applyToManagedObject().
 			virtual bool parse() = 0;
+
+			// Apply parsed fields to managed objects under proper Locker.
+			// Runs on a Core3 task-queue thread (not the cpprestsdk
+			// continuation thread) so we never starve the HTTP client's pool
+			// on managed-object lock contention. Default no-op; subclasses
+			// that mutate managed objects override.
+			virtual void applyToManagedObject() {}
 
 			// Invoke the callback if set
 			inline void invokeCallback() {
