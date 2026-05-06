@@ -413,12 +413,10 @@ void SWGRealmsAPI::apiCall(Reference<SWGRealmsAPIResult*> result, const String& 
 
 			API_TRACE(result, "queue_scheduled");
 
-			// Use signal queue for blocking calls (just broadcast completion)
-			// Use main queue for async calls (may modify managed objects)
-			auto queue = result->useSignalQueue ? getSignalQueue() : getCustomQueue();
+			auto queue = result->blockDuringSaveEvent ? getCustomQueue() : getSignalQueue();
 
 			// Track queue depth before submitting - warn on new peaks (main queue only)
-			if (!result->useSignalQueue) {
+			if (result->blockDuringSaveEvent) {
 				int queueDepth = queue->size();
 				int peak = peakQueueDepth.get();
 				while (queueDepth > peak) {
@@ -439,16 +437,13 @@ void SWGRealmsAPI::apiCall(Reference<SWGRealmsAPIResult*> result, const String& 
 					warning() << clientTrxId << " callback delay: " << delayMs << "ms";
 				}
 
-				// Apply parsed fields to managed objects on this Core3 task
-				// thread - never on the cpprestsdk continuation thread - so
-				// managed-object lock contention can't starve the HTTP pool.
-				// Wrapped in try/catch so a thrown setter never prevents
-				// the cv broadcast in invokeCallback() and never hangs a
-				// blocking caller.
-				try {
-					result->applyToManagedObject();
-				} catch (const std::exception& e) {
-					error() << clientTrxId << " applyToManagedObject exception: " << e.what();
+				// Blocking calls apply on the caller thread after wait_for; everything else applies here.
+				if (!result->isBlockingCall) {
+					try {
+						result->applyToManagedObject();
+					} catch (const std::exception& e) {
+						error() << clientTrxId << " applyToManagedObject exception: " << e.what();
+					}
 				}
 
 				result->invokeCallback();
@@ -463,8 +458,8 @@ void SWGRealmsAPI::apiNotify(const String& src, const String& basePath) {
 		}
 	});
 
-	// Fire-and-forget notifications use signal queue - callback just logs, doesn't modify objects
-	result->useSignalQueue = true;
+	// Save manager calls apiNotify during save; signal queue must run mid-save.
+	result->blockDuringSaveEvent = false;
 
 	apiCall(result.castTo<SWGRealmsAPIResult*>(), src, basePath);
 }
@@ -748,7 +743,8 @@ SWGRealmsAPIResult::SWGRealmsAPIResult() {
 	resultAction = ApprovalAction::UNKNOWN;
 	resultElapsedTimeMS = 0ull;
 	blockingReceived = false;
-	useSignalQueue = false;
+	blockDuringSaveEvent = true;
+	isBlockingCall = false;
 
 	resultDebug.setNullValue("<not set>");
 }
@@ -1065,9 +1061,9 @@ bool SWGRealmsAPI::apiCallBlocking(Reference<SWGRealmsAPIResult*> result, const 
 	// Reset blocking state
 	result->blockingReceived = false;
 
-	// Use signal queue for completion callback - it doesn't block during saves
-	// This prevents timeout when a blocking call is waiting during a save
-	result->useSignalQueue = true;
+	// Caller cv-parks below; broadcast must run mid-save, apply runs on caller thread.
+	result->blockDuringSaveEvent = false;
+	result->isBlockingCall = true;
 
 	// Set callback that signals completion
 	result->callback = [result]() {
@@ -1132,6 +1128,15 @@ bool SWGRealmsAPI::apiCallBlocking(Reference<SWGRealmsAPIResult*> result, const 
 			<< " timeout_ms=" << apiTimeoutMs << "]";
 		errorMessage = msg.toString();
 		return false;
+	}
+
+	// Apply on caller thread so any upstream Locker(account) is same-thread recursive.
+	if (result->isActionAllowed()) {
+		try {
+			result->applyToManagedObject();
+		} catch (const std::exception& e) {
+			error() << result->getClientTrxId() << " applyToManagedObject exception: " << e.what();
+		}
 	}
 
 	// Check result status
