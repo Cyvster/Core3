@@ -431,6 +431,11 @@ namespace server {
 			// WebSocket streaming client (owned, nullable if disabled)
 			SWGRealmsStreamer* streamer = nullptr;
 
+			// Task queues - registered in ctor so workers spawn at boot and don't potentially block a save
+			TaskQueue* blockingQueue = nullptr;     // Blocks during save - async callbacks that modify objects
+			TaskQueue* signalQueue = nullptr;       // Non-blocking - blocking call completion signals only
+			TaskQueue* metricsQueue = nullptr;      // 1 thread for metrics (BDB handle optimization)
+
 			// Blocking call statistics
 			AtomicInteger outstandingBlockingCalls = 0;
 			AtomicInteger peakConcurrentCalls = 0;
@@ -577,10 +582,6 @@ namespace server {
 			bool isStreamConnected() const;
 			int getStreamPendingCount() const;
 
-			// Task queues
-			static const TaskQueue* getCustomQueue();        // Blocks during save - for async callbacks that modify objects
-			static const TaskQueue* getSignalQueue();        // Non-blocking - for blocking call completion signals only
-			static const TaskQueue* getCustomMetricsQueue(); // 1 thread for metrics (BDB handle optimization)
 			void scheduleMetricsPublish();
 		};
 	}

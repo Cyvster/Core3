@@ -111,6 +111,12 @@ SWGRealmsAPI::SWGRealmsAPI() {
 
 	auto config = ConfigManager::instance();
 
+	// Spawn queue workers now so first-time BDB handle init can't land mid-save.
+	auto taskManager = Core::getTaskManager();
+	blockingQueue  = taskManager->initializeCustomQueue("SWGRealmsAPI", config->getInt("Core3.Login.API.WorkerThreads", 4));
+	signalQueue  = taskManager->initializeCustomQueue("SWGRealmsSignal", 1, false);
+	metricsQueue = taskManager->initializeCustomQueue("SWGRealmsMetrics", 1);
+
 	debugLevel = config->getInt("Core3.Login.API.DebugLevel", 0);
 
 	setLogLevel(static_cast<Logger::LogLevel>(debugLevel));
@@ -206,7 +212,7 @@ void SWGRealmsAPI::apiCall(Reference<SWGRealmsAPIResult*> result, const String& 
 
 		Core::getTaskManager()->executeTask([result]() {
 			result->invokeCallback();
-		}, "SWGRealmsAPIResult-nop-" + src, getCustomQueue()->getName());
+		}, "SWGRealmsAPIResult-nop-" + src, blockingQueue->getName());
 		return;
 	}
 
@@ -413,7 +419,7 @@ void SWGRealmsAPI::apiCall(Reference<SWGRealmsAPIResult*> result, const String& 
 
 			API_TRACE(result, "queue_scheduled");
 
-			auto queue = result->blockDuringSaveEvent ? getCustomQueue() : getSignalQueue();
+			auto queue = result->blockDuringSaveEvent ? blockingQueue : signalQueue;
 
 			// Track queue depth before submitting - warn on new peaks (main queue only)
 			if (result->blockDuringSaveEvent) {
@@ -495,7 +501,7 @@ void SWGRealmsAPI::createSession(const String& username, const String& password,
 
 		Core::getTaskManager()->executeTask([result]() mutable {
 			result->invokeCallback();
-		}, "SWGRealmsAPIResult-nop-createSession", getCustomQueue()->getName());
+		}, "SWGRealmsAPIResult-nop-createSession", blockingQueue->getName());
 
 		return;
 	}
@@ -2314,34 +2320,6 @@ public:
 	}
 };
 
-const TaskQueue* SWGRealmsAPI::getCustomQueue() {
-	static auto customQueue = []() {
-		auto numThreads = ConfigManager::instance()->getInt("Core3.Login.API.WorkerThreads", 4);
-		// This queue blocks during saves - safe for callbacks that modify managed objects
-		return Core::getTaskManager()->initializeCustomQueue("SWGRealmsAPI", numThreads);
-	}();
-
-	return customQueue;
-}
-
-const TaskQueue* SWGRealmsAPI::getSignalQueue() {
-	static auto signalQueue = []() {
-		// Non-blocking queue for blocking call completion signals only
-		// These callbacks just broadcast() to wake up the waiting thread
-		return Core::getTaskManager()->initializeCustomQueue("SWGRealmsSignal", 1, false);
-	}();
-
-	return signalQueue;
-}
-
-const TaskQueue* SWGRealmsAPI::getCustomMetricsQueue() {
-	static auto customQueue = []() {
-		return Core::getTaskManager()->initializeCustomQueue("SWGRealmsMetrics", 1);
-	}();
-
-	return customQueue;
-}
-
 void SWGRealmsAPI::scheduleMetricsPublish() {
 	int intervalSec = ConfigManager::instance()->getInt("Core3.Login.API.MetricsInterval", 600);
 
@@ -2362,7 +2340,7 @@ void SWGRealmsAPI::scheduleMetricsPublish() {
 	}
 
 	Reference<SWGRealmsMetricsTask*> task = new SWGRealmsMetricsTask(intervalSec);
-	task->setCustomTaskQueue(getCustomMetricsQueue()->getName());
+	task->setCustomTaskQueue(metricsQueue->getName());
 	task->schedule(intervalSec * 1000);
 
 	info(true) << "Scheduled metrics publishing every " << intervalSec << " seconds";
