@@ -152,9 +152,27 @@ SWGRealmsAPI::SWGRealmsAPI() {
 	client_config.set_validate_certificates(false);
 	client_config.set_timeout(utility::seconds(apiTimeoutMs / 1000));
 
-	httpClient = new http_client(baseURL.toCharArray(), client_config);
+	// http_client ctor parses baseURL as an RFC 3986 URI and throws uri_exception
+	// on malformed input (missing scheme, unencoded space, etc.). Disable the
+	// API cleanly instead of crashing init - admin will see a clear error and
+	// every subsequent apiCall will fail-closed via the !apiEnabled branch.
+	try {
+		httpClient = new http_client(baseURL.toCharArray(), client_config);
+	} catch (const std::exception& e) {
+		error() << "Failed to construct http_client (BaseURL='" << baseURL << "'): " << e.what() << " - API DISABLED";
+		apiEnabled = false;
+		return;
+	}
 
-	streamer = new SWGRealmsStreamer(baseURL, apiToken, galaxyID, debugLevel);
+	// Streamer failure is non-fatal: API can still serve approvals, only the
+	// telemetry/event stream is lost. Downstream code already guards on
+	// streamer != nullptr.
+	try {
+		streamer = new SWGRealmsStreamer(baseURL, apiToken, galaxyID, debugLevel);
+	} catch (const std::exception& e) {
+		error() << "Failed to construct SWGRealmsStreamer: " << e.what() << " - streaming disabled, API still active";
+		streamer = nullptr;
+	}
 
 	info(true) << "Starting " << toString();
 }
@@ -266,15 +284,53 @@ void SWGRealmsAPI::apiCall(Reference<SWGRealmsAPIResult*> result, const String& 
 
 	req.headers().add(U("Authorization"), authHeader.toCharArray());
 
-	req.set_request_uri(apiPath.toCharArray());
+	// set_request_uri parses apiPath as an RFC 3986 URI and throws uri_exception
+	// on invalid input (e.g. an unencoded space). httpClient->request can also
+	// throw synchronously. If either escapes apiCall(), the callback never
+	// fires and apiCallBlocking parks on its condvar until the timeout — and
+	// outstandingBlockingCalls leaks. Fail the result cleanly and schedule the
+	// callback so blocking callers wake up.
+	try {
+		req.set_request_uri(apiPath.toCharArray());
 
-	if (!body.isEmpty()) {
-		req.set_body(body.toCharArray(), "application/json");
+		if (!body.isEmpty()) {
+			req.set_body(body.toCharArray(), "application/json");
+		}
+
+		API_TRACE(result, "http_request_sent");
+	} catch (const std::exception& e) {
+		incrementErrorCount();
+		error() << logPrefix << "Exception preparing request [path=" << apiPath << "]: " << e.what();
+
+		result->setAction(SWGRealmsAPIResult::ApprovalAction::TEMPFAIL);
+		result->setTitle("Temporary Server Error");
+		result->setMessage("Failed to build API request");
+		result->setDetails(String("Exception: ") + e.what());
+		result->setDebugValue("http_status", "0");
+		result->setElapsedTimeMS(startTime.miliDifference());
+
+		auto queue = result->blockDuringSaveEvent ? blockingQueue : signalQueue;
+		auto clientTrxId = result->getClientTrxId();
+
+		Core::getTaskManager()->executeTask([result, clientTrxId, this] {
+			API_TRACE(result, "callback_invoked");
+
+			if (!result->isBlockingCall) {
+				try {
+					result->applyToManagedObject();
+				} catch (const std::exception& e2) {
+					error() << clientTrxId << " applyToManagedObject exception: " << e2.what();
+				}
+			}
+
+			result->invokeCallback();
+		}, "SWGRealmsAPIResult-exception-" + src, queue->getName());
+
+		return;
 	}
 
-	API_TRACE(result, "http_request_sent");
-
-	httpClient->request(req)
+	try {
+		httpClient->request(req)
 		.then([this, src, apiPath, result](pplx::task<http_response> task) {
 			auto logPrefix = result->getClientTrxId() + " " + src + ": ";
 			http_response resp;
@@ -455,6 +511,34 @@ void SWGRealmsAPI::apiCall(Reference<SWGRealmsAPIResult*> result, const String& 
 				result->invokeCallback();
 			}, "SWGRealmsAPIResult-" + src, queue->getName());
 		});
+	} catch (const std::exception& e) {
+		incrementErrorCount();
+		error() << logPrefix << "Exception dispatching request [path=" << apiPath << "]: " << e.what();
+
+		result->setAction(SWGRealmsAPIResult::ApprovalAction::TEMPFAIL);
+		result->setTitle("Temporary Server Error");
+		result->setMessage("Failed to dispatch API request");
+		result->setDetails(String("Exception: ") + e.what());
+		result->setDebugValue("http_status", "0");
+		result->setElapsedTimeMS(startTime.miliDifference());
+
+		auto queue = result->blockDuringSaveEvent ? blockingQueue : signalQueue;
+		auto clientTrxId = result->getClientTrxId();
+
+		Core::getTaskManager()->executeTask([result, clientTrxId, this] {
+			API_TRACE(result, "callback_invoked");
+
+			if (!result->isBlockingCall) {
+				try {
+					result->applyToManagedObject();
+				} catch (const std::exception& e2) {
+					error() << clientTrxId << " applyToManagedObject exception: " << e2.what();
+				}
+			}
+
+			result->invokeCallback();
+		}, "SWGRealmsAPIResult-exception-" + src, queue->getName());
+	}
 }
 
 void SWGRealmsAPI::apiNotify(const String& src, const String& basePath) {
@@ -506,14 +590,39 @@ void SWGRealmsAPI::createSession(const String& username, const String& password,
 		return;
 	}
 
-	auto requestBody = json::value::object();
-	requestBody[U("username")] = json::value::string(U(username.toCharArray()));
-	requestBody[U("password")] = json::value::string(U(password.toCharArray()));
-	requestBody[U("client_version")] = json::value::string(U(clientVersion.toCharArray()));
-	requestBody[U("client_ip")] = json::value::string(U(clientEndpoint.toCharArray()));
-	requestBody[U("galaxy_id")] = json::value::number(galaxyID);
+	// username/password come straight off the wire from LoginClientId; if they
+	// contain invalid UTF-8 or fail JSON encoding, json::value::string() or
+	// serialize() can throw. Without this guard the login session callback
+	// never fires and the LoginClient parks until its own timeout (same hang
+	// class as the URI bug, but at every login attempt).
 
-	apiCall(result.castTo<SWGRealmsAPIResult*>(), __FUNCTION__, "/v1/core3/account/login", "POST", String(requestBody.serialize().c_str()));
+	try {
+		auto requestBody = json::value::object();
+		requestBody[U("username")] = json::value::string(U(username.toCharArray()));
+		requestBody[U("password")] = json::value::string(U(password.toCharArray()));
+		requestBody[U("client_version")] = json::value::string(U(clientVersion.toCharArray()));
+		requestBody[U("client_ip")] = json::value::string(U(clientEndpoint.toCharArray()));
+		requestBody[U("galaxy_id")] = json::value::number(galaxyID);
+
+		apiCall(result.castTo<SWGRealmsAPIResult*>(), __FUNCTION__, "/v1/core3/account/login", "POST", String(requestBody.serialize().c_str()));
+	} catch (const std::exception& e) {
+		incrementErrorCount();
+		error() << "createSession: failed to build login request body for username='" << username << "': " << e.what();
+
+		result->setAction(SWGRealmsAPIResult::ApprovalAction::REJECT);
+		result->setTitle("Login Error");
+		result->setMessage("If the error continues please contact support and mention error code = J");
+		result->setDetails(String("Exception building login request: ") + e.what());
+		result->setDebugValue("trx_id", "createSession-build-error");
+		result->setDebugValue("http_status", "0");
+
+		Core::getTaskManager()->executeTask([result]() mutable {
+			result->invokeCallback();
+		}, "SWGRealmsAPIResult-buildfail-createSession", blockingQueue->getName());
+
+		return;
+	}
+
 }
 
 void SWGRealmsAPI::approveNewSession(const String& ip, uint32 accountID, const SessionAPICallback& resultCallback) {
