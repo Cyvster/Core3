@@ -471,10 +471,30 @@ public:
 
 			connectPlayer(obj, characterID, player, client, zoneServer);
 		} else {
-			if (obj != nullptr)
-				client->error("could get from zone server character id " + String::valueOf(characterID) + " but is not a player creature");
-			else
-				client->error("could not get from zone server character id " + String::valueOf(characterID));
+			// Failure here leaves the SWG client parked at "Now connecting to
+			// the Galaxy..." until its own timeout - the previous code only
+			// wrote to the per-client log and sent no ErrorMessage back, which
+			// made it look like a hang.  Surface the reason in the main log
+			// AND tell the client so it stops waiting.
+			StringBuffer reason;
+			if (obj != nullptr) {
+				reason << "object " << String::hexvalueOf((int64)characterID)
+				       << " loaded but is not a player creature (gameObjectType="
+				       << String::hexvalueOf((int64)obj->getGameObjectType()) << ")";
+			} else {
+				reason << "object " << String::hexvalueOf((int64)characterID)
+				       << " not found in object broker (account="
+				       << client->getAccountID() << " galaxy="
+				       << zoneServer->getGalaxyID() << ")";
+			}
+
+			client->error() << "SelectCharacter failed: " << reason.toString();
+			Logger::console.error() << "SelectCharacter failed for account "
+			                        << client->getAccountID() << ": " << reason.toString();
+
+			ErrorMessage* errMsg = new ErrorMessage("Login Error",
+				"Server could not load this character.\nContact support if this persists.", 0x0);
+			client->sendMessage(errMsg);
 		}
 	}
 };
