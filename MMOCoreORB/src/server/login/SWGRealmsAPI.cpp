@@ -1403,8 +1403,12 @@ bool SWGRealmsAPI::getAccountDataBlocking(uint32 accountID, Reference<Account*> 
 }
 
 uint32 SWGRealmsAPI::getAccountID(const String& username, String& errorMessage) {
+	// Percent-encode the username so legacy account names with spaces or other
+	// reserved characters produce a valid path segment.
+	String encodedUsername(web::uri::encode_data_string(username.toCharArray()).c_str());
+
 	StringBuffer pathBuffer;
-	pathBuffer << "/v1/core3/galaxy/" << galaxyID << "/account/" << username;
+	pathBuffer << "/v1/core3/galaxy/" << galaxyID << "/account/" << encodedUsername;
 
 	Reference<AccountResult*> result = new AccountResult();  // accountID-only mode
 	if (!apiCallBlocking(result.castTo<SWGRealmsAPIResult*>(), pathBuffer.toString(), "GET", "", errorMessage)) {
