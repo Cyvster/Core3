@@ -121,7 +121,7 @@ public:
 
 		auto deviceSceneO = zoneServer->getObject(controlDeviceID);
 
-		if (deviceSceneO == nullptr || !deviceSceneO->isPetControlDevice()) {
+		if (deviceSceneO == nullptr || !deviceSceneO->isPetControlDevice() || !deviceSceneO->isASubChildOf(player)) {
 			return;
 		}
 
@@ -152,6 +152,10 @@ public:
 			auto module = zoneServer->getObject(modulesToRemove.get(i));
 
 			if (module == nullptr) {
+				continue;
+			}
+
+			if (!module->isASubChildOf(datapad) || module->getGameObjectType() != SceneObjectType::DROIDPROGRAMMINGCHIP) {
 				continue;
 			}
 
