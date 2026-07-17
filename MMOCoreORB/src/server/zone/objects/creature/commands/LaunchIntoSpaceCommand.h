@@ -12,6 +12,7 @@
 #include "server/zone/objects/intangible/ShipControlDevice.h"
 #include "server/zone/packets/scene/UpdateTransformMessage.h"
 #include "server/zone/objects/intangible/tasks/LaunchShipTask.h"
+#include "server/zone/objects/group/GroupObject.h"
 
 class LaunchIntoSpaceCommand : public QueueCommand {
 public:
@@ -68,6 +69,25 @@ public:
 		if (!ship->canBePilotedBy(creature)) {
 			creature->sendSystemMessage("@space/space_interaction:no_ship_certification"); // "You are not certified to pilot this ship."
 			return GENERALERROR;
+		}
+
+		// Only relocate/launch players who are actually in the pilot's group. The groupMembers list is fully
+		// client-supplied, so without this a pilot could teleport/launch arbitrary online players by OID.
+		if (groupMembers.size() > 0) {
+			ManagedReference<GroupObject*> group = creature->getGroup();
+			Vector<uint64> validatedMembers;
+
+			for (int i = 0; i < groupMembers.size(); i++) {
+				uint64 memberID = groupMembers.get(i);
+
+				if (memberID == creature->getObjectID() || group == nullptr || !group->hasMember(memberID)) {
+					continue;
+				}
+
+				validatedMembers.add(memberID);
+			}
+
+			groupMembers = validatedMembers;
 		}
 
 		// JTL Fast Travel

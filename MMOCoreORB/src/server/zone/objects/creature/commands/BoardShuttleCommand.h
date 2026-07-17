@@ -111,6 +111,12 @@ public:
 			return SUCCESS;
 		}
 
+		// The ticket must belong to the boarding player (prevents destroying another player's ticket by supplying its OID as the target).
+		if (!ticketObject->isASubChildOf(creature)) {
+			creature->sendSystemMessage("@travel:no_ticket"); //You do not have a ticket to board this shuttle.
+			return GENERALERROR;
+		}
+
 		String departurePlanet = ticketObject->getDeparturePlanet();
 		String departurePoint = ticketObject->getDeparturePoint();
 

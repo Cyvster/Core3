@@ -216,7 +216,7 @@ public:
 		for (int i = 0; i < modulesToAdd.size(); i++) {
 			auto programmedModule = zoneServer->getObject(modulesToAdd.get(i)).castTo<DroidProgrammingChip*>();
 
-			if (programmedModule == nullptr || programmedModule->getGameObjectType() != SceneObjectType::DROIDPROGRAMMINGCHIP) {
+			if (programmedModule == nullptr || !programmedModule->isASubChildOf(player) || programmedModule->getGameObjectType() != SceneObjectType::DROIDPROGRAMMINGCHIP) {
 				continue;
 			}
 
