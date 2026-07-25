@@ -459,6 +459,11 @@ namespace server {
 			SWGRealmsAPI();
 			~SWGRealmsAPI();
 
+			// Suppress the telemetry websocket for offline tools that publish no
+			// trxlog/metrics events. The REST client is unaffected. Must be called
+			// before the first instance().
+			static void disableStreaming();
+
 			inline void incrementTrxCount() {
 				trxCount.increment();
 			}

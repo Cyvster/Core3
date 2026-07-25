@@ -97,6 +97,12 @@ public:
 
 using namespace server::login;
 
+static bool streamingEnabled = true;
+
+void SWGRealmsAPI::disableStreaming() {
+	streamingEnabled = false;
+}
+
 SWGRealmsAPI::SWGRealmsAPI() {
 	trxCount = 0;
 
@@ -167,11 +173,13 @@ SWGRealmsAPI::SWGRealmsAPI() {
 	// Streamer failure is non-fatal: API can still serve approvals, only the
 	// telemetry/event stream is lost. Downstream code already guards on
 	// streamer != nullptr.
-	try {
-		streamer = new SWGRealmsStreamer(baseURL, apiToken, galaxyID, debugLevel);
-	} catch (const std::exception& e) {
-		error() << "Failed to construct SWGRealmsStreamer: " << e.what() << " - streaming disabled, API still active";
-		streamer = nullptr;
+	if (streamingEnabled) {
+		try {
+			streamer = new SWGRealmsStreamer(baseURL, apiToken, galaxyID, debugLevel);
+		} catch (const std::exception& e) {
+			error() << "Failed to construct SWGRealmsStreamer: " << e.what() << " - streaming disabled, API still active";
+			streamer = nullptr;
+		}
 	}
 
 	info(true) << "Starting " << toString();

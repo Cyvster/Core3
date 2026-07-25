@@ -86,6 +86,11 @@ void ObjectDatabaseCore::initialize() {
 		warning("could not load core3 config");
 	}
 
+#ifdef WITH_SWGREALMS_API
+	// odb3 only reads from the API, it never publishes trxlog or metrics events.
+	SWGRealmsAPI::disableStreaming();
+#endif // WITH_SWGREALMS_API
+
 	//DistributedObjectBroker* orb = DistributedObjectBroker::initialize("", 44230);
 	//orb->setCustomObjectManager(new ObjectManager(false));
 }
@@ -121,6 +126,11 @@ void ObjectDatabaseCore::run() {
 	objectManager->shutdown();
 
 	Core::shutdownTaskManager();
+
+#ifdef WITH_SWGREALMS_API
+	// Stops the cpprest io_service; its worker threads outlive main() otherwise.
+	SWGRealmsAPI::finalizeInstance();
+#endif // WITH_SWGREALMS_API
 }
 
 VectorMap<uint64, String> ObjectDatabaseCore::loadPlayers(int galaxyID) {
