@@ -16,6 +16,7 @@
 #include "server/zone/managers/auction/AuctionManager.h"
 #include "server/zone/managers/auction/AuctionsMap.h"
 #include "server/zone/objects/tangible/components/vendor/VendorDataComponent.h"
+#include "server/zone/objects/transaction/TransactionLog.h"
 #include "server/zone/ZoneProcessServer.h"
 
 VendorManager::VendorManager() {
@@ -246,7 +247,7 @@ void VendorManager::promptRenameVendorTo(CreatureObject* player, TangibleObject*
 	player->getPlayerObject()->addSuiBox(input);
 }
 
-void VendorManager::destroyVendor(TangibleObject* vendor) {
+void VendorManager::destroyVendor(TangibleObject* vendor, const String& reason) {
 	DataObjectComponentReference* data = vendor->getDataObjectComponent();
 	if (data == nullptr || data->get() == nullptr || !data->get()->isVendorData()) {
 		error("Vendor has no data component");
@@ -271,6 +272,76 @@ void VendorManager::destroyVendor(TangibleObject* vendor) {
 		return;
 	}
 
+	// Counts are gathered before locking the vendor, deleteTerminalItems() takes the AuctionsMap lock
+	int itemsForSale = auctionsMap->getVendorItemCount(vendor, true);
+	int itemsTotal = auctionsMap->getVendorItemCount(vendor, false);
+
+	ManagedReference<CreatureObject*> owner = server->getZoneServer()->getObject(vendorData->getOwnerId()).castTo<CreatureObject*>();
+
+	TransactionLog trx(owner, vendor, TrxCode::VENDORLIFECYCLE);
+	trx.addState("subjectAction", "destroy");
+	trx.addState("subjectDestroyReason", reason);
+	trx.addState("vendorName", vendor->getDisplayedName());
+	trx.addState("vendorOwnerId", vendorData->getOwnerId());
+	trx.addState("vendorItemsForSale", itemsForSale);
+	trx.addState("vendorItemsTotal", itemsTotal);
+	trx.addState("vendorMaintAmount", vendorData->getMaint());
+	trx.addState("vendorEmptyDays", vendorData->getEmptyDays());
+	trx.addState("vendorRegistered", vendorData->isRegistered());
+	trx.addState("vendorUID", vendorData->getUID());
+
+	// Items for sale are not contained by the vendor, they have to be pulled from the auction
+	// map by vendor oid and added by hand or the export misses everything the owner lost
+	int itemsExported = 0;
+	auto zone = vendor->getZone();
+
+	if (zone != nullptr) {
+		String planet = zone->getZoneName();
+		String region = "@planet_n:" + planet;
+
+		ManagedReference<CityRegion*> cityRegion = vendor->getCityRegion().get();
+
+		if (cityRegion != nullptr)
+			region = cityRegion->getCityRegionName();
+
+		TerminalListVector vendorList = auctionsMap->getVendorTerminalData(planet, region, vendor);
+
+		if (vendorList.size() > 0) {
+			Reference<TerminalItemList*> list = vendorList.get(0);
+
+			if (list != nullptr) {
+				ReadLocker rlocker(list);
+
+				for (int i = 0; i < list->size(); ++i) {
+					ManagedReference<AuctionItem*> item = list->get(i);
+
+					if (item == nullptr)
+						continue;
+
+					uint64 sellingID = item->getAuctionedItemObjectID();
+
+					if (sellingID == 0)
+						continue;
+
+					trx.addRelatedObject(sellingID, true);
+					itemsExported++;
+				}
+			}
+		}
+	}
+
+	trx.addState("vendorItemsExported", itemsExported);
+
+	// A vendor with no zone cannot be looked up by planet/region, getVendorTerminalData would
+	// fall back to the whole galaxy listing, so the manifest is skipped rather than guessed at
+	if (zone == nullptr && itemsTotal > 0)
+		trx.addState("vendorItemsExportSkipped", "vendor has no zone");
+
+	// Force a synchronous export, the vendor and its items are deleted below
+	trx.addRelatedObject(vendor, true);
+	trx.setExportRelatedObjects(true);
+	trx.exportRelated();
+
 	if (vendorData->isRegistered() && vendor->getZone() != nullptr) {
 		vendor->getZone()->unregisterObjectWithPlanetaryMap(vendor);
 	}
@@ -278,6 +349,7 @@ void VendorManager::destroyVendor(TangibleObject* vendor) {
 	Locker locker(vendor);
 
 	vendorData->cancelVendorCheckTask();
+	vendorData->setDestroyStarted();
 
 	vendor->destroyObjectFromWorld(true);
 	vendor->destroyObjectFromDatabase(true);

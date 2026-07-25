@@ -3046,7 +3046,7 @@ void PlayerObjectImplementation::destroyObjectFromDatabase(bool destroyContained
 		ManagedReference<TangibleObject*> vendor = getZoneServer()->getObject(oid).castTo<TangibleObject*>();
 
 		if (vendor != nullptr) {
-			VendorManager::instance()->destroyVendor(vendor);
+			VendorManager::instance()->destroyVendor(vendor, "owner character deleted");
 		}
 	}
 

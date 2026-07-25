@@ -48,6 +48,9 @@ public:
 
 	virtual void notifyObjectDestroyingFromDatabase();
 
+	virtual void notifyObjectDestroyingFromWorld() {
+	}
+
 	void setParent(SceneObject* object);
 
 	SceneObject* getParent();

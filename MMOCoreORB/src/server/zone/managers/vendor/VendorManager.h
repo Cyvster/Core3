@@ -52,7 +52,7 @@ public:
 
 	void promptRenameVendorTo(CreatureObject* player, TangibleObject* vendor);
 
-	void destroyVendor(TangibleObject* vendor);
+	void destroyVendor(TangibleObject* vendor, const String& reason);
 
 	void sendRegisterVendorTo(CreatureObject* player, TangibleObject* vendor);
 

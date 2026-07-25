@@ -18,6 +18,8 @@
 #include "server/zone/packets/object/SpatialChat.h"
 #include "server/zone/objects/tangible/tasks/VendorReturnToPositionTask.h"
 #include "server/zone/objects/transaction/TransactionLog.h"
+#include "server/zone/CloseObjectsVector.h"
+#include "server/zone/Zone.h"
 
 VendorDataComponent::VendorDataComponent() : AuctionTerminalDataComponent(), adBarkingMutex() {
 	ownerId = 0;
@@ -33,6 +35,7 @@ VendorDataComponent::VendorDataComponent() : AuctionTerminalDataComponent(), adB
 	barkMessage = "";
 	lastBark = 0;
 	originalDirection = 1000;
+	destroyStartedTime = Time((uint32)0);
 	addSerializableVariables();
 }
 
@@ -98,6 +101,8 @@ void VendorDataComponent::initializeTransientMembers() {
 }
 
 void VendorDataComponent::notifyObjectDestroyingFromDatabase() {
+	logUnmanagedRemoval("destroyObjectFromDatabase");
+
 	ManagedReference<SceneObject*> strong = parent.get();
 
 	if(strong == nullptr)
@@ -111,6 +116,202 @@ void VendorDataComponent::notifyObjectDestroyingFromDatabase() {
 
 	if (ghost != nullptr)
 		ghost->removeVendor(strong);
+}
+
+void VendorDataComponent::notifyObjectDestroyingFromWorld() {
+	logUnmanagedRemoval("destroyObjectFromWorld");
+}
+
+// Mirrors PlayerManagerCommand::dumpCOV, minus the object Locker, the caller of the destroy
+// hooks already holds the vendor lock and safeCopyTo does its own locking on the vector
+String VendorDataComponent::getCloseObjectsDump(SceneObject* vendor, int& playerCount, String& playerList) {
+	StringBuffer dump;
+	StringBuffer players;
+
+	playerCount = 0;
+	playerList = "";
+
+	if (vendor == nullptr)
+		return "no vendor";
+
+	SortedVector<uint64> seenPlayers;
+	seenPlayers.setNoDuplicateInsertPlan();
+
+	auto ourPosition = vendor->getWorldPosition();
+
+	auto notePlayer = [&](SceneObject* obj, float distance) {
+		if (obj == nullptr || !obj->isPlayerCreature() || seenPlayers.contains(obj->getObjectID()))
+			return;
+
+		seenPlayers.put(obj->getObjectID());
+
+		if (playerCount > 0)
+			players << "; ";
+
+		players << obj->getDisplayedName() << " (" << obj->getObjectID() << ") " << (int)distance << "m";
+
+		playerCount++;
+	};
+
+	CloseObjectsVector* closeVector = (CloseObjectsVector*)vendor->getCloseObjects();
+
+	if (closeVector == nullptr) {
+		dump << "vendor has no close objects vector";
+	} else {
+		SortedVector<TreeEntry*> closeObjects;
+		closeVector->safeCopyTo(closeObjects);
+
+		VectorMap<float, SceneObject*> sortedObjects;
+		sortedObjects.setAllowDuplicateInsertPlan();
+
+		for (int i = 0; i < closeObjects.size(); ++i) {
+			auto obj = static_cast<SceneObject*>(closeObjects.getUnsafe(i));
+
+			if (obj == nullptr)
+				continue;
+
+			sortedObjects.put(ourPosition.distanceTo(obj->getWorldPosition()), obj);
+		}
+
+		dump << sortedObjects.size() << " objects:";
+
+		for (int i = 0; i < sortedObjects.size(); ++i) {
+			auto obj = sortedObjects.get(i);
+
+			if (obj == nullptr) {
+				dump << endl << "  " << i << ": nullptr object";
+				continue;
+			}
+
+			auto objParent = obj->getParent().get();
+			auto objTemplate = obj->getObjectTemplate();
+			float distance = ourPosition.distanceTo(obj->getWorldPosition());
+
+			dump << endl << "  " << i << ": " << obj->getObjectID() << ": " << obj->getDisplayedName()
+				<< " (" << (objTemplate == nullptr ? "no template" : objTemplate->getTemplateFileName()) << ")"
+				<< " parent: " << (objParent == nullptr ? String("<none>") : String::valueOf(objParent->getObjectID()))
+				<< " receivers: " << CloseObjectsVector::receiverFlagsToString(obj->getReceiverFlags())
+				<< " @ " << obj->getWorldPosition().toString() << " " << (int)distance << "m";
+
+			if (obj->isPlayerCreature()) {
+				dump << " <== PLAYER";
+				notePlayer(obj, distance);
+			}
+		}
+	}
+
+	// A vendor indoors may not carry the cell occupants in its own vector
+	ManagedReference<SceneObject*> vendorParent = vendor->getParent().get();
+
+	if (vendorParent != nullptr && vendorParent->isCellObject()) {
+		for (int i = 0; i < vendorParent->getContainerObjectsSize(); ++i) {
+			auto obj = vendorParent->getContainerObject(i);
+
+			if (obj == nullptr || !obj->isPlayerCreature() || seenPlayers.contains(obj->getObjectID()))
+				continue;
+
+			float distance = ourPosition.distanceTo(obj->getWorldPosition());
+
+			dump << endl << "  in same cell: " << obj->getObjectID() << ": " << obj->getDisplayedName() << " " << (int)distance << "m <== PLAYER";
+
+			notePlayer(obj, distance);
+		}
+	}
+
+	playerList = players.toString();
+
+	return dump.toString();
+}
+
+void VendorDataComponent::logUnmanagedRemoval(const String& context) {
+	bool destroyStarted = destroyStartedTime.getTime() != 0;
+	int64 msSinceDestroyStarted = destroyStarted ? destroyStartedTime.miliDifference() : -1;
+
+	if (destroyStarted && msSinceDestroyStarted <= DESTROYWINDOWMS)
+		return;
+
+	ManagedReference<SceneObject*> strongParent = parent.get();
+
+	if (strongParent == nullptr)
+		return;
+
+	auto zoneServer = strongParent->getZoneServer();
+	ManagedReference<CreatureObject*> owner = zoneServer == nullptr ? nullptr : zoneServer->getObject(ownerId).castTo<CreatureObject*>();
+
+	auto zone = strongParent->getZone();
+	String zoneName = zone == nullptr ? "none" : zone->getZoneName();
+	Vector3 worldPosition = strongParent->getWorldPosition();
+
+	ManagedReference<SceneObject*> vendorParent = strongParent->getParent().get();
+	uint64 parentID = vendorParent == nullptr ? 0 : vendorParent->getObjectID();
+
+	// The immediate parent of an indoor vendor is a cell and cells carry no name, the structure
+	// above it is what actually identifies where the vendor stood
+	ManagedReference<SceneObject*> rootParent = strongParent->getRootParent();
+	uint64 buildingID = rootParent == nullptr ? 0 : rootParent->getObjectID();
+	String buildingName = rootParent == nullptr ? "none" : rootParent->getDisplayedName();
+
+	int playerCount = 0;
+	String nearbyPlayers;
+	String closeObjectsDump = getCloseObjectsDump(strongParent, playerCount, nearbyPlayers);
+
+	StackTrace callStack;
+	String callStackData = callStack.toStringData();
+
+	// Console logger so this always reaches the global log, an AiAgent vendor has global
+	// logging disabled and would otherwise bury this in its own per-object file
+	auto msg = Logger::console.error();
+
+	msg << "Vendor removed outside VendorManager via " << context
+		<< " -- vendor: " << strongParent->getObjectID()
+		<< " name: " << strongParent->getDisplayedName()
+		<< " ownerId: " << ownerId
+		<< " ownerName: " << (owner == nullptr ? "unknown" : owner->getFirstName())
+		<< " uid: " << getUID()
+		<< " zone: " << zoneName
+		<< " worldPosition: " << worldPosition.getX() << "," << worldPosition.getY() << "," << worldPosition.getZ()
+		<< " parent: " << parentID
+		<< " building: " << buildingID << " (" << buildingName << ")"
+		<< " maintAmount: " << maintAmount
+		<< " registered: " << registered;
+
+	if (destroyStarted)
+		msg << " sanctionedDestroyStarted: " << msSinceDestroyStarted << "ms ago, past the " << (int)DESTROYWINDOWMS << "ms window";
+	else
+		msg << " sanctionedDestroyStarted: never";
+
+	if (playerCount > 0)
+		msg << " -- players nearby: " << nearbyPlayers;
+	else
+		msg << " -- players nearby: none";
+
+	msg << endl << "COV was: " << closeObjectsDump;
+	msg << endl << "callStack: " << callStackData;
+
+	msg.flush();
+
+	TransactionLog trx(owner, strongParent, TrxCode::VENDORLIFECYCLE);
+	trx.addState("subjectAction", "unmanaged_removal");
+	trx.addState("subjectDestroyReason", "removed outside VendorManager via " + context);
+	trx.addState("vendorName", strongParent->getDisplayedName());
+	trx.addState("vendorOwnerId", ownerId);
+	trx.addState("vendorOwnerName", owner == nullptr ? "unknown" : owner->getFirstName());
+	trx.addState("vendorMaintAmount", maintAmount);
+	trx.addState("vendorRegistered", registered);
+	trx.addState("vendorUID", getUID());
+	trx.addState("vendorDestroyStarted", destroyStarted);
+	trx.addState("vendorMsSinceDestroyStarted", msSinceDestroyStarted);
+	trx.addState("vendorParentId", parentID);
+	trx.addState("vendorBuildingId", buildingID);
+	trx.addState("vendorBuildingName", buildingName);
+	trx.addState("vendorNearbyPlayerCount", playerCount);
+	trx.addState("vendorNearbyPlayers", nearbyPlayers);
+	trx.addState("vendorCloseObjects", closeObjectsDump);
+	trx.addState("vendorCallStack", callStackData);
+
+	trx.addRelatedObject(strongParent, true);
+	trx.setExportRelatedObjects(true);
+	trx.exportRelated();
 }
 
 void VendorDataComponent::runVendorUpdate() {
@@ -162,13 +363,23 @@ void VendorDataComponent::runVendorUpdate() {
 			if (cman != nullptr)
 				cman->sendMail(sender, subject, body, owner->getFirstName());
 			mail1Sent = true;
+
+			TransactionLog trx(owner, vendor, TrxCode::VENDORLIFECYCLE);
+			trx.addState("subjectAction", "endangered");
+			trx.addState("vendorName", strongParent->getDisplayedName());
+			trx.addState("vendorOwnerId", ownerId);
+			trx.addState("vendorEmptyDays", getEmptyDays());
+			trx.addState("vendorMaintAmount", maintAmount);
+			trx.addState("vendorRegistered", registered);
+			trx.addState("vendorUID", getUID());
+			trx.addState("vendorMailSent", cman != nullptr);
 		}
 
 		else if (time(0) - emptyTimer.getTime() > EMPTYDELETE) {
 			StringIdChatParameter body("@auction:vendor_status_deleted");
 			if (cman != nullptr)
 				cman->sendMail(sender, subject, body, owner->getFirstName());
-			VendorManager::instance()->destroyVendor(vendor);
+			VendorManager::instance()->destroyVendor(vendor, "nothing listed for sale for 28 days");
 			return;
 		}
 
@@ -194,7 +405,7 @@ void VendorDataComponent::runVendorUpdate() {
 			StringIdChatParameter body("@auction:vendor_status_deleted");
 			if (cman != nullptr)
 				cman->sendMail(sender, subject, body, owner->getFirstName());
-			VendorManager::instance()->destroyVendor(vendor);
+			VendorManager::instance()->destroyVendor(vendor, "maintenance pool empty for 100 days");
 		}
 
 	} else {

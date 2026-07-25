@@ -1226,6 +1226,10 @@ void SceneObjectImplementation::destroyObjectFromWorld(bool sendSelfDestroy) {
 	if (zone == nullptr)
 		return;
 
+	if (dataObjectComponent != nullptr) {
+		dataObjectComponent->notifyObjectDestroyingFromWorld();
+	}
+
 	if (zone->isSpaceZone()) {
 		spaceZoneComponent->destroyObjectFromWorld(asSceneObject(), sendSelfDestroy);
 	} else {

@@ -2387,6 +2387,21 @@ void AuctionManagerImplementation::sendVendorUpdateMail(SceneObject* vendor, boo
 		StringIdChatParameter body("@auction:vendor_status_empty");
 		body.setTO(vendor->getDisplayedName());
 		cman->sendMail(sender, subject, body, owner->getFirstName());
+
+		// Total counts stock still sitting on the vendor, expired or withdrawn items keep a
+		// vendor "empty" for deletion purposes while the owner can still retrieve them
+		int itemsTotal = auctionMap->getVendorItemCount(vendor, false);
+
+		TransactionLog trx(owner, vendor, TrxCode::VENDORLIFECYCLE);
+		trx.addState("subjectAction", "empty");
+		trx.addState("vendorName", vendor->getDisplayedName());
+		trx.addState("vendorOwnerId", vendorData->getOwnerId());
+		trx.addState("vendorItemsForSale", 0);
+		trx.addState("vendorItemsTotal", itemsTotal);
+		trx.addState("vendorMaintAmount", vendorData->getMaint());
+		trx.addState("vendorRegistered", vendorData->isRegistered());
+		trx.addState("vendorUID", vendorData->getUID());
+
 		vendorData->setEmpty();
 
 		if (vendorData->isRegistered())

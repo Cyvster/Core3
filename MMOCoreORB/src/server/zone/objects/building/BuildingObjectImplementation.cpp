@@ -305,7 +305,7 @@ void BuildingObjectImplementation::notifyRemoveFromZone() {
 			Locker objLocker(obj);
 
 			if (obj->isVendor()) {
-				VendorManager::instance()->destroyVendor(obj->asTangibleObject());
+				VendorManager::instance()->destroyVendor(obj->asTangibleObject(), "building removed from world");
 			} else {
 				obj->destroyObjectFromWorld(true);
 			}

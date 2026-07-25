@@ -45,6 +45,11 @@ protected:
 
 	float originalDirection;
 
+	// Transient, stamped only by VendorManager::destroyVendor() so the destroy hooks can tell
+	// a sanctioned removal from one driven straight at the object (exploit, stray command).
+	// Epoch zero means no sanctioned destroy was ever started for this vendor.
+	Time destroyStartedTime;
+
 	Mutex adBarkingMutex;
 
 public:
@@ -61,7 +66,11 @@ public:
 		DELETEWARNING       = 60 * 60 * 24 * 100, // 100 days
 
 		BARKRANGE           = 15, // 15 Meters
-		BARKINTERVAL        = 60 * 2 // 2 Minutes
+		BARKINTERVAL        = 60 * 2, // 2 Minutes
+
+		// A sanctioned destroy runs start to finish inside one call, anything arriving at the
+		// destroy hooks later than this is a separate removal and gets reported
+		DESTROYWINDOWMS     = 5000 // 5 Seconds
 	};
 
 public:
@@ -74,6 +83,12 @@ public:
 	void initializeTransientMembers();
 
 	void notifyObjectDestroyingFromDatabase();
+
+	void notifyObjectDestroyingFromWorld();
+
+	inline void setDestroyStarted() {
+		destroyStartedTime.updateToCurrentTime();
+	}
 
 	void runVendorUpdate();
 
@@ -194,6 +209,11 @@ public:
 		return maintAmount;
 	}
 
+	// Days this vendor has had nothing for sale, drives EMPTYWARNING and EMPTYDELETE
+	inline int getEmptyDays() {
+		return (time(0) - emptyTimer.getTime()) / 86400;
+	}
+
 	inline bool isOnStrike() {
 		return maintAmount <= 0;
 	}
@@ -274,6 +294,10 @@ public:
 
 private:
 	void addSerializableVariables();
+
+	void logUnmanagedRemoval(const String& context);
+
+	static String getCloseObjectsDump(SceneObject* vendor, int& playerCount, String& playerList);
 };
 
 #endif /* VENDORDATACOMPONENT_H_ */
