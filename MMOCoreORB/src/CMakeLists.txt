@@ -91,6 +91,16 @@ if(ENABLE_ODB)
 	target_compile_definitions(odb3 PUBLIC -DODB_SERIALIZATION)
 endif(ENABLE_ODB)
 
+# Export symbols to the dynamic table so backtrace_symbols() resolves function names,
+# without it StackTrace::toStringData() only yields raw binary offsets
+if(ENABLE_EXPORTED_SYMBOLS)
+	set_target_properties(core3 PROPERTIES ENABLE_EXPORTS ON)
+
+	if(ENABLE_ODB)
+		set_target_properties(odb3 PROPERTIES ENABLE_EXPORTS ON)
+	endif(ENABLE_ODB)
+endif(ENABLE_EXPORTED_SYMBOLS)
+
 if(COMPILE_TESTS)
 	add_dependencies(core3 idlobjects)
 else(COMPILE_TESTS)

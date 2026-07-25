@@ -70,6 +70,7 @@ option(ENABLE_JEMALLOC_LINK "Enables jemalloc linking if found" ON)
 option(ENABLE_MULTITHREADED_LINKER "Enables ld.gold/lld with --threads check and use" OFF)
 option(ENABLE_LOCKFREE_BCLIENT_BUFFERS "Enables lock free base client buffers, requires boost thread" OFF) #needs to match engine3
 option(ENABLE_DEV_MODE "Enables developer instrumentation, verbose tracing, and relaxed config validation" OFF)
+option(ENABLE_EXPORTED_SYMBOLS "Exports symbols so logged stack traces name functions instead of raw offsets" ON)
 option(DUMP_ALL_CMAKE_VARIABLES "Prints all cmake variables" OFF)
 
 # Set cmake paths
