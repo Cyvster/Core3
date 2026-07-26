@@ -8,6 +8,7 @@ import engine.core.ManagedObject;
 include system.util.SortedVector;
 include system.util.VectorMap;
 
+@json
 class PlayerBounty extends ManagedObject {
 	protected unsigned long targetPlayerID;
 

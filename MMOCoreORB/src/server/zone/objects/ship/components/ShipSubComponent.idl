@@ -10,6 +10,7 @@ include server.zone.objects.manufactureschematic.craftingvalues.CraftingValues;
 include server.zone.packets.scene.AttributeListMessage;
 include server.zone.objects.creature.CreatureObject;
 
+@json
 class ShipSubComponent extends Component {
 	public ShipSubComponent() {
 		super();

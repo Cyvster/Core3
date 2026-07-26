@@ -46,6 +46,7 @@ include server.zone.objects.ship.transform.ShipObjectTransform;
 include server.zone.objects.ship.transform.SpaceTransform;
 
 
+@json
 class ShipObject extends TangibleObject {
 	public static final int HYPERSPACE_DELAY = 40;
 	public static final int NAVIGATOR_DELAY = 20;

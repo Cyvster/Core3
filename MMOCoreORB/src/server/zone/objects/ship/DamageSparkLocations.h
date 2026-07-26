@@ -4,6 +4,7 @@
 #include "system/lang/Object.h"
 #include "engine/util/u3d/Vector3.h"
 #include "system/util/VectorMap.h"
+#include "engine/util/json_utils.h"
 
 class DamageSparkLocations : public Object {
 protected:
@@ -11,6 +12,10 @@ protected:
 
 public:
 	DamageSparkLocations() {
+	}
+
+	friend void to_json(nlohmann::json& j, const DamageSparkLocations& p) {
+		j["sparkLocations"] = p.sparkLocations;
 	}
 
 	DamageSparkLocations(const DamageSparkLocations& locations) : Object() {

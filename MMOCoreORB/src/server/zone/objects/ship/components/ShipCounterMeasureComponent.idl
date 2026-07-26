@@ -11,6 +11,7 @@ include server.zone.objects.manufactureschematic.craftingvalues.CraftingValues;
 include server.zone.packets.scene.AttributeListMessage;
 include server.zone.objects.creature.CreatureObject;
 
+@json
 class ShipCounterMeasureComponent extends Component {
 	protected float effectivenessMin;
 	protected float effectivenessMax;

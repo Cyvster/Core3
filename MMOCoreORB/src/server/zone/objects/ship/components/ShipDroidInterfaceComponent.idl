@@ -13,6 +13,7 @@ include server.zone.objects.manufactureschematic.craftingvalues.CraftingValues;
 include server.zone.packets.scene.AttributeListMessage;
 include templates.SharedObjectTemplate;
 
+@json
 class ShipDroidInterfaceComponent extends ShipComponent {
 	protected float droidCommandSpeed;
 

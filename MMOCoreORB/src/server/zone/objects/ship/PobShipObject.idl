@@ -29,6 +29,7 @@ include server.zone.objects.ship.ShipPermissionList;
 include server.zone.objects.tangible.TangibleObject;
 
 
+@json
 class PobShipObject extends ShipObject {
 	public static final unsigned int MAX_PLAYER_ITEMS = 100;
 

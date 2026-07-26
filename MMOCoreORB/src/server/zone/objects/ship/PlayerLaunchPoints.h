@@ -4,6 +4,7 @@
 #include "system/lang/Object.h"
 #include "engine/util/u3d/Vector3.h"
 #include "system/util/VectorMap.h"
+#include "engine/util/json_utils.h"
 
 class PlayerLaunchPoints : public Object {
 protected:
@@ -11,6 +12,10 @@ protected:
 
 public:
 	PlayerLaunchPoints() {
+	}
+
+	friend void to_json(nlohmann::json& j, const PlayerLaunchPoints& p) {
+		j["spawnLocations"] = p.spawnLocations;
 	}
 
 	PlayerLaunchPoints(const PlayerLaunchPoints& points) : Object() {

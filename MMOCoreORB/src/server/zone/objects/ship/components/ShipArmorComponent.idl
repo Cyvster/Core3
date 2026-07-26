@@ -12,6 +12,7 @@ include server.zone.packets.scene.AttributeListMessage;
 import server.zone.objects.creature.CreatureObject;
 include templates.SharedObjectTemplate;
 
+@json
 class ShipArmorComponent extends ShipComponent {
 
 	public ShipArmorComponent() {

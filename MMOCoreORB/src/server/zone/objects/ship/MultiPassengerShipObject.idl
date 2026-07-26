@@ -10,6 +10,7 @@ include server.zone.objects.ship.FighterShipObject;
 include templates.SharedObjectTemplate;
 include templates.tangible.ship.SharedShipObjectTemplate;
 
+@json
 class MultiPassengerShipObject extends FighterShipObject {
 	public MultiPassengerShipObject() {
 		Logger.setLoggingName("MultiPassengerShipObject");

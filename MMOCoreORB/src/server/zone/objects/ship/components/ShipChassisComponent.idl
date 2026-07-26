@@ -12,6 +12,7 @@ include templates.SharedObjectTemplate;
 include server.zone.objects.manufactureschematic.craftingvalues.CraftingValues;
 import system.util.Vector;
 
+@json
 class ShipChassisComponent extends ShipComponent {
 	private string chassisDeed;
 	private string certification;

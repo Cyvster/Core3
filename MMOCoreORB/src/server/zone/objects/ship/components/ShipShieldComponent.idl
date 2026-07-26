@@ -12,6 +12,7 @@ include server.zone.packets.scene.AttributeListMessage;
 import server.zone.objects.creature.CreatureObject;
 include templates.SharedObjectTemplate;
 
+@json
 class ShipShieldComponent extends ShipComponent {
 	protected float rearHitpoints;
 	protected float frontHitpoints;

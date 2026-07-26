@@ -16,6 +16,7 @@ include server.zone.packets.DeltaMessage;
 include server.zone.objects.ship.ShipDeltaVector;
 include templates.tangible.ship.ShipComponentTemplate;
 
+@json
 class ShipComponent extends Component {
 	protected float mass;
 	protected float hitpointsMax;
