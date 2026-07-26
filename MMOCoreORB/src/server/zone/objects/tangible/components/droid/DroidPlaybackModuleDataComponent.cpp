@@ -559,6 +559,8 @@ int DroidPlaybackModuleDataComponent::writeObjectMembers(ObjectOutputStream* str
 	int _offset;
 	uint32 _totalSize;
 
+	int _varCount = writeClassNameMember(stream);
+
 	_name = "trackList";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
@@ -575,10 +577,13 @@ int DroidPlaybackModuleDataComponent::writeObjectMembers(ObjectOutputStream* str
 	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
 	stream->writeInt(_offset, _totalSize);
 
-	return 2;
+	return _varCount + 2;
 }
 
 bool DroidPlaybackModuleDataComponent::readObjectMember(ObjectInputStream* stream, const String& name) {
+	if (readClassNameMember(stream, name))
+		return true;
+
 	if (name == "trackList") {
 		TypeInfo< Vector<int> >::parseFromBinaryStream(&trackList, stream);
 		return true;

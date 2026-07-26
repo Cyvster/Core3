@@ -305,6 +305,8 @@ int DroidEffectsModuleDataComponent::writeObjectMembers(ObjectOutputStream* stre
 	int _offset;
 	uint32 _totalSize;
 
+	int _varCount = writeClassNameMember(stream);
+
 	_name = "installedEffects";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
@@ -329,10 +331,13 @@ int DroidEffectsModuleDataComponent::writeObjectMembers(ObjectOutputStream* stre
 	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
 	stream->writeInt(_offset, _totalSize);
 
-	return 3;
+	return _varCount + 3;
 }
 
 bool DroidEffectsModuleDataComponent::readObjectMember(ObjectInputStream* stream, const String& name) {
+
+	if (readClassNameMember(stream, name))
+		return true;
 
 	if (name == "installedEffects") {
 		TypeInfo< VectorMap<String,String> >::parseFromBinaryStream(&installedEffects, stream);

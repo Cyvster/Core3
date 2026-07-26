@@ -38,6 +38,8 @@ public:
 		int _offset;
 		uint32 _totalSize;
 
+		int _varCount = writeClassNameMember(stream);
+
 		_name = "fireworkList";
 		_name.toBinaryStream(stream);
 		_offset = stream->getOffset();
@@ -46,10 +48,13 @@ public:
 		_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
 		stream->writeInt(_offset, _totalSize);
 
-		return 1;
+		return _varCount + 1;
 	}
 
 	bool readObjectMember(ObjectInputStream* stream, const String& name) {
+		if (readClassNameMember(stream, name))
+			return true;
+
 		if (name == "fireworkList") {
 			TypeInfo<VectorMap<ManagedReference<FireworkObject*>, int> >::parseFromBinaryStream(&fireworkList, stream);
 

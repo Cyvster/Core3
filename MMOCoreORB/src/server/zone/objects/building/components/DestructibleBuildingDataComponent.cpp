@@ -78,6 +78,8 @@ int DestructibleBuildingDataComponent::writeObjectMembers(ObjectOutputStream* st
 	int _offset;
 	uint32 _totalSize;
 
+	int _varCount = writeClassNameMember(stream);
+
 	_name = "placementTime";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
@@ -198,10 +200,13 @@ int DestructibleBuildingDataComponent::writeObjectMembers(ObjectOutputStream* st
 	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
 	stream->writeInt(_offset, _totalSize);
 
-	return 15;
+	return _varCount + 15;
 }
 
 bool DestructibleBuildingDataComponent::readObjectMember(ObjectInputStream* stream, const String& name) {
+	if (readClassNameMember(stream, name))
+		return true;
+
 	if (name == "placementTime") {
 		TypeInfo<Time >::parseFromBinaryStream(&placementTime, stream);
 		return true;

@@ -39,7 +39,12 @@ public:
 	}
 
 	DataObjectComponent* getDataObjectComponent(const String& name) {
-		return dataObjectFactory.createObject(name);
+		DataObjectComponent* component = dataObjectFactory.createObject(name);
+
+		if (component != nullptr)
+			component->_setClassName(name);
+
+		return component;
 	}
 
 	void putComponent(const String& name, SceneObjectComponent* component) {

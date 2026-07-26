@@ -22,6 +22,33 @@ void DataObjectComponent::notifyObjectDestroyingFromDatabase() {
 
 }
 
+int DataObjectComponent::writeClassNameMember(ObjectOutputStream* stream) {
+	String name = "_className";
+	name.toBinaryStream(stream);
+
+	int offset = stream->getOffset();
+	stream->writeInt(0);
+
+	_getClassName().toBinaryStream(stream);
+
+	stream->writeInt(offset, (uint32) (stream->getOffset() - (offset + 4)));
+
+	return 1;
+}
+
+bool DataObjectComponent::readClassNameMember(ObjectInputStream* stream, const String& name) {
+	if (name != "_className")
+		return false;
+
+	String className;
+	className.parseFromBinaryStream(stream);
+
+	if (!className.isEmpty())
+		_setClassName(className);
+
+	return true;
+}
+
 void DataObjectComponent::setParent(SceneObject* object) {
 	parent = object;
 }

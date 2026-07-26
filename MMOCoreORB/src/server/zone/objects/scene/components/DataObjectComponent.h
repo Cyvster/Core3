@@ -32,6 +32,12 @@ class DataObjectComponent : public SceneObjectComponent, public Serializable {
 protected:
 	ManagedWeakReference<SceneObject*> parent;
 
+	// counterparts to the "_className" variable that Serializable-map based
+	// components persist automatically; for hand-written writeObjectMembers/
+	// readObjectMember serializers
+	int writeClassNameMember(ObjectOutputStream* stream);
+	bool readClassNameMember(ObjectInputStream* stream, const String& name);
+
 public:
 
 	DataObjectComponent();
