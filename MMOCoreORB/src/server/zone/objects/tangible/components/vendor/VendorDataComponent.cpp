@@ -52,6 +52,7 @@ void VendorDataComponent::addSerializableVariables() {
 	addSerializableVariable("adBarking", &adBarking);
 	addSerializableVariable("mail1Sent", &mail1Sent);
 	addSerializableVariable("emptyTimer", &emptyTimer);
+	addSerializableVariable("inactiveTimer", &inactiveTimer);
 	addSerializableVariable("barkMessage", &barkMessage);
 	addSerializableVariable("barkMood", &barkMood);
 	addSerializableVariable("barkAnimation", &barkAnimation);
@@ -73,6 +74,7 @@ void VendorDataComponent::writeJSON(nlohmann::json& j) const {
 	SERIALIZE_JSON_MEMBER(adBarking);
 	SERIALIZE_JSON_MEMBER(mail1Sent);
 	SERIALIZE_JSON_MEMBER(emptyTimer);
+	SERIALIZE_JSON_MEMBER(inactiveTimer);
 	SERIALIZE_JSON_MEMBER(barkMessage);
 	SERIALIZE_JSON_MEMBER(barkMood);
 	SERIALIZE_JSON_MEMBER(barkAnimation);
