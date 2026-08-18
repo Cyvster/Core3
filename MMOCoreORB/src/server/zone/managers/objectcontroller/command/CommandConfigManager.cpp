@@ -29,7 +29,6 @@
 #include "server/zone/packets/object/CombatAction.h"
 
 #include "server/zone/objects/creature/commands/AdminCommand.h"
-#include "server/zone/managers/customskill/CustomSkillCommand.h"
 #include "server/zone/objects/creature/commands/CombatQueueCommand.h"
 #include "server/zone/objects/creature/commands/SquadLeaderCommand.h"
 #include "server/zone/objects/creature/commands/ForceHealQueueCommand.h"
@@ -341,8 +340,6 @@ void CommandConfigManager::registerSpecialCommands(CommandList* sCommands) {
 	info(true) << "Loading Special Commands...";
 
 	slashCommands = sCommands;
-
-	slashCommands->put(new CustomSkillCommand("customskills", server));
 
 	QueueCommand* admin = new AdminCommand("admin", server);
 	slashCommands->put(admin);
