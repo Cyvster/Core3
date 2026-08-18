@@ -8,6 +8,7 @@
 #define CUSTOMSKILLMANAGER_H_
 
 #include "engine/engine.h"
+#include <vector>
 
 namespace server {
 namespace zone {
@@ -41,7 +42,7 @@ struct CustomSkillDefinition {
 };
 
 class CustomSkillManager : public Singleton<CustomSkillManager>, public Logger, public Object {
-	Vector<CustomSkillDefinition> definitions;
+	std::vector<CustomSkillDefinition> definitions;
 
 	static const String SCREENPLAY;
 

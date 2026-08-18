@@ -18,11 +18,11 @@ CustomSkillManager::CustomSkillManager()
 }
 
 void CustomSkillManager::loadDefaultDefinitions() {
-	definitions.add(CustomSkillDefinition("custom_skill_1", "Custom Skill 1", "Placeholder custom skill.", 10));
-	definitions.add(CustomSkillDefinition("custom_skill_2", "Custom Skill 2", "Placeholder custom skill.", 10));
-	definitions.add(CustomSkillDefinition("custom_skill_3", "Custom Skill 3", "Placeholder custom skill.", 10));
-	definitions.add(CustomSkillDefinition("custom_skill_4", "Custom Skill 4", "Placeholder custom skill.", 10));
-	definitions.add(CustomSkillDefinition("custom_skill_5", "Custom Skill 5", "Placeholder custom skill.", 10));
+	definitions.push_back(CustomSkillDefinition("custom_skill_1", "Custom Skill 1", "Placeholder custom skill.", 10));
+	definitions.push_back(CustomSkillDefinition("custom_skill_2", "Custom Skill 2", "Placeholder custom skill.", 10));
+	definitions.push_back(CustomSkillDefinition("custom_skill_3", "Custom Skill 3", "Placeholder custom skill.", 10));
+	definitions.push_back(CustomSkillDefinition("custom_skill_4", "Custom Skill 4", "Placeholder custom skill.", 10));
+	definitions.push_back(CustomSkillDefinition("custom_skill_5", "Custom Skill 5", "Placeholder custom skill.", 10));
 }
 
 void CustomSkillManager::openMenu(CreatureObject* player) {
@@ -41,7 +41,7 @@ void CustomSkillManager::openMenu(CreatureObject* player) {
 	box->setCallback(new CustomSkillSuiCallback(player->getZoneServer()));
 
 	for (int i = 0; i < definitions.size(); ++i) {
-		const CustomSkillDefinition& definition = definitions.get(i);
+		const CustomSkillDefinition& definition = definitions[i];
 		String label = definition.name + "  (" + String::valueOf(getSkillLevel(player, definition.id)) + "/" + String::valueOf(definition.maxLevel) + ")";
 		box->addMenuItem(label, i);
 	}
@@ -73,8 +73,8 @@ void CustomSkillManager::setSkillLevel(CreatureObject* player, const String& ski
 	const CustomSkillDefinition* definition = nullptr;
 
 	for (int i = 0; i < definitions.size(); ++i) {
-		if (definitions.get(i).id == skillId) {
-			definition = &definitions.get(i);
+		if (definitions[i].id == skillId) {
+			definition = &definitions[i];
 			break;
 		}
 	}
@@ -90,7 +90,7 @@ const CustomSkillDefinition* CustomSkillManager::getDefinition(int index) const 
 	if (index < 0 || index >= definitions.size())
 		return nullptr;
 
-	return &definitions.get(index);
+	return &definitions[index];
 }
 
 int CustomSkillManager::getDefinitionCount() const {
