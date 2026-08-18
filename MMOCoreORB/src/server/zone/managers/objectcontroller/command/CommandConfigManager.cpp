@@ -342,8 +342,7 @@ void CommandConfigManager::registerSpecialCommands(CommandList* sCommands) {
 
 	slashCommands = sCommands;
 
-	QueueCommand* customSkills = new CustomSkillCommand("customskills", server);
-	slashCommands->put(customSkills);
+	slashCommands->put(new CustomSkillCommand("customskills", server));
 
 	QueueCommand* admin = new AdminCommand("admin", server);
 	slashCommands->put(admin);
