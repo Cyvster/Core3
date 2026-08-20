@@ -8,6 +8,8 @@
 #include "CombatManager.h"
 #include "CreatureAttackData.h"
 #include "DefenderHitList.h"
+#include "server/zone/managers/customskills/durability/CustomSkillsDurability.h"
+#include "server/zone/managers/customskills/combat/CustomSkillsCombat.h"
 #include "server/zone/objects/scene/variables/DeltaVector.h"
 #include "server/zone/objects/building/BuildingObject.h"
 #include "server/zone/objects/creature/CreatureObject.h"
@@ -29,7 +31,6 @@
 #include "server/zone/objects/installation/InstallationObject.h"
 #include "server/zone/packets/object/ShowFlyText.h"
 #include "server/zone/managers/frs/FrsManager.h"
-#include "server/zone/managers/customskills/combat/CustomSkillsCombat.h"
 #include "server/zone/objects/intangible/PetControlDevice.h"
 #include "server/zone/objects/installation/TurretObject.h"
 
@@ -1668,7 +1669,7 @@ int CombatManager::applyDamage(CreatureObject* attacker, WeaponObject* weapon, T
 		int armorReduction = getArmorTurretReduction(attacker, defender, damageType);
 
 		if (armorReduction >= 0)
-			damage *= getArmorPiercing(defender, armorPiercing);
+			damage *= getArmorPiercing(attacker, defender, armorPiercing);
 
 		if (armorReduction > 0) {
 			damage *= (1.f - (armorReduction / 100.f));
@@ -2029,8 +2030,9 @@ int CombatManager::getDefenderDefenseModifier(CreatureObject* defender, WeaponOb
 	debug() << "Base target defense is " << targetDefense;
 
 	// defense hardcap
-	if (targetDefense > 125)
-		targetDefense = 125;
+	int defenseCap = CustomSkillsCombat::getDefenseCap(defender, 125);
+	if (targetDefense > defenseCap)
+		targetDefense = defenseCap;
 
 	if (attacker->isPlayerCreature())
 		targetDefense += defender->getSkillMod("private_defense");
@@ -2065,8 +2067,9 @@ int CombatManager::getDefenderSecondaryDefenseModifier(CreatureObject* defender)
 		targetDefense += defender->getSkillMod("private_" + mod);
 	}
 
-	if (targetDefense > 125)
-		targetDefense = 125;
+	int defenseCap = CustomSkillsCombat::getDefenseCap(defender, 125);
+	if (targetDefense > defenseCap)
+		targetDefense = defenseCap;
 
 	return targetDefense;
 }
@@ -2466,7 +2469,7 @@ int CombatManager::getArmorReduction(TangibleObject* attacker, WeaponObject* wea
 		float armorReduction = getArmorNpcReduction(cast<AiAgent*>(defender), damageType);
 
 		if (armorReduction >= 0)
-			damage *= getArmorPiercing(cast<AiAgent*>(defender), armorPiercing);
+			damage *= getArmorPiercing(attacker, cast<AiAgent*>(defender), armorPiercing);
 
 		if (armorReduction > 0) {
 			damage *= (1.f - (armorReduction / 100.f));
@@ -2480,7 +2483,7 @@ int CombatManager::getArmorReduction(TangibleObject* attacker, WeaponObject* wea
 		float armorReduction = getArmorVehicleReduction(cast<VehicleObject*>(defender), damageType);
 
 		if (armorReduction >= 0)
-			damage *= getArmorPiercing(cast<VehicleObject*>(defender), armorPiercing);
+			damage *= getArmorPiercing(attacker, cast<VehicleObject*>(defender), armorPiercing);
 
 		if (armorReduction > 0)
 			damage *= (1.f - (armorReduction / 100.f));
@@ -2553,7 +2556,7 @@ int CombatManager::getArmorReduction(TangibleObject* attacker, WeaponObject* wea
 		float armorReduction = getArmorObjectReduction(psg, damageType);
 		float dmgAbsorbed = damage;
 
-		damage *= getArmorPiercing(psg, armorPiercing);
+		damage *= getArmorPiercing(attacker, psg, armorPiercing);
 
 		if (armorReduction > 0)
 			damage *= 1.f - (armorReduction / 100.f);
@@ -2568,7 +2571,8 @@ int CombatManager::getArmorReduction(TangibleObject* attacker, WeaponObject* wea
 
 		Locker plocker(psg);
 
-		psg->inflictDamage(psg, 0, damage * 0.2, true, true);
+		if (CustomSkillsDurability::shouldDegradeArmor(defender))
+			psg->inflictDamage(psg, 0, damage * 0.2, true, true);
 	}
 
 	// Standard Armor
@@ -2581,7 +2585,7 @@ int CombatManager::getArmorReduction(TangibleObject* attacker, WeaponObject* wea
 		float dmgAbsorbed = damage;
 
 		// use only the damage applied to the armor for piercing (after the PSG takes some off)
-		damage *= getArmorPiercing(armor, armorPiercing);
+		damage *= getArmorPiercing(attacker, armor, armorPiercing);
 
 		if (armorReduction > 0) {
 			damage *= (1.f - (armorReduction / 100.f));
@@ -2596,7 +2600,8 @@ int CombatManager::getArmorReduction(TangibleObject* attacker, WeaponObject* wea
 		// inflict condition damage
 		Locker alocker(armor);
 
-		armor->inflictDamage(armor, 0, damage * 0.2, true, true);
+		if (CustomSkillsDurability::shouldDegradeArmor(defender))
+			armor->inflictDamage(armor, 0, damage * 0.2, true, true);
 	}
 
 	return damage;
@@ -2650,7 +2655,7 @@ int CombatManager::getArmorTurretReduction(CreatureObject* attacker, TangibleObj
 	return resist;
 }
 
-float CombatManager::getArmorPiercing(TangibleObject* defender, int armorPiercing) const {
+float CombatManager::getArmorPiercing(TangibleObject* attacker, TangibleObject* defender, int armorPiercing) const {
 	int armorReduction = 0;
 
 	if (defender->isAiAgent()) {
@@ -2671,6 +2676,8 @@ float CombatManager::getArmorPiercing(TangibleObject* defender, int armorPiercin
 			armorReduction = turret->getArmorRating();
 		}
 	}
+
+	armorReduction = CustomSkillsCombat::getEffectiveArmorRating(attacker, armorReduction);
 
 	if (armorPiercing > armorReduction)
 		return pow(1.25, armorPiercing - armorReduction);
@@ -2702,7 +2709,7 @@ float CombatManager::doObjectDetonation(TangibleObject* attackerTanO, CreatureOb
 			int armorResist = defenderVehicle->getBlast();
 
 			if (armorResist > 0) {
-				damage *= getArmorPiercing(defenderVehicle, armorPiercing);
+				damage *= getArmorPiercing(attackerTanO, defenderVehicle, armorPiercing);
 
 				damage *= (1.f - (armorResist / 100.f));
 			}
@@ -2744,7 +2751,7 @@ float CombatManager::doObjectDetonation(TangibleObject* attackerTanO, CreatureOb
 				int armorResist = agent->getBlast();
 
 				if (armorResist > 0) {
-					damage *= getArmorPiercing(agent, armorPiercing);
+					damage *= getArmorPiercing(attackerTanO, agent, armorPiercing);
 
 					damage *= (1.f - (armorResist / 100.f));
 				}
@@ -2762,7 +2769,7 @@ float CombatManager::doObjectDetonation(TangibleObject* attackerTanO, CreatureOb
 			if (psgArmor != nullptr && !psgArmor->isVulnerable(SharedWeaponObjectTemplate::BLAST)) {
 				float armorReduction = psgArmor->getBlast();
 
-				damage *= getArmorPiercing(psgArmor, armorPiercing);
+				damage *= getArmorPiercing(attackerTanO, psgArmor, armorPiercing);
 
 				if (armorReduction > 0) {
 					damage *= (1.f - (armorReduction / 100.f));
@@ -2770,7 +2777,8 @@ float CombatManager::doObjectDetonation(TangibleObject* attackerTanO, CreatureOb
 
 				Locker plocker(psgArmor, attackerTanO);
 
-				psgArmor->inflictDamage(psgArmor, 0, damage * 0.2, true, true);
+				if (CustomSkillsDurability::shouldDegradeArmor(defender))
+					psgArmor->inflictDamage(psgArmor, 0, damage * 0.2, true, true);
 			}
 
 			ManagedReference<ArmorObject*> armor = getArmorObject(defender, hitLocation);
@@ -2780,7 +2788,7 @@ float CombatManager::doObjectDetonation(TangibleObject* attackerTanO, CreatureOb
 				float armorReduction = getArmorObjectReduction(armor, SharedWeaponObjectTemplate::BLAST);
 
 				// use only the damage applied to the armor for piercing (after the PSG takes some off)
-				damage *= getArmorPiercing(armor, armorPiercing);
+				damage *= getArmorPiercing(attackerTanO, armor, armorPiercing);
 
 				if (armorReduction > 0) {
 					damage *= (1.f - (armorReduction / 100.f));
@@ -2789,7 +2797,8 @@ float CombatManager::doObjectDetonation(TangibleObject* attackerTanO, CreatureOb
 				// inflict condition damage
 				Locker alocker(armor, attackerTanO);
 
-				armor->inflictDamage(armor, 0, damage * 0.2, true, true);
+				if (CustomSkillsDurability::shouldDegradeArmor(defender))
+					armor->inflictDamage(armor, 0, damage * 0.2, true, true);
 			}
 		}
 

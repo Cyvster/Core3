@@ -5,6 +5,7 @@
 #include "server/zone/managers/resource/ResourceManager.h"
 #include "server/zone/managers/combat/CombatManager.h"
 #include "server/zone/managers/creature/CreatureManager.h"
+#include "server/zone/managers/customskills/gathering/CustomSkillsGathering.h"
 #include "server/zone/objects/creature/CreatureObject.h"
 #include "server/zone/objects/transaction/TransactionLog.h"
 #include "engine/engine.h"
@@ -129,6 +130,8 @@ public:
 		} else {
 			quantityExtracted = int(quantityExtracted * 0.50f);
 		}
+
+		quantityExtracted = CustomSkillsGathering::modifyMilkQuantity(player, quantityExtracted);
 
 		TransactionLog trx(TrxCode::HARVESTED, player, resourceSpawn);
 		resourceManager->harvestResourceToPlayer(trx, player, resourceSpawn, quantityExtracted);

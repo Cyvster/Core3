@@ -3,6 +3,8 @@
 		See file COPYING for copying conditions. */
 
 #include "server/zone/objects/creature/CreatureObject.h"
+#include "server/zone/managers/customskills/buffs/CustomSkillsBuffs.h"
+#include "server/zone/managers/customskills/skillmods/CustomSkillsSkillMods.h"
 #include "server/zone/objects/creature/ai/AiAgent.h"
 #include "server/zone/objects/creature/ai/HelperDroidObject.h"
 #include "templates/params/creature/CreatureState.h"
@@ -1655,7 +1657,8 @@ void CreatureObjectImplementation::addSkillMod(const int modType, const String& 
 
 	skillModList.add(modType, skillMod, value);
 
-	SkillModEntry newMod = skillModList.getVisibleSkillMod(skillMod);
+	SkillModEntry newMod = CustomSkillsSkillMods::getVisibleSkillMod(asCreatureObject(), skillModList,
+		skillMod, skillModList.getVisibleSkillMod(skillMod));
 
 	if (newMod == oldMod) {
 		return;
@@ -1707,7 +1710,8 @@ void CreatureObjectImplementation::removeAllSkillModsOfType(const int modType, b
 int CreatureObjectImplementation::getSkillMod(const String& skillmod) const {
 	ReadLocker locker(&skillModMutex);
 
-	return skillModList.getSkillMod(skillmod);
+	return CustomSkillsSkillMods::getSkillMod(const_cast<CreatureObjectImplementation*>(this)->asCreatureObject(),
+		skillModList, skillmod, skillModList.getSkillMod(skillmod));
 }
 
 int CreatureObjectImplementation::getSkillModOfType(const String& skillmod, const unsigned int modType) {
@@ -3021,9 +3025,10 @@ void CreatureObjectImplementation::renewBuff(uint32 buffCRC, int duration, bool 
 	if (buff != nullptr) {
 
 		Locker blocker(buff, creo);
+		const float effectiveDuration = CustomSkillsBuffs::getDuration(creo, buff, duration);
 
-		if (buff->getTimeLeft() < duration) {
-			buff->renew(duration);
+		if (buff->getTimeLeft() < effectiveDuration) {
+			buff->renew(effectiveDuration);
 
 			if(sendToClient)
 				buff->sendTo(creo);

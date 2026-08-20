@@ -6,6 +6,7 @@
 #define CREATUREOBJECTDELTAMESSAGE4_H_
 
 #include "server/zone/packets/DeltaMessage.h"
+#include "server/zone/managers/customskills/movement/CustomSkillsMovement.h"
 
 class CreatureObjectDeltaMessage4 : public DeltaMessage {
 	CreatureObject* creo;
@@ -37,7 +38,7 @@ public:
 	}
 
 	void updateRunSpeed() {
-		addFloatUpdate(0x07, creo->getRunSpeed());
+		addFloatUpdate(0x07, CustomSkillsMovement::getSpeed(creo, creo->getRunSpeed()));
 	}
 
 	void updateSlopeModAngle() {

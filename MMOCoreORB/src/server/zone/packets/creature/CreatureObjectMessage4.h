@@ -7,6 +7,8 @@
 
 #include "server/zone/packets/BaseLineMessage.h"
 #include "server/zone/objects/creature/CreatureObject.h"
+#include "server/zone/managers/customskills/movement/CustomSkillsMovement.h"
+#include "server/zone/managers/customskills/skillmods/CustomSkillsSkillMods.h"
 
 class CreatureObjectMessage4 : public BaseLineMessage {
 public:
@@ -21,7 +23,8 @@ public:
 
 		// Skill Mods.
 		const SkillModList* skillMods = creo->getSkillModList();
-		skillMods->insertToMessage(this);
+		SkillModList visibleSkillMods = CustomSkillsSkillMods::getVisibleSkillModList(creo, *skillMods);
+		visibleSkillMods.insertToMessage(this);
 
 		// Speed Multipliers.
 		insertFloat(creo->getSpeedMultiplierBase());
@@ -31,7 +34,7 @@ public:
 		insertLong(creo->getListenID());
 
 		// Run Speed.
-		insertFloat(creo->getRunSpeed());
+		insertFloat(CustomSkillsMovement::getSpeed(creo, creo->getRunSpeed()));
 
 		// Slope Mods - Terrain Negotiation
 		insertFloat(creo->getSlopeModAngle());

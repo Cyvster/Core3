@@ -6,6 +6,7 @@
  */
 
 #include "server/zone/objects/tangible/weapon/WeaponObject.h"
+#include "server/zone/managers/customskills/durability/CustomSkillsDurability.h"
 #include "server/zone/packets/tangible/WeaponObjectMessage3.h"
 #include "server/zone/packets/tangible/WeaponObjectMessage6.h"
 #include "server/zone/objects/creature/CreatureObject.h"
@@ -738,13 +739,12 @@ void WeaponObjectImplementation::decay(CreatureObject* user) {
 		return;
 	}
 
-	int roll = System::random(100);
 	int chance = 5;
 
 	if (hasPowerup())
 		chance += 10;
 
-	if (roll < chance) {
+	if (CustomSkillsDurability::shouldDegradeWeapon(user, chance)) {
 		Locker locker(_this.getReferenceUnsafeStaticCast());
 
 		if (isJediWeapon()) {

@@ -7,6 +7,7 @@
 #include "server/zone/objects/tangible/misc/CustomIngredient.h"
 #include "server/zone/objects/manufactureschematic/ingredientslots/ComponentSlot.h"
 #include "server/zone/objects/manufactureschematic/ingredientslots/ResourceSlot.h"
+#include "server/zone/managers/customskills/crafting/CustomSkillsCrafting.h"
 
 SharedLabratory::SharedLabratory() : Logger("SharedLabratory"){
 }
@@ -173,7 +174,13 @@ int SharedLabratory::calculateAssemblySuccess(CreatureObject* player,DraftSchema
 
 	int luckRoll = System::random(100) + cityBonus;
 
+	const float amazingThreshold = 95 - craftbonus - cityBonus;
 	if(luckRoll > (95 - craftbonus))
+		return CraftingManager::AMAZINGSUCCESS;
+
+	const int firstAmazingRoll = Math::max(0, Math::min(101, static_cast<int>(floor(amazingThreshold)) + 1));
+	const int nativeAmazingChance = ((101 - firstAmazingRoll) * 10000) / 101;
+	if (CustomSkillsCrafting::shouldPromoteAmazingFailure(player, nativeAmazingChance))
 		return CraftingManager::AMAZINGSUCCESS;
 
 	if(luckRoll < (5 - craftbonus - failMitigate))

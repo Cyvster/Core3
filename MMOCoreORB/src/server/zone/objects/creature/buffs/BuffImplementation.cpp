@@ -11,6 +11,7 @@
 #include "server/zone/objects/creature/CreatureObject.h"
 #include "server/zone/packets/object/Buffs.h"
 #include "server/zone/managers/skill/SkillModManager.h"
+#include "server/zone/managers/customskills/buffs/CustomSkillsBuffs.h"
 
 void BuffImplementation::init() {
 	attributeModifiers.setNoDuplicateInsertPlan();
@@ -98,6 +99,9 @@ void BuffImplementation::activate(bool applyModifiers) {
 	debug() << "activating buff with crc " << hex << buffCRC;
 
 	try {
+		ManagedReference<CreatureObject*> creo = creature.get();
+		buffDuration = CustomSkillsBuffs::getDuration(creo, _this.getReferenceUnsafeStaticCast(), buffDuration);
+
 		if (applyModifiers)
 			applyAllModifiers();
 
@@ -107,7 +111,6 @@ void BuffImplementation::activate(bool applyModifiers) {
 
 		debug() << "nextExecutionTime miliDifference:" << nextExecutionTime.miliDifference();
 
-		ManagedReference<CreatureObject*> creo = creature.get();
 		if (creo->isPlayerCreature())
 			sendTo(creo);
 

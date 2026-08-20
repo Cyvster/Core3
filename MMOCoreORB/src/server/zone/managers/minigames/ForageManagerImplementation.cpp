@@ -6,6 +6,7 @@
  */
 
 #include "server/zone/managers/minigames/ForageManager.h"
+#include "server/zone/managers/customskills/gathering/CustomSkillsGathering.h"
 #include "server/zone/managers/loot/LootManager.h"
 #include "server/zone/managers/resource/ResourceManager.h"
 #include "server/zone/managers/minigames/events/ForagingEvent.h"
@@ -403,6 +404,7 @@ bool ForageManagerImplementation::forageGiveResource(TransactionLog& trx, Creatu
 	}
 
 	int quantity = System::random(30) + 10;
+	quantity = CustomSkillsGathering::modifyForageQuantity(player, quantity);
 	resourceManager->harvestResourceToPlayer(trx, player, resource, quantity);
 	return true;
 }

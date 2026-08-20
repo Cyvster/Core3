@@ -180,6 +180,24 @@ public:
 		return 0;
 	}
 
+	const SkillModGroup* getSkillModGroupIfPresent(const uint32 type) const {
+		for (int i = 0; i < mods.size(); ++i) {
+			if (mods.elementAt(i).getKey() == type)
+				return &mods.elementAt(i).getValue();
+		}
+		return nullptr;
+	}
+
+	int getRawSkillModOfType(const String& skillMod, const uint32 modType) const {
+		for (int i = 0; i < mods.size(); ++i) {
+			if (mods.elementAt(i).getKey() != modType)
+				continue;
+			const SkillModGroup& group = mods.elementAt(i).getValue();
+			return group.contains(skillMod) ? group.get(skillMod) : 0;
+		}
+		return 0;
+	}
+
 	String getPrintableSkillModList() const {
 		VectorMap<String, int> skills;
 		skills.setAllowOverwriteInsertPlan();

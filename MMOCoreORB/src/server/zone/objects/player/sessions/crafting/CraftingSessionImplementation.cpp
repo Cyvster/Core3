@@ -7,6 +7,7 @@
 
 #include "server/zone/objects/scene/variables/StringId.h"
 #include "server/zone/objects/player/sessions/crafting/CraftingSession.h"
+#include "server/zone/managers/customskills/crafting/CustomSkillsCrafting.h"
 #include "server/zone/managers/player/PlayerManager.h"
 #include "server/zone/objects/creature/CreatureObject.h"
 #include "server/zone/objects/player/PlayerObject.h"
@@ -773,6 +774,8 @@ void CraftingSessionImplementation::initialAssembly(int clientCounter) {
 
 	// Set initial crafting percentages
 	craftingManager->setInitialCraftingValues(prototype, manufactureSchematic, assemblyResult);
+	CustomSkillsCrafting::applyAmazingResults(crafter, manufactureSchematic->getCraftingValues(), assemblyResult,
+		CraftingManager::AMAZINGSUCCESS);
 	// prototype->setInitialCraftingValues(manufactureSchematic, assemblyResult);
 
 	Reference<CraftingValues*> craftingValues = manufactureSchematic->getCraftingValues();
@@ -1121,6 +1124,8 @@ void CraftingSessionImplementation::experiment(int rowsAttempted, const String& 
 
 		// Do the experimenting - sets new percentages
 		craftingManager->experimentRow(manufactureSchematic, craftingValues, rowEffected, pointsAttempted, failure, experimentationResult);
+		CustomSkillsCrafting::applyAmazingResults(crafter, craftingValues, experimentationResult,
+			CraftingManager::AMAZINGSUCCESS, craftingValues->getVisibleAttributeGroup(rowEffected));
 
 #ifdef DEBUG_EXPERIMENTATION
 		info(true) << "Successful Experimentation for Row #" << i << " Using " << pointsAttempted << " points. NEW Remaining Experimentation Points: " << (experimentationPointsTotal - experimentationPointsUsed);
@@ -1393,6 +1398,7 @@ void CraftingSessionImplementation::createPrototype(int clientCounter, bool crea
 			// This is for practicing
 			startCreationTasks(manufactureSchematic->getComplexity() * 2, true);
 			xp = round(xp * 1.05f);
+			xp = CustomSkillsCrafting::modifyPracticeExperience(crafter, xp);
 		}
 
 		Reference<PlayerManager*> playerManager = crafter->getZoneServer()->getPlayerManager();
@@ -1412,6 +1418,7 @@ void CraftingSessionImplementation::createPrototype(int clientCounter, bool crea
 void CraftingSessionImplementation::startCreationTasks(int timer, bool practice) {
 	ManagedReference<CraftingTool*> craftingTool = this->craftingTool.get();
 	ManagedReference<CreatureObject*> crafter = this->crafter.get();
+	timer = CustomSkillsCrafting::getPersonalCraftingDuration(crafter, timer);
 
 	ManagedReference<ZoneServer*> server = crafter->getZoneServer();
 

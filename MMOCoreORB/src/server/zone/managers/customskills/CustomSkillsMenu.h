@@ -4,6 +4,7 @@
 
 #include "server/zone/objects/creature/CreatureObject.h"
 #include "server/zone/objects/player/sui/listbox/SuiListBox.h"
+#include "CustomSkillsModifierType.h"
 
 class CustomSkillsMenu {
 public:
@@ -26,7 +27,8 @@ private:
 	static void addCategoryItem(SuiListBox* box, CreatureObject* player, const String& name, Page category);
 	static int getAcquiredCount(CreatureObject* player, Page page);
 	static int countAcquired(CreatureObject* player, const char* const* keys, int count);
-	static int getCriticalChance(CreatureObject* player, Page page);
+	static int getModifierTotal(CreatureObject* player, Page page, CustomSkillsModifierType::Type type);
+	static int countModifier(CreatureObject* player, const char* const* keys, int count, CustomSkillsModifierType::Type type);
 	static String getPromptText(CreatureObject* player, Page page);
 	static String getTitle(Page page);
 };

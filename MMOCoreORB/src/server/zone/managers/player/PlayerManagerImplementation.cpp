@@ -6,6 +6,9 @@
  */
 
 #include "server/zone/managers/player/PlayerManager.h"
+#include "server/zone/managers/customskills/progression/CustomSkillsProgression.h"
+#include "server/zone/managers/customskills/movement/CustomSkillsMovement.h"
+#include "server/zone/managers/customskills/CustomSkillsModifiers.h"
 #include <utility>
 #include <mutex>
 
@@ -2527,6 +2530,7 @@ void PlayerManagerImplementation::awardBadge(PlayerObject* ghost, const Badge* b
 	}
 
 	ghost->setBadge(badgeId);
+	CustomSkillsModifiers::notifyBadgeAwarded(player);
 	stringId.setStringId("badge_n", "prose_grant");
 	player->sendSystemMessage(stringId);
 
@@ -2627,7 +2631,14 @@ int PlayerManagerImplementation::awardExperience(CreatureObject* player, const S
 		trx.addState("localMultiplier", localMultiplier);
 		trx.addState("globalExpMultiplier", globalExpMultiplier);
 
-		xp = playerObject->addExperience(trx, xpType, (int) (amount * speciesModifier * buffMultiplier * localMultiplier * globalExpMultiplier));
+		// Custom bonuses apply only to positive awards. Penalties and deductions
+		// retain the native server behavior.
+		int customMultiplier = amount > 0 ? CustomSkillsProgression::getExperienceMultiplier(player) : 10000;
+		trx.addState("customSkillsMultiplier", customMultiplier);
+		float modifiedAmount = amount * speciesModifier * buffMultiplier * localMultiplier * globalExpMultiplier;
+		if (customMultiplier != 10000)
+			modifiedAmount *= customMultiplier / 10000.f;
+		xp = playerObject->addExperience(trx, xpType, (int)modifiedAmount);
 	} else {
 		xp = playerObject->addExperience(trx, xpType, (int)amount);
 	}
@@ -4033,7 +4044,7 @@ bool PlayerManagerImplementation::checkPlayerSpeedTest(CreatureObject* player, S
 		}
 	}
 
-	float maxAllowedSpeed = allowedSpeedMod * allowedSpeedBase;
+	float maxAllowedSpeed = CustomSkillsMovement::getSpeed(player, allowedSpeedMod * allowedSpeedBase);
 	float maxSpeedVariable = (maxAllowedSpeed * errorMultiplier);
 
 #ifdef DEBUG_SPEED_HACK
@@ -4095,7 +4106,7 @@ bool PlayerManagerImplementation::checkPlayerSpeedTest(CreatureObject* player, S
 			SpeedModChange* change = &changeBuffer->get(i);
 
 			float oldSpeedMod = change->getNewSpeed();
-			float allowed = allowedSpeedBase * oldSpeedMod * errorMultiplier;
+			float allowed = CustomSkillsMovement::getSpeed(player, allowedSpeedBase * oldSpeedMod) * errorMultiplier;
 
 			if (allowed >= parsedSpeed) {
 #ifdef DEBUG_SPEED_HACK

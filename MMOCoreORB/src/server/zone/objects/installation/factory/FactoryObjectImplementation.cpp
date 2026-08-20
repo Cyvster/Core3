@@ -6,6 +6,7 @@
  */
 
 #include "server/zone/objects/installation/factory/FactoryObject.h"
+#include "server/zone/managers/customskills/crafting/CustomSkillsCrafting.h"
 #include "server/zone/objects/installation/factory/FactoryHopperObserver.h"
 #include "sui/InsertSchematicSuiCallback.h"
 #include "tasks/CreateFactoryObjectTask.h"
@@ -522,7 +523,7 @@ void FactoryObjectImplementation::handleOperateToggle(CreatureObject* player) {
 		currentUserName = player->getFirstName();
 		currentRunCount = 0;
 
-		if (startFactory()) {
+		if (startFactory(player)) {
 			player->sendSystemMessage("@manf_station:activated"); // Station activated
 			player->sendSystemMessage("This schematic limit is: " + String::valueOf(schematic->getManufactureLimit()));
 		}
@@ -533,7 +534,7 @@ void FactoryObjectImplementation::handleOperateToggle(CreatureObject* player) {
 	}
 }
 
-bool FactoryObjectImplementation::startFactory() {
+bool FactoryObjectImplementation::startFactory(CreatureObject* activator) {
 	if (getContainerObjectsSize() == 0) {
 		return false;
 	}
@@ -563,10 +564,18 @@ bool FactoryObjectImplementation::startFactory() {
 	}
 
 #ifdef DEBUG_FACTORIES
-	timer = 30;
-	info(true) << "Factory Testing Timer Set To: " << timer;
+	int nativeTimer = 30;
 #else
-	timer = ((int)schematic->getComplexity()) * 8;
+	int nativeTimer = ((int)schematic->getComplexity()) * 8;
+#endif
+
+	if (activator != nullptr)
+		timer = CustomSkillsCrafting::getFactoryProductionDuration(activator, nativeTimer);
+	else if (timer < 1)
+		timer = nativeTimer;
+
+#ifdef DEBUG_FACTORIES
+	info(true) << "Factory Testing Timer Set To: " << timer;
 #endif
 
 	if (!populateSchematicBlueprint(schematic))

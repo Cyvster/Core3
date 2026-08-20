@@ -7,6 +7,7 @@
 #include "server/zone/managers/crafting/labratories/ResourceLabratory.h"
 #include "server/zone/managers/crafting/labratories/GeneticLabratory.h"
 #include "server/zone/managers/crafting/labratories/DroidLabratory.h"
+#include "server/zone/managers/customskills/crafting/CustomSkillsCrafting.h"
 
 void CraftingManagerImplementation::initialize() {
 	schematicMap = SchematicMap::instance();
@@ -96,7 +97,13 @@ int CraftingManagerImplementation::calculateExperimentationSuccess(CreatureObjec
 	/// Range 0-100
 	int luckRoll = System::random(100) + cityBonus;
 
+	const float amazingThreshold = (95 - expbonus) - forceSkill - cityBonus;
 	if(luckRoll > ((95 - expbonus) - forceSkill))
+		return AMAZINGSUCCESS;
+
+	const int firstAmazingRoll = Math::max(0, Math::min(101, static_cast<int>(floor(amazingThreshold)) + 1));
+	const int nativeAmazingChance = ((101 - firstAmazingRoll) * 10000) / 101;
+	if (CustomSkillsCrafting::shouldPromoteAmazingFailure(player, nativeAmazingChance))
 		return AMAZINGSUCCESS;
 
 	if(luckRoll < (5 - expbonus - failMitigate))

@@ -264,7 +264,7 @@ protected:
 	bool checkConeAngle(SceneObject* targetCreature, float angle, float creatureVectorX, float creatureVectorY, float directionVectorX, float directionVectorY) const;
 
 	int getArmorReduction(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defender, DefenderHitList* hitList, float damage, int hitLocation, const CreatureAttackData& data) const;
-	float getArmorPiercing(TangibleObject* defender, int armorPiercing) const;
+	float getArmorPiercing(TangibleObject* attacker, TangibleObject* defender, int armorPiercing) const;
 	int getArmorNpcReduction(AiAgent* defender, int damageType) const;
 	int getArmorVehicleReduction(VehicleObject* defender, int damageType) const;
 	int getArmorTurretReduction(CreatureObject* attacker, TangibleObject* defender, int damageType) const;

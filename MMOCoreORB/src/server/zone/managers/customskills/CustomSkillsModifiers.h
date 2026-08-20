@@ -3,17 +3,26 @@
 
 #include "engine/engine.h"
 #include "server/zone/objects/player/PlayerObject.h"
+#include "CustomSkillsModifierType.h"
+
+class CreatureObject;
 
 class CustomSkillsModifiers {
 public:
-	static const int CRITICAL_CHANCE_PER_COMBAT_BADGE = 300;
-	static const int BASE_CRITICAL_MULTIPLIER = 15000;
-
+	static bool isCriticalChanceEnabled();
 	static int getBadgeCriticalChance(const String& badgeKey);
 	static int getCriticalChance(PlayerObject* ghost);
 	static int getCriticalChance(PlayerObject* ghost, const char* const* badgeKeys, int count);
 	static int getCriticalMultiplier(PlayerObject* ghost);
 	static String formatPercent(int basisPoints);
+	static String colorizeCriticalText(const String& text);
+	static int getModifierTotal(CreatureObject* player, CustomSkillsModifierType::Type type);
+	static int getBadgeModifier(const String& badgeKey, CustomSkillsModifierType::Type type);
+	static bool isModifierEnabled(CustomSkillsModifierType::Type type);
+	static int applyModifierCap(CustomSkillsModifierType::Type type, int value);
+	static String getModifierName(CustomSkillsModifierType::Type type);
+	static String formatModifierBonus(CustomSkillsModifierType::Type type, int value);
+	static void notifyBadgeAwarded(CreatureObject* player);
 
 private:
 	static bool isCombatProfessionBadge(const String& badgeKey);

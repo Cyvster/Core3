@@ -2,15 +2,15 @@
 
 ## Main page
 
-The `/customskills` command opens the character's Custom Skills menu. Until
-additional systems are implemented, the main page contains the character's
-acquired badge bonuses and a single `Badges` category:
+The `/customskills` command opens the character's Custom Skills menu. The main
+page contains the character's enabled, acquired modifier totals and a single
+`Badges` category:
 
 ```text
 Custom Skills
 
-Accumulated Bonuses
-+7% Critical Damage
+Stat Summary
++7% Critical Chance
 +4 Melee Defense
 +2% Movement Speed
 
@@ -77,19 +77,30 @@ O  Ben Kenobi's Old Home  (+1% Critical Damage)
 X  Pool Beneath Fort Tusken  (+1% Critical Damage)
 ```
 
-Only the marker is colored. Omit the suffix for badges without configured
-bonuses and list multiple bonuses in stable modifier display order.
+The marker uses its ownership color and each configured modifier suffix uses
+the module summary color. Omit the suffix for badges without configured bonuses
+and list multiple bonuses in stable modifier display order.
 
 Multiple Custom Skills windows remain supported intentionally.
 
 ## First effective modifier
 
-Each of the twelve ground combat profession mastery badges grants 300 basis
-points (3.00%) of Critical Chance. The maximum from these badges is 36.00%.
-Successful critical attacks use the system's 150.00% base critical multiplier.
-The attacker also receives a yellow `(CRIT)` indicator in the combat-spam chat
-channel whenever a critical hit occurs.
+By default, each of the twelve ground combat profession mastery badges grants
+300 basis points (3.00%) of Critical Chance. The default maximum is 36.00%.
+Successful critical attacks use a default 150.00% critical multiplier.
+Critical hits temporarily produce a compact `(CRIT)` development label. Native
+damage spam and its default color remain untouched. The label will be removed
+after development because the stock client cannot append it to the damage line.
 The shared modifier service supplies both combat and every menu summary.
+The offense summary always lists base custom combat values such as Critical
+Multiplier, even when the character has no acquired badge contribution. A
+disabled mechanic is omitted from the active summary.
+
+Modifier behavior is loaded once from `bin/scripts/customskills/config.lua`.
+Every mechanic can be enabled independently and assigned a uniform per-badge
+value and badge-key list without editing C++. Critical Chance additionally
+configures its multiplier and development label. A server restart reloads the
+configuration.
 
 ## Stock-client controls
 

@@ -74,9 +74,11 @@ void CustomSkillsMenu::addBadgeItems(SuiListBox* box, CreatureObject* player, co
 		if (badgeName.isEmpty())
 			badgeName = badge->getKey();
 
-		int criticalChance = CustomSkillsModifiers::getBadgeCriticalChance(badge->getKey());
-		if (criticalChance > 0)
-			badgeName += "  (+" + CustomSkillsModifiers::formatPercent(criticalChance) + " Critical Chance)";
+		for (int type = 0; type < CustomSkillsModifierType::COUNT; ++type) {
+			int bonus = CustomSkillsModifiers::getBadgeModifier(badge->getKey(), static_cast<CustomSkillsModifierType::Type>(type));
+			if (bonus > 0)
+				badgeName += "  (" + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(static_cast<CustomSkillsModifierType::Type>(type), bonus)) + ")";
+		}
 
 		box->addMenuItem(marker + " \\#.  " + badgeName);
 	}
@@ -115,26 +117,42 @@ int CustomSkillsMenu::getAcquiredCount(CreatureObject* player, Page page) {
 
 void CustomSkillsMenu::addCategoryItem(SuiListBox* box, CreatureObject* player, const String& name, Page category) {
 	String label = name + " (" + String::valueOf(getAcquiredCount(player, category)) + ")";
-	int criticalChance = getCriticalChance(player, category);
-	if (criticalChance > 0)
-		label += "  (+" + CustomSkillsModifiers::formatPercent(criticalChance) + " Critical Chance)";
+	for (int type = 0; type < CustomSkillsModifierType::COUNT; ++type) {
+		int total = getModifierTotal(player, category, static_cast<CustomSkillsModifierType::Type>(type));
+		if (total > 0)
+			label += "  (" + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(static_cast<CustomSkillsModifierType::Type>(type), total)) + ")";
+	}
 	box->addMenuItem(label);
 }
 
-int CustomSkillsMenu::getCriticalChance(CreatureObject* player, Page page) {
+int CustomSkillsMenu::countModifier(CreatureObject* player, const char* const* keys, int count, CustomSkillsModifierType::Type type) {
 	PlayerObject* ghost = player->getPlayerObject();
-	if (ghost == nullptr)
-		return 0;
+	const BadgeList* list = BadgeList::instance();
+	int total = 0;
+	for (int i = 0; i < count; ++i) {
+		const Badge* badge = list->get(keys[i]);
+		if (badge != nullptr && ghost->hasBadge(badge->getIndex()))
+			total += CustomSkillsModifiers::getBadgeModifier(badge->getKey(), type);
+	}
+	return total;
+}
 
+int CustomSkillsMenu::getModifierTotal(CreatureObject* player, Page page, CustomSkillsModifierType::Type type) {
+#define MOD_LEAF(pageName, data) case pageName: return CustomSkillsModifiers::applyModifierCap(type, countModifier(player, data, countOf(data), type))
 	switch (page) {
 	case MAIN:
-	case BADGES:
-	case PROFESSION:
-	case PROFESSION_COMBAT:
-		return CustomSkillsModifiers::getCriticalChance(ghost, combat, countOf(combat));
-	default:
-		return 0;
+	case BADGES: return CustomSkillsModifiers::applyModifierCap(type, getModifierTotal(player, MILESTONES, type) + getModifierTotal(player, EXPLORATION, type) + getModifierTotal(player, PROFESSION, type) + getModifierTotal(player, QUEST, type) + getModifierTotal(player, EVENT, type));
+	case EXPLORATION: return CustomSkillsModifiers::applyModifierCap(type, getModifierTotal(player, EXPLORATION_MILESTONES, type) + getModifierTotal(player, CORELLIA, type) + getModifierTotal(player, DANTOOINE, type) + getModifierTotal(player, DATHOMIR, type) + getModifierTotal(player, ENDOR, type) + getModifierTotal(player, LOK, type) + getModifierTotal(player, NABOO, type) + getModifierTotal(player, RORI, type) + getModifierTotal(player, TALUS, type) + getModifierTotal(player, TATOOINE, type) + getModifierTotal(player, YAVIN4, type));
+	case PROFESSION: return CustomSkillsModifiers::applyModifierCap(type, getModifierTotal(player, PROFESSION_COMBAT, type) + getModifierTotal(player, PROFESSION_CRAFTING, type) + getModifierTotal(player, PROFESSION_OUTDOORS, type) + getModifierTotal(player, PROFESSION_SCIENCE, type) + getModifierTotal(player, PROFESSION_SOCIAL, type) + getModifierTotal(player, PROFESSION_PILOT, type));
+	case QUEST: return CustomSkillsModifiers::applyModifierCap(type, getModifierTotal(player, QUEST_HERO, type) + getModifierTotal(player, QUEST_WARREN, type) + getModifierTotal(player, QUEST_THEME_PARKS, type) + getModifierTotal(player, QUEST_CORVETTE, type));
+	case EVENT: return CustomSkillsModifiers::applyModifierCap(type, getModifierTotal(player, EVENT_COA, type) + getModifierTotal(player, EVENT_ACCOLADES, type) + getModifierTotal(player, EVENT_LIBRARIAN, type) + getModifierTotal(player, EVENT_RACING, type) + getModifierTotal(player, EVENT_DEATH_STAR, type));
+	MOD_LEAF(MILESTONES, milestones); MOD_LEAF(EXPLORATION_MILESTONES, explorationMilestones); MOD_LEAF(CORELLIA, corellia); MOD_LEAF(DANTOOINE, dantooine); MOD_LEAF(DATHOMIR, dathomir); MOD_LEAF(ENDOR, endor); MOD_LEAF(LOK, lok); MOD_LEAF(NABOO, naboo); MOD_LEAF(RORI, rori); MOD_LEAF(TALUS, talus); MOD_LEAF(TATOOINE, tatooine); MOD_LEAF(YAVIN4, yavin4);
+	MOD_LEAF(PROFESSION_COMBAT, combat); MOD_LEAF(PROFESSION_CRAFTING, crafting); MOD_LEAF(PROFESSION_OUTDOORS, outdoors); MOD_LEAF(PROFESSION_SCIENCE, science); MOD_LEAF(PROFESSION_SOCIAL, social); MOD_LEAF(PROFESSION_PILOT, pilot);
+	MOD_LEAF(QUEST_HERO, hero); MOD_LEAF(QUEST_WARREN, warren); MOD_LEAF(QUEST_THEME_PARKS, themeParks); MOD_LEAF(QUEST_CORVETTE, corvette);
+	MOD_LEAF(EVENT_COA, coa); MOD_LEAF(EVENT_ACCOLADES, accolades); MOD_LEAF(EVENT_LIBRARIAN, librarian); MOD_LEAF(EVENT_RACING, racing); MOD_LEAF(EVENT_DEATH_STAR, deathStar);
+	default: return 0;
 	}
+#undef MOD_LEAF
 }
 
 String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
@@ -142,13 +160,18 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 	if (!showsOffenseSummary)
 		return "Select an entry to continue.";
 
-	int criticalChance = getCriticalChance(player, page);
 	int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(player->getPlayerObject());
 	StringBuffer summary;
-	summary << (page == MAIN ? "Offense Summary" : "Accumulated Bonuses") << endl
-		<< "Critical Chance: +" << CustomSkillsModifiers::formatPercent(criticalChance) << endl
-		<< "Critical Multiplier: " << CustomSkillsModifiers::formatPercent(criticalMultiplier) << endl << endl
-		<< "Select an entry to continue.";
+	summary << (page == MAIN ? "Stat Summary" : "Accumulated Bonuses") << endl;
+	for (int type = 0; type < CustomSkillsModifierType::COUNT; ++type) {
+		CustomSkillsModifierType::Type modifier = static_cast<CustomSkillsModifierType::Type>(type);
+		if (CustomSkillsModifiers::isModifierEnabled(modifier))
+			summary << CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(modifier,
+				CustomSkillsModifiers::getModifierTotal(player, modifier))) << endl;
+	}
+	if (CustomSkillsModifiers::isCriticalChanceEnabled())
+		summary << CustomSkillsModifiers::colorizeCriticalText("Critical Multiplier: " + CustomSkillsModifiers::formatPercent(criticalMultiplier) + " (Base)") << endl;
+	summary << endl << "Select an entry to continue.";
 	return summary.toString();
 }
 
