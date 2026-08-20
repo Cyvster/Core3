@@ -163,7 +163,6 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 		return "Select an entry to continue.";
 
 	StringBuffer summary;
-	summary << (page == MAIN ? "Stat Summary" : "Accumulated Bonuses") << endl;
 
 	auto addCategory = [&](const char* label, std::initializer_list<CustomSkillsModifierType::Type> types) {
 		summary << "\\#FFFF00--- " << label << " ---\\#. " << endl;
@@ -201,7 +200,6 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 		int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(player->getPlayerObject());
 		summary << CustomSkillsModifiers::colorizeCriticalText("+" + CustomSkillsModifiers::formatPercent(criticalMultiplier) + " Critical Multiplier") << endl;
 	}
-	summary << "Select an entry to continue.";
 	return summary.toString();
 }
 
