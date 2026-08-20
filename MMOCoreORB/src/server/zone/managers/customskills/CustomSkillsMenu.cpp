@@ -7,6 +7,8 @@
 #include "server/zone/objects/player/PlayerObject.h"
 #include "server/zone/objects/player/sui/SuiWindowType.h"
 
+#include <initializer_list>
+
 namespace {
 #define BADGES(name, ...) const char* const name[] = {__VA_ARGS__}
 	BADGES(milestones, "count_5", "count_10", "count_25", "count_50", "count_75", "count_100", "count_125");
@@ -160,17 +162,46 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 	if (!showsOffenseSummary)
 		return "Select an entry to continue.";
 
-	int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(player->getPlayerObject());
 	StringBuffer summary;
 	summary << (page == MAIN ? "Stat Summary" : "Accumulated Bonuses") << endl;
-	for (int type = 0; type < CustomSkillsModifierType::COUNT; ++type) {
-		CustomSkillsModifierType::Type modifier = static_cast<CustomSkillsModifierType::Type>(type);
-		int total = CustomSkillsModifiers::getModifierTotal(player, modifier);
-		summary << CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(modifier, total)) << endl;
+
+	auto addCategory = [&](const char* label, std::initializer_list<CustomSkillsModifierType::Type> types) {
+		summary << "\\#FFFF00--- " << label << " ---\\#. " << endl;
+		for (auto type : types) {
+			int total = CustomSkillsModifiers::getModifierTotal(player, type);
+			summary << CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(type, total)) << endl;
+		}
+	};
+
+	addCategory("Combat", {
+		CustomSkillsModifierType::CRITICAL_CHANCE,
+		CustomSkillsModifierType::DOUBLE_ATTACK_CHANCE,
+		CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE,
+		CustomSkillsModifierType::QUAD_ATTACK_CHANCE,
+		CustomSkillsModifierType::ARMOR_PENETRATION,
+		CustomSkillsModifierType::DEFENSE_CAP_INCREASE,
+		CustomSkillsModifierType::ARMOR_DEGRADE_REDUCTION,
+		CustomSkillsModifierType::WEAPON_DEGRADE_REDUCTION
+	});
+	addCategory("Utility", {
+		CustomSkillsModifierType::SEA_CAP_INCREASE,
+		CustomSkillsModifierType::MOVEMENT_SPEED,
+		CustomSkillsModifierType::BUFF_DURATION,
+		CustomSkillsModifierType::EXPERIENCE_MULTIPLIER,
+		CustomSkillsModifierType::GATHERING_QUANTITY
+	});
+	addCategory("Crafting", {
+		CustomSkillsModifierType::PRACTICE_EXPERIENCE_BONUS,
+		CustomSkillsModifierType::CRAFTING_SPEED,
+		CustomSkillsModifierType::AMAZING_SUCCESS_CHANCE,
+		CustomSkillsModifierType::AMAZING_RESULTS
+	});
+
+	if (CustomSkillsModifiers::isCriticalChanceEnabled()) {
+		int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(player->getPlayerObject());
+		summary << CustomSkillsModifiers::colorizeCriticalText("+" + CustomSkillsModifiers::formatPercent(criticalMultiplier) + " Critical Multiplier") << endl;
 	}
-	if (CustomSkillsModifiers::isCriticalChanceEnabled())
-		summary << CustomSkillsModifiers::colorizeCriticalText("Critical Multiplier: " + CustomSkillsModifiers::formatPercent(criticalMultiplier) + " (Base)") << endl;
-	summary << endl << "Select an entry to continue.";
+	summary << "Select an entry to continue.";
 	return summary.toString();
 }
 
