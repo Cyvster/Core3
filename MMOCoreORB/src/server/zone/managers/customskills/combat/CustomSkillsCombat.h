@@ -12,7 +12,7 @@ public:
 
 	static int getDefenseCap(CreatureObject* defender, int nativeCap);
 
-	static int getEffectiveArmorRating(CreatureObject* attacker, int nativeArmor);
+	static int getEffectiveArmorRating(TangibleObject* attacker, int nativeArmor);
 };
 
 #endif

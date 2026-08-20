@@ -38,11 +38,14 @@ int CustomSkillsCombat::getDefenseCap(CreatureObject* defender, int nativeCap) {
 	return nativeCap + bonus;
 }
 
-int CustomSkillsCombat::getEffectiveArmorRating(CreatureObject* attacker, int nativeArmor) {
+int CustomSkillsCombat::getEffectiveArmorRating(TangibleObject* attacker, int nativeArmor) {
 	if (attacker == nullptr || nativeArmor <= 0)
 		return nativeArmor;
 
-	const int penetration = CustomSkillsModifiers::getModifierTotal(attacker, CustomSkillsModifierType::ARMOR_PENETRATION);
+	if (!attacker->isPlayerCreature())
+		return nativeArmor;
+
+	const int penetration = CustomSkillsModifiers::getModifierTotal(attacker->asCreatureObject(), CustomSkillsModifierType::ARMOR_PENETRATION);
 	if (penetration <= 0)
 		return nativeArmor;
 	return Math::max(0, nativeArmor - penetration);

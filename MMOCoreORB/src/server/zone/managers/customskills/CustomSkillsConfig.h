@@ -4,7 +4,7 @@
 #include "engine/engine.h"
 #include "CustomSkillsModifierType.h"
 
-class CustomSkillsConfig : public Singleton<CustomSkillsConfig>, public Logger {
+class CustomSkillsConfig : public Singleton<CustomSkillsConfig>, public Object, public Logger {
 public:
 	static const int DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE = 300;
 	static const int DEFAULT_CRITICAL_MULTIPLIER = 15000;
