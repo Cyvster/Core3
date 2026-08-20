@@ -82,8 +82,9 @@ Multiple Custom Skills windows remain supported intentionally.
 
 The stock `Script.listBox` sends a server event when a player submits a button,
 not when the selected row changes. Therefore OK opens the selected subpage,
-Back returns one level, and only Cancel exits. OK on an informational badge row
-or with no valid selection reopens the current page.
+Back returns one level, and only Cancel exits. Navigable category pages use an
+OK button. Informational badge-list pages label that button Refresh; submitting
+it or submitting without a valid selection reopens the current page.
 
 Single-click navigation, right-click Back, and reliable double-click submission
 require a client-side SUI script/template modification and are deferred to the

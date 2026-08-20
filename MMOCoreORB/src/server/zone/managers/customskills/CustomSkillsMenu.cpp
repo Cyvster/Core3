@@ -47,7 +47,7 @@ void CustomSkillsMenu::open(CreatureObject* player, Page page) {
 	ManagedReference<SuiListBox*> box = new SuiListBox(player, SuiWindowType::NONE, boxType);
 	box->setCallback(new CustomSkillsSuiCallback(player->getZoneServer(), page));
 	box->setCancelButton(true, "@cancel");
-	box->setOkButton(true, "@ok");
+	box->setOkButton(true, hasChildPages(page) ? "@ok" : "@refresh");
 	box->setPromptTitle(getTitle(page));
 	box->setPromptText(page == MAIN ? "Select a category." : "Select an entry to continue.");
 	if (page != MAIN)
@@ -105,6 +105,10 @@ CustomSkillsMenu::Page CustomSkillsMenu::getChild(Page page, int selection) {
 #define CHILD(parent, data) case parent: return selection < static_cast<int>(sizeof(data) / sizeof(data[0])) ? data[selection] : page
 	switch (page) { CHILD(MAIN, main); CHILD(BADGES, badges); CHILD(EXPLORATION, exploration); CHILD(PROFESSION, profession); CHILD(QUEST, quest); CHILD(EVENT, event); default: return page; }
 #undef CHILD
+}
+
+bool CustomSkillsMenu::hasChildPages(Page page) {
+	return page == MAIN || page == BADGES || page == EXPLORATION || page == PROFESSION || page == QUEST || page == EVENT;
 }
 
 CustomSkillsMenu::Page CustomSkillsMenu::getParent(Page page) {

@@ -18,6 +18,7 @@ public:
 	static void open(CreatureObject* player, Page page = MAIN);
 	static Page getParent(Page page);
 	static Page getChild(Page page, int selection);
+	static bool hasChildPages(Page page);
 
 private:
 	static void addPageItems(SuiListBox* box, CreatureObject* player, Page page);
