@@ -24,7 +24,7 @@ public:
 private:
 	static void addPageItems(SuiListBox* box, CreatureObject* player, Page page);
 	static void addBadgeItems(SuiListBox* box, CreatureObject* player, const char* const* keys, int count);
-	static void addCategoryItem(SuiListBox* box, CreatureObject* player, const String& name, Page category);
+	static void addCategoryItem(SuiListBox* box, CreatureObject* player, const String& name, Page category, bool showBonuses = true);
 	static int getAcquiredCount(CreatureObject* player, Page page);
 	static int countAcquired(CreatureObject* player, const char* const* keys, int count);
 	static int getModifierTotal(CreatureObject* player, Page page, CustomSkillsModifierType::Type type);

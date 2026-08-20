@@ -117,12 +117,14 @@ int CustomSkillsMenu::getAcquiredCount(CreatureObject* player, Page page) {
 #undef COUNT_LEAF
 }
 
-void CustomSkillsMenu::addCategoryItem(SuiListBox* box, CreatureObject* player, const String& name, Page category) {
+void CustomSkillsMenu::addCategoryItem(SuiListBox* box, CreatureObject* player, const String& name, Page category, bool showBonuses) {
 	String label = name + " (" + String::valueOf(getAcquiredCount(player, category)) + ")";
-	for (int type = 0; type < CustomSkillsModifierType::COUNT; ++type) {
-		int total = getModifierTotal(player, category, static_cast<CustomSkillsModifierType::Type>(type));
-		if (total > 0)
-			label += "  (" + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(static_cast<CustomSkillsModifierType::Type>(type), total)) + ")";
+	if (showBonuses) {
+		for (int type = 0; type < CustomSkillsModifierType::COUNT; ++type) {
+			int total = getModifierTotal(player, category, static_cast<CustomSkillsModifierType::Type>(type));
+			if (total > 0)
+				label += "  (" + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(static_cast<CustomSkillsModifierType::Type>(type), total)) + ")";
+		}
 	}
 	box->addMenuItem(label);
 }
@@ -158,7 +160,7 @@ int CustomSkillsMenu::getModifierTotal(CreatureObject* player, Page page, Custom
 }
 
 String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
-	bool showsOffenseSummary = page == MAIN || page == PROFESSION || page == PROFESSION_COMBAT;
+	bool showsOffenseSummary = page == MAIN || page == BADGES || page == PROFESSION || page == PROFESSION_COMBAT;
 	if (!showsOffenseSummary)
 		return "Select an entry to continue.";
 
@@ -206,7 +208,7 @@ void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Pag
 #define LEAF(pageName, data) case pageName: addBadgeItems(box, player, data, countOf(data)); break
 	switch (page) {
 	case MAIN: addCategoryItem(box, player, "Badges", BADGES); break;
-	case BADGES: addCategoryItem(box, player, "Milestone Badges", MILESTONES); addCategoryItem(box, player, "Exploration", EXPLORATION); addCategoryItem(box, player, "Profession", PROFESSION); addCategoryItem(box, player, "Quest", QUEST); addCategoryItem(box, player, "Event", EVENT); break;
+	case BADGES: addCategoryItem(box, player, "Milestone Badges", MILESTONES, false); addCategoryItem(box, player, "Exploration", EXPLORATION, false); addCategoryItem(box, player, "Profession", PROFESSION, false); addCategoryItem(box, player, "Quest", QUEST, false); addCategoryItem(box, player, "Event", EVENT, false); break;
 	case EXPLORATION: addCategoryItem(box, player, "Milestone Exploration", EXPLORATION_MILESTONES); addCategoryItem(box, player, "Corellia", CORELLIA); addCategoryItem(box, player, "Dantooine", DANTOOINE); addCategoryItem(box, player, "Dathomir", DATHOMIR); addCategoryItem(box, player, "Endor", ENDOR); addCategoryItem(box, player, "Lok", LOK); addCategoryItem(box, player, "Naboo", NABOO); addCategoryItem(box, player, "Rori", RORI); addCategoryItem(box, player, "Talus", TALUS); addCategoryItem(box, player, "Tatooine", TATOOINE); addCategoryItem(box, player, "Yavin IV", YAVIN4); break;
 	case PROFESSION: addCategoryItem(box, player, "Combat", PROFESSION_COMBAT); addCategoryItem(box, player, "Crafting", PROFESSION_CRAFTING); addCategoryItem(box, player, "Outdoors", PROFESSION_OUTDOORS); addCategoryItem(box, player, "Science", PROFESSION_SCIENCE); addCategoryItem(box, player, "Social", PROFESSION_SOCIAL); addCategoryItem(box, player, "Pilot", PROFESSION_PILOT); break;
 	case QUEST: addCategoryItem(box, player, "Hero of Tatooine", QUEST_HERO); addCategoryItem(box, player, "Warren", QUEST_WARREN); addCategoryItem(box, player, "Theme Parks", QUEST_THEME_PARKS); addCategoryItem(box, player, "Corellian Corvette", QUEST_CORVETTE); break;
