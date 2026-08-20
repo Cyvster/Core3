@@ -78,7 +78,7 @@ void CustomSkillsConfig::loadModifier(LuaObject& modifiers, const String& name,
 	int badgeBonus = static_cast<int>(modifier.getIntField("badgeBonus", defaultBadgeBonus));
 	if (badgeBonus < 0)
 		badgeBonus = 0;
-	modifierCombatSpamLabels[type] = modifier.getStringField("combatSpamLabel", modifierCombatSpamLabels[type].c_str());
+	modifierCombatSpamLabels[type] = modifier.getStringField("combatSpamLabel", modifierCombatSpamLabels[type].toCharArray());
 
 	LuaObject badges = modifier.getObjectField("badges");
 	if (badges.isValidTable()) {
