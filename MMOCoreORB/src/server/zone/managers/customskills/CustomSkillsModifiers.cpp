@@ -120,12 +120,18 @@ String CustomSkillsModifiers::getModifierName(CustomSkillsModifierType::Type typ
 }
 
 String CustomSkillsModifiers::formatModifierBonus(CustomSkillsModifierType::Type type, int value) {
+	String valueStr;
 	if (type == CustomSkillsModifierType::ARMOR_PENETRATION ||
 			type == CustomSkillsModifierType::DEFENSE_CAP_INCREASE ||
 			type == CustomSkillsModifierType::SEA_CAP_INCREASE)
-		return "+" + String::valueOf(value) + " " + getModifierName(type);
+		valueStr = "+" + String::valueOf(value);
+	else
+		valueStr = "+" + formatPercent(value);
 
-	return "+" + formatPercent(value) + " " + getModifierName(type);
+	while (valueStr.length() < 8)
+		valueStr += " ";
+
+	return valueStr + getModifierName(type);
 }
 
 void CustomSkillsModifiers::notifyBadgeAwarded(CreatureObject* player) {
