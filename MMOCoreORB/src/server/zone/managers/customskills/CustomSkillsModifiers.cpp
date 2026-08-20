@@ -128,7 +128,7 @@ String CustomSkillsModifiers::formatModifierBonus(CustomSkillsModifierType::Type
 	else
 		valueStr = "+" + formatPercent(value);
 
-	while (valueStr.length() < 8)
+	while (valueStr.length() < 14)
 		valueStr += " ";
 
 	return valueStr + getModifierName(type);
