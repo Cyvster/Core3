@@ -4,4 +4,3 @@ luacov.stats.out
 .DS_Store
 .cache
 compile_commands.json
-/.vs
