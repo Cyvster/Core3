@@ -111,33 +111,29 @@ void CustomSkillsConfig::load() {
 		warning("customSummaryColor must be a six-character RGB hex value; using default");
 
 	LuaObject critical = root.getObjectField("criticalChance");
-	if (!critical.isValidTable()) {
+	if (critical.isValidTable()) {
+		criticalChanceEnabled = critical.getBooleanField("enabled", true);
+		modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = criticalChanceEnabled;
+
+		int badgeBonus = critical.getIntField("badgeBonus", DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE);
+		if (badgeBonus >= 0 && badgeBonus <= 10000)
+			criticalChancePerCombatBadge = badgeBonus;
+		else
+			warning("criticalChance.badgeBonus must be from 0 to 10000; using default");
+		setUniformBadgeBonus(CustomSkillsModifierType::CRITICAL_CHANCE, criticalChancePerCombatBadge);
+
+		int multiplier = critical.getIntField("multiplier", DEFAULT_CRITICAL_MULTIPLIER);
+		if (multiplier >= 10000)
+			criticalMultiplier = multiplier;
+		else
+			warning("criticalChance.multiplier must be at least 10000; using default");
+
+		String spamLabel = critical.getStringField("combatSpamLabel", "(CRIT)");
+		if (!spamLabel.isEmpty())
+			criticalCombatSpamLabel = spamLabel;
+	} else {
 		warning("customSkillsConfig.criticalChance is missing or invalid; using defaults");
-		critical.pop();
-		root.pop();
-		return;
 	}
-
-	criticalChanceEnabled = critical.getBooleanField("enabled", true);
-	modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = criticalChanceEnabled;
-
-	int badgeBonus = critical.getIntField("badgeBonus", DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE);
-	if (badgeBonus >= 0 && badgeBonus <= 10000)
-		criticalChancePerCombatBadge = badgeBonus;
-	else
-		warning("criticalChance.badgeBonus must be from 0 to 10000; using default");
-	setUniformBadgeBonus(CustomSkillsModifierType::CRITICAL_CHANCE, criticalChancePerCombatBadge);
-
-	int multiplier = critical.getIntField("multiplier", DEFAULT_CRITICAL_MULTIPLIER);
-	if (multiplier >= 10000)
-		criticalMultiplier = multiplier;
-	else
-		warning("criticalChance.multiplier must be at least 10000; using default");
-
-	String spamLabel = critical.getStringField("combatSpamLabel", "(CRIT)");
-	if (!spamLabel.isEmpty())
-		criticalCombatSpamLabel = spamLabel;
-
 	critical.pop();
 
 	LuaObject modifiers = root.getObjectField("modifiers");

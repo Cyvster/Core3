@@ -9,6 +9,10 @@ public:
 	static int applyDamage(const CombatManager* combatManager, TangibleObject* attacker, WeaponObject* weapon,
 		CreatureObject* defender, DefenderHitList* defenderHitList, int damage, float damageMultiplier,
 		int poolsToDamage, uint8& hitLocation, const CreatureAttackData& data);
+
+	static int getDefenseCap(CreatureObject* defender, int nativeCap);
+
+	static int getEffectiveArmorRating(CreatureObject* attacker, int nativeArmor);
 };
 
 #endif

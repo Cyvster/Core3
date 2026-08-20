@@ -14,6 +14,6 @@ bool CustomSkillsDurability::shouldDegradeWeapon(CreatureObject* user, int nativ
 	int reduction = CustomSkillsModifiers::getModifierTotal(user, CustomSkillsModifierType::WEAPON_DEGRADE_REDUCTION);
 	if (reduction <= 0)
 		return System::random(100) < nativeChancePercent;
-	int effectiveChance = Math::max(0, nativeChancePercent * 100 - reduction);
+	int effectiveChance = Math::max(0, nativeChancePercent * (10000 - reduction) / 100);
 	return System::random(9999) < effectiveChance;
 }

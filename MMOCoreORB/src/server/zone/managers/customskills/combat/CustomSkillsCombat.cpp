@@ -1,6 +1,7 @@
 #include "CustomSkillsCombat.h"
 
 #include "server/zone/managers/combat/CombatManager.h"
+#include "server/zone/managers/customskills/CustomSkillsModifierType.h"
 #include "server/zone/managers/customskills/CustomSkillsModifiers.h"
 #include "server/zone/objects/player/PlayerObject.h"
 
@@ -10,8 +11,6 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 	if (combatManager == nullptr)
 		return 0;
 
-	// A multiplier below one represents a blocked attack in the vanilla combat
-	// pipeline. Critical hits apply only to successful, unblocked player attacks.
 	if (attacker != nullptr && attacker->isPlayerCreature() && damage > 0 && damageMultiplier >= 1.f) {
 		PlayerObject* ghost = attacker->asCreatureObject()->getPlayerObject();
 		int criticalChance = CustomSkillsModifiers::getCriticalChance(ghost);
@@ -20,8 +19,6 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 			int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(ghost);
 			damage = static_cast<int>((static_cast<int64>(damage) * criticalMultiplier) / 10000);
 
-			// Use the client's combat-spam channel so the indicator is visible with
-			// the attack feedback without requiring client files.
 			UnicodeString criticalMessage("(CRIT)");
 			attacker->asCreatureObject()->sendCustomCombatSpam(criticalMessage, 11);
 		}
@@ -29,4 +26,24 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 
 	return combatManager->applyVanillaDamage(attacker, weapon, defender, defenderHitList, damage,
 		damageMultiplier, poolsToDamage, hitLocation, data);
+}
+
+int CustomSkillsCombat::getDefenseCap(CreatureObject* defender, int nativeCap) {
+	if (defender == nullptr)
+		return nativeCap;
+
+	const int bonus = CustomSkillsModifiers::getModifierTotal(defender, CustomSkillsModifierType::DEFENSE_CAP_INCREASE);
+	if (bonus <= 0)
+		return nativeCap;
+	return nativeCap + bonus;
+}
+
+int CustomSkillsCombat::getEffectiveArmorRating(CreatureObject* attacker, int nativeArmor) {
+	if (attacker == nullptr || nativeArmor <= 0)
+		return nativeArmor;
+
+	const int penetration = CustomSkillsModifiers::getModifierTotal(attacker, CustomSkillsModifierType::ARMOR_PENETRATION);
+	if (penetration <= 0)
+		return nativeArmor;
+	return Math::max(0, nativeArmor - penetration);
 }
