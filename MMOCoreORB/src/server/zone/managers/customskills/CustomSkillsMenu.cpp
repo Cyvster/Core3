@@ -178,15 +178,15 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 		CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE,
 		CustomSkillsModifierType::QUAD_ATTACK_CHANCE,
 		CustomSkillsModifierType::ARMOR_PENETRATION,
-		CustomSkillsModifierType::DEFENSE_CAP_INCREASE,
-		CustomSkillsModifierType::ARMOR_DEGRADE_REDUCTION,
-		CustomSkillsModifierType::WEAPON_DEGRADE_REDUCTION
+		CustomSkillsModifierType::DEFENSE_CAP_INCREASE
 	});
 	if (CustomSkillsModifiers::isCriticalChanceEnabled()) {
 		int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(player->getPlayerObject());
 		summary << CustomSkillsModifiers::colorizeCriticalText("+" + CustomSkillsModifiers::formatPercent(criticalMultiplier) + " Critical Multiplier") << endl;
 	}
 	addCategory("Utility", {
+		CustomSkillsModifierType::ARMOR_DEGRADE_REDUCTION,
+		CustomSkillsModifierType::WEAPON_DEGRADE_REDUCTION,
 		CustomSkillsModifierType::SEA_CAP_INCREASE,
 		CustomSkillsModifierType::MOVEMENT_SPEED,
 		CustomSkillsModifierType::BUFF_DURATION,
