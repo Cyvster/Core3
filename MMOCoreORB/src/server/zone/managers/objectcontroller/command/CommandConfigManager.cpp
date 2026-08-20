@@ -344,6 +344,11 @@ void CommandConfigManager::registerSpecialCommands(CommandList* sCommands) {
 	QueueCommand* admin = new AdminCommand("admin", server);
 	slashCommands->put(admin);
 
+	QueueCommand* customSkills = createCommand(String("customSkills").toLowerCase());
+
+	if (customSkills == nullptr)
+		error("Could not create command /customskills");
+
 	// Fri Oct  7 17:09:26 PDT 2011 - Karl Bunch <karlbunch@karlbunch.com>
 	// Turns out this isn't in the base datatables/command/command_tables_shared.iff file
 	// Meanwhile the client sends this to the server as part of the /logout command sequence
