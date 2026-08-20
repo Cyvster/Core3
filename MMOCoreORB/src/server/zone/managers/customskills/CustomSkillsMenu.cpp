@@ -77,15 +77,50 @@ void CustomSkillsMenu::addBadgeItems(SuiListBox* box, CreatureObject* player, co
 	}
 }
 
+int CustomSkillsMenu::countAcquired(CreatureObject* player, const char* const* keys, int count) {
+	PlayerObject* ghost = player->getPlayerObject();
+	const BadgeList* list = BadgeList::instance();
+	int acquired = 0;
+
+	for (int i = 0; i < count; ++i) {
+		const Badge* badge = list->get(keys[i]);
+		if (badge != nullptr && ghost->hasBadge(badge->getIndex()))
+			++acquired;
+	}
+
+	return acquired;
+}
+
+int CustomSkillsMenu::getAcquiredCount(CreatureObject* player, Page page) {
+#define COUNT_LEAF(pageName, data) case pageName: return countAcquired(player, data, countOf(data))
+	switch (page) {
+	case BADGES: return getAcquiredCount(player, MILESTONES) + getAcquiredCount(player, EXPLORATION) + getAcquiredCount(player, PROFESSION) + getAcquiredCount(player, QUEST) + getAcquiredCount(player, EVENT);
+	case EXPLORATION: return getAcquiredCount(player, EXPLORATION_MILESTONES) + getAcquiredCount(player, CORELLIA) + getAcquiredCount(player, DANTOOINE) + getAcquiredCount(player, DATHOMIR) + getAcquiredCount(player, ENDOR) + getAcquiredCount(player, LOK) + getAcquiredCount(player, NABOO) + getAcquiredCount(player, RORI) + getAcquiredCount(player, TALUS) + getAcquiredCount(player, TATOOINE) + getAcquiredCount(player, YAVIN4);
+	case PROFESSION: return getAcquiredCount(player, PROFESSION_COMBAT) + getAcquiredCount(player, PROFESSION_CRAFTING) + getAcquiredCount(player, PROFESSION_OUTDOORS) + getAcquiredCount(player, PROFESSION_SCIENCE) + getAcquiredCount(player, PROFESSION_SOCIAL) + getAcquiredCount(player, PROFESSION_PILOT);
+	case QUEST: return getAcquiredCount(player, QUEST_HERO) + getAcquiredCount(player, QUEST_WARREN) + getAcquiredCount(player, QUEST_THEME_PARKS) + getAcquiredCount(player, QUEST_CORVETTE);
+	case EVENT: return getAcquiredCount(player, EVENT_COA) + getAcquiredCount(player, EVENT_ACCOLADES) + getAcquiredCount(player, EVENT_LIBRARIAN) + getAcquiredCount(player, EVENT_RACING) + getAcquiredCount(player, EVENT_DEATH_STAR);
+	COUNT_LEAF(MILESTONES, milestones); COUNT_LEAF(EXPLORATION_MILESTONES, explorationMilestones); COUNT_LEAF(CORELLIA, corellia); COUNT_LEAF(DANTOOINE, dantooine); COUNT_LEAF(DATHOMIR, dathomir); COUNT_LEAF(ENDOR, endor); COUNT_LEAF(LOK, lok); COUNT_LEAF(NABOO, naboo); COUNT_LEAF(RORI, rori); COUNT_LEAF(TALUS, talus); COUNT_LEAF(TATOOINE, tatooine); COUNT_LEAF(YAVIN4, yavin4);
+	COUNT_LEAF(PROFESSION_COMBAT, combat); COUNT_LEAF(PROFESSION_CRAFTING, crafting); COUNT_LEAF(PROFESSION_OUTDOORS, outdoors); COUNT_LEAF(PROFESSION_SCIENCE, science); COUNT_LEAF(PROFESSION_SOCIAL, social); COUNT_LEAF(PROFESSION_PILOT, pilot);
+	COUNT_LEAF(QUEST_HERO, hero); COUNT_LEAF(QUEST_WARREN, warren); COUNT_LEAF(QUEST_THEME_PARKS, themeParks); COUNT_LEAF(QUEST_CORVETTE, corvette);
+	COUNT_LEAF(EVENT_COA, coa); COUNT_LEAF(EVENT_ACCOLADES, accolades); COUNT_LEAF(EVENT_LIBRARIAN, librarian); COUNT_LEAF(EVENT_RACING, racing); COUNT_LEAF(EVENT_DEATH_STAR, deathStar);
+	default: return 0;
+	}
+#undef COUNT_LEAF
+}
+
+void CustomSkillsMenu::addCategoryItem(SuiListBox* box, CreatureObject* player, const String& name, Page category) {
+	box->addMenuItem(name + " (" + String::valueOf(getAcquiredCount(player, category)) + ")");
+}
+
 void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Page page) {
 #define LEAF(pageName, data) case pageName: addBadgeItems(box, player, data, countOf(data)); break
 	switch (page) {
-	case MAIN: box->addMenuItem("Badges"); break;
-	case BADGES: box->addMenuItem("Milestone Badges"); box->addMenuItem("Exploration"); box->addMenuItem("Profession"); box->addMenuItem("Quest"); box->addMenuItem("Event"); break;
-	case EXPLORATION: box->addMenuItem("Milestone Exploration"); box->addMenuItem("Corellia"); box->addMenuItem("Dantooine"); box->addMenuItem("Dathomir"); box->addMenuItem("Endor"); box->addMenuItem("Lok"); box->addMenuItem("Naboo"); box->addMenuItem("Rori"); box->addMenuItem("Talus"); box->addMenuItem("Tatooine"); box->addMenuItem("Yavin IV"); break;
-	case PROFESSION: box->addMenuItem("Combat"); box->addMenuItem("Crafting"); box->addMenuItem("Outdoors"); box->addMenuItem("Science"); box->addMenuItem("Social"); box->addMenuItem("Pilot"); break;
-	case QUEST: box->addMenuItem("Hero of Tatooine"); box->addMenuItem("Warren"); box->addMenuItem("Theme Parks"); box->addMenuItem("Corellian Corvette"); break;
-	case EVENT: box->addMenuItem("Cries of Alderaan"); box->addMenuItem("Accolades"); box->addMenuItem("Librarian"); box->addMenuItem("Racing"); box->addMenuItem("Death Star"); break;
+	case MAIN: addCategoryItem(box, player, "Badges", BADGES); break;
+	case BADGES: addCategoryItem(box, player, "Milestone Badges", MILESTONES); addCategoryItem(box, player, "Exploration", EXPLORATION); addCategoryItem(box, player, "Profession", PROFESSION); addCategoryItem(box, player, "Quest", QUEST); addCategoryItem(box, player, "Event", EVENT); break;
+	case EXPLORATION: addCategoryItem(box, player, "Milestone Exploration", EXPLORATION_MILESTONES); addCategoryItem(box, player, "Corellia", CORELLIA); addCategoryItem(box, player, "Dantooine", DANTOOINE); addCategoryItem(box, player, "Dathomir", DATHOMIR); addCategoryItem(box, player, "Endor", ENDOR); addCategoryItem(box, player, "Lok", LOK); addCategoryItem(box, player, "Naboo", NABOO); addCategoryItem(box, player, "Rori", RORI); addCategoryItem(box, player, "Talus", TALUS); addCategoryItem(box, player, "Tatooine", TATOOINE); addCategoryItem(box, player, "Yavin IV", YAVIN4); break;
+	case PROFESSION: addCategoryItem(box, player, "Combat", PROFESSION_COMBAT); addCategoryItem(box, player, "Crafting", PROFESSION_CRAFTING); addCategoryItem(box, player, "Outdoors", PROFESSION_OUTDOORS); addCategoryItem(box, player, "Science", PROFESSION_SCIENCE); addCategoryItem(box, player, "Social", PROFESSION_SOCIAL); addCategoryItem(box, player, "Pilot", PROFESSION_PILOT); break;
+	case QUEST: addCategoryItem(box, player, "Hero of Tatooine", QUEST_HERO); addCategoryItem(box, player, "Warren", QUEST_WARREN); addCategoryItem(box, player, "Theme Parks", QUEST_THEME_PARKS); addCategoryItem(box, player, "Corellian Corvette", QUEST_CORVETTE); break;
+	case EVENT: addCategoryItem(box, player, "Cries of Alderaan", EVENT_COA); addCategoryItem(box, player, "Accolades", EVENT_ACCOLADES); addCategoryItem(box, player, "Librarian", EVENT_LIBRARIAN); addCategoryItem(box, player, "Racing", EVENT_RACING); addCategoryItem(box, player, "Death Star", EVENT_DEATH_STAR); break;
 	LEAF(MILESTONES, milestones); LEAF(EXPLORATION_MILESTONES, explorationMilestones); LEAF(CORELLIA, corellia); LEAF(DANTOOINE, dantooine); LEAF(DATHOMIR, dathomir); LEAF(ENDOR, endor); LEAF(LOK, lok); LEAF(NABOO, naboo); LEAF(RORI, rori); LEAF(TALUS, talus); LEAF(TATOOINE, tatooine); LEAF(YAVIN4, yavin4);
 	LEAF(PROFESSION_COMBAT, combat); LEAF(PROFESSION_CRAFTING, crafting); LEAF(PROFESSION_OUTDOORS, outdoors); LEAF(PROFESSION_SCIENCE, science); LEAF(PROFESSION_SOCIAL, social); LEAF(PROFESSION_PILOT, pilot);
 	LEAF(QUEST_HERO, hero); LEAF(QUEST_WARREN, warren); LEAF(QUEST_THEME_PARKS, themeParks); LEAF(QUEST_CORVETTE, corvette);

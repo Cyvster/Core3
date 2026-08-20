@@ -56,6 +56,10 @@ Exploration totals its milestones and planets, and Badges totals every badge
 category. Unacquired badges never contribute to these totals, and no
 `total possible` value is displayed.
 
+Every category entry appends its acquired descendant-badge count. Counts are
+recursive and character-specific, for example `Badges (20)`,
+`Exploration (12)`, and `Rori (4)`. The possible badge count is not displayed.
+
 Totals must come from the same modifier service used by gameplay so stacking,
 caps, and rounding cannot disagree with the effective character bonuses.
 

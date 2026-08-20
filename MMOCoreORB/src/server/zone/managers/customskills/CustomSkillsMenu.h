@@ -23,6 +23,9 @@ public:
 private:
 	static void addPageItems(SuiListBox* box, CreatureObject* player, Page page);
 	static void addBadgeItems(SuiListBox* box, CreatureObject* player, const char* const* keys, int count);
+	static void addCategoryItem(SuiListBox* box, CreatureObject* player, const String& name, Page category);
+	static int getAcquiredCount(CreatureObject* player, Page page);
+	static int countAcquired(CreatureObject* player, const char* const* keys, int count);
 	static String getTitle(Page page);
 };
 #endif
