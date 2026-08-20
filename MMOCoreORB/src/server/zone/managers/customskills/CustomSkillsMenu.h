@@ -1,8 +1,4 @@
-/*
- * CustomSkillsMenu.h
- * Portable, server-side custom skills menu.
- */
-
+/* Portable, server-side custom skills menu. */
 #ifndef CUSTOMSKILLSMENU_H_
 #define CUSTOMSKILLSMENU_H_
 
@@ -12,18 +8,20 @@
 class CustomSkillsMenu {
 public:
 	enum Page {
-		MAIN = 0,
-		COMBAT = 1,
-		DEFENSE = 2,
-		UTILITY = 3,
-		CRAFTING = 4,
-		ABOUT = 5
+		MAIN, BADGES, MILESTONES, EXPLORATION, PROFESSION, QUEST, EVENT,
+		EXPLORATION_MILESTONES, CORELLIA, DANTOOINE, DATHOMIR, ENDOR, LOK, NABOO, RORI, TALUS, TATOOINE, YAVIN4,
+		PROFESSION_COMBAT, PROFESSION_CRAFTING, PROFESSION_OUTDOORS, PROFESSION_SCIENCE, PROFESSION_SOCIAL, PROFESSION_PILOT,
+		QUEST_HERO, QUEST_WARREN, QUEST_THEME_PARKS, QUEST_CORVETTE,
+		EVENT_COA, EVENT_ACCOLADES, EVENT_LIBRARIAN, EVENT_RACING, EVENT_DEATH_STAR
 	};
 
 	static void open(CreatureObject* player, Page page = MAIN);
+	static Page getParent(Page page);
+	static Page getChild(Page page, int selection);
 
 private:
-	static void addPageItems(SuiListBox* box, Page page);
+	static void addPageItems(SuiListBox* box, CreatureObject* player, Page page);
+	static void addBadgeItems(SuiListBox* box, CreatureObject* player, const char* const* keys, int count);
+	static String getTitle(Page page);
 };
-
-#endif // CUSTOMSKILLSMENU_H_
+#endif
