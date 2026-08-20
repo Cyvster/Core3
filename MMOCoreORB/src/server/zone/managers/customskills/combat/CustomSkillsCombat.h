@@ -2,13 +2,7 @@
 #define CUSTOMSKILLSCOMBAT_H_
 
 #include "engine/engine.h"
-
-class CombatManager;
-class CreatureAttackData;
-class CreatureObject;
-class DefenderHitList;
-class TangibleObject;
-class WeaponObject;
+#include "server/zone/managers/combat/CombatManager.h"
 
 class CustomSkillsCombat {
 public:

@@ -2,8 +2,7 @@
 #define CUSTOMSKILLSMODIFIERS_H_
 
 #include "engine/engine.h"
-
-class PlayerObject;
+#include "server/zone/objects/player/PlayerObject.h"
 
 class CustomSkillsModifiers {
 public:
