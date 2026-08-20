@@ -72,9 +72,13 @@ void CustomSkillsConfig::loadModifier(LuaObject& modifiers, const String& name,
 	}
 
 	modifierEnabled[type] = modifier.getBooleanField("enabled", defaultEnabled);
-	modifierCaps[type] = Math::max(0, modifier.getIntField("cap", modifierCaps[type]));
-	int badgeBonus = Math::max(0, modifier.getIntField("badgeBonus", defaultBadgeBonus));
-	modifierCombatSpamLabels[type] = modifier.getStringField("combatSpamLabel", modifierCombatSpamLabels[type]);
+	modifierCaps[type] = static_cast<int>(modifier.getIntField("cap", modifierCaps[type]));
+	if (modifierCaps[type] < 0)
+		modifierCaps[type] = 0;
+	int badgeBonus = static_cast<int>(modifier.getIntField("badgeBonus", defaultBadgeBonus));
+	if (badgeBonus < 0)
+		badgeBonus = 0;
+	modifierCombatSpamLabels[type] = modifier.getStringField("combatSpamLabel", modifierCombatSpamLabels[type].c_str());
 
 	LuaObject badges = modifier.getObjectField("badges");
 	if (badges.isValidTable()) {
