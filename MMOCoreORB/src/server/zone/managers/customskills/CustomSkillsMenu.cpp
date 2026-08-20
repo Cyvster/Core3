@@ -165,9 +165,8 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 	summary << (page == MAIN ? "Stat Summary" : "Accumulated Bonuses") << endl;
 	for (int type = 0; type < CustomSkillsModifierType::COUNT; ++type) {
 		CustomSkillsModifierType::Type modifier = static_cast<CustomSkillsModifierType::Type>(type);
-		if (CustomSkillsModifiers::isModifierEnabled(modifier))
-			summary << CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(modifier,
-				CustomSkillsModifiers::getModifierTotal(player, modifier))) << endl;
+		int total = CustomSkillsModifiers::getModifierTotal(player, modifier);
+		summary << CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(modifier, total)) << endl;
 	}
 	if (CustomSkillsModifiers::isCriticalChanceEnabled())
 		summary << CustomSkillsModifiers::colorizeCriticalText("Critical Multiplier: " + CustomSkillsModifiers::formatPercent(criticalMultiplier) + " (Base)") << endl;
