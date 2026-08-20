@@ -29,6 +29,7 @@
 #include "server/zone/objects/installation/InstallationObject.h"
 #include "server/zone/packets/object/ShowFlyText.h"
 #include "server/zone/managers/frs/FrsManager.h"
+#include "server/zone/managers/customskills/combat/CustomSkillsCombat.h"
 #include "server/zone/objects/intangible/PetControlDevice.h"
 #include "server/zone/objects/installation/TurretObject.h"
 
@@ -1415,6 +1416,11 @@ int CombatManager::calculatePoolsToDamage(int poolsToDamage) const {
 }
 
 int CombatManager::applyDamage(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defender, DefenderHitList* defenderHitList, int damage, float damageMultiplier, int poolsToDamage, uint8& hitLocation, const CreatureAttackData& data) const {
+	return CustomSkillsCombat::applyDamage(this, attacker, weapon, defender, defenderHitList, damage,
+		damageMultiplier, poolsToDamage, hitLocation, data);
+}
+
+int CombatManager::applyVanillaDamage(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defender, DefenderHitList* defenderHitList, int damage, float damageMultiplier, int poolsToDamage, uint8& hitLocation, const CreatureAttackData& data) const {
 	if (poolsToDamage == 0 || damageMultiplier == 0 || defenderHitList == nullptr || weapon == nullptr) {
 		return 0;
 	}

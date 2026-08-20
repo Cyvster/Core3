@@ -1,5 +1,6 @@
 #include "CustomSkillsMenu.h"
 #include "CustomSkillsSuiCallback.h"
+#include "CustomSkillsModifiers.h"
 
 #include "server/zone/managers/player/BadgeList.h"
 #include "server/zone/managers/stringid/StringIdManager.h"
@@ -49,7 +50,7 @@ void CustomSkillsMenu::open(CreatureObject* player, Page page) {
 	box->setCancelButton(true, "@cancel");
 	box->setOkButton(true, hasChildPages(page) ? "@ok" : "@refresh");
 	box->setPromptTitle(getTitle(page));
-	box->setPromptText(page == MAIN ? "Select a category." : "Select an entry to continue.");
+	box->setPromptText(getPromptText(player, page));
 	if (page != MAIN)
 		box->setOtherButton(true, "@back");
 	addPageItems(box, player, page);
@@ -72,6 +73,10 @@ void CustomSkillsMenu::addBadgeItems(SuiListBox* box, CreatureObject* player, co
 		// corresponding STF entry instead of producing a blank menu row.
 		if (badgeName.isEmpty())
 			badgeName = badge->getKey();
+
+		int criticalChance = CustomSkillsModifiers::getBadgeCriticalChance(badge->getKey());
+		if (criticalChance > 0)
+			badgeName += "  (+" + CustomSkillsModifiers::formatPercent(criticalChance) + " Critical Chance)";
 
 		box->addMenuItem(marker + " \\#.  " + badgeName);
 	}
@@ -109,7 +114,42 @@ int CustomSkillsMenu::getAcquiredCount(CreatureObject* player, Page page) {
 }
 
 void CustomSkillsMenu::addCategoryItem(SuiListBox* box, CreatureObject* player, const String& name, Page category) {
-	box->addMenuItem(name + " (" + String::valueOf(getAcquiredCount(player, category)) + ")");
+	String label = name + " (" + String::valueOf(getAcquiredCount(player, category)) + ")";
+	int criticalChance = getCriticalChance(player, category);
+	if (criticalChance > 0)
+		label += "  (+" + CustomSkillsModifiers::formatPercent(criticalChance) + " Critical Chance)";
+	box->addMenuItem(label);
+}
+
+int CustomSkillsMenu::getCriticalChance(CreatureObject* player, Page page) {
+	PlayerObject* ghost = player->getPlayerObject();
+	if (ghost == nullptr)
+		return 0;
+
+	switch (page) {
+	case MAIN:
+	case BADGES:
+	case PROFESSION:
+	case PROFESSION_COMBAT:
+		return CustomSkillsModifiers::getCriticalChance(ghost, combat, countOf(combat));
+	default:
+		return 0;
+	}
+}
+
+String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
+	bool showsOffenseSummary = page == MAIN || page == BADGES || page == PROFESSION || page == PROFESSION_COMBAT;
+	if (!showsOffenseSummary)
+		return "Select an entry to continue.";
+
+	int criticalChance = getCriticalChance(player, page);
+	int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(player->getPlayerObject());
+	StringBuffer summary;
+	summary << (page == MAIN ? "Offense Summary" : "Accumulated Bonuses") << endl
+		<< "Critical Chance: +" << CustomSkillsModifiers::formatPercent(criticalChance) << endl
+		<< "Critical Multiplier: " << CustomSkillsModifiers::formatPercent(criticalMultiplier) << endl << endl
+		<< "Select an entry to continue.";
+	return summary.toString();
 }
 
 void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Page page) {

@@ -26,6 +26,8 @@ private:
 	static void addCategoryItem(SuiListBox* box, CreatureObject* player, const String& name, Page category);
 	static int getAcquiredCount(CreatureObject* player, Page page);
 	static int countAcquired(CreatureObject* player, const char* const* keys, int count);
+	static int getCriticalChance(CreatureObject* player, Page page);
+	static String getPromptText(CreatureObject* player, Page page);
 	static String getTitle(Page page);
 };
 #endif

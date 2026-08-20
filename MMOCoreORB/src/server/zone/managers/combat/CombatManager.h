@@ -18,8 +18,11 @@
 
 class CreatureAttackData;
 class CombatQueueCommand;
+class CustomSkillsCombat;
 
 class CombatManager : public Singleton<CombatManager>, public Logger, public Object {
+	friend class CustomSkillsCombat;
+
 public:
 	enum HitStatus : int {
 		 MISS = 0,
@@ -234,6 +237,7 @@ protected:
 	int calculatePoolsToDamage(int poolsToDamage) const;
 	int applyDamage(CreatureObject* attacker, WeaponObject* weapon, TangibleObject* defender, DefenderHitList* defenderHitList, int poolsToDamage, const CreatureAttackData& data) const;
 	int applyDamage(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defender, DefenderHitList* defenderHitList, int damage, float damageMultiplier, int poolsToDamage, uint8& hitLocation, const CreatureAttackData& data) const;
+	int applyVanillaDamage(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defender, DefenderHitList* defenderHitList, int damage, float damageMultiplier, int poolsToDamage, uint8& hitLocation, const CreatureAttackData& data) const;
 	void woundCreatureTarget(CreatureObject* defender, WeaponObject* weapon, Vector<int> poolsToWound) const;
 
 	void applyDots(CreatureObject* attacker, CreatureObject* defender, const CreatureAttackData& data, int appliedDamage, int unmitDamage, int poolsToDamage) const;

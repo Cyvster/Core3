@@ -82,6 +82,15 @@ bonuses and list multiple bonuses in stable modifier display order.
 
 Multiple Custom Skills windows remain supported intentionally.
 
+## First effective modifier
+
+Each of the twelve ground combat profession mastery badges grants 300 basis
+points (3.00%) of Critical Chance. The maximum from these badges is 36.00%.
+Successful critical attacks use the system's 150.00% base critical multiplier.
+The attacker also receives a yellow `(CRIT)` indicator in the combat-spam chat
+channel whenever a critical hit occurs.
+The shared modifier service supplies both combat and every menu summary.
+
 ## Stock-client controls
 
 The stock `Script.listBox` sends a server event when a player submits a button,
