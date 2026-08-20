@@ -158,7 +158,7 @@ int CustomSkillsMenu::getModifierTotal(CreatureObject* player, Page page, Custom
 }
 
 String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
-	bool showsOffenseSummary = page == MAIN || page == BADGES || page == PROFESSION || page == PROFESSION_COMBAT;
+	bool showsOffenseSummary = page == MAIN || page == PROFESSION || page == PROFESSION_COMBAT;
 	if (!showsOffenseSummary)
 		return "Select an entry to continue.";
 
