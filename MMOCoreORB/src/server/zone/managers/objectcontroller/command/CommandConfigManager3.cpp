@@ -34,6 +34,8 @@
 #include "server/zone/ZoneServer.h"
 #include "server/zone/Zone.h"
 
+#include "server/zone/managers/customskills/CustomSkillsCommand.h"
+
 #include "server/zone/objects/creature/commands/JediQueueCommand.h"
 
 #include "server/zone/objects/creature/commands/Melee1hBlindHit1Command.h"
@@ -339,6 +341,7 @@ using namespace server::zone::managers::objectcontroller::command;
 
 
 void CommandConfigManager::registerCommands3() {
+	commandFactory.registerCommand<CustomSkillsCommand>(String("customSkills").toLowerCase());
 	commandFactory.registerCommand<Melee1hBlindHit1Command>(String("melee1hBlindHit1").toLowerCase());
 	commandFactory.registerCommand<Melee1hBlindHit2Command>(String("melee1hBlindHit2").toLowerCase());
 	commandFactory.registerCommand<Melee1hBodyHit1Command>(String("melee1hBodyHit1").toLowerCase());
