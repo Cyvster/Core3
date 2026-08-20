@@ -77,3 +77,14 @@ Only the marker is colored. Omit the suffix for badges without configured
 bonuses and list multiple bonuses in stable modifier display order.
 
 Multiple Custom Skills windows remain supported intentionally.
+
+## Stock-client controls
+
+The stock `Script.listBox` sends a server event when a player submits a button,
+not when the selected row changes. Therefore OK opens the selected subpage,
+Back returns one level, and only Cancel exits. OK on an informational badge row
+or with no valid selection reopens the current page.
+
+Single-click navigation, right-click Back, and reliable double-click submission
+require a client-side SUI script/template modification and are deferred to the
+client-mod phase.
