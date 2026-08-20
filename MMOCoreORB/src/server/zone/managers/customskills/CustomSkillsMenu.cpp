@@ -182,6 +182,10 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 		CustomSkillsModifierType::ARMOR_DEGRADE_REDUCTION,
 		CustomSkillsModifierType::WEAPON_DEGRADE_REDUCTION
 	});
+	if (CustomSkillsModifiers::isCriticalChanceEnabled()) {
+		int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(player->getPlayerObject());
+		summary << CustomSkillsModifiers::colorizeCriticalText("+" + CustomSkillsModifiers::formatPercent(criticalMultiplier) + " Critical Multiplier") << endl;
+	}
 	addCategory("Utility", {
 		CustomSkillsModifierType::SEA_CAP_INCREASE,
 		CustomSkillsModifierType::MOVEMENT_SPEED,
@@ -195,11 +199,6 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 		CustomSkillsModifierType::AMAZING_SUCCESS_CHANCE,
 		CustomSkillsModifierType::AMAZING_RESULTS
 	});
-
-	if (CustomSkillsModifiers::isCriticalChanceEnabled()) {
-		int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(player->getPlayerObject());
-		summary << CustomSkillsModifiers::colorizeCriticalText("+" + CustomSkillsModifiers::formatPercent(criticalMultiplier) + " Critical Multiplier") << endl;
-	}
 	return summary.toString();
 }
 
