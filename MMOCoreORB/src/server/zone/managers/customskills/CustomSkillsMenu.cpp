@@ -2,6 +2,7 @@
 #include "CustomSkillsSuiCallback.h"
 
 #include "server/zone/managers/player/BadgeList.h"
+#include "server/zone/managers/stringid/StringIdManager.h"
 #include "server/zone/objects/player/PlayerObject.h"
 #include "server/zone/objects/player/sui/SuiWindowType.h"
 
@@ -64,7 +65,15 @@ void CustomSkillsMenu::addBadgeItems(SuiListBox* box, CreatureObject* player, co
 		if (badge == nullptr)
 			continue;
 		String marker = ghost->hasBadge(badge->getIndex()) ? "\\#00FF00O" : "\\#FF0000X";
-		box->addMenuItem(marker + " \\#.  @badge_n:" + badge->getKey());
+		String stringId = "@badge_n:" + badge->getKey();
+		String badgeName = StringIdManager::instance()->getStringId(stringId.hashCode()).toString();
+
+		// Keep the stable badge key visible if a custom server is missing the
+		// corresponding STF entry instead of producing a blank menu row.
+		if (badgeName.isEmpty())
+			badgeName = badge->getKey();
+
+		box->addMenuItem(marker + " \\#.  " + badgeName);
 	}
 }
 
