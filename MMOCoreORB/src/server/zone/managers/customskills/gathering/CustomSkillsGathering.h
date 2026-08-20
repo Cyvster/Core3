@@ -1,7 +1,7 @@
 #ifndef CUSTOMSKILLSGATHERING_H_
 #define CUSTOMSKILLSGATHERING_H_
 
-class CreatureObject;
+#include "server/zone/objects/creature/CreatureObject.h"
 
 class CustomSkillsGathering {
 public:

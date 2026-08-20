@@ -5,8 +5,6 @@
 #include "server/zone/objects/player/PlayerObject.h"
 #include "CustomSkillsModifierType.h"
 
-class CreatureObject;
-
 class CustomSkillsModifiers {
 public:
 	static bool isCriticalChanceEnabled();

@@ -1,7 +1,7 @@
 #ifndef CUSTOMSKILLSPROGRESSION_H_
 #define CUSTOMSKILLSPROGRESSION_H_
 
-class CreatureObject;
+#include "server/zone/objects/creature/CreatureObject.h"
 
 class CustomSkillsProgression {
 public:

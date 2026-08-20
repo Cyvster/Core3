@@ -1,8 +1,8 @@
 #ifndef CUSTOMSKILLSBUFFS_H_
 #define CUSTOMSKILLSBUFFS_H_
 
-class Buff;
-class CreatureObject;
+#include "server/zone/objects/creature/CreatureObject.h"
+#include "server/zone/objects/creature/buffs/Buff.h"
 
 class CustomSkillsBuffs {
 public:

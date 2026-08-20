@@ -4,9 +4,6 @@
 #include "server/zone/objects/creature/variables/SkillModEntry.h"
 #include "server/zone/objects/creature/variables/SkillModList.h"
 
-class CreatureObject;
-class SkillModList;
-
 class CustomSkillsSkillMods {
 public:
 	static int getSkillMod(CreatureObject* player, const SkillModList& list, const String& name, int nativeValue);

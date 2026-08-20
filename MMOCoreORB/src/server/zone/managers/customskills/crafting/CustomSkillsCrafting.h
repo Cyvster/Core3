@@ -1,8 +1,8 @@
 #ifndef CUSTOMSKILLSCRAFTING_H_
 #define CUSTOMSKILLSCRAFTING_H_
 
-class CreatureObject;
-class CraftingValues;
+#include "server/zone/objects/creature/CreatureObject.h"
+#include "server/zone/objects/manufactureschematic/craftingvalues/CraftingValues.h"
 
 class CustomSkillsCrafting {
 public:

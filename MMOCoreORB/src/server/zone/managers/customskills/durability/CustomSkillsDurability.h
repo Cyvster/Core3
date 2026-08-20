@@ -1,7 +1,7 @@
 #ifndef CUSTOMSKILLSDURABILITY_H_
 #define CUSTOMSKILLSDURABILITY_H_
 
-class CreatureObject;
+#include "server/zone/objects/creature/CreatureObject.h"
 
 class CustomSkillsDurability {
 public:
