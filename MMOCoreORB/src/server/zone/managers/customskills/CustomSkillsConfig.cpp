@@ -21,7 +21,7 @@ void CustomSkillsConfig::setDefaults() {
 	customSummaryColor = "00FF00";
 	criticalCombatSpamLabel = "(CRIT)";
 	modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = true;
-	modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE] = 10000;
+	modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE] = 6000;
 
 	const char* combatBadges[] = {
 		"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
@@ -90,7 +90,27 @@ void CustomSkillsConfig::loadModifier(LuaObject& modifiers, const String& name,
 		}
 	}
 	badges.pop();
+
+	loadBadgeOverrides(modifier, type);
+
 	modifier.pop();
+}
+
+void CustomSkillsConfig::loadBadgeOverrides(LuaObject& table, CustomSkillsModifierType::Type type) {
+	LuaObject overrides = table.getObjectField("badgeOverrides");
+	if (overrides.isValidTable()) {
+		for (int i = 1; i <= overrides.getTableSize(); ++i) {
+			LuaObject entry = overrides.getObjectAt(i);
+			if (entry.isValidTable() && entry.getTableSize() == 2) {
+				String key = entry.getStringAt(1);
+				int value = entry.getIntAt(2);
+				if (!key.isEmpty() && value >= 0)
+					modifierBadgeBonuses[type].put(key, value);
+			}
+			entry.pop();
+		}
+	}
+	overrides.pop();
 }
 
 void CustomSkillsConfig::load() {
@@ -125,6 +145,22 @@ void CustomSkillsConfig::load() {
 		else
 			warning("criticalChance.badgeBonus must be from 0 to 10000; using default");
 		setUniformBadgeBonus(CustomSkillsModifierType::CRITICAL_CHANCE, criticalChancePerCombatBadge);
+
+		int cap = critical.getIntField("cap", modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE]);
+		if (cap >= 0)
+			modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE] = cap;
+
+		LuaObject ccBadges = critical.getObjectField("badges");
+		if (ccBadges.isValidTable()) {
+			for (int i = 1; i <= ccBadges.getTableSize(); ++i) {
+				String badge = ccBadges.getStringAt(i);
+				if (!badge.isEmpty())
+					modifierBadgeBonuses[CustomSkillsModifierType::CRITICAL_CHANCE].put(badge, criticalChancePerCombatBadge);
+			}
+		}
+		ccBadges.pop();
+
+		loadBadgeOverrides(critical, CustomSkillsModifierType::CRITICAL_CHANCE);
 
 		int multiplier = critical.getIntField("multiplier", DEFAULT_CRITICAL_MULTIPLIER);
 		if (multiplier >= 10000)

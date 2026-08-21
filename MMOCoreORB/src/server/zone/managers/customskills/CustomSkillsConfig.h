@@ -37,6 +37,7 @@ private:
 	void load();
 	void loadModifier(LuaObject& modifiers, const String& name, CustomSkillsModifierType::Type type,
 		bool defaultEnabled, int defaultBadgeBonus);
+	void loadBadgeOverrides(LuaObject& table, CustomSkillsModifierType::Type type);
 	void setUniformBadgeBonus(CustomSkillsModifierType::Type type, int value);
 };
 
