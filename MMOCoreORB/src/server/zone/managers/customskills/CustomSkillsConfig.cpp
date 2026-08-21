@@ -22,7 +22,7 @@ void CustomSkillsConfig::setDefaults() {
 	criticalCombatSpamLabel = "(CRIT)";
 	rarityNamingEnabled = false;
 	legendaryColor = "FF00FF";
-	exceptionalColor = "00FFFF";
+	exceptionalColor = "0000FF";
 	modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = true;
 	modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE] = 6000;
 
@@ -189,7 +189,7 @@ void CustomSkillsConfig::load() {
 		else
 			warning("rarityNaming.legendaryColor must be a six-character RGB hex value; using default");
 
-		String exceptional = rarity.getStringField("exceptionalColor", "00FFFF");
+		String exceptional = rarity.getStringField("exceptionalColor", "0000FF");
 		if (exceptional.length() == 6)
 			exceptionalColor = exceptional;
 		else

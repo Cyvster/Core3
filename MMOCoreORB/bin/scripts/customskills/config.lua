@@ -15,7 +15,7 @@ customSkillsConfig = {
 	rarityNaming = {
 		enabled = false,
 		legendaryColor = "FF00FF",   -- purple for legendary
-		exceptionalColor = "00FFFF", -- cyan for exceptional
+		exceptionalColor = "0000FF", -- blue for exceptional
 	},
 
 	criticalChance = {
