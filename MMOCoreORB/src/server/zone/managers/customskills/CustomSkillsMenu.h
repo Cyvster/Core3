@@ -18,7 +18,7 @@ public:
 		BONUS_CRIT_CHANCE, BONUS_CRIT_MULTI, BONUS_DOUBLE, BONUS_TRIPLE, BONUS_QUAD, BONUS_ARMOR_PEN, BONUS_DEF_CAP,
 		BONUS_ARMOR_DEGRADE, BONUS_WEAPON_DEGRADE, BONUS_SEA_CAP, BONUS_MOVE_SPEED, BONUS_BUFF_DUR, BONUS_EXP_BONUS, BONUS_GATHERING,
 		BONUS_PRACTICE_XP, BONUS_CRAFT_SPEED, BONUS_AMAZING_SUCCESS, BONUS_AMAZING_RESULTS,
-		SERVER_CONFIG, MOD_OPTIONS, SGEMU_OPTIONS
+		SERVER_CONFIG, MOD_OPTIONS, RARITY_NAMING, SWGEMU_OPTIONS
 	};
 
 	static void open(CreatureObject* player, Page page = MAIN);
@@ -36,5 +36,6 @@ private:
 	static int countModifier(CreatureObject* player, const char* const* keys, int count, CustomSkillsModifierType::Type type);
 	static String getPromptText(CreatureObject* player, Page page);
 	static String getTitle(Page page);
+	static int countEnabledOptions();
 };
 #endif
