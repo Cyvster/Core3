@@ -304,6 +304,7 @@ void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Pag
 	case BONUS_UTILITY: addCategoryItem(box, player, "Armor Degrade Reduction", BONUS_ARMOR_DEGRADE, false); addCategoryItem(box, player, "Weapon Degrade Reduction", BONUS_WEAPON_DEGRADE, false); addCategoryItem(box, player, "SEA Cap", BONUS_SEA_CAP, false); addCategoryItem(box, player, "Movement Speed", BONUS_MOVE_SPEED, false); addCategoryItem(box, player, "Buff Duration", BONUS_BUFF_DUR, false); addCategoryItem(box, player, "Experience Bonus", BONUS_EXP_BONUS, false); addCategoryItem(box, player, "Gathering Quantity", BONUS_GATHERING, false); break;
 	case BONUS_CRAFTING: addCategoryItem(box, player, "Practice XP", BONUS_PRACTICE_XP, false); addCategoryItem(box, player, "Crafting Speed", BONUS_CRAFT_SPEED, false); addCategoryItem(box, player, "Amazing Success", BONUS_AMAZING_SUCCESS, false); addCategoryItem(box, player, "Amazing Results", BONUS_AMAZING_RESULTS, false); break;
 	case SERVER_CONFIG: addCategoryItem(box, player, "Mod Options", MOD_OPTIONS, false); addCategoryItem(box, player, "SGEMU Options", SGEMU_OPTIONS, false); break;
+	case SGEMU_OPTIONS: break;
 	case MOD_OPTIONS: {
 		CustomSkillsConfig* config = CustomSkillsConfig::instance();
 		String rarityStatus = config->isRarityNamingEnabled() ? "\\#00FF00Enabled" : "\\#FF0000Disabled";
