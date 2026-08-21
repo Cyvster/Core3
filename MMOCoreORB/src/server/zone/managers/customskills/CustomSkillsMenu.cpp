@@ -248,10 +248,6 @@ int CustomSkillsMenu::getModifierTotal(CreatureObject* player, Page page, Custom
 }
 
 String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
-	bool showsOffenseSummary = page == MAIN || page == BADGES || page == PROFESSION || page == PROFESSION_COMBAT || page == BONUSES || page == BONUS_COMBAT || page == BONUS_UTILITY || page == BONUS_CRAFTING;
-	if (!showsOffenseSummary)
-		return "Select an entry to continue.";
-
 	StringBuffer summary;
 
 	auto addCategory = [&](const char* label, std::initializer_list<CustomSkillsModifierType::Type> types) {
