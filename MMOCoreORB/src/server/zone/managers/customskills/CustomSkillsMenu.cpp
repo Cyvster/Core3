@@ -38,6 +38,87 @@ namespace {
 	BADGES(librarian, "bdg_library_trivia");
 	BADGES(racing, "bdg_racing_agrilat_swamp", "bdg_racing_keren_city", "bdg_racing_mos_espa", "bdg_racing_lok_marathon", "bdg_racing_narmle_memorial", "bdg_racing_nashal_river");
 	BADGES(deathStar, "destroy_deathstar");
+
+	BADGES(badgesCritChance,
+		"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
+		"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
+		"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
+		"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master",
+		"count_5", "count_10", "count_25", "count_50", "count_75", "count_100", "count_125",
+		"bdg_exp_10_badges", "bdg_exp_20_badges", "bdg_exp_30_badges", "bdg_exp_40_badges", "bdg_exp_45_badges");
+	BADGES(badgesCritMulti,
+		"count_5", "count_10", "count_25", "count_50", "count_75", "count_100", "count_125",
+		"bdg_exp_10_badges", "bdg_exp_20_badges", "bdg_exp_30_badges", "bdg_exp_40_badges", "bdg_exp_45_badges");
+	BADGES(badgesDouble,
+		"warren_compassion", "warren_hero",
+		"bdg_thm_park_jabba_badge", "bdg_thm_park_imperial_badge", "bdg_thm_park_rebel_badge", "bdg_thm_park_nym_badge");
+	BADGES(badgesTriple,
+		"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
+		"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
+		"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
+		"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master",
+		"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark");
+	BADGES(badgesQuad,
+		"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
+		"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
+		"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
+		"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master",
+		"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark");
+	BADGES(badgesArmorPen,
+		"bdg_corvette_imp_destroy", "bdg_corvette_imp_rescue", "bdg_corvette_imp_assassin",
+		"bdg_corvette_neutral_destroy", "bdg_corvette_neutral_rescue", "bdg_corvette_neutral_assassin",
+		"bdg_corvette_reb_destroy", "bdg_corvette_reb_rescue", "bdg_corvette_reb_assassin");
+	BADGES(badgesDefCap,
+		"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark",
+		"exp_lok_volcano", "bdg_exp_lok_imp_outpost", "bdg_exp_lok_kimogila_skeleton",
+		"exp_dat_tarpit", "exp_dat_escape_pod", "exp_dat_misty_falls_1", "exp_dat_misty_falls_2",
+		"bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison", "exp_yav_temple_exar_kun");
+	BADGES(badgesArmorDegrade,
+		"bdg_exp_tal_creature_village", "bdg_exp_tal_imp_base", "bdg_exp_tal_imp_vs_reb_battle", "bdg_exp_tal_aqualish_cave",
+		"bdg_exp_ror_kobala_spice_mine", "bdg_exp_ror_rebel_outpost", "bdg_exp_ror_imp_camp", "bdg_exp_ror_imp_hyperdrive_fac");
+	BADGES(badgesWeaponDegrade,
+		"exp_dan_jedi_temple", "exp_dan_rebel_base", "bdg_exp_dan_dantari_village1", "bdg_exp_dan_dantari_village2",
+		"bdg_exp_end_ewok_tree_village", "bdg_exp_end_ewok_lake_village", "bdg_exp_end_dulok_village", "bdg_exp_end_imp_outpost");
+	BADGES(badgesSeaCap,
+		"exp_tat_tusken_pool", "exp_tat_krayt_skeleton", "exp_tat_sarlacc_pit", "exp_tat_krayt_graveyard",
+		"exp_dat_sarlacc");
+	BADGES(badgesMoveSpeed,
+		"exp_nab_gungan_sacred_place", "bdg_exp_nab_theed_falls_bottom", "bdg_exp_nab_deeja_falls_top", "bdg_exp_nab_amidalas_sandy_beach");
+	BADGES(badgesBuffDur,
+		"exp_tat_escape_pod", "exp_tat_lars_homestead", "exp_tat_bens_hut",
+		"exp_yav_temple_woolamander", "exp_yav_temple_blueleaf",
+		"science_combatmedic_master", "science_doctor_master", "science_medic_master",
+		"social_dancer_master", "social_entertainer_master", "social_imagedesigner_master",
+		"social_musician_master", "social_politician_master");
+	BADGES(badgesExpBonus,
+		"exp_cor_agrilat_swamp", "bdg_exp_cor_rebel_hideout", "bdg_exp_cor_rogue_corsec_base",
+		"bdg_exp_cor_tyrena_theater", "bdg_exp_cor_bela_vistal_fountain");
+	BADGES(badgesPracticeXP,
+		"exp_tat_escape_pod", "exp_tat_lars_homestead", "exp_tat_bens_hut",
+		"exp_yav_temple_woolamander", "exp_yav_temple_blueleaf",
+		"social_dancer_master", "social_entertainer_master", "social_imagedesigner_master",
+		"social_musician_master", "social_politician_master");
+	BADGES(badgesCraftSpeed,
+		"crafting_architect_master", "crafting_armorsmith_master", "crafting_artisan_master",
+		"crafting_chef_master", "crafting_droidengineer_master", "crafting_merchant_master",
+		"crafting_shipwright", "crafting_tailor_master", "crafting_weaponsmith_master",
+		"science_doctor_master");
+	BADGES(badgesAmazingSuccess,
+		"exp_yav_temple_exar_kun",
+		"exp_lok_volcano", "bdg_exp_lok_imp_outpost", "bdg_exp_lok_kimogila_skeleton",
+		"exp_dat_tarpit", "exp_dat_escape_pod", "exp_dat_misty_falls_1", "exp_dat_misty_falls_2",
+		"bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison");
+	BADGES(badgesAmazingResults,
+		"exp_yav_temple_exar_kun",
+		"exp_lok_volcano", "bdg_exp_lok_imp_outpost", "bdg_exp_lok_kimogila_skeleton",
+		"exp_dat_tarpit", "exp_dat_escape_pod", "exp_dat_misty_falls_1", "exp_dat_misty_falls_2",
+		"bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison");
+	BADGES(badgesGathering,
+		"exp_tat_escape_pod", "exp_tat_lars_homestead", "exp_tat_bens_hut",
+		"exp_yav_temple_woolamander", "exp_yav_temple_blueleaf",
+		"outdoors_bio_engineer_master", "outdoors_creaturehandler_master", "outdoors_ranger_master",
+		"outdoors_scout_master", "outdoors_squadleader_master",
+		"science_combatmedic_master", "science_doctor_master", "science_medic_master");
 #undef BADGES
 	template <int N> int countOf(const char* const (&)[N]) { return N; }
 }
@@ -108,10 +189,17 @@ int CustomSkillsMenu::getAcquiredCount(CreatureObject* player, Page page) {
 	case PROFESSION: return getAcquiredCount(player, PROFESSION_COMBAT) + getAcquiredCount(player, PROFESSION_CRAFTING) + getAcquiredCount(player, PROFESSION_OUTDOORS) + getAcquiredCount(player, PROFESSION_SCIENCE) + getAcquiredCount(player, PROFESSION_SOCIAL) + getAcquiredCount(player, PROFESSION_PILOT);
 	case QUEST: return getAcquiredCount(player, QUEST_HERO) + getAcquiredCount(player, QUEST_WARREN) + getAcquiredCount(player, QUEST_THEME_PARKS) + getAcquiredCount(player, QUEST_CORVETTE);
 	case EVENT: return getAcquiredCount(player, EVENT_COA) + getAcquiredCount(player, EVENT_ACCOLADES) + getAcquiredCount(player, EVENT_LIBRARIAN) + getAcquiredCount(player, EVENT_RACING) + getAcquiredCount(player, EVENT_DEATH_STAR);
+	case BONUSES: return getAcquiredCount(player, BONUS_COMBAT) + getAcquiredCount(player, BONUS_UTILITY) + getAcquiredCount(player, BONUS_CRAFTING);
+	case BONUS_COMBAT: return getAcquiredCount(player, BONUS_CRIT_CHANCE) + getAcquiredCount(player, BONUS_CRIT_MULTI) + getAcquiredCount(player, BONUS_DOUBLE) + getAcquiredCount(player, BONUS_TRIPLE) + getAcquiredCount(player, BONUS_QUAD) + getAcquiredCount(player, BONUS_ARMOR_PEN) + getAcquiredCount(player, BONUS_DEF_CAP);
+	case BONUS_UTILITY: return getAcquiredCount(player, BONUS_ARMOR_DEGRADE) + getAcquiredCount(player, BONUS_WEAPON_DEGRADE) + getAcquiredCount(player, BONUS_SEA_CAP) + getAcquiredCount(player, BONUS_MOVE_SPEED) + getAcquiredCount(player, BONUS_BUFF_DUR) + getAcquiredCount(player, BONUS_EXP_BONUS) + getAcquiredCount(player, BONUS_GATHERING);
+	case BONUS_CRAFTING: return getAcquiredCount(player, BONUS_PRACTICE_XP) + getAcquiredCount(player, BONUS_CRAFT_SPEED) + getAcquiredCount(player, BONUS_AMAZING_SUCCESS) + getAcquiredCount(player, BONUS_AMAZING_RESULTS);
 	COUNT_LEAF(MILESTONES, milestones); COUNT_LEAF(EXPLORATION_MILESTONES, explorationMilestones); COUNT_LEAF(CORELLIA, corellia); COUNT_LEAF(DANTOOINE, dantooine); COUNT_LEAF(DATHOMIR, dathomir); COUNT_LEAF(ENDOR, endor); COUNT_LEAF(LOK, lok); COUNT_LEAF(NABOO, naboo); COUNT_LEAF(RORI, rori); COUNT_LEAF(TALUS, talus); COUNT_LEAF(TATOOINE, tatooine); COUNT_LEAF(YAVIN4, yavin4);
 	COUNT_LEAF(PROFESSION_COMBAT, combat); COUNT_LEAF(PROFESSION_CRAFTING, crafting); COUNT_LEAF(PROFESSION_OUTDOORS, outdoors); COUNT_LEAF(PROFESSION_SCIENCE, science); COUNT_LEAF(PROFESSION_SOCIAL, social); COUNT_LEAF(PROFESSION_PILOT, pilot);
 	COUNT_LEAF(QUEST_HERO, hero); COUNT_LEAF(QUEST_WARREN, warren); COUNT_LEAF(QUEST_THEME_PARKS, themeParks); COUNT_LEAF(QUEST_CORVETTE, corvette);
 	COUNT_LEAF(EVENT_COA, coa); COUNT_LEAF(EVENT_ACCOLADES, accolades); COUNT_LEAF(EVENT_LIBRARIAN, librarian); COUNT_LEAF(EVENT_RACING, racing); COUNT_LEAF(EVENT_DEATH_STAR, deathStar);
+	COUNT_LEAF(BONUS_CRIT_CHANCE, badgesCritChance); COUNT_LEAF(BONUS_CRIT_MULTI, badgesCritMulti); COUNT_LEAF(BONUS_DOUBLE, badgesDouble); COUNT_LEAF(BONUS_TRIPLE, badgesTriple); COUNT_LEAF(BONUS_QUAD, badgesQuad); COUNT_LEAF(BONUS_ARMOR_PEN, badgesArmorPen); COUNT_LEAF(BONUS_DEF_CAP, badgesDefCap);
+	COUNT_LEAF(BONUS_ARMOR_DEGRADE, badgesArmorDegrade); COUNT_LEAF(BONUS_WEAPON_DEGRADE, badgesWeaponDegrade); COUNT_LEAF(BONUS_SEA_CAP, badgesSeaCap); COUNT_LEAF(BONUS_MOVE_SPEED, badgesMoveSpeed); COUNT_LEAF(BONUS_BUFF_DUR, badgesBuffDur); COUNT_LEAF(BONUS_EXP_BONUS, badgesExpBonus); COUNT_LEAF(BONUS_GATHERING, badgesGathering);
+	COUNT_LEAF(BONUS_PRACTICE_XP, badgesPracticeXP); COUNT_LEAF(BONUS_CRAFT_SPEED, badgesCraftSpeed); COUNT_LEAF(BONUS_AMAZING_SUCCESS, badgesAmazingSuccess); COUNT_LEAF(BONUS_AMAZING_RESULTS, badgesAmazingResults);
 	default: return 0;
 	}
 #undef COUNT_LEAF
@@ -160,7 +248,7 @@ int CustomSkillsMenu::getModifierTotal(CreatureObject* player, Page page, Custom
 }
 
 String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
-	bool showsOffenseSummary = page == MAIN || page == BADGES || page == PROFESSION || page == PROFESSION_COMBAT;
+	bool showsOffenseSummary = page == MAIN || page == BADGES || page == PROFESSION || page == PROFESSION_COMBAT || page == BONUSES || page == BONUS_COMBAT || page == BONUS_UTILITY || page == BONUS_CRAFTING;
 	if (!showsOffenseSummary)
 		return "Select an entry to continue.";
 
@@ -208,48 +296,64 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Page page) {
 #define LEAF(pageName, data) case pageName: addBadgeItems(box, player, data, countOf(data)); break
 	switch (page) {
-	case MAIN: addCategoryItem(box, player, "Badges", BADGES, false); break;
+	case MAIN: addCategoryItem(box, player, "Badges", BADGES, false); addCategoryItem(box, player, "Bonuses", BONUSES, false); break;
 	case BADGES: addCategoryItem(box, player, "Milestone Badges", MILESTONES); addCategoryItem(box, player, "Exploration", EXPLORATION); addCategoryItem(box, player, "Profession", PROFESSION); addCategoryItem(box, player, "Quest", QUEST); addCategoryItem(box, player, "Event", EVENT); break;
 	case EXPLORATION: addCategoryItem(box, player, "Milestone Exploration", EXPLORATION_MILESTONES); addCategoryItem(box, player, "Corellia", CORELLIA); addCategoryItem(box, player, "Dantooine", DANTOOINE); addCategoryItem(box, player, "Dathomir", DATHOMIR); addCategoryItem(box, player, "Endor", ENDOR); addCategoryItem(box, player, "Lok", LOK); addCategoryItem(box, player, "Naboo", NABOO); addCategoryItem(box, player, "Rori", RORI); addCategoryItem(box, player, "Talus", TALUS); addCategoryItem(box, player, "Tatooine", TATOOINE); addCategoryItem(box, player, "Yavin IV", YAVIN4); break;
 	case PROFESSION: addCategoryItem(box, player, "Combat", PROFESSION_COMBAT); addCategoryItem(box, player, "Crafting", PROFESSION_CRAFTING); addCategoryItem(box, player, "Outdoors", PROFESSION_OUTDOORS); addCategoryItem(box, player, "Science", PROFESSION_SCIENCE); addCategoryItem(box, player, "Social", PROFESSION_SOCIAL); addCategoryItem(box, player, "Pilot", PROFESSION_PILOT); break;
 	case QUEST: addCategoryItem(box, player, "Hero of Tatooine", QUEST_HERO); addCategoryItem(box, player, "Warren", QUEST_WARREN); addCategoryItem(box, player, "Theme Parks", QUEST_THEME_PARKS); addCategoryItem(box, player, "Corellian Corvette", QUEST_CORVETTE); break;
 	case EVENT: addCategoryItem(box, player, "Cries of Alderaan", EVENT_COA); addCategoryItem(box, player, "Accolades", EVENT_ACCOLADES); addCategoryItem(box, player, "Librarian", EVENT_LIBRARIAN); addCategoryItem(box, player, "Racing", EVENT_RACING); addCategoryItem(box, player, "Death Star", EVENT_DEATH_STAR); break;
+	case BONUSES: addCategoryItem(box, player, "Combat", BONUS_COMBAT, false); addCategoryItem(box, player, "Utility", BONUS_UTILITY, false); addCategoryItem(box, player, "Crafting", BONUS_CRAFTING, false); break;
+	case BONUS_COMBAT: addCategoryItem(box, player, "Critical Chance", BONUS_CRIT_CHANCE, false); addCategoryItem(box, player, "Critical Multiplier", BONUS_CRIT_MULTI, false); addCategoryItem(box, player, "Double Attack", BONUS_DOUBLE, false); addCategoryItem(box, player, "Triple Attack", BONUS_TRIPLE, false); addCategoryItem(box, player, "Quad Attack", BONUS_QUAD, false); addCategoryItem(box, player, "Armor Penetration", BONUS_ARMOR_PEN, false); addCategoryItem(box, player, "Defense Cap", BONUS_DEF_CAP, false); break;
+	case BONUS_UTILITY: addCategoryItem(box, player, "Armor Degrade Reduction", BONUS_ARMOR_DEGRADE, false); addCategoryItem(box, player, "Weapon Degrade Reduction", BONUS_WEAPON_DEGRADE, false); addCategoryItem(box, player, "SEA Cap", BONUS_SEA_CAP, false); addCategoryItem(box, player, "Movement Speed", BONUS_MOVE_SPEED, false); addCategoryItem(box, player, "Buff Duration", BONUS_BUFF_DUR, false); addCategoryItem(box, player, "Experience Bonus", BONUS_EXP_BONUS, false); addCategoryItem(box, player, "Gathering Quantity", BONUS_GATHERING, false); break;
+	case BONUS_CRAFTING: addCategoryItem(box, player, "Practice XP", BONUS_PRACTICE_XP, false); addCategoryItem(box, player, "Crafting Speed", BONUS_CRAFT_SPEED, false); addCategoryItem(box, player, "Amazing Success", BONUS_AMAZING_SUCCESS, false); addCategoryItem(box, player, "Amazing Results", BONUS_AMAZING_RESULTS, false); break;
 	LEAF(MILESTONES, milestones); LEAF(EXPLORATION_MILESTONES, explorationMilestones); LEAF(CORELLIA, corellia); LEAF(DANTOOINE, dantooine); LEAF(DATHOMIR, dathomir); LEAF(ENDOR, endor); LEAF(LOK, lok); LEAF(NABOO, naboo); LEAF(RORI, rori); LEAF(TALUS, talus); LEAF(TATOOINE, tatooine); LEAF(YAVIN4, yavin4);
 	LEAF(PROFESSION_COMBAT, combat); LEAF(PROFESSION_CRAFTING, crafting); LEAF(PROFESSION_OUTDOORS, outdoors); LEAF(PROFESSION_SCIENCE, science); LEAF(PROFESSION_SOCIAL, social); LEAF(PROFESSION_PILOT, pilot);
 	LEAF(QUEST_HERO, hero); LEAF(QUEST_WARREN, warren); LEAF(QUEST_THEME_PARKS, themeParks); LEAF(QUEST_CORVETTE, corvette);
 	LEAF(EVENT_COA, coa); LEAF(EVENT_ACCOLADES, accolades); LEAF(EVENT_LIBRARIAN, librarian); LEAF(EVENT_RACING, racing); LEAF(EVENT_DEATH_STAR, deathStar);
+	LEAF(BONUS_CRIT_CHANCE, badgesCritChance); LEAF(BONUS_CRIT_MULTI, badgesCritMulti); LEAF(BONUS_DOUBLE, badgesDouble); LEAF(BONUS_TRIPLE, badgesTriple); LEAF(BONUS_QUAD, badgesQuad); LEAF(BONUS_ARMOR_PEN, badgesArmorPen); LEAF(BONUS_DEF_CAP, badgesDefCap);
+	LEAF(BONUS_ARMOR_DEGRADE, badgesArmorDegrade); LEAF(BONUS_WEAPON_DEGRADE, badgesWeaponDegrade); LEAF(BONUS_SEA_CAP, badgesSeaCap); LEAF(BONUS_MOVE_SPEED, badgesMoveSpeed); LEAF(BONUS_BUFF_DUR, badgesBuffDur); LEAF(BONUS_EXP_BONUS, badgesExpBonus); LEAF(BONUS_GATHERING, badgesGathering);
+	LEAF(BONUS_PRACTICE_XP, badgesPracticeXP); LEAF(BONUS_CRAFT_SPEED, badgesCraftSpeed); LEAF(BONUS_AMAZING_SUCCESS, badgesAmazingSuccess); LEAF(BONUS_AMAZING_RESULTS, badgesAmazingResults);
 	}
 #undef LEAF
 }
 
 CustomSkillsMenu::Page CustomSkillsMenu::getChild(Page page, int selection) {
-	static const Page main[] = {BADGES};
+	static const Page main[] = {BADGES, BONUSES};
 	static const Page badges[] = {MILESTONES, EXPLORATION, PROFESSION, QUEST, EVENT};
 	static const Page exploration[] = {EXPLORATION_MILESTONES, CORELLIA, DANTOOINE, DATHOMIR, ENDOR, LOK, NABOO, RORI, TALUS, TATOOINE, YAVIN4};
 	static const Page profession[] = {PROFESSION_COMBAT, PROFESSION_CRAFTING, PROFESSION_OUTDOORS, PROFESSION_SCIENCE, PROFESSION_SOCIAL, PROFESSION_PILOT};
 	static const Page quest[] = {QUEST_HERO, QUEST_WARREN, QUEST_THEME_PARKS, QUEST_CORVETTE};
 	static const Page event[] = {EVENT_COA, EVENT_ACCOLADES, EVENT_LIBRARIAN, EVENT_RACING, EVENT_DEATH_STAR};
+	static const Page bonuses[] = {BONUS_COMBAT, BONUS_UTILITY, BONUS_CRAFTING};
+	static const Page bonusCombat[] = {BONUS_CRIT_CHANCE, BONUS_CRIT_MULTI, BONUS_DOUBLE, BONUS_TRIPLE, BONUS_QUAD, BONUS_ARMOR_PEN, BONUS_DEF_CAP};
+	static const Page bonusUtility[] = {BONUS_ARMOR_DEGRADE, BONUS_WEAPON_DEGRADE, BONUS_SEA_CAP, BONUS_MOVE_SPEED, BONUS_BUFF_DUR, BONUS_EXP_BONUS, BONUS_GATHERING};
+	static const Page bonusCrafting[] = {BONUS_PRACTICE_XP, BONUS_CRAFT_SPEED, BONUS_AMAZING_SUCCESS, BONUS_AMAZING_RESULTS};
 	if (selection < 0) return page;
 #define CHILD(parent, data) case parent: return selection < static_cast<int>(sizeof(data) / sizeof(data[0])) ? data[selection] : page
-	switch (page) { CHILD(MAIN, main); CHILD(BADGES, badges); CHILD(EXPLORATION, exploration); CHILD(PROFESSION, profession); CHILD(QUEST, quest); CHILD(EVENT, event); default: return page; }
+	switch (page) { CHILD(MAIN, main); CHILD(BADGES, badges); CHILD(EXPLORATION, exploration); CHILD(PROFESSION, profession); CHILD(QUEST, quest); CHILD(EVENT, event); CHILD(BONUSES, bonuses); CHILD(BONUS_COMBAT, bonusCombat); CHILD(BONUS_UTILITY, bonusUtility); CHILD(BONUS_CRAFTING, bonusCrafting); default: return page; }
 #undef CHILD
 }
 
 bool CustomSkillsMenu::hasChildPages(Page page) {
-	return page == MAIN || page == BADGES || page == EXPLORATION || page == PROFESSION || page == QUEST || page == EVENT;
+	return page == MAIN || page == BADGES || page == EXPLORATION || page == PROFESSION || page == QUEST || page == EVENT || page == BONUSES || page == BONUS_COMBAT || page == BONUS_UTILITY || page == BONUS_CRAFTING;
 }
 
 CustomSkillsMenu::Page CustomSkillsMenu::getParent(Page page) {
 	if (page == BADGES) return MAIN;
+	if (page == BONUSES) return MAIN;
 	if (page >= MILESTONES && page <= EVENT) return BADGES;
 	if (page >= EXPLORATION_MILESTONES && page <= YAVIN4) return EXPLORATION;
 	if (page >= PROFESSION_COMBAT && page <= PROFESSION_PILOT) return PROFESSION;
 	if (page >= QUEST_HERO && page <= QUEST_CORVETTE) return QUEST;
 	if (page >= EVENT_COA && page <= EVENT_DEATH_STAR) return EVENT;
+	if (page == BONUS_COMBAT || page == BONUS_UTILITY || page == BONUS_CRAFTING) return BONUSES;
+	if (page >= BONUS_CRIT_CHANCE && page <= BONUS_DEF_CAP) return BONUS_COMBAT;
+	if (page >= BONUS_ARMOR_DEGRADE && page <= BONUS_GATHERING) return BONUS_UTILITY;
+	if (page >= BONUS_PRACTICE_XP && page <= BONUS_AMAZING_RESULTS) return BONUS_CRAFTING;
 	return MAIN;
 }
 
 String CustomSkillsMenu::getTitle(Page page) {
-	static const char* const titles[] = {"Custom Skills", "Custom Skills > Badges", "Badges > Milestone Badges", "Badges > Exploration", "Badges > Profession", "Badges > Quest", "Badges > Event", "Exploration > Milestone Exploration", "Exploration > Corellia", "Exploration > Dantooine", "Exploration > Dathomir", "Exploration > Endor", "Exploration > Lok", "Exploration > Naboo", "Exploration > Rori", "Exploration > Talus", "Exploration > Tatooine", "Exploration > Yavin IV", "Profession > Combat", "Profession > Crafting", "Profession > Outdoors", "Profession > Science", "Profession > Social", "Profession > Pilot", "Quest > Hero of Tatooine", "Quest > Warren", "Quest > Theme Parks", "Quest > Corellian Corvette", "Event > Cries of Alderaan", "Event > Accolades", "Event > Librarian", "Event > Racing", "Event > Death Star"};
+	static const char* const titles[] = {"Custom Skills", "Custom Skills > Badges", "Badges > Milestone Badges", "Badges > Exploration", "Badges > Profession", "Badges > Quest", "Badges > Event", "Exploration > Milestone Exploration", "Exploration > Corellia", "Exploration > Dantooine", "Exploration > Dathomir", "Exploration > Endor", "Exploration > Lok", "Exploration > Naboo", "Exploration > Rori", "Exploration > Talus", "Exploration > Tatooine", "Exploration > Yavin IV", "Profession > Combat", "Profession > Crafting", "Profession > Outdoors", "Profession > Science", "Profession > Social", "Profession > Pilot", "Quest > Hero of Tatooine", "Quest > Warren", "Quest > Theme Parks", "Quest > Corellian Corvette", "Event > Cries of Alderaan", "Event > Accolades", "Event > Librarian", "Event > Racing", "Event > Death Star", "Custom Skills > Bonuses", "Bonuses > Combat", "Bonuses > Utility", "Bonuses > Crafting", "Combat > Critical Chance", "Combat > Critical Multiplier", "Combat > Double Attack", "Combat > Triple Attack", "Combat > Quad Attack", "Combat > Armor Penetration", "Combat > Defense Cap", "Utility > Armor Degrade Reduction", "Utility > Weapon Degrade Reduction", "Utility > SEA Cap", "Utility > Movement Speed", "Utility > Buff Duration", "Utility > Experience Bonus", "Utility > Gathering Quantity", "Crafting > Practice XP", "Crafting > Crafting Speed", "Crafting > Amazing Success", "Crafting > Amazing Results"};
 	return titles[static_cast<int>(page)];
 }
