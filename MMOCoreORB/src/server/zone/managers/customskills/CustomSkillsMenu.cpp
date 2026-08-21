@@ -202,6 +202,8 @@ int CustomSkillsMenu::getAcquiredCount(CreatureObject* player, Page page) {
 	case BONUS_UTILITY: return getAcquiredCount(player, BONUS_ARMOR_DEGRADE) + getAcquiredCount(player, BONUS_WEAPON_DEGRADE) + getAcquiredCount(player, BONUS_SEA_CAP) + getAcquiredCount(player, BONUS_MOVE_SPEED) + getAcquiredCount(player, BONUS_BUFF_DUR) + getAcquiredCount(player, BONUS_EXP_BONUS) + getAcquiredCount(player, BONUS_GATHERING);
 	case BONUS_CRAFTING: return getAcquiredCount(player, BONUS_PRACTICE_XP) + getAcquiredCount(player, BONUS_CRAFT_SPEED) + getAcquiredCount(player, BONUS_AMAZING_SUCCESS) + getAcquiredCount(player, BONUS_AMAZING_RESULTS);
 	case SERVER_CONFIG: return countEnabledOptions();
+	case MOD_OPTIONS: return CustomSkillsConfig::instance()->isRarityNamingEnabled() ? 1 : 0;
+	case SWGEMU_OPTIONS: return 0;
 	COUNT_LEAF(MILESTONES, milestones); COUNT_LEAF(EXPLORATION_MILESTONES, explorationMilestones); COUNT_LEAF(CORELLIA, corellia); COUNT_LEAF(DANTOOINE, dantooine); COUNT_LEAF(DATHOMIR, dathomir); COUNT_LEAF(ENDOR, endor); COUNT_LEAF(LOK, lok); COUNT_LEAF(NABOO, naboo); COUNT_LEAF(RORI, rori); COUNT_LEAF(TALUS, talus); COUNT_LEAF(TATOOINE, tatooine); COUNT_LEAF(YAVIN4, yavin4);
 	COUNT_LEAF(PROFESSION_COMBAT, combat); COUNT_LEAF(PROFESSION_CRAFTING, crafting); COUNT_LEAF(PROFESSION_OUTDOORS, outdoors); COUNT_LEAF(PROFESSION_SCIENCE, science); COUNT_LEAF(PROFESSION_SOCIAL, social); COUNT_LEAF(PROFESSION_PILOT, pilot);
 	COUNT_LEAF(QUEST_HERO, hero); COUNT_LEAF(QUEST_WARREN, warren); COUNT_LEAF(QUEST_THEME_PARKS, themeParks); COUNT_LEAF(QUEST_CORVETTE, corvette);
@@ -276,16 +278,16 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 			summary << "Exceptional color: \\#" + config->getExceptionalColor() + "███\\#. (" + config->getExceptionalColor() + ")" << endl;
 			summary << "  Default: \\#0000FF███\\#. (0000FF)" << endl;
 		} else if (page == MOD_OPTIONS) {
-			summary << "\\#FFFF00--- Mod Options ---\\#. " << endl;
-			String rarityState = config->isRarityNamingEnabled() ? "\\#00FF00Enabled" : "\\#FF0000Disabled";
+			String rarityState = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
 			summary << rarityState << "\\#. Rarity Naming" << endl;
 		} else if (page == SWGEMU_OPTIONS) {
-			summary << "\\#FFFF00--- SWGEMU Options ---\\#. " << endl;
 			summary << "No options configured yet." << endl;
 		} else {
-			summary << "\\#FFFF00--- Server Config ---\\#. " << endl;
-			int enabled = countEnabledOptions();
-			summary << enabled << " option(s) enabled" << endl;
+			summary << "\\#FFFF00--- Mod Options ---\\#. " << endl;
+			String rarityState = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
+			summary << rarityState << "\\#. Rarity Naming" << endl;
+			summary << "\\#FFFF00--- SWGEMU Options ---\\#. " << endl;
+			summary << "No options configured yet." << endl;
 		}
 		return summary.toString();
 	}
@@ -346,7 +348,8 @@ void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Pag
 	case SWGEMU_OPTIONS: break;
 	case MOD_OPTIONS: {
 		CustomSkillsConfig* config = CustomSkillsConfig::instance();
-		addCategoryItem(box, player, "Rarity Naming", RARITY_NAMING, false);
+		String status = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
+		box->addMenuItem("Rarity Naming " + status + "\\#.");
 		break;
 	}
 	case RARITY_NAMING: {
