@@ -147,3 +147,22 @@ void CustomSkillsModifiers::notifyBadgeAwarded(CreatureObject* player) {
 	CustomSkillsSkillMods::refreshVisibleSkillMods(player);
 	player->updateRunSpeed();
 }
+
+bool CustomSkillsModifiers::applyRarityNaming(TangibleObject* object, float excMod, float legendaryThreshold, float exceptionalThreshold) {
+	CustomSkillsConfig* config = CustomSkillsConfig::instance();
+	if (!config->isRarityNamingEnabled())
+		return false;
+
+	String color;
+	if (excMod >= legendaryThreshold)
+		color = config->getLegendaryColor();
+	else if (excMod >= exceptionalThreshold)
+		color = config->getExceptionalColor();
+	else
+		return false;
+
+	String coloredName = "\\#" + color + object->getDisplayedName() + "\\#.";
+	object->setCustomObjectName(coloredName, false);
+	object->addMagicBit(false);
+	return true;
+}

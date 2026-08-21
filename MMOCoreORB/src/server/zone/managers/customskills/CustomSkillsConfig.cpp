@@ -20,6 +20,9 @@ void CustomSkillsConfig::setDefaults() {
 	criticalMultiplier = DEFAULT_CRITICAL_MULTIPLIER;
 	customSummaryColor = "00FF00";
 	criticalCombatSpamLabel = "(CRIT)";
+	rarityNamingEnabled = false;
+	legendaryColor = "FF00FF";
+	exceptionalColor = "00FFFF";
 	modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = true;
 	modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE] = 6000;
 
@@ -175,6 +178,24 @@ void CustomSkillsConfig::load() {
 		warning("customSkillsConfig.criticalChance is missing or invalid; using defaults");
 	}
 	critical.pop();
+
+	LuaObject rarity = root.getObjectField("rarityNaming");
+	if (rarity.isValidTable()) {
+		rarityNamingEnabled = rarity.getBooleanField("enabled", false);
+
+		String legendary = rarity.getStringField("legendaryColor", "FF00FF");
+		if (legendary.length() == 6)
+			legendaryColor = legendary;
+		else
+			warning("rarityNaming.legendaryColor must be a six-character RGB hex value; using default");
+
+		String exceptional = rarity.getStringField("exceptionalColor", "00FFFF");
+		if (exceptional.length() == 6)
+			exceptionalColor = exceptional;
+		else
+			warning("rarityNaming.exceptionalColor must be a six-character RGB hex value; using default");
+	}
+	rarity.pop();
 
 	LuaObject modifiers = root.getObjectField("modifiers");
 	if (modifiers.isValidTable()) {

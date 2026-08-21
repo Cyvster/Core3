@@ -7,6 +7,17 @@ customSkillsConfig = {
 	-- RGB color used for custom modifier text in SUI menus.
 	customSummaryColor = "00FF00",
 
+	-- Rarity naming: color-only display instead of appending "(Exceptional)"/"(Legendary)" to item names.
+	-- When enabled, item names use colored text instead of suffixes, which also fixes quest turn-in
+	-- compatibility (quest systems match items by name, so suffixes break the match).
+	-- Set enabled = true to use color-only naming, or false to use the original SWGEmu suffix system.
+	-- Color values are six-character RGB hex codes (e.g., "FF00FF" for purple, "00FFFF" for cyan).
+	rarityNaming = {
+		enabled = false,
+		legendaryColor = "FF00FF",   -- purple for legendary
+		exceptionalColor = "00FFFF", -- cyan for exceptional
+	},
+
 	criticalChance = {
 		enabled = true,
 		cap = 6000,

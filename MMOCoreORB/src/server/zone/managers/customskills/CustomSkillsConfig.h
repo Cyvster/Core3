@@ -16,6 +16,9 @@ public:
 	int getCriticalMultiplier() const { return criticalMultiplier; }
 	const String& getCustomSummaryColor() const { return customSummaryColor; }
 	const String& getCriticalCombatSpamLabel() const { return criticalCombatSpamLabel; }
+	bool isRarityNamingEnabled() const { return rarityNamingEnabled; }
+	const String& getLegendaryColor() const { return legendaryColor; }
+	const String& getExceptionalColor() const { return exceptionalColor; }
 	bool isModifierEnabled(CustomSkillsModifierType::Type type) const;
 	int getModifierCap(CustomSkillsModifierType::Type type) const;
 	int getBadgeBonus(CustomSkillsModifierType::Type type, const String& badgeKey) const;
@@ -28,6 +31,9 @@ private:
 	int criticalMultiplier;
 	String customSummaryColor;
 	String criticalCombatSpamLabel;
+	bool rarityNamingEnabled;
+	String legendaryColor;
+	String exceptionalColor;
 	bool modifierEnabled[CustomSkillsModifierType::COUNT];
 	int modifierCaps[CustomSkillsModifierType::COUNT];
 	VectorMap<String, int> modifierBadgeBonuses[CustomSkillsModifierType::COUNT];

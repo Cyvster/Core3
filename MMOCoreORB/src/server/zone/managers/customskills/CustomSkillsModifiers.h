@@ -3,6 +3,7 @@
 
 #include "engine/engine.h"
 #include "server/zone/objects/player/PlayerObject.h"
+#include "server/zone/objects/tangible/TangibleObject.h"
 #include "CustomSkillsModifierType.h"
 
 class CustomSkillsModifiers {
@@ -21,6 +22,7 @@ public:
 	static String getModifierName(CustomSkillsModifierType::Type type);
 	static String formatModifierBonus(CustomSkillsModifierType::Type type, int value);
 	static void notifyBadgeAwarded(CreatureObject* player);
+	static bool applyRarityNaming(TangibleObject* object, float excMod, float legendaryThreshold, float exceptionalThreshold);
 
 private:
 	static bool isCombatProfessionBadge(const String& badgeKey);

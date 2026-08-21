@@ -1,6 +1,7 @@
 #include "CustomSkillsMenu.h"
 #include "CustomSkillsSuiCallback.h"
 #include "CustomSkillsModifiers.h"
+#include "CustomSkillsConfig.h"
 
 #include "server/zone/managers/player/BadgeList.h"
 #include "server/zone/managers/stringid/StringIdManager.h"
@@ -292,7 +293,7 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Page page) {
 #define LEAF(pageName, data) case pageName: addBadgeItems(box, player, data, countOf(data)); break
 	switch (page) {
-	case MAIN: addCategoryItem(box, player, "Badges", BADGES, false); addCategoryItem(box, player, "Bonuses", BONUSES, false); break;
+	case MAIN: addCategoryItem(box, player, "Badges", BADGES, false); addCategoryItem(box, player, "Bonuses", BONUSES, false); addCategoryItem(box, player, "Server Config", SERVER_CONFIG, false); break;
 	case BADGES: addCategoryItem(box, player, "Milestone Badges", MILESTONES); addCategoryItem(box, player, "Exploration", EXPLORATION); addCategoryItem(box, player, "Profession", PROFESSION); addCategoryItem(box, player, "Quest", QUEST); addCategoryItem(box, player, "Event", EVENT); break;
 	case EXPLORATION: addCategoryItem(box, player, "Milestone Exploration", EXPLORATION_MILESTONES); addCategoryItem(box, player, "Corellia", CORELLIA); addCategoryItem(box, player, "Dantooine", DANTOOINE); addCategoryItem(box, player, "Dathomir", DATHOMIR); addCategoryItem(box, player, "Endor", ENDOR); addCategoryItem(box, player, "Lok", LOK); addCategoryItem(box, player, "Naboo", NABOO); addCategoryItem(box, player, "Rori", RORI); addCategoryItem(box, player, "Talus", TALUS); addCategoryItem(box, player, "Tatooine", TATOOINE); addCategoryItem(box, player, "Yavin IV", YAVIN4); break;
 	case PROFESSION: addCategoryItem(box, player, "Combat", PROFESSION_COMBAT); addCategoryItem(box, player, "Crafting", PROFESSION_CRAFTING); addCategoryItem(box, player, "Outdoors", PROFESSION_OUTDOORS); addCategoryItem(box, player, "Science", PROFESSION_SCIENCE); addCategoryItem(box, player, "Social", PROFESSION_SOCIAL); addCategoryItem(box, player, "Pilot", PROFESSION_PILOT); break;
@@ -302,6 +303,17 @@ void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Pag
 	case BONUS_COMBAT: addCategoryItem(box, player, "Critical Chance", BONUS_CRIT_CHANCE, false); addCategoryItem(box, player, "Critical Multiplier", BONUS_CRIT_MULTI, false); addCategoryItem(box, player, "Double Attack", BONUS_DOUBLE, false); addCategoryItem(box, player, "Triple Attack", BONUS_TRIPLE, false); addCategoryItem(box, player, "Quad Attack", BONUS_QUAD, false); addCategoryItem(box, player, "Armor Penetration", BONUS_ARMOR_PEN, false); addCategoryItem(box, player, "Defense Cap", BONUS_DEF_CAP, false); break;
 	case BONUS_UTILITY: addCategoryItem(box, player, "Armor Degrade Reduction", BONUS_ARMOR_DEGRADE, false); addCategoryItem(box, player, "Weapon Degrade Reduction", BONUS_WEAPON_DEGRADE, false); addCategoryItem(box, player, "SEA Cap", BONUS_SEA_CAP, false); addCategoryItem(box, player, "Movement Speed", BONUS_MOVE_SPEED, false); addCategoryItem(box, player, "Buff Duration", BONUS_BUFF_DUR, false); addCategoryItem(box, player, "Experience Bonus", BONUS_EXP_BONUS, false); addCategoryItem(box, player, "Gathering Quantity", BONUS_GATHERING, false); break;
 	case BONUS_CRAFTING: addCategoryItem(box, player, "Practice XP", BONUS_PRACTICE_XP, false); addCategoryItem(box, player, "Crafting Speed", BONUS_CRAFT_SPEED, false); addCategoryItem(box, player, "Amazing Success", BONUS_AMAZING_SUCCESS, false); addCategoryItem(box, player, "Amazing Results", BONUS_AMAZING_RESULTS, false); break;
+	case SERVER_CONFIG: addCategoryItem(box, player, "Mod Options", MOD_OPTIONS, false); addCategoryItem(box, player, "SGEMU Options", SGEMU_OPTIONS, false); break;
+	case MOD_OPTIONS: {
+		CustomSkillsConfig* config = CustomSkillsConfig::instance();
+		String rarityStatus = config->isRarityNamingEnabled() ? "\\#00FF00Enabled" : "\\#FF0000Disabled";
+		box->addMenuItem("Rarity Naming: " + rarityStatus + "\\#.");
+		if (config->isRarityNamingEnabled()) {
+			box->addMenuItem("  Legendary color: \\#" + config->getLegendaryColor() + "█████\\#. (" + config->getLegendaryColor() + ")");
+			box->addMenuItem("  Exceptional color: \\#" + config->getExceptionalColor() + "█████\\#. (" + config->getExceptionalColor() + ")");
+		}
+		break;
+	}
 	LEAF(MILESTONES, milestones); LEAF(EXPLORATION_MILESTONES, explorationMilestones); LEAF(CORELLIA, corellia); LEAF(DANTOOINE, dantooine); LEAF(DATHOMIR, dathomir); LEAF(ENDOR, endor); LEAF(LOK, lok); LEAF(NABOO, naboo); LEAF(RORI, rori); LEAF(TALUS, talus); LEAF(TATOOINE, tatooine); LEAF(YAVIN4, yavin4);
 	LEAF(PROFESSION_COMBAT, combat); LEAF(PROFESSION_CRAFTING, crafting); LEAF(PROFESSION_OUTDOORS, outdoors); LEAF(PROFESSION_SCIENCE, science); LEAF(PROFESSION_SOCIAL, social); LEAF(PROFESSION_PILOT, pilot);
 	LEAF(QUEST_HERO, hero); LEAF(QUEST_WARREN, warren); LEAF(QUEST_THEME_PARKS, themeParks); LEAF(QUEST_CORVETTE, corvette);
@@ -314,7 +326,7 @@ void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Pag
 }
 
 CustomSkillsMenu::Page CustomSkillsMenu::getChild(Page page, int selection) {
-	static const Page main[] = {BADGES, BONUSES};
+	static const Page main[] = {BADGES, BONUSES, SERVER_CONFIG};
 	static const Page badges[] = {MILESTONES, EXPLORATION, PROFESSION, QUEST, EVENT};
 	static const Page exploration[] = {EXPLORATION_MILESTONES, CORELLIA, DANTOOINE, DATHOMIR, ENDOR, LOK, NABOO, RORI, TALUS, TATOOINE, YAVIN4};
 	static const Page profession[] = {PROFESSION_COMBAT, PROFESSION_CRAFTING, PROFESSION_OUTDOORS, PROFESSION_SCIENCE, PROFESSION_SOCIAL, PROFESSION_PILOT};
@@ -324,19 +336,22 @@ CustomSkillsMenu::Page CustomSkillsMenu::getChild(Page page, int selection) {
 	static const Page bonusCombat[] = {BONUS_CRIT_CHANCE, BONUS_CRIT_MULTI, BONUS_DOUBLE, BONUS_TRIPLE, BONUS_QUAD, BONUS_ARMOR_PEN, BONUS_DEF_CAP};
 	static const Page bonusUtility[] = {BONUS_ARMOR_DEGRADE, BONUS_WEAPON_DEGRADE, BONUS_SEA_CAP, BONUS_MOVE_SPEED, BONUS_BUFF_DUR, BONUS_EXP_BONUS, BONUS_GATHERING};
 	static const Page bonusCrafting[] = {BONUS_PRACTICE_XP, BONUS_CRAFT_SPEED, BONUS_AMAZING_SUCCESS, BONUS_AMAZING_RESULTS};
+	static const Page serverConfig[] = {MOD_OPTIONS, SGEMU_OPTIONS};
 	if (selection < 0) return page;
 #define CHILD(parent, data) case parent: return selection < static_cast<int>(sizeof(data) / sizeof(data[0])) ? data[selection] : page
-	switch (page) { CHILD(MAIN, main); CHILD(BADGES, badges); CHILD(EXPLORATION, exploration); CHILD(PROFESSION, profession); CHILD(QUEST, quest); CHILD(EVENT, event); CHILD(BONUSES, bonuses); CHILD(BONUS_COMBAT, bonusCombat); CHILD(BONUS_UTILITY, bonusUtility); CHILD(BONUS_CRAFTING, bonusCrafting); default: return page; }
+	switch (page) { CHILD(MAIN, main); CHILD(BADGES, badges); CHILD(EXPLORATION, exploration); CHILD(PROFESSION, profession); CHILD(QUEST, quest); CHILD(EVENT, event); CHILD(BONUSES, bonuses); CHILD(BONUS_COMBAT, bonusCombat); CHILD(BONUS_UTILITY, bonusUtility); CHILD(BONUS_CRAFTING, bonusCrafting); CHILD(SERVER_CONFIG, serverConfig); default: return page; }
 #undef CHILD
 }
 
 bool CustomSkillsMenu::hasChildPages(Page page) {
-	return page == MAIN || page == BADGES || page == EXPLORATION || page == PROFESSION || page == QUEST || page == EVENT || page == BONUSES || page == BONUS_COMBAT || page == BONUS_UTILITY || page == BONUS_CRAFTING;
+	return page == MAIN || page == BADGES || page == EXPLORATION || page == PROFESSION || page == QUEST || page == EVENT || page == BONUSES || page == BONUS_COMBAT || page == BONUS_UTILITY || page == BONUS_CRAFTING || page == SERVER_CONFIG;
 }
 
 CustomSkillsMenu::Page CustomSkillsMenu::getParent(Page page) {
 	if (page == BADGES) return MAIN;
 	if (page == BONUSES) return MAIN;
+	if (page == SERVER_CONFIG) return MAIN;
+	if (page == MOD_OPTIONS || page == SGEMU_OPTIONS) return SERVER_CONFIG;
 	if (page >= MILESTONES && page <= EVENT) return BADGES;
 	if (page >= EXPLORATION_MILESTONES && page <= YAVIN4) return EXPLORATION;
 	if (page >= PROFESSION_COMBAT && page <= PROFESSION_PILOT) return PROFESSION;
@@ -350,6 +365,6 @@ CustomSkillsMenu::Page CustomSkillsMenu::getParent(Page page) {
 }
 
 String CustomSkillsMenu::getTitle(Page page) {
-	static const char* const titles[] = {"Custom Skills", "Custom Skills > Badges", "Badges > Milestone Badges", "Badges > Exploration", "Badges > Profession", "Badges > Quest", "Badges > Event", "Exploration > Milestone Exploration", "Exploration > Corellia", "Exploration > Dantooine", "Exploration > Dathomir", "Exploration > Endor", "Exploration > Lok", "Exploration > Naboo", "Exploration > Rori", "Exploration > Talus", "Exploration > Tatooine", "Exploration > Yavin IV", "Profession > Combat", "Profession > Crafting", "Profession > Outdoors", "Profession > Science", "Profession > Social", "Profession > Pilot", "Quest > Hero of Tatooine", "Quest > Warren", "Quest > Theme Parks", "Quest > Corellian Corvette", "Event > Cries of Alderaan", "Event > Accolades", "Event > Librarian", "Event > Racing", "Event > Death Star", "Custom Skills > Bonuses", "Bonuses > Combat", "Bonuses > Utility", "Bonuses > Crafting", "Combat > Critical Chance", "Combat > Critical Multiplier", "Combat > Double Attack", "Combat > Triple Attack", "Combat > Quad Attack", "Combat > Armor Penetration", "Combat > Defense Cap", "Utility > Armor Degrade Reduction", "Utility > Weapon Degrade Reduction", "Utility > SEA Cap", "Utility > Movement Speed", "Utility > Buff Duration", "Utility > Experience Bonus", "Utility > Gathering Quantity", "Crafting > Practice XP", "Crafting > Crafting Speed", "Crafting > Amazing Success", "Crafting > Amazing Results"};
+	static const char* const titles[] = {"Custom Skills", "Custom Skills > Badges", "Badges > Milestone Badges", "Badges > Exploration", "Badges > Profession", "Badges > Quest", "Badges > Event", "Exploration > Milestone Exploration", "Exploration > Corellia", "Exploration > Dantooine", "Exploration > Dathomir", "Exploration > Endor", "Exploration > Lok", "Exploration > Naboo", "Exploration > Rori", "Exploration > Talus", "Exploration > Tatooine", "Exploration > Yavin IV", "Profession > Combat", "Profession > Crafting", "Profession > Outdoors", "Profession > Science", "Profession > Social", "Profession > Pilot", "Quest > Hero of Tatooine", "Quest > Warren", "Quest > Theme Parks", "Quest > Corellian Corvette", "Event > Cries of Alderaan", "Event > Accolades", "Event > Librarian", "Event > Racing", "Event > Death Star", "Custom Skills > Bonuses", "Bonuses > Combat", "Bonuses > Utility", "Bonuses > Crafting", "Combat > Critical Chance", "Combat > Critical Multiplier", "Combat > Double Attack", "Combat > Triple Attack", "Combat > Quad Attack", "Combat > Armor Penetration", "Combat > Defense Cap", "Utility > Armor Degrade Reduction", "Utility > Weapon Degrade Reduction", "Utility > SEA Cap", "Utility > Movement Speed", "Utility > Buff Duration", "Utility > Experience Bonus", "Utility > Gathering Quantity", "Crafting > Practice XP", "Crafting > Crafting Speed", "Crafting > Amazing Success", "Crafting > Amazing Results", "Custom Skills > Server Config", "Server Config > Mod Options", "Server Config > SGEMU Options"};
 	return titles[static_cast<int>(page)];
 }

@@ -21,6 +21,7 @@
 #include "templates/params/creature/CreatureAttribute.h"
 #include "server/zone/objects/ship/components/ShipComponent.h"
 #include "server/zone/objects/ship/ai/ShipAiAgent.h"
+#include "server/zone/managers/customskills/CustomSkillsModifiers.h"
 
 // #define DEBUG_LOOT_MAN
 
@@ -262,6 +263,9 @@ void LootManagerImplementation::setCustomObjectName(TangibleObject* object, cons
 			object->setCustomObjectName(customName, false);
 		}
 	}
+
+	if (CustomSkillsModifiers::applyRarityNaming(object, excMod, legendaryModifier, exceptionalModifier))
+		return;
 
 	String suffixName = "";
 
