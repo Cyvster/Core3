@@ -49,6 +49,17 @@ customSkillsConfig = {
 			},
 		},
 
+		-- 12 milestone badges: +12.5% Crit Multiplier each (150% bonus on top of 150% base = 300% max).
+		criticalMultiplier = {
+			enabled = true,
+			badgeBonus = 1250,
+			cap = 15000,
+			badges = {
+				"count_5", "count_10", "count_25", "count_50", "count_75", "count_100", "count_125",
+				"bdg_exp_10_badges", "bdg_exp_20_badges", "bdg_exp_30_badges", "bdg_exp_40_badges", "bdg_exp_45_badges",
+			},
+		},
+
 		tripleAttackChance = {
 			enabled = true,
 			badgeBonus = 200,

@@ -11,7 +11,7 @@ public:
 	static int getBadgeCriticalChance(const String& badgeKey);
 	static int getCriticalChance(PlayerObject* ghost);
 	static int getCriticalChance(PlayerObject* ghost, const char* const* badgeKeys, int count);
-	static int getCriticalMultiplier(PlayerObject* ghost);
+	static int getCriticalMultiplier(CreatureObject* player);
 	static String formatPercent(int basisPoints);
 	static String colorizeCriticalText(const String& text);
 	static int getModifierTotal(CreatureObject* player, CustomSkillsModifierType::Type type);

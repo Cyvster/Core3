@@ -5,6 +5,7 @@ class CustomSkillsModifierType {
 public:
 	enum Type {
 		CRITICAL_CHANCE,
+		CRITICAL_MULTIPLIER,
 		DOUBLE_ATTACK_CHANCE,
 		TRIPLE_ATTACK_CHANCE,
 		QUAD_ATTACK_CHANCE,

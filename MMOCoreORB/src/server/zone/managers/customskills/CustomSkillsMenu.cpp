@@ -169,23 +169,24 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 	auto addCategory = [&](const char* label, std::initializer_list<CustomSkillsModifierType::Type> types) {
 		summary << "\\#FFFF00--- " << label << " ---\\#. " << endl;
 		for (auto type : types) {
-			int total = CustomSkillsModifiers::getModifierTotal(player, type);
+			int total;
+			if (type == CustomSkillsModifierType::CRITICAL_MULTIPLIER)
+				total = CustomSkillsModifiers::getCriticalMultiplier(player);
+			else
+				total = CustomSkillsModifiers::getModifierTotal(player, type);
 			summary << CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(type, total)) << endl;
 		}
 	};
 
 	addCategory("Combat", {
 		CustomSkillsModifierType::CRITICAL_CHANCE,
+		CustomSkillsModifierType::CRITICAL_MULTIPLIER,
 		CustomSkillsModifierType::DOUBLE_ATTACK_CHANCE,
 		CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE,
 		CustomSkillsModifierType::QUAD_ATTACK_CHANCE,
 		CustomSkillsModifierType::ARMOR_PENETRATION,
 		CustomSkillsModifierType::DEFENSE_CAP_INCREASE
 	});
-	if (CustomSkillsModifiers::isCriticalChanceEnabled()) {
-		int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(player->getPlayerObject());
-		summary << CustomSkillsModifiers::colorizeCriticalText("+" + CustomSkillsModifiers::formatPercent(criticalMultiplier) + " Critical Multiplier") << endl;
-	}
 	addCategory("Utility", {
 		CustomSkillsModifierType::ARMOR_DEGRADE_REDUCTION,
 		CustomSkillsModifierType::WEAPON_DEGRADE_REDUCTION,

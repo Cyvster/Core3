@@ -12,11 +12,11 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 		return 0;
 
 	if (attacker != nullptr && attacker->isPlayerCreature() && damage > 0 && damageMultiplier >= 1.f) {
-		PlayerObject* ghost = attacker->asCreatureObject()->getPlayerObject();
-		int criticalChance = CustomSkillsModifiers::getCriticalChance(ghost);
+		CreatureObject* creo = attacker->asCreatureObject();
+		int criticalChance = CustomSkillsModifiers::getCriticalChance(creo->getPlayerObject());
 
 		if (criticalChance > 0 && System::random(9999) < criticalChance) {
-			int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(ghost);
+			int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(creo);
 			damage = static_cast<int>((static_cast<int64>(damage) * criticalMultiplier) / 10000);
 
 			UnicodeString criticalMessage("(CRIT)");

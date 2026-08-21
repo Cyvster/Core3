@@ -57,8 +57,13 @@ int CustomSkillsModifiers::getCriticalChance(PlayerObject* ghost, const char* co
 	return Math::min(chance, 10000);
 }
 
-int CustomSkillsModifiers::getCriticalMultiplier(PlayerObject* ghost) {
-	return ghost == nullptr ? 10000 : CustomSkillsConfig::instance()->getCriticalMultiplier();
+int CustomSkillsModifiers::getCriticalMultiplier(CreatureObject* player) {
+	if (player == nullptr)
+		return 10000;
+
+	int base = CustomSkillsConfig::instance()->getCriticalMultiplier();
+	int bonus = getModifierTotal(player, CustomSkillsModifierType::CRITICAL_MULTIPLIER);
+	return base + bonus;
 }
 
 String CustomSkillsModifiers::formatPercent(int basisPoints) {
@@ -111,7 +116,8 @@ int CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::Type type,
 
 String CustomSkillsModifiers::getModifierName(CustomSkillsModifierType::Type type) {
 	static const char* names[] = {
-		"Critical Chance", "Double Attack Chance", "Triple Attack Chance", "Quad Attack Chance",
+		"Critical Chance", "Critical Multiplier",
+		"Double Attack Chance", "Triple Attack Chance", "Quad Attack Chance",
 		"Armor Penetration", "Defense Cap", "Armor Degrade Reduction", "Weapon Degrade Reduction",
 		"SEA Cap", "Movement Speed", "Buff Duration", "Experience Bonus", "Practice Experience Bonus",
 		"Crafting Speed", "Amazing Success Chance", "Amazing Results", "Gathering Quantity"

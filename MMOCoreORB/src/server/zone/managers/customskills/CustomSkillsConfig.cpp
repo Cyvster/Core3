@@ -181,6 +181,7 @@ void CustomSkillsConfig::load() {
 		loadModifier(modifiers, "doubleAttackChance", CustomSkillsModifierType::DOUBLE_ATTACK_CHANCE, false, 0);
 		loadModifier(modifiers, "tripleAttackChance", CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE, false, 0);
 		loadModifier(modifiers, "quadAttackChance", CustomSkillsModifierType::QUAD_ATTACK_CHANCE, false, 0);
+		loadModifier(modifiers, "criticalMultiplier", CustomSkillsModifierType::CRITICAL_MULTIPLIER, false, 0);
 		loadModifier(modifiers, "armorPenetration", CustomSkillsModifierType::ARMOR_PENETRATION, false, 0);
 		loadModifier(modifiers, "defenseCapIncrease", CustomSkillsModifierType::DEFENSE_CAP_INCREASE, false, 0);
 		loadModifier(modifiers, "armorDegradeReduction", CustomSkillsModifierType::ARMOR_DEGRADE_REDUCTION, false, 0);
