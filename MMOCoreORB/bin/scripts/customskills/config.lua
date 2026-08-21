@@ -13,7 +13,7 @@ customSkillsConfig = {
 	-- Set enabled = true to use color-only naming, or false to use the original SWGEmu suffix system.
 	-- Color values are six-character RGB hex codes (e.g., "FF00FF" for purple, "00FFFF" for cyan).
 	rarityNaming = {
-		enabled = false,
+		enabled = true,
 		legendaryColor = "FF00FF",   -- purple for legendary
 		exceptionalColor = "0000FF", -- blue for exceptional
 	},
