@@ -100,27 +100,23 @@ MMOCoreORB/bin/scripts/customskills/config.lua
 criticalChance = {
     enabled = true,
     cap = 6000,             -- 60.00% maximum
-    badgeBonus = 400,        -- default per-badge rate (basis points)
+    badgeBonus = 0,          -- no blanket fallback; every badge declares
+                             -- its own value via badgeOverrides
     multiplier = 15000,      -- 150.00% critical damage
     combatSpamLabel = "(CRIT)",
     badges = {
-        "count_5", "count_10", "count_25", "count_50", "count_75",
-        "count_100", "count_125",
-        "bdg_exp_10_badges", "bdg_exp_20_badges", "bdg_exp_30_badges",
-        "bdg_exp_40_badges", "bdg_exp_45_badges",
+        -- 60 achievement badges (milestones, combat/crafting/outdoors/
+        -- science masteries, quest lines, dangerous + Jedi exploration)
+        ...
     },
     badgeOverrides = {
-        { "count_5", 100 }, { "count_10", 100 }, { "count_25", 100 },
-        { "count_50", 100 }, { "count_75", 100 }, { "count_100", 100 },
-        { "count_125", 100 },
-        { "bdg_exp_10_badges", 100 }, { "bdg_exp_20_badges", 100 },
-        { "bdg_exp_30_badges", 100 }, { "bdg_exp_40_badges", 100 },
-        { "bdg_exp_45_badges", 100 },
+        -- every listed badge explicitly set: 100 bp = +1.00% each
+        { "count_5", 100 }, ... -- 60 entries total
     },
 }
 ```
 
-### Generic Modifiers
+Full 60-badge list: `docs/customskills/CODE_REFERENCE.md` -> Appendix A.### Generic Modifiers
 
 Each modifier table accepts:
 - `enabled` -- `true`/`false`
@@ -217,7 +213,7 @@ customSummaryColor = "00FF00"   -- RGB hex for menu modifier text color
 1. **Startup**: No errors loading `customSkills.lua` or `CustomSkillsCommand`
 2. **Command**: `/customskills` opens menu on a normal player character
 3. **Navigation**: Open every category, use Back/Cancel, reopen repeatedly, test 2+ characters simultaneously
-4. **Critical Chance**: Each milestone exploration badge (via `badgeOverrides`) shows +1.00%, max +12.00% for all 12 (combat masteries no longer grant Critical Chance)
+4. **Critical Chance**: Each of the 60 assigned badges (via `badgeOverrides`) shows +1.00%; full set reaches the +60.00% cap
 5. **Combat test**: Critical attacks deal 150% of pre-armor damage
 6. **Before enabling new modifier**: Run focused tests from `docs/customskills/CODE_REFERENCE.md`
 

@@ -124,8 +124,8 @@ O  Lars Homestead  (+25% Movement Speed)
 ### Critical Chance
 
 - **What it does**: Gives landed attacks a chance to become critical hits, dealing bonus damage.
-- **Powered by**: The 12 exploration milestone badges (5/10/25/50/75/100/125 badges counted, plus the 10/20/30/40/45-badge exploration awards).
-- **Typical maximum**: +12% critical chance.
+- **Powered by**: 60 achievement badges across the whole game -- all badge-count milestones (7 accumulation + 5 exploration), all 12 combat profession masteries, Hero of Tatooine (5), Warren (2), Theme Parks (4), Corellian Corvette (9), dangerous exploration sites (5), Jedi sites (3), Outdoors masteries (5), and Science masteries (3).
+- **Typical maximum**: +60% critical chance with the full set.
 - **Combat spam**: `(CRIT)` appears when it triggers.
 
 ### Critical Multiplier

@@ -308,3 +308,47 @@ Daniel may resolve, reject, or apply any entry directly.
   re-signing remains the contributor's own action, or a mechanical
   replacement authorized by Daniel. -- ox-alpha
   (opencode/x-preview-f-free), 08242026
+
+---
+
+## ERR-007 -- Hardcoded critical-chance constructor defaults survived ERR-005 remediation
+
+- Status: RESOLVED
+- Filed by: ox-alpha (opencode/x-preview-f-free)
+- Date: 08242026
+- Affects: `CustomSkillsConfig.cpp` / `.h` (constructor seed +
+  `DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE`);
+  `bin/scripts/customskills/config.lua`; CODE_REFERENCE.md Appendix A
+- Severity: F1 (runtime behavior contradicted documented maximum and
+  [CS-3] single-source-of-truth; violated owner no-hardcode policy)
+- Description: the C++ constructor seeded all 12 combat mastery badges
+  into the CRITICAL_CHANCE map at
+  `DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE` (300 bp), and
+  `setUniformBadgeBonus()` rescaled those seeded entries to whatever
+  `config.lua` set `badgeBonus` to (400 bp shipped). Full-badge players
+  therefore received an undocumented 12 x 4% = +48% on top of the
+  documented +12% milestone bonus (exactly the 60% cap), while all
+  documentation stated a 12% maximum. A missing/invalid config silently
+  ran crit chance at 36%. The hardcode survived the ERR-005 cleanup,
+  which had only removed the separate static array in
+  `CustomSkillsModifiers.cpp`.
+- Evidence: constructor block seeding `combatBadges[]` via
+  `DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE` (CustomSkillsConfig.cpp,
+  pre-BRIEF-007); `setUniformBadgeBonus(CRITICAL_CHANCE, ...)`
+  rescaling seeded entries in `load()`; ERR-005 resolution history.
+- Proposed fix: remove the seed and the constant; make the badgeBonus
+  fallback an explicit 0 (no silent grants); restore 60% cap reachability
+  through the owner-specified 60-badge x 100 bp override set
+  ([BRIEF-007]).
+- Findings: discovered 08242026 during the badge-bonus rebalancing
+  session when Daniel asked what the code does when the critical chance
+  value is empty. Interim commit `049ef1d0d0` (badgeBonus = 0) exposed
+  the hidden layer by dropping full-set players from 60% to 12% pending
+  this fix. -- ox-alpha (opencode/x-preview-f-free), 08242026
+- Resolution: RESOLVED -- BRIEF-007 delivered: constructor seed and
+  constant removed (`criticalChanceFallbackBonus`, default 0);
+  `config.lua` expanded to the owner-specified 60-badge x 100 bp
+  override set reaching the 6000 bp cap exactly; Appendix A, USER_GUIDE,
+  and INSTALLATION updated to match config.lua as authority. Applied
+  08242026 by ox-alpha (opencode/x-preview-f-free); self-verified under
+  [DIRECTIVE 08242026].
