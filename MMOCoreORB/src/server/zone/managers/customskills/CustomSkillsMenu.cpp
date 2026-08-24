@@ -40,86 +40,7 @@ namespace {
 	BADGES(racing, "bdg_racing_agrilat_swamp", "bdg_racing_keren_city", "bdg_racing_mos_espa", "bdg_racing_lok_marathon", "bdg_racing_narmle_memorial", "bdg_racing_nashal_river");
 	BADGES(deathStar, "destroy_deathstar");
 
-	BADGES(badgesCritChance,
-		"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
-		"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
-		"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
-		"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master",
-		"count_5", "count_10", "count_25", "count_50", "count_75", "count_100", "count_125",
-		"bdg_exp_10_badges", "bdg_exp_20_badges", "bdg_exp_30_badges", "bdg_exp_40_badges", "bdg_exp_45_badges");
-	BADGES(badgesCritMulti,
-		"count_5", "count_10", "count_25", "count_50", "count_75", "count_100", "count_125",
-		"bdg_exp_10_badges", "bdg_exp_20_badges", "bdg_exp_30_badges", "bdg_exp_40_badges", "bdg_exp_45_badges");
-	BADGES(badgesDouble,
-		"warren_compassion", "warren_hero",
-		"bdg_thm_park_jabba_badge", "bdg_thm_park_imperial_badge", "bdg_thm_park_rebel_badge", "bdg_thm_park_nym_badge");
-	BADGES(badgesTriple,
-		"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
-		"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
-		"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
-		"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master",
-		"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark");
-	BADGES(badgesQuad,
-		"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
-		"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
-		"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
-		"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master",
-		"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark");
-	BADGES(badgesArmorPen,
-		"bdg_corvette_imp_destroy", "bdg_corvette_imp_rescue", "bdg_corvette_imp_assassin",
-		"bdg_corvette_neutral_destroy", "bdg_corvette_neutral_rescue", "bdg_corvette_neutral_assassin",
-		"bdg_corvette_reb_destroy", "bdg_corvette_reb_rescue", "bdg_corvette_reb_assassin");
-	BADGES(badgesDefCap,
-		"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark",
-		"exp_lok_volcano", "bdg_exp_lok_imp_outpost", "bdg_exp_lok_kimogila_skeleton",
-		"exp_dat_tarpit", "exp_dat_escape_pod", "exp_dat_misty_falls_1", "exp_dat_misty_falls_2",
-		"bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison", "exp_yav_temple_exar_kun");
-	BADGES(badgesArmorDegrade,
-		"bdg_exp_tal_creature_village", "bdg_exp_tal_imp_base", "bdg_exp_tal_imp_vs_reb_battle", "bdg_exp_tal_aqualish_cave",
-		"bdg_exp_ror_kobala_spice_mine", "bdg_exp_ror_rebel_outpost", "bdg_exp_ror_imp_camp", "bdg_exp_ror_imp_hyperdrive_fac");
-	BADGES(badgesWeaponDegrade,
-		"exp_dan_jedi_temple", "exp_dan_rebel_base", "bdg_exp_dan_dantari_village1", "bdg_exp_dan_dantari_village2",
-		"bdg_exp_end_ewok_tree_village", "bdg_exp_end_ewok_lake_village", "bdg_exp_end_dulok_village", "bdg_exp_end_imp_outpost");
-	BADGES(badgesSeaCap,
-		"exp_tat_tusken_pool", "exp_tat_krayt_skeleton", "exp_tat_sarlacc_pit", "exp_tat_krayt_graveyard",
-		"exp_dat_sarlacc");
-	BADGES(badgesMoveSpeed,
-		"exp_nab_gungan_sacred_place", "bdg_exp_nab_theed_falls_bottom", "bdg_exp_nab_deeja_falls_top", "bdg_exp_nab_amidalas_sandy_beach");
-	BADGES(badgesBuffDur,
-		"exp_tat_escape_pod", "exp_tat_lars_homestead", "exp_tat_bens_hut",
-		"exp_yav_temple_woolamander", "exp_yav_temple_blueleaf",
-		"science_combatmedic_master", "science_doctor_master", "science_medic_master",
-		"social_dancer_master", "social_entertainer_master", "social_imagedesigner_master",
-		"social_musician_master", "social_politician_master");
-	BADGES(badgesExpBonus,
-		"exp_cor_agrilat_swamp", "bdg_exp_cor_rebel_hideout", "bdg_exp_cor_rogue_corsec_base",
-		"bdg_exp_cor_tyrena_theater", "bdg_exp_cor_bela_vistal_fountain");
-	BADGES(badgesPracticeXP,
-		"exp_tat_escape_pod", "exp_tat_lars_homestead", "exp_tat_bens_hut",
-		"exp_yav_temple_woolamander", "exp_yav_temple_blueleaf",
-		"social_dancer_master", "social_entertainer_master", "social_imagedesigner_master",
-		"social_musician_master", "social_politician_master");
-	BADGES(badgesCraftSpeed,
-		"crafting_architect_master", "crafting_armorsmith_master", "crafting_artisan_master",
-		"crafting_chef_master", "crafting_droidengineer_master", "crafting_merchant_master",
-		"crafting_shipwright", "crafting_tailor_master", "crafting_weaponsmith_master",
-		"science_doctor_master");
-	BADGES(badgesAmazingSuccess,
-		"exp_yav_temple_exar_kun",
-		"exp_lok_volcano", "bdg_exp_lok_imp_outpost", "bdg_exp_lok_kimogila_skeleton",
-		"exp_dat_tarpit", "exp_dat_escape_pod", "exp_dat_misty_falls_1", "exp_dat_misty_falls_2",
-		"bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison");
-	BADGES(badgesAmazingResults,
-		"exp_yav_temple_exar_kun",
-		"exp_lok_volcano", "bdg_exp_lok_imp_outpost", "bdg_exp_lok_kimogila_skeleton",
-		"exp_dat_tarpit", "exp_dat_escape_pod", "exp_dat_misty_falls_1", "exp_dat_misty_falls_2",
-		"bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison");
-	BADGES(badgesGathering,
-		"exp_tat_escape_pod", "exp_tat_lars_homestead", "exp_tat_bens_hut",
-		"exp_yav_temple_woolamander", "exp_yav_temple_blueleaf",
-		"outdoors_bio_engineer_master", "outdoors_creaturehandler_master", "outdoors_ranger_master",
-		"outdoors_scout_master", "outdoors_squadleader_master",
-		"science_combatmedic_master", "science_doctor_master", "science_medic_master");
+
 #undef BADGES
 	template <int N> int countOf(const char* const (&)[N]) { return N; }
 }
@@ -209,9 +130,9 @@ int CustomSkillsMenu::getAcquiredCount(CreatureObject* player, Page page) {
 	COUNT_LEAF(PROFESSION_COMBAT, combat); COUNT_LEAF(PROFESSION_CRAFTING, crafting); COUNT_LEAF(PROFESSION_OUTDOORS, outdoors); COUNT_LEAF(PROFESSION_SCIENCE, science); COUNT_LEAF(PROFESSION_SOCIAL, social); COUNT_LEAF(PROFESSION_PILOT, pilot);
 	COUNT_LEAF(QUEST_HERO, hero); COUNT_LEAF(QUEST_WARREN, warren); COUNT_LEAF(QUEST_THEME_PARKS, themeParks); COUNT_LEAF(QUEST_CORVETTE, corvette);
 	COUNT_LEAF(EVENT_COA, coa); COUNT_LEAF(EVENT_ACCOLADES, accolades); COUNT_LEAF(EVENT_LIBRARIAN, librarian); COUNT_LEAF(EVENT_RACING, racing); COUNT_LEAF(EVENT_DEATH_STAR, deathStar);
-	COUNT_LEAF(BONUS_CRIT_CHANCE, badgesCritChance); COUNT_LEAF(BONUS_CRIT_MULTI, badgesCritMulti); COUNT_LEAF(BONUS_DOUBLE, badgesDouble); COUNT_LEAF(BONUS_TRIPLE, badgesTriple); COUNT_LEAF(BONUS_QUAD, badgesQuad); COUNT_LEAF(BONUS_ARMOR_PEN, badgesArmorPen); COUNT_LEAF(BONUS_DEF_CAP, badgesDefCap);
-	COUNT_LEAF(BONUS_ARMOR_DEGRADE, badgesArmorDegrade); COUNT_LEAF(BONUS_WEAPON_DEGRADE, badgesWeaponDegrade); COUNT_LEAF(BONUS_SEA_CAP, badgesSeaCap); COUNT_LEAF(BONUS_MOVE_SPEED, badgesMoveSpeed); COUNT_LEAF(BONUS_BUFF_DUR, badgesBuffDur); COUNT_LEAF(BONUS_EXP_BONUS, badgesExpBonus); COUNT_LEAF(BONUS_GATHERING, badgesGathering);
-	COUNT_LEAF(BONUS_PRACTICE_XP, badgesPracticeXP); COUNT_LEAF(BONUS_CRAFT_SPEED, badgesCraftSpeed); COUNT_LEAF(BONUS_AMAZING_SUCCESS, badgesAmazingSuccess); COUNT_LEAF(BONUS_AMAZING_RESULTS, badgesAmazingResults);
+	case BONUS_CRIT_CHANCE: return countOwnedBonuses(player, CRITICAL_CHANCE); case BONUS_CRIT_MULTI: return countOwnedBonuses(player, CRITICAL_MULTIPLIER); case BONUS_DOUBLE: return countOwnedBonuses(player, DOUBLE_ATTACK_CHANCE); case BONUS_TRIPLE: return countOwnedBonuses(player, TRIPLE_ATTACK_CHANCE); case BONUS_QUAD: return countOwnedBonuses(player, QUAD_ATTACK_CHANCE); case BONUS_ARMOR_PEN: return countOwnedBonuses(player, ARMOR_PENETRATION); case BONUS_DEF_CAP: return countOwnedBonuses(player, DEFENSE_CAP_INCREASE);
+	case BONUS_ARMOR_DEGRADE: return countOwnedBonuses(player, ARMOR_DEGRADE_REDUCTION); case BONUS_WEAPON_DEGRADE: return countOwnedBonuses(player, WEAPON_DEGRADE_REDUCTION); case BONUS_SEA_CAP: return countOwnedBonuses(player, SEA_CAP_INCREASE); case BONUS_MOVE_SPEED: return countOwnedBonuses(player, MOVEMENT_SPEED); case BONUS_BUFF_DUR: return countOwnedBonuses(player, BUFF_DURATION); case BONUS_EXP_BONUS: return countOwnedBonuses(player, EXPERIENCE_MULTIPLIER); case BONUS_GATHERING: return countOwnedBonuses(player, GATHERING_QUANTITY);
+	case BONUS_PRACTICE_XP: return countOwnedBonuses(player, PRACTICE_EXPERIENCE_BONUS); case BONUS_CRAFT_SPEED: return countOwnedBonuses(player, CRAFTING_SPEED); case BONUS_AMAZING_SUCCESS: return countOwnedBonuses(player, AMAZING_SUCCESS_CHANCE); case BONUS_AMAZING_RESULTS: return countOwnedBonuses(player, AMAZING_RESULTS);
 	default: return 0;
 	}
 #undef COUNT_LEAF
@@ -229,17 +150,41 @@ void CustomSkillsMenu::addCategoryItem(SuiListBox* box, CreatureObject* player, 
 	box->addMenuItem(label);
 }
 
-int CustomSkillsMenu::countModifier(CreatureObject* player, const char* const* keys, int count, CustomSkillsModifierType::Type type) {
+void CustomSkillsMenu::addBonusItems(SuiListBox* box, CreatureObject* player, CustomSkillsModifierType::Type type) {
 	PlayerObject* ghost = player->getPlayerObject();
 	const BadgeList* list = BadgeList::instance();
-	int total = 0;
-	for (int i = 0; i < count; ++i) {
-		const Badge* badge = list->get(keys[i]);
-		if (badge != nullptr && ghost->hasBadge(badge->getIndex()))
-			total += CustomSkillsModifiers::getBadgeModifier(badge->getKey(), type);
+	const VectorMap<String, int>& bonuses = CustomSkillsConfig::instance()->getBadgeBonuses(type);
+	for (int i = 0; i < bonuses.size(); ++i) {
+		const String& key = bonuses.elementAt(i).getKey();
+		const Badge* badge = list->get(key);
+		if (badge == nullptr)
+			continue;
+		String marker = ghost->hasBadge(badge->getIndex()) ? "\\#00FF00O" : "\\#FF0000X";
+		String stringId = "@badge_n:" + badge->getKey();
+		String badgeName = StringIdManager::instance()->getStringId(stringId.hashCode()).toString();
+		if (badgeName.isEmpty())
+			badgeName = badge->getKey();
+
+		int bonus = bonuses.elementAt(i).getValue();
+		if (bonus > 0)
+			badgeName += "  (" + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(type, bonus)) + ")";
+		box->addMenuItem(marker + " \\#.  " + badgeName);
 	}
-	return total;
 }
+
+int CustomSkillsMenu::countOwnedBonuses(CreatureObject* player, CustomSkillsModifierType::Type type) {
+	PlayerObject* ghost = player->getPlayerObject();
+	const BadgeList* list = BadgeList::instance();
+	const VectorMap<String, int>& bonuses = CustomSkillsConfig::instance()->getBadgeBonuses(type);
+	int acquired = 0;
+	for (int i = 0; i < bonuses.size(); ++i) {
+		const Badge* badge = list->get(bonuses.elementAt(i).getKey());
+		if (badge != nullptr && ghost->hasBadge(badge->getIndex()))
+			++acquired;
+	}
+	return acquired;
+}
+
 
 int CustomSkillsMenu::getModifierTotal(CreatureObject* player, Page page, CustomSkillsModifierType::Type type) {
 #define MOD_LEAF(pageName, data) case pageName: return CustomSkillsModifiers::applyModifierCap(type, countModifier(player, data, countOf(data), type))
@@ -369,9 +314,9 @@ void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Pag
 	LEAF(PROFESSION_COMBAT, combat); LEAF(PROFESSION_CRAFTING, crafting); LEAF(PROFESSION_OUTDOORS, outdoors); LEAF(PROFESSION_SCIENCE, science); LEAF(PROFESSION_SOCIAL, social); LEAF(PROFESSION_PILOT, pilot);
 	LEAF(QUEST_HERO, hero); LEAF(QUEST_WARREN, warren); LEAF(QUEST_THEME_PARKS, themeParks); LEAF(QUEST_CORVETTE, corvette);
 	LEAF(EVENT_COA, coa); LEAF(EVENT_ACCOLADES, accolades); LEAF(EVENT_LIBRARIAN, librarian); LEAF(EVENT_RACING, racing); LEAF(EVENT_DEATH_STAR, deathStar);
-	LEAF(BONUS_CRIT_CHANCE, badgesCritChance); LEAF(BONUS_CRIT_MULTI, badgesCritMulti); LEAF(BONUS_DOUBLE, badgesDouble); LEAF(BONUS_TRIPLE, badgesTriple); LEAF(BONUS_QUAD, badgesQuad); LEAF(BONUS_ARMOR_PEN, badgesArmorPen); LEAF(BONUS_DEF_CAP, badgesDefCap);
-	LEAF(BONUS_ARMOR_DEGRADE, badgesArmorDegrade); LEAF(BONUS_WEAPON_DEGRADE, badgesWeaponDegrade); LEAF(BONUS_SEA_CAP, badgesSeaCap); LEAF(BONUS_MOVE_SPEED, badgesMoveSpeed); LEAF(BONUS_BUFF_DUR, badgesBuffDur); LEAF(BONUS_EXP_BONUS, badgesExpBonus); LEAF(BONUS_GATHERING, badgesGathering);
-	LEAF(BONUS_PRACTICE_XP, badgesPracticeXP); LEAF(BONUS_CRAFT_SPEED, badgesCraftSpeed); LEAF(BONUS_AMAZING_SUCCESS, badgesAmazingSuccess); LEAF(BONUS_AMAZING_RESULTS, badgesAmazingResults);
+	case BONUS_CRIT_CHANCE: addBonusItems(box, player, CRITICAL_CHANCE); break; case BONUS_CRIT_MULTI: addBonusItems(box, player, CRITICAL_MULTIPLIER); break; case BONUS_DOUBLE: addBonusItems(box, player, DOUBLE_ATTACK_CHANCE); break; case BONUS_TRIPLE: addBonusItems(box, player, TRIPLE_ATTACK_CHANCE); break; case BONUS_QUAD: addBonusItems(box, player, QUAD_ATTACK_CHANCE); break; case BONUS_ARMOR_PEN: addBonusItems(box, player, ARMOR_PENETRATION); break; case BONUS_DEF_CAP: addBonusItems(box, player, DEFENSE_CAP_INCREASE); break;
+	case BONUS_ARMOR_DEGRADE: addBonusItems(box, player, ARMOR_DEGRADE_REDUCTION); break; case BONUS_WEAPON_DEGRADE: addBonusItems(box, player, WEAPON_DEGRADE_REDUCTION); break; case BONUS_SEA_CAP: addBonusItems(box, player, SEA_CAP_INCREASE); break; case BONUS_MOVE_SPEED: addBonusItems(box, player, MOVEMENT_SPEED); break; case BONUS_BUFF_DUR: addBonusItems(box, player, BUFF_DURATION); break; case BONUS_EXP_BONUS: addBonusItems(box, player, EXPERIENCE_MULTIPLIER); break; case BONUS_GATHERING: addBonusItems(box, player, GATHERING_QUANTITY); break;
+	case BONUS_PRACTICE_XP: addBonusItems(box, player, PRACTICE_EXPERIENCE_BONUS); break; case BONUS_CRAFT_SPEED: addBonusItems(box, player, CRAFTING_SPEED); break; case BONUS_AMAZING_SUCCESS: addBonusItems(box, player, AMAZING_SUCCESS_CHANCE); break; case BONUS_AMAZING_RESULTS: addBonusItems(box, player, AMAZING_RESULTS); break;
 	}
 #undef LEAF
 }

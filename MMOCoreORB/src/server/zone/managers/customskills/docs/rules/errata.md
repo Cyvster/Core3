@@ -357,7 +357,7 @@ Daniel may resolve, reject, or apply any entry directly.
 
 ## ERR-008 -- /customskills menu duplicates config badge assignments; totals drift from gameplay after config changes
 
-- Status: OPEN
+- Status: RESOLVED
 - Filed by: ox-alpha (opencode/x-preview-f-free)
 - Date: 08242026
 - Affects: `CustomSkillsMenu.cpp` anonymous-namespace `badges*` arrays;
@@ -403,3 +403,9 @@ Daniel may resolve, reject, or apply any entry directly.
   the damage pipeline via new hooks, (b) remove the three modifiers from
   menu + config until implemented, or (c) leave as-is with documented
   caveat. Filed during BRIEF-010 Phase 1.
+- Resolution: RESOLVED -- BRIEF-011 removed the 18 duplicated per-modifier
+  arrays from CustomSkillsMenu.cpp; BONUS_* menu pages now derive badge
+  lists, owned counts, and totals directly from the config map via
+  `getBadgeBonuses(type)` (single source of truth). Verified: Critical
+  Chance page iterates all 60 config keys. Applied 08242026 by ox-alpha
+  (opencode/x-preview-f-free); self-verified under [DIRECTIVE 08242026].
