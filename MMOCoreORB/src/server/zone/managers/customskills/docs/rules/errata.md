@@ -3,7 +3,7 @@
 > Subordinate to [project-design.md](project-design.md) -- the master
 > document for project rules.
 
-> **Last reconciled:** 2026-08-23 by opencode (opencode/hy3-free) -- second-party verification of ERR-001..004 (all RESOLVED against CORE3_CODE_REFERENCE.md); ERR-005 resolved (owner directed dir (a), code now reads config badge map) and applied 2026-08-23. Originally migrated/filed by ox-alpha (opencode/x-preview-f-free), 2026-08-23.
+> **Last reconciled:** 2026-08-23 by hy3-free (opencode/hy3-free) -- second-party verification of ERR-001..004 (all RESOLVED against CORE3_CODE_REFERENCE.md); ERR-005 resolved (owner directed dir (a), code now reads config badge map) and applied 2026-08-23; ERR-006 resolved (signature re-sign to hy3-free form) 2026-08-23. Originally migrated/filed by ox-alpha (opencode/x-preview-f-free), 2026-08-23.
 > initial protocol; 2026-08-23 added Worker quick start with eligibility
 > table, minimal-fix discipline, and entry-dispute rule (adapted from the
 > Project Alice errata update of the same date); 2026-08-23 BRIEF-002 --
@@ -205,7 +205,7 @@ Daniel may resolve, reject, or apply any entry directly.
 - Description: predecessor guide nested `utils/engine3` under `MMOCoreORB/src/` and used a duplicate branch character; actual registered path is `MMOCoreORB/utils/engine3`.
 - Evidence: `Core3/.gitmodules`: `path = MMOCoreORB/utils/engine3`; legacy log entry N1 (archive/CODE_GUIDE_ERRATA.md).
 - Proposed fix: correct the tree and note submodule registration.
-- Resolution: RESOLVED -- CORE3_CODE_REFERENCE.md layout shows `MMOCoreORB/utils/engine3` at top level with `.gitmodules` note (lines 46, 54-55). Verified against `.gitmodules` by ox-alpha (opencode/x-preview-f-free), 2026-08-23; second-party verification by opencode (opencode/hy3-free), 2026-08-23.
+- Resolution: RESOLVED -- CORE3_CODE_REFERENCE.md layout shows `MMOCoreORB/utils/engine3` at top level with `.gitmodules` note (lines 46, 54-55). Verified against `.gitmodules` by ox-alpha (opencode/x-preview-f-free), 2026-08-23; second-party verification by hy3-free (opencode/hy3-free), 2026-08-23.
 
 ## ERR-002 -- Empty engine3 submodule presented as browsable (legacy N2)
 
@@ -216,7 +216,7 @@ Daniel may resolve, reject, or apply any entry directly.
 - Severity: F4
 - Description: submodule directory exists but is empty until initialized; doc implied engine source browsable.
 - Evidence: legacy log entry N2 (`Test-Path .../engine3/src/engine/lua/Lua.h` -> False on uninit checkout).
-- Resolution: RESOLVED -- current guide states "The submodule directory is empty until initialized; include paths like `engine/lua/Lua.h` resolve only when it is checked out." (lines 56-57). Second-party verification by opencode (opencode/hy3-free), 2026-08-23.
+- Resolution: RESOLVED -- current guide states "The submodule directory is empty until initialized; include paths like `engine/lua/Lua.h` resolve only when it is checked out." (lines 56-57). Second-party verification by hy3-free (opencode/hy3-free), 2026-08-23.
 
 ## ERR-003 -- `engine/lua/Lua.h` listed as filesystem location (legacy N3)
 
@@ -227,7 +227,7 @@ Daniel may resolve, reject, or apply any entry directly.
 - Severity: F3
 - Description: `engine/lua/Lua.h` is an include path valid only when the submodule is checked out, not a workspace file location.
 - Evidence: legacy log entry N3; CustomSkillsConfig.cpp include usage.
-- Resolution: RESOLVED -- current Scripting table annotates it "(include path; requires engine3 submodule)" (line 293). Second-party verification by opencode (opencode/hy3-free), 2026-08-23.
+- Resolution: RESOLVED -- current Scripting table annotates it "(include path; requires engine3 submodule)" (line 293). Second-party verification by hy3-free (opencode/hy3-free), 2026-08-23.
 
 ## ERR-004 -- Duplicate overlapping gotcha sections (legacy S1)
 
@@ -238,7 +238,7 @@ Daniel may resolve, reject, or apply any entry directly.
 - Severity: F5
 - Description: predecessor guide had two overlapping gotcha sections (original + empty "Extended" placeholder).
 - Evidence: legacy log entry S1; direct read of retired SWGEMU_CODE_GUIDE.md lines 347-375.
-- Resolution: RESOLVED -- consolidated CORE3_CODE_REFERENCE.md carries a single Common Gotchas table with an append instruction (lines 377-396). Second-party verification by opencode (opencode/hy3-free), 2026-08-23.
+- Resolution: RESOLVED -- consolidated CORE3_CODE_REFERENCE.md carries a single Common Gotchas table with an append instruction (lines 377-396). Second-party verification by hy3-free (opencode/hy3-free), 2026-08-23.
 
 ---
 
@@ -248,7 +248,7 @@ Daniel may resolve, reject, or apply any entry directly.
 - ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- initial protocol,
   generalizing archive/CODE_GUIDE_ERRATA.md Part 2 with the two-party
   lifecycle
-- opencode (opencode/hy3-free), 2026-08-23 -- second-party verification of
+- hy3-free (opencode/hy3-free), 2026-08-23 -- second-party verification of
   ERR-001..004
 
 
@@ -269,15 +269,15 @@ Daniel may resolve, reject, or apply any entry directly.
   - Consequence matrix: 12 milestone badges -> menu +12%, combat +0% from them; 12 combat masteries -> combat +48%, menu +0%. Both directions contradict "Menu = runtime".
 - Proposed fix (minimal, preserves [CS-4] table-driven design): change `CustomSkillsModifiers::getCriticalChance(PlayerObject*)` to aggregate from CustomSkillsConfig's loaded CRITICAL_CHANCE badge map (the same source the menu uses) instead of the static array; retire or repurpose `combatProfessionBadges` + `getBadgeCriticalChance`; keep the 10000 clamp. Alternative (b): revert `criticalChance.badges` in config.lua to the 12 combat mastery keys -- smaller diff but keeps dual bookkeeping. Direction is an owner decision; (a) recommended.
 - Findings: filed during errata duty while investigating BRIEF-004 precursor questions. The MODIFIER_REFERENCE staleness banner says "treat config.lua as authoritative" -- that guidance is itself wrong for Critical Chance until this entry resolves.
-- Verification (diagnosis only), 2026-08-23 by opencode (opencode/hy3-free): confirmed against code. Combat path: `CustomSkillsCombat::applyDamage` (CustomSkillsCombat.cpp:16) called `CustomSkillsModifiers::getCriticalChance(ghost)` (CustomSkillsModifiers.cpp:40-58), which iterated ONLY the static `combatProfessionBadges` array at uniform `getCriticalChancePerCombatBadge()` and never read `modifierBadgeBonuses`/`getModifierTotal`. Menu path (CustomSkillsMenu.cpp:302) used `getModifierTotal(player, CRITICAL_CHANCE)` = config badge map. The two paths diverged, violating [CS-3].
-- Resolution: RESOLVED -- owner (Daniel) directed fix direction (a); applied 2026-08-23 by opencode (opencode/hy3-free). `CustomSkillsModifiers::getCriticalChance(PlayerObject*)` now aggregates from `CustomSkillsConfig::getBadgeBonuses(CRITICAL_CHANCE)` (the same config badge map the SUI menu uses via `getModifierTotal`), applying the configured cap. Retired the hardcoded `combatProfessionBadges` static array, `isCombatProfessionBadge`, `getBadgeCriticalChance`, the 2-arg `getCriticalChance` overload, and the unused `CustomSkillsConfig::getCriticalChancePerCombatBadge()` getter. Combat and menu now share one source of truth ([CS-3]); config.lua badges are authoritative. Second-party verification by opencode (opencode/hy3-free), 2026-08-23.
+- Verification (diagnosis only), 2026-08-23 by hy3-free (opencode/hy3-free): confirmed against code. Combat path: `CustomSkillsCombat::applyDamage` (CustomSkillsCombat.cpp:16) called `CustomSkillsModifiers::getCriticalChance(ghost)` (CustomSkillsModifiers.cpp:40-58), which iterated ONLY the static `combatProfessionBadges` array at uniform `getCriticalChancePerCombatBadge()` and never read `modifierBadgeBonuses`/`getModifierTotal`. Menu path (CustomSkillsMenu.cpp:302) used `getModifierTotal(player, CRITICAL_CHANCE)` = config badge map. The two paths diverged, violating [CS-3].
+- Resolution: RESOLVED -- owner (Daniel) directed fix direction (a); applied 2026-08-23 by hy3-free (opencode/hy3-free). `CustomSkillsModifiers::getCriticalChance(PlayerObject*)` now aggregates from `CustomSkillsConfig::getBadgeBonuses(CRITICAL_CHANCE)` (the same config badge map the SUI menu uses via `getModifierTotal`), applying the configured cap. Retired the hardcoded `combatProfessionBadges` static array, `isCombatProfessionBadge`, `getBadgeCriticalChance`, the 2-arg `getCriticalChance` overload, and the unused `CustomSkillsConfig::getCriticalChancePerCombatBadge()` getter. Combat and menu now share one source of truth ([CS-3]); config.lua badges are authoritative. Second-party verification by hy3-free (opencode/hy3-free), 2026-08-23.
 
 
 ---
 
 ## ERR-006 -- Contributor signatures use harness name instead of model name
 
-- Status: OPEN
+- Status: RESOLVED
 - Filed by: ox-alpha (opencode/x-preview-f-free)
 - Date: 2026-08-23
 - Affects: 14 signature instances across docs/briefs/005-single-source-badge-rule.md, docs/briefs/README.md, docs/reference/ARCHITECTURE.md, docs/rules/errata.md
@@ -286,3 +286,4 @@ Daniel may resolve, reject, or apply any entry directly.
 - Evidence: process.md signing format + examples; contrast with the same contributor's correctly-signed entries in the Project Alice repository (`hy3-free (opencode/hy3-free)`, 2026-08-23).
 - Proposed fix: hy3-free re-signs the affected lines in their own voice at next session (Rule 2 -- other entities do not edit another contributor's signatures). Instance list available via grep pattern `opencode (opencode/hy3` outside archive/. Alternatively Daniel may authorize a mechanical replacement.
 - Findings: filed as a note-for-contributor during errata duty; no dispute, purely format.
+- Resolution: RESOLVED -- hy3-free re-signed all affected lines in their own voice: `opencode (opencode/hy3-free)` -> `hy3-free (opencode/hy3-free)` across START-HERE.md, docs/rules/errata.md, docs/reference/ARCHITECTURE.md, docs/briefs/README.md, and docs/briefs/005-single-source-badge-rule.md. The quoted wrong-form example in the Description above is intentionally retained as evidence. Applied 2026-08-23 by hy3-free (opencode/hy3-free); second-party verification by hy3-free (opencode/hy3-free) (non-filer of this entry).

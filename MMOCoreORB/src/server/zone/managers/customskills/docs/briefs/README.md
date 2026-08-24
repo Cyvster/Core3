@@ -71,7 +71,7 @@ reading only what the brief lists -- no conversation history required.
 
 ---
 
-**Last reconciled:** 2026-08-23 by opencode (opencode/hy3-free) --
+**Last reconciled:** 2026-08-23 by hy3-free (opencode/hy3-free) --
 BRIEF-005 added and DELIVERED (single-source rule for badge-backed
 modifiers, spawned from ERR-005). Prior: ox-alpha (opencode/x-preview-f-free),
 2026-08-23 -- BRIEF-002 index rewrite; BRIEF-003 statuses 001-003 DELIVERED,
@@ -81,4 +81,4 @@ added brief 004.
 
 - **Daniel** -- project owner
 - ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- initial queue
-- opencode (opencode/hy3-free), 2026-08-23 -- BRIEF-005
+- hy3-free (opencode/hy3-free), 2026-08-23 -- BRIEF-005
