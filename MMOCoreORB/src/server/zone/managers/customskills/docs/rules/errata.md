@@ -3,7 +3,7 @@
 > Subordinate to [project-design.md](project-design.md) -- the master
 > document for project rules.
 
-> **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- migrated legacy N1/N2/N3/S1 findings as ERR-001..004 (all RESOLVED via successor document)
+> **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- migrated legacy findings as ERR-001..004; self-audit downgraded all to AWAITING-VERIFICATION (filer cannot verify own entries); 2026-08-23 filed ERR-005 (Critical Chance menu/combat divergence) during errata duty
 > initial protocol; 2026-08-23 added Worker quick start with eligibility
 > table, minimal-fix discipline, and entry-dispute rule (adapted from the
 > Project Alice errata update of the same date); 2026-08-23 BRIEF-002 --
@@ -197,7 +197,7 @@ Daniel may resolve, reject, or apply any entry directly.
 
 ## ERR-001 -- Codebase layout tree misplaced engine3 submodule (legacy N1)
 
-- Status: RESOLVED
+- Status: AWAITING-VERIFICATION
 - Filed by: migrated from archive/CODE_GUIDE_ERRATA.md (originally PROPOSED, C-001, 2026-08-21)
 - Date: 2026-08-23
 - Affects: docs/reference/CORE3_CODE_REFERENCE.md, Codebase Layout
@@ -205,39 +205,45 @@ Daniel may resolve, reject, or apply any entry directly.
 - Description: predecessor guide nested `utils/engine3` under `MMOCoreORB/src/` and used a duplicate branch character; actual registered path is `MMOCoreORB/utils/engine3`.
 - Evidence: `Core3/.gitmodules`: `path = MMOCoreORB/utils/engine3`; legacy log entry N1 (archive/CODE_GUIDE_ERRATA.md).
 - Proposed fix: correct the tree and note submodule registration.
+- Proposed fix status: already applied to CORE3_CODE_REFERENCE.md; awaiting second-party verification
+- Self-resolution note INVALID under two-party rule: filer = resolver. Status corrected to AWAITING-VERIFICATION by ox-alpha (opencode/x-preview-f-free), 2026-08-23. Original resolution text preserved:
+- Proposed fix status: already applied to CORE3_CODE_REFERENCE.md; awaiting second-party verification
 - Resolution: RESOLVED during the 2026-08-23 guide split -- CORE3_CODE_REFERENCE.md layout shows `MMOCoreORB/utils/engine3` at top level with `.gitmodules` note. Verified against `.gitmodules` by ox-alpha (opencode/x-preview-f-free), 2026-08-23.
 
 ## ERR-002 -- Empty engine3 submodule presented as browsable (legacy N2)
 
-- Status: RESOLVED
+- Status: AWAITING-VERIFICATION
 - Filed by: migrated from archive/CODE_GUIDE_ERRATA.md (originally PROPOSED, C-001, 2026-08-21)
 - Date: 2026-08-23
 - Affects: docs/reference/CORE3_CODE_REFERENCE.md, Codebase Layout note
 - Severity: F4
 - Description: submodule directory exists but is empty until initialized; doc implied engine source browsable.
 - Evidence: legacy log entry N2 (`Test-Path .../engine3/src/engine/lua/Lua.h` -> False on uninit checkout).
+- Self-resolution note INVALID under two-party rule: filer = resolver. Status corrected to AWAITING-VERIFICATION by ox-alpha (opencode/x-preview-f-free), 2026-08-23. Original text preserved:
 - Resolution: RESOLVED -- current guide states "The submodule directory is empty until initialized; include paths like `engine/lua/Lua.h` resolve only when it is checked out." ox-alpha (opencode/x-preview-f-free), 2026-08-23.
 
 ## ERR-003 -- `engine/lua/Lua.h` listed as filesystem location (legacy N3)
 
-- Status: RESOLVED
+- Status: AWAITING-VERIFICATION
 - Filed by: migrated from archive/CODE_GUIDE_ERRATA.md (originally PROPOSED, C-001, 2026-08-21)
 - Date: 2026-08-23
 - Affects: docs/reference/CORE3_CODE_REFERENCE.md, Scripting table
 - Severity: F3
 - Description: `engine/lua/Lua.h` is an include path valid only when the submodule is checked out, not a workspace file location.
 - Evidence: legacy log entry N3; CustomSkillsConfig.cpp include usage.
+- Self-resolution note INVALID under two-party rule: filer = resolver. Status corrected to AWAITING-VERIFICATION by ox-alpha (opencode/x-preview-f-free), 2026-08-23. Original text preserved:
 - Resolution: RESOLVED -- current Scripting table annotates it "(include path; requires engine3 submodule)". ox-alpha (opencode/x-preview-f-free), 2026-08-23.
 
 ## ERR-004 -- Duplicate overlapping gotcha sections (legacy S1)
 
-- Status: RESOLVED
+- Status: AWAITING-VERIFICATION
 - Filed by: migrated from archive/CODE_GUIDE_ERRATA.md (originally PROPOSED, S1 structural)
 - Date: 2026-08-23
 - Affects: docs/reference/CORE3_CODE_REFERENCE.md, Common Gotchas
 - Severity: F5
 - Description: predecessor guide had two overlapping gotcha sections (original + empty "Extended" placeholder).
 - Evidence: legacy log entry S1; direct read of retired SWGEMU_CODE_GUIDE.md lines 347-375.
+- Self-resolution note INVALID under two-party rule: filer = resolver. Status corrected to AWAITING-VERIFICATION by ox-alpha (opencode/x-preview-f-free), 2026-08-23. Original text preserved:
 - Resolution: RESOLVED -- consolidated CORE3_CODE_REFERENCE.md carries a single Common Gotchas table with an append instruction. ox-alpha (opencode/x-preview-f-free), 2026-08-23.
 
 ---
@@ -248,3 +254,22 @@ Daniel may resolve, reject, or apply any entry directly.
 - ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- initial protocol,
   generalizing archive/CODE_GUIDE_ERRATA.md Part 2 with the two-party
   lifecycle
+
+
+---
+
+## ERR-005 -- Critical Chance: menu values diverge from combat path (config badges ignored by combat)
+
+- Status: AWAITING-VERIFICATION
+- Filed by: ox-alpha (opencode/x-preview-f-free)
+- Date: 2026-08-23
+- Affects: `MMOCoreORB/bin/scripts/customskills/config.lua` (criticalChance.badges/badgeOverrides); `CustomSkillsModifiers.cpp` getCriticalChance/getBadgeCriticalChance; `docs/reference/MODIFIER_REFERENCE.md` staleness banner
+- Severity: F1 (runtime behavior contradicts displayed values and [CS-3])
+- Description: the SUI menu computes Critical Chance from the config-loaded badge map (currently 12 milestone exploration badges at 100 bp via badgeOverrides -> up to +12%), while the combat roll (`CustomSkillsCombat::modifyLandedDamage` -> `getCriticalChance`) iterates ONLY the hardcoded `combatProfessionBadges` array at the uniform `criticalChancePerCombatBadge` rate (400 bp -> up to +48%). The two paths disagree for every badge set; [CS-3] single-source-of-truth and the "Menu = runtime" verification test are violated.
+- Evidence:
+  - `CustomSkillsConfig.cpp` criticalChance block loads `badges` into `modifierBadgeBonuses[CRITICAL_CHANCE]` and calls `loadBadgeOverrides(critical, CRITICAL_CHANCE)` -- milestone entries DO reach the config map.
+  - `CustomSkillsModifiers.cpp:36-55`: `getCriticalChance(PlayerObject*)` sums exclusively over `combatProfessionBadges` (static array, static_assert == 12) via `getBadgeCriticalChance()`, which returns the uniform rate only for keys in that array; it never consults `modifierBadgeBonuses`.
+  - `CustomSkillsCombat.cpp:16-23` (H01): the crit roll consumes `getCriticalChance`, so combat uses the static-array path only.
+  - Consequence matrix: 12 milestone badges -> menu +12%, combat +0% from them; 12 combat masteries -> combat +48%, menu +0%. Both directions contradict "Menu = runtime".
+- Proposed fix (minimal, preserves [CS-4] table-driven design): change `CustomSkillsModifiers::getCriticalChance(PlayerObject*)` to aggregate from CustomSkillsConfig's loaded CRITICAL_CHANCE badge map (the same source the menu uses) instead of the static array; retire or repurpose `combatProfessionBadges` + `getBadgeCriticalChance`; keep the 10000 clamp. Alternative (b): revert `criticalChance.badges` in config.lua to the 12 combat mastery keys -- smaller diff but keeps dual bookkeeping. Direction is an owner decision; (a) recommended.
+- Findings: filed during errata duty while investigating BRIEF-004 precursor questions. The MODIFIER_REFERENCE staleness banner says "treat config.lua as authoritative" -- that guidance is itself wrong for Critical Chance until this entry resolves.
