@@ -7,6 +7,11 @@ customSkillsConfig = {
 	-- RGB color used for custom modifier text in SUI menus.
 	customSummaryColor = "00FF00",
 
+	-- Show combat spam labels like (CRIT) after qualifying hits. Labels are
+	-- sent as their own combat message (client limitation: a label cannot
+	-- be appended onto the native hit line).
+	combatSpamLabelsEnabled = true,
+
 	-- Rarity naming: color-only display instead of appending "(Exceptional)"/"(Legendary)" to item names.
 	-- When enabled, item names use colored text instead of suffixes, which also fixes quest turn-in
 	-- compatibility (quest systems match items by name, so suffixes break the match).

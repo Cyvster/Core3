@@ -377,3 +377,29 @@ Daniel may resolve, reject, or apply any entry directly.
 - Proposed fix: derive menu grouping from the config map at runtime
   (preferred) or add boot-time drift validation; remediation scheduled
   as BRIEF-011 Phase A.
+
+---
+
+## ERR-009 -- Double/Triple/Quad attack chance modifiers have no gameplay implementation
+
+- Status: OPEN
+- Filed by: ox-alpha (opencode/x-preview-f-free)
+- Date: 08242026
+- Affects: `config.lua` (doubleAttackChance, tripleAttackChance,
+  quadAttackChance); `CustomSkillsMenu.cpp` BONUS_* pages; produced by
+  BRIEF-010 Phase 1 investigation
+- Severity: F1 (menu advertises bonuses that cannot proc; players see
+  totals for mechanics that do not exist)
+- Description: the three repeat-attack modifiers are loaded from config
+  and displayed in `/customskills`, but no combat code consumes their
+  modifier types -- there is no repeat-tier roll anywhere. Their
+  combatSpamLabels are likewise never emitted.
+- Evidence: repo-wide sweep shows DOUBLE_ATTACK_CHANCE /
+  TRIPLE_ATTACK_CHANCE / QUAD_ATTACK_CHANCE referenced only by
+  CustomSkillsConfig.cpp (loader), CustomSkillsMenu.cpp (display),
+  CustomSkillsModifierType.h (enum), and docs. No hooks patch call site
+  touches them.
+- Proposed fix: owner decision required: (a) implement tier mechanics in
+  the damage pipeline via new hooks, (b) remove the three modifiers from
+  menu + config until implemented, or (c) leave as-is with documented
+  caveat. Filed during BRIEF-010 Phase 1.

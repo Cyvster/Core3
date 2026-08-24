@@ -1,6 +1,6 @@
 # BRIEF-010 -- Combat spam labels: enable/disable control, menu listing, and same-line append fix
 
-- Status: CLAIMED by ox-alpha (opencode/x-preview-f-free), 08242026
+- Status: AWAITING-OWNER by ox-alpha (opencode/x-preview-f-free), 08242026 -- same-line append proven impossible at packet level (findings below); toggle + suppression + menu listing delivered; owner to choose: keep separate-line labels, full-line replacement (heavier swgemu touch), or remove feature
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Owner report from last live test: the appended label
   (`(CRIT)` etc.) did not appear on the same line as the combat message
@@ -92,3 +92,57 @@ spam line.
 - Changing proc rates, values, caps, or badge assignments.
 - Removing the feature without explicit owner directive.
 - Native (non-module) combat spam formatting.
+
+---
+
+## Phase 1 findings -- 08242026 by ox-alpha (opencode/x-preview-f-free)
+
+1. **Emission path**: `combat/CustomSkillsCombat.cpp::applyDamage` calls
+   `CreatureObjectImplementation::sendCustomCombatSpam(label, 11)`, which
+   constructs a standalone `CombatSpam(asCreatureObject(), customString,
+   color)` packet and sends it. The label was never part of the hit line.
+2. **Root cause of the newline drop (proven)**: the native hit line is a
+   stringId-mode CombatSpam packet
+   (`CombatSpam(attacker, defender, receiver, item, damage, file,
+   stringName, color)` in `CombatManager::broadcastCombatSpam`) whose
+   text the CLIENT composes from file/stringId/damage fields -- the
+   packet schema has no free-text suffix slot. Raw-text packets are a
+   separate full line each. Therefore an arbitrary suffix like `(CRIT)`
+   cannot join the vanilla line through any packet that exists; only a
+   full raw-text REPLACEMENT of the line could carry it.
+3. **Enable/disable before this brief**: modifier disabled -> no proc ->
+   no label. Empty-string label -> still emitted (blank suffix). No
+   global off switch existed. NOW: `combatSpamLabelsEnabled` root config
+   switch (default true) + empty-string per-modifier suppression both
+   implemented in `CustomSkillsConfig` and honored by the crit path.
+4. **Menu audit**: Server Config page previously listed only Rarity
+   Naming state. NOW: prompt text + MOD_OPTIONS row show
+   `Combat Spam Labels ON/OFF`, and countEnabledOptions() includes it.
+
+### Additional finding (owner decision required)
+
+**Double/Triple/Quad attack chance have NO gameplay implementation.**
+Repo-wide sweep: `DOUBLE_ATTACK_CHANCE`/`TRIPLE_ATTACK_CHANCE`/
+`QUAD_ATTACK_CHANCE` are consumed only by the config loader, menu, enum,
+and docs -- no combat code rolls repeat tiers or emits their labels.
+The menu advertises bonuses that cannot proc. Options for owner:
+(a) implement tier mechanics (new hooks inside the damage pipeline),
+(b) remove them from menu/config until implemented, (c) leave as-is with
+a documented caveat. Filed as **ERR-009 (OPEN)**.
+
+## Phase 2 delivered
+
+- `combatSpamLabelsEnabled` root switch: loader + getter + defaults;
+  disabled suppresses ALL label emission.
+- Per-modifier empty-string label now suppresses emission entirely.
+- Menu: Combat Spam Labels state visible on Server Config (prompt +
+  MOD_OPTIONS row); counted in enabled-options total.
+
+## Same-line feasibility verdict (Phase 3 gate)
+
+Same-line append requires either a CombatSpam schema change (client-side)
+or suppressing the vanilla broadcast and rebuilding the full hit line as
+raw text (new swgemu hook inside the mitigation/spam chain + duplicated
+line composition). Both exceed minimal-hook policy. AWAITING OWNER:
+keep separate-line labels / approve full-replacement implementation /
+remove labels.

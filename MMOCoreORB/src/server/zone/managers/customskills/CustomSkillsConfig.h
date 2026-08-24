@@ -13,6 +13,7 @@ public:
 	bool isCriticalChanceEnabled() const { return criticalChanceEnabled; }
 	int getCriticalMultiplier() const { return criticalMultiplier; }
 	const String& getCustomSummaryColor() const { return customSummaryColor; }
+	bool isCombatSpamLabelsEnabled() const { return combatSpamLabelsEnabled; }
 	const String& getCriticalCombatSpamLabel() const { return criticalCombatSpamLabel; }
 	bool isRarityNamingEnabled() const { return rarityNamingEnabled; }
 	const String& getLegendaryColor() const { return legendaryColor; }
@@ -29,6 +30,7 @@ private:
 	int criticalMultiplier;
 	String customSummaryColor;
 	String criticalCombatSpamLabel;
+	bool combatSpamLabelsEnabled;
 	bool rarityNamingEnabled;
 	String legendaryColor;
 	String exceptionalColor;

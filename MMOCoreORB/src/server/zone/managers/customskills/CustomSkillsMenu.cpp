@@ -186,6 +186,7 @@ int CustomSkillsMenu::countEnabledOptions() {
 	CustomSkillsConfig* config = CustomSkillsConfig::instance();
 	int count = 0;
 	if (config->isRarityNamingEnabled()) ++count;
+	if (config->isCombatSpamLabelsEnabled()) ++count;
 	return count;
 }
 
@@ -283,9 +284,11 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 		} else if (page == SWGEMU_OPTIONS) {
 			summary << "No options configured yet." << endl;
 		} else {
-			summary << "\\#FFFF00--- Mod Options ---\\#. " << endl;
 			String rarityState = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
+			String spamState = config->isCombatSpamLabelsEnabled() ? "\\#00FF00ON" : "\\#FF0000OFF";
+			summary << "\\#FFFF00--- Mod Options ---\\#. " << endl;
 			summary << rarityState << "\\#. Rarity Naming" << endl;
+			summary << spamState << "\\#. Combat Spam Labels" << endl;
 			summary << "\\#FFFF00--- SWGEMU Options ---\\#. " << endl;
 			summary << "No options configured yet." << endl;
 		}
@@ -350,6 +353,8 @@ void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Pag
 		CustomSkillsConfig* config = CustomSkillsConfig::instance();
 		String status = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
 		box->addMenuItem("Rarity Naming " + status + "\\#.");
+		String spamState = config->isCombatSpamLabelsEnabled() ? "\\#00FF00ON" : "\\#FF0000OFF";
+		box->addMenuItem("Combat Spam Labels " + spamState + "\\#.");
 		break;
 	}
 	case RARITY_NAMING: {

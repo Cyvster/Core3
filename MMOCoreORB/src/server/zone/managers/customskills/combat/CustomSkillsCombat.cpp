@@ -19,8 +19,12 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 			int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(creo);
 			damage = static_cast<int>((static_cast<int64>(damage) * criticalMultiplier) / 10000);
 
-			UnicodeString criticalMessage("(CRIT)");
-			attacker->asCreatureObject()->sendCustomCombatSpam(criticalMessage, 11);
+			CustomSkillsConfig* config = CustomSkillsConfig::instance();
+			if (config->isCombatSpamLabelsEnabled()) {
+				const String& label = config->getCriticalCombatSpamLabel();
+				if (!label.isEmpty())
+					creo->sendCustomCombatSpam(UnicodeString(label), 11);
+			}
 		}
 	}
 

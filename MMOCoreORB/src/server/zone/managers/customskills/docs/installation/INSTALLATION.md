@@ -190,7 +190,9 @@ Restart Core3 after editing.
 ### Root Settings
 
 ```lua
-customSummaryColor = "00FF00"   -- RGB hex for menu modifier text color
+customSummaryColor = "00FF00"       -- RGB hex for menu modifier text color
+combatSpamLabelsEnabled = true      -- show (CRIT)-style labels after
+                                    -- qualifying hits (own line each)
 ```
 
 **Important**: Configuration is cached for combat performance. **Restart Core3 after any change**. Missing/invalid values use safe defaults and log warnings.
@@ -213,7 +215,7 @@ customSummaryColor = "00FF00"   -- RGB hex for menu modifier text color
 1. **Startup**: No errors loading `customSkills.lua` or `CustomSkillsCommand`
 2. **Command**: `/customskills` opens menu on a normal player character
 3. **Navigation**: Open every category, use Back/Cancel, reopen repeatedly, test 2+ characters simultaneously
-4. **Critical Chance**: Each of the 60 assigned badges (via `badgeOverrides`) shows +1.00%; full set reaches the +60.00% cap
+4. **Critical Chance**: Each of the 60 assigned badges (via `badgeOverrides`) shows +1.00%; full set reaches the +60.00% cap. With `combatSpamLabelsEnabled = true`, crits emit a separate `(CRIT)` combat message
 5. **Combat test**: Critical attacks deal 150% of pre-armor damage
 6. **Before enabling new modifier**: Run focused tests from `docs/customskills/CODE_REFERENCE.md`
 

@@ -126,7 +126,7 @@ O  Lars Homestead  (+25% Movement Speed)
 - **What it does**: Gives landed attacks a chance to become critical hits, dealing bonus damage.
 - **Powered by**: 60 achievement badges across the whole game -- all badge-count milestones (7 accumulation + 5 exploration), all 12 combat profession masteries, Hero of Tatooine (5), Warren (2), Theme Parks (4), Corellian Corvette (9), dangerous exploration sites (5), Jedi sites (3), Outdoors masteries (5), and Science masteries (3).
 - **Typical maximum**: +60% critical chance with the full set.
-- **Combat spam**: `(CRIT)` appears when it triggers.
+- **Combat spam**: `(CRIT)` appears when it triggers (on its own combat message line; server owner can turn labels off).
 
 ### Critical Multiplier
 
@@ -250,6 +250,7 @@ O  Lars Homestead  (+25% Movement Speed)
 ## Important Notes
 
 - **Pilot/JTL badges**: Grant no bonuses while Jump to Lightspeed is unavailable
+- **Double/Triple/Quad Attack**: Listed in menu and configuration; the repeat-tier proc is not yet implemented server-side ([ERR-009](../rules/errata.md))
 - **Hidden badges** (`show = 0`): Still visible in `/customskills` if they contribute to your totals (so totals stay explained)
 - **Disabled features**: Show in menu as inactive but don't affect gameplay
 - **Config changes**: Require server restart. Values you see in `/customskills` always match what the server is actually using

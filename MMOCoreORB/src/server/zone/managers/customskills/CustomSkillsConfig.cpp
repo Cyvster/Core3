@@ -22,6 +22,7 @@ void CustomSkillsConfig::setDefaults() {
 	criticalMultiplier = DEFAULT_CRITICAL_MULTIPLIER;
 	customSummaryColor = "00FF00";
 	criticalCombatSpamLabel = "(CRIT)";
+	combatSpamLabelsEnabled = true;
 	rarityNamingEnabled = false;
 	legendaryColor = "FF00FF";
 	exceptionalColor = "0000FF";
@@ -129,6 +130,8 @@ void CustomSkillsConfig::load() {
 		customSummaryColor = summaryColor;
 	else
 		warning("customSummaryColor must be a six-character RGB hex value; using default");
+
+	combatSpamLabelsEnabled = root.getBooleanField("combatSpamLabelsEnabled", true);
 
 	LuaObject critical = root.getObjectField("criticalChance");
 	if (critical.isValidTable()) {
