@@ -49,14 +49,19 @@ reading only what the brief lists -- no conversation history required.
 |------|-------|--------|
 | [`001-migrate-mod-into-core3.md`](001-migrate-mod-into-core3.md) | Migrate customskills-mod into the Core3 repository; dissolve dual tree | UNCLAIMED |
 | [`002-post-migration-doc-repair.md`](002-post-migration-doc-repair.md) | Post-migration documentation & governance repair (links, R6.5/R6.6, START-HERE) | UNCLAIMED |
-| [`003-reconcile-hooks-patch-modifier-count.md`](003-reconcile-hooks-patch-modifier-count.md) | Regenerate patch incl. H16; reconcile modifier count + menu docs | UNCLAIMED |
+| [`003-reconcile-hooks-patch-modifier-count.md`](003-reconcile-hooks-patch-modifier-count.md) | Regenerate patch incl. H16; reconcile modifier count + menu docs | DELIVERED |
+| [`004-modifier-reference-refresh.md`](004-modifier-reference-refresh.md) | Refresh MODIFIER_REFERENCE against current config.lua (badgeOverrides, rarityNaming) | UNCLAIMED |
 
 ## Notes
 
-- Briefs 001-003 form a sequence: execute in numeric order (001 physically
-  relocates everything; 002 repairs references/governance; 003 reconciles
-  content accuracy). Each lists its prerequisite.
-- Brief file paths are stable across the migration: after 001 delivers, this
+- Briefs 001-003 were executed in sequence on 2026-08-23 (001 physically
+  relocated the module into this repo; 002 repaired references/governance;
+  003 reconciled hooks/patch/count). Each lists its prerequisite.
+- Brief 004 was opened from 003 delivery findings: config.lua drifted far
+  past MODIFIER_REFERENCE (all modifiers enabled, badgeOverrides feature,
+  rarityNaming section, criticalChance restructure). Execute it before
+  trusting reference default tables.
+- Brief file paths are stable across the migration: since 001 delivered, this
   queue lives at
   `Core3/MMOCoreORB/src/server/zone/managers/customskills/docs/briefs/`.
 - The original 001 ("sync package with core3") was superseded by owner
@@ -65,7 +70,9 @@ reading only what the brief lists -- no conversation history required.
 
 ---
 
-**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- BRIEF-002: index rewritten for migration sequence (001-003); queue relocates with docs into Core3 repo.
+**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) --
+BRIEF-002: index rewritten for migration sequence; BRIEF-003: statuses
+001-003 DELIVERED, added brief 004.
 
 ## Contributors
 

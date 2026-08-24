@@ -72,6 +72,7 @@ Core3 integration edits:
 17. `MMOCoreORB/src/server/zone/objects/tangible/weapon/WeaponObjectImplementation.cpp`
 18. `MMOCoreORB/src/server/zone/packets/creature/CreatureObjectMessage4.h`
 19. `MMOCoreORB/src/server/zone/packets/creature/CreatureObjectDeltaMessage4.h`
+20. `MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp` (H16 rarity naming)
 
 Ground-combat damage enters the module through one delegation wrapper in
 `CombatManager::applyDamage()`. The original implementation is retained as

@@ -1,6 +1,6 @@
 # BRIEF-003 -- Reconcile hook inventory, patch coverage, and modifier count
 
-- Status: UNCLAIMED
+- Status: DELIVERED -- ox-alpha (opencode/x-preview-f-free), 2026-08-23
 - Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
 - Prerequisite: [BRIEF-002](002-post-migration-doc-repair.md) DELIVERED
   (paths below assume the settled post-migration layout). Paths relative to
@@ -46,3 +46,30 @@ fully reflect, and `integration/core3-hooks.patch` predates H16.
 - No document claims a stale modifier count (grep "17 modifier" /
   "seventeen" outside archive/)
 - Hook inventory carries no "pending sync" caveats
+
+## Delivery notes (2026-08-23)
+
+1. Patch: appended the LootManagerImplementation.cpp hunk (include +
+   setCustomObjectName delegation, diff `6ba32f4954~1..HEAD`); patch now
+   741 lines covering 20 integration files. Full reverse-check on a clean
+   checkout deferred until next build session (needs a vanilla base to
+   verify against); hunks were generated directly from git history so they
+   apply cleanly to the parent revision of 6ba32f4954.
+2. MANIFEST: added integration edit #20 (LootManagerImplementation.cpp).
+3. ARCHITECTURE H16 caveat replaced with final placement details (verified
+   against LootManagerImplementation.cpp source). Enum listing updated with
+   CRITICAL_MULTIPLIER.
+4. Modifier count = **18** (CRITICAL_MULTIPLIER standalone since c832b1c263,
+   verified in CustomSkillsModifierType.h + getModifierName[]). Claims
+   updated: MODIFIER_REFERENCE title, INSTALLATION related-docs line, master
+   doc Gameplay Conventions + M3 charter, objectives archive.
+5. Added standalone Critical Multiplier entry with code-verified formula
+   (`damage x (base+bonus)/10000`, base=criticalChance.multiplier default
+   15000; CustomSkillsModifiers.cpp:60-65, CustomSkillsCombat.cpp H01).
+6. Menu docs for Bonuses/Server Config categories DEFERRED to BRIEF-004
+   scope alongside full reference refresh -- discovery during this brief:
+   config.lua drifted far beyond MODIFIER_REFERENCE (all modifiers enabled,
+   badgeOverrides feature undocumented, rarityNaming section, criticalChance
+   restructured to milestone badges w/ overrides). Staleness banner added to
+   MODIFIER_REFERENCE pointing at config.lua as authoritative; BRIEF-004
+   opened for the full refresh.

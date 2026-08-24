@@ -1,6 +1,6 @@
 # BRIEF-002 -- Post-migration documentation & governance repair
 
-- Status: CLAIMED -- ox-alpha (opencode/x-preview-f-free), 2026-08-23
+- Status: DELIVERED -- ox-alpha (opencode/x-preview-f-free), 2026-08-23; commit 49a22bd54a
 - Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
 - Prerequisite: [BRIEF-001](001-migrate-mod-into-core3.md) DELIVERED. All
   paths in this brief are post-migration, relative to
@@ -56,3 +56,13 @@ governance rules still describe a dual-tree world that no longer exists.
   link-check sweep; include workspace-root START-HERE.md)
 - process.md contains no two-tree/mirror instructions
 - Stamps updated on all modified documents
+
+## Delivery notes (2026-08-23)
+
+All eight deliverables completed in commit `49a22bd54a`: governance rewrite
+(R6.5/R6.6/containment/release conventions), master-doc Integration Policy,
+workspace START-HERE rewritten, INSTALLATION single-tree install/remove,
+MANIFEST header+paths, CORE3_USER_GUIDE deploy section, ARCHITECTURE layout
+note + patch-management wording, errata verification wording. Trackers:
+package-sync objective marked OBSOLETE; git-history objective RESOLVED;
+stamps updated on all touched docs.

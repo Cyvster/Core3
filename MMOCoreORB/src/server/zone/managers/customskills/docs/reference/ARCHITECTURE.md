@@ -102,7 +102,8 @@ containment rule).
 
 ```cpp
 enum Type {
-    CRITICAL_CHANCE, DOUBLE_ATTACK_CHANCE, TRIPLE_ATTACK_CHANCE, QUAD_ATTACK_CHANCE,
+    CRITICAL_CHANCE, CRITICAL_MULTIPLIER,
+    DOUBLE_ATTACK_CHANCE, TRIPLE_ATTACK_CHANCE, QUAD_ATTACK_CHANCE,
     ARMOR_PENETRATION, DEFENSE_CAP_INCREASE, ARMOR_DEGRADE_REDUCTION, WEAPON_DEGRADE_REDUCTION,
     SEA_CAP_INCREASE, MOVEMENT_SPEED, BUFF_DURATION, EXPERIENCE_MULTIPLIER,
     PRACTICE_EXPERIENCE_BONUS, CRAFTING_SPEED, AMAZING_SUCCESS_CHANCE,
@@ -182,12 +183,7 @@ Generic modifier config fields: `enabled`, `badgeBonus`, `cap`, `badges[]`,
 | **H14B** | `CustomSkillsSkillMods::getEffectiveVisibleSkillMod(character, modName, nativeEntry, rawWearable)` | SEA Cap Increase | Character skill-mod delta/baseline prep & badge-cap refresh | Implemented |
 | **H15A** | `CustomSkillsGathering::modifyForageQuantity(player, resource, nativeQuantity)` | Gathering Quantity | `ForageManagerImplementation::forageGiveResource` (after roll) | Implemented |
 | **H15B** | `CustomSkillsGathering::modifyMilkQuantity(player, creature, resource, nativeQuantity)` | Gathering Quantity | `MilkCreatureTask::giveMilkToPlayer` (after density adjustment) | Implemented |
-| **H16** | `CustomSkillsModifiers::applyRarityNaming(object, ...)` | Server Config: Rarity Naming | `LootManagerImplementation::setCustomObjectName` (see BRIEF-001 note below) | In dev tree; package sync pending |
-
-> **Status caveat (2026-08-23):** commits through `504bb6cb15` in `../Core3`
-> (H16, Server Config menu, Bonuses category) are not yet mirrored into
-> `package/` or the patch file. Reconciliation is [BRIEF-001](../briefs/001-sync-package-with-core3.md).
-> Until it delivers, the dev tree is authoritative for H16 behavior.
+| **H16** | `CustomSkillsModifiers::applyRarityNaming(object, excMod, legendaryModifier, exceptionalModifier)` | Server Config: Rarity Naming | `LootManagerImplementation::setCustomObjectName` — after per-item modifiers are computed, BEFORE native suffix selection; returns true to skip the vanilla `(Exceptional)`/`(Legendary)` suffix and use color-only naming (`rarityNaming` config: enabled, legendaryColor FF00FF, exceptionalColor 0000FF) | Implemented |
 
 Hook pattern: minimal generic delegation in the Core3 file; module-owned
 service does all logic ([CS-2]).

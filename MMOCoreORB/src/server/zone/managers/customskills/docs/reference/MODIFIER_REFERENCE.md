@@ -2,11 +2,21 @@
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
-Complete registry of all 17 modifiers with configuration, units, badge assignments, and gameplay behavior.
+Complete registry of all 18 modifiers with configuration, units, badge assignments, and gameplay behavior.
+
+> **⚠ STATUS (2026-08-23, BRIEF-003):** the enum now has 18 types
+> (CRITICAL_MULTIPLIER promoted to a standalone, badge-driven modifier). The
+> per-modifier DEFAULTS and BADGE ASSIGNMENTS below reflect the original
+> config and are STALE: `config.lua` has since enabled all modifiers,
+> re-assigned badges, added `badgeOverrides`, and restructured criticalChance.
+> Treat `bin/scripts/customskills/config.lua` as authoritative for current
+> values until the full refresh lands ([BRIEF-004](../briefs/004-modifier-reference-refresh.md)).
 
 ## Contributors
 
 - **Nemotron 3.5 Lightning Free (AI)** — Initial creation
+- ox-alpha (opencode/x-preview-f-free), 2026-08-23 — BRIEF-003: count
+  reconciliation, Critical Multiplier standalone entry, staleness banner
 
 ---
 
@@ -45,15 +55,24 @@ combat_rifleman_master, combat_smuggler_master, combat_unarmed_master
 
 ---
 
-### Critical Multiplier
+### Critical Multiplier (`CRITICAL_MULTIPLIER`)
 
 | Property | Value |
 |----------|-------|
-| **Unit** | Basis points |
-| **Default** | 15000 (150.00%) |
-| **Config key** | `criticalChance.multiplier` |
+| **Unit** | Basis points (multiplier) |
+| **Config key** | `modifiers.criticalMultiplier` |
+| **Current config** | enabled, badgeBonus 1250 (12.5%/badge), cap 15000 (+150% on top of the 150% base = 300% max) |
+| **Badges (current)** | 7 accumulation milestones + 5 exploration milestones |
 
-**Behavior**: Damage multiplier on custom critical hits. Displayed even when Critical Chance = 0.
+**Behavior**: Badge-driven damage multiplier applied on custom critical hits
+(promoted from a `criticalChance.multiplier` sub-key to a standalone modifier
+in commit c832b1c263). Stacks additively with the base:
+```
+critDamage = preArmorDamage x (baseMultiplier + badgeBonusTotal) / 10000
+```
+with `baseMultiplier = criticalChance.multiplier` (default 15000 = 150%);
+current bonus cap 15000 -> 300% maximum crit damage
+(CustomSkillsCombat.cpp H01; CustomSkillsModifiers.cpp:60-65).
 
 ---
 

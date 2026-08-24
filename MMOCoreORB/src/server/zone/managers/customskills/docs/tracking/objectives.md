@@ -66,7 +66,7 @@ Core3-side wiring. See
 - M1 command-opened SUI menu -- complete (shell tested in-game)
 - M2 first effective modifier (Critical Chance: 12 combat badges, 3% each,
   150% multiplier) -- complete
-- M3 all 17 modifiers + hooks implemented -- complete
+- M3 all modifiers + hooks implemented -- complete
 - M4 badge assignments & config, 111 badges mapped -- complete
 - Documentation governance adoption (rules/, tracking/, briefs/,
   reference/ migration, START-HERE) -- ox-alpha

@@ -222,7 +222,7 @@ If reverse check fails (Core3 files edited since), remove Custom Skills hunks ma
 
 - **User Guide**: `../user-guide/USER_GUIDE.md` — Player-facing mechanics
 - **Architecture & Implementation**: `../reference/ARCHITECTURE.md` — Hooks, services, menu, verification matrix
-- **Modifier Reference**: `../reference/MODIFIER_REFERENCE.md` — All 17 modifiers with config
+- **Modifier Reference**: `../reference/MODIFIER_REFERENCE.md` — All 18 modifiers with config
 - **Badge Reference**: `../reference/BADGE_REFERENCE.md` — Full badge catalog
 - **Core3 platform**: `../reference/CORE3_CODE_REFERENCE.md` + `../reference/CORE3_USER_GUIDE.md`
 

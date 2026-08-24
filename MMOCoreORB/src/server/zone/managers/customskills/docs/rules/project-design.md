@@ -108,7 +108,7 @@ ratification recorded in this document or an ERR entry.
 
 ## Gameplay Conventions
 
-- All 17 modifiers are enumerated in
+- All 18 modifiers (CRITICAL_MULTIPLIER promoted to standalone 2026-08-23) are enumerated in
   `docs/reference/MODIFIER_REFERENCE.md`, which is the authority on per-
   modifier units, defaults, caps, and badge assignments.
 - Badge pool: 111 eligible badges of 140 total (9 pilot/JTL and 20
@@ -123,7 +123,7 @@ ratification recorded in this document or an ERR entry.
 |-----------|---------|--------|
 | M1 | Command-opened SUI menu | Complete |
 | M2 | First effective modifier (Critical Chance) | Complete |
-| M3 | All 17 modifiers + hooks implemented | Complete |
+| M3 | All modifiers + hooks implemented | Complete |
 | M4 | Badge assignments & config (111 badges) | Complete |
 | M5 | Challenge Tier system | Design phase |
 | M6 | Challenge Tier skill trees | Design phase |

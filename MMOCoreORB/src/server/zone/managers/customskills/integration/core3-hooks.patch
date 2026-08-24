@@ -717,3 +717,25 @@ index 49f953a5..4eb0d3be 100644
  
  		// Slope Mods - Terrain Negotiation
  		insertFloat(creo->getSlopeModAngle());
+diff --git a/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp b/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp
+index 661297f06b..e05b7633f9 100644
+--- a/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp
++++ b/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp
+@@ -21,6 +21,7 @@
+ #include "templates/params/creature/CreatureAttribute.h"
+ #include "server/zone/objects/ship/components/ShipComponent.h"
+ #include "server/zone/objects/ship/ai/ShipAiAgent.h"
++#include "server/zone/managers/customskills/CustomSkillsModifiers.h"
+ 
+ // #define DEBUG_LOOT_MAN
+ 
+@@ -263,6 +264,9 @@ void LootManagerImplementation::setCustomObjectName(TangibleObject* object, cons
+ 		}
+ 	}
+ 
++	if (CustomSkillsModifiers::applyRarityNaming(object, excMod, legendaryModifier, exceptionalModifier))
++		return;
++
+ 	String suffixName = "";
+ 
+ 	if (excMod >= legendaryModifier) {
