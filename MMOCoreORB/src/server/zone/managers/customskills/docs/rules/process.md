@@ -4,9 +4,11 @@
 > document for project rules.
 
 > **Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
-> BRIEF-006: recording conventions reconciled with the Project Alice
-> framework (explicit slot semantics, short format adopted, deviation and
-> scope tracking); [DIRECTIVE 08242026]: date format switched to MMDDYYYY
+> R6.9 added (discovery capture: session learnings land in owning reference
+> docs same-session; owner directive); prior: 08242026 -- BRIEF-006:
+> recording conventions reconciled with the Project Alice framework
+> (explicit slot semantics, short format adopted, deviation and scope
+> tracking); [DIRECTIVE 08242026]: date format switched to MMDDYYYY
 > going forward (OD-1 answered; format templates updated; historical ISO
 > records unchanged); prior: 08232026 by ox-alpha
 > (opencode/x-preview-f-free) -- R8 added (shared-tree coordination, four
@@ -139,6 +141,18 @@ carries a traceability tag (first line or body):
 
 Documentation-only commits follow the same rule. A tag without a real
 referent violates R5.
+
+## Rule 6.9 -- Discovery capture
+
+Facts learned during a work session about the toolchain, environment, or
+deployment mechanics -- how builds, data archives, stringfiles, client
+assets, or server tooling actually behave -- are recorded in the OWNING
+reference document ([PROC R6.6] table plus docs/README.md index) in the
+SAME session they are learned, not left in conversation history, scratch
+notes, or planning documents. Division of labor: planning documents record
+decisions; reference documents record mechanisms. If no reference document
+owns the topic, file an erratum proposing a home instead of inventing a
+new document unilaterally.
 
 ## Rule 7 -- Disputes graduate, never escalate inline
 

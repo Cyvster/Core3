@@ -272,9 +272,9 @@ Owner-approved scheme A: `Novice <Tree>` / `<Branch> I-IV` / `Master <Tree>`
 using the existing branch themes. Hidden tree roots
 (`challenge_survivor` / `challenge_veteran` / `challenge_paragon`) display
 as Survivor / Veteran / Paragon if ever surfaced. Internal skill keys are
-unchanged; names ship as client stringfile entries (skill_n.stf source for
-the TRE builder -- same mechanism as the challenge_tier entry in
-exp_n.stf) during deployment.
+unchanged; names ship as client stringfile entries at deployment -- see
+[CORE3_USER_GUIDE.md](../reference/CORE3_USER_GUIDE.md) -> Deploying Module
+Changes -> Client data archives (TRE builder).
 
 ---
 

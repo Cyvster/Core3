@@ -216,6 +216,24 @@ it there with `git apply --reverse`; if check fails, port hunks manually per
 Remember ([PROC R6.5/R6.6] in `../rules/process.md`): commit code AND its
 doc updates together under your traceability tag.
 
+### Client data archives (TRE builder)
+
+Some module artifacts live in the server's data archives, maintained in
+Daniel's TRE builder workspace (`G:\Data\swgemu server\TRE builder\`),
+outside this repository:
+
+- **Datatable rows** (e.g. Challenge Tier skill trees) are appended to
+  `datatables\skill\skills.csv`. Its NAME column holds internal keys only;
+  display strings never go there.
+- **Display strings** ship as compiled STF sources under `string\en\`.
+  Precedent: `exp_n.stf` carries the `challenge_tier` XP label. Skill-box
+  display names belong in a `skill_n.stf` source (to be added when the
+  Challenge Tier trees deploy; decision record:
+  [../feature-planning/CHALLENGE_TIER_SKILLS.md](../feature-planning/CHALLENGE_TIER_SKILLS.md)).
+
+After editing either side, rebuild the affected archive(s) with the TRE
+builder and redeploy them together with the server binary.
+
 ---
 
 ## Troubleshooting
