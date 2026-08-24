@@ -7,6 +7,9 @@
 ## Contributors
 
 - **Nemotron 3.5 Lightning Free (AI)** — Initial creation
+- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- BRIEF-002: rewritten
+  for single-tree layout (install onto other servers via module dir copy +
+  patch)
 
 Custom Skills is a SWGEmu Core3 module that adds badge-derived character bonuses across combat, crafting, gathering, movement, buffs, and experience systems. It provides a `/customskills` in-game menu showing character-specific bonus totals and their badge sources.
 
@@ -37,41 +40,47 @@ Custom Skills is a SWGEmu Core3 module that adds badge-derived character bonuses
 
 ## Installation Steps
 
+The module lives inside this Core3 repository. These steps install it onto a
+DIFFERENT Core3 checkout (a vanilla server). For development here, no
+installation is needed -- build and run.
+
 ### 1. Copy Module Files
 
 ```bash
-# From customskills-mod root
-cp -r package/MMOCoreORB/ /path/to/Core3/MMOCoreORB/
+# SRC = this repo's module dir
+# MMOCoreORB/src/server/zone/managers/customskills/
+# DST = /path/to/Core3/MMOCoreORB/src/server/zone/managers/customskills/
+cp -r "$SRC" "$DST"
 ```
 
-This adds:
-- C++ module: `MMOCoreORB/src/server/zone/managers/customskills/`
-- Command script: `MMOCoreORB/bin/scripts/commands/customSkills.lua`
-- Configuration: `MMOCoreORB/bin/scripts/customskills/config.lua`
+Then copy the two script files (sanctioned exceptions outside the module
+dir):
+- `MMOCoreORB/bin/scripts/commands/customSkills.lua`
+- `MMOCoreORB/bin/scripts/customskills/config.lua`
 
 ### 2. Apply Core3 Integration Patch
 
 ```bash
 cd /path/to/Core3
-git apply --check --ignore-space-change /path/to/customskills-mod/integration/core3-hooks.patch
-git apply --ignore-space-change /path/to/customskills-mod/integration/core3-hooks.patch
+git apply --check --ignore-space-change <module>/integration/core3-hooks.patch
+git apply --ignore-space-change <module>/integration/core3-hooks.patch
 ```
 
-**If `--check` fails**: The target Core3 revision differs. Port hunks manually using `MANIFEST.md` (lists all 19 integration files) and `docs/reference/ARCHITECTURE.md` (describes each hook's purpose). Do not force the patch.
+**If `--check` fails**: The target Core3 revision differs. Port hunks manually using `MANIFEST.md` (lists all integration files) and `docs/reference/ARCHITECTURE.md` (describes each hook's purpose). Do not force the patch.
 
 ### 3. Reconfigure & Build
 
 ```bash
 # From Core3 root
 cmake -B build  # or your standard configure command
-cmake --build build --target MMOCoreORB
+cmake --build build --target core3
 ```
 
 The recursive source glob will pick up the new `.cpp` files automatically.
 
 ### 4. Deploy & Restart
 
-- Deploy the built binary (`MMOCoreORB`/`core3`)
+- Deploy the built binary (`core3`)
 - Deploy updated scripts from `MMOCoreORB/bin/scripts/`
 - Restart the server
 
@@ -178,7 +187,7 @@ customSummaryColor = "00FF00"   -- RGB hex for menu modifier text color
 ## Removal
 
 ```bash
-# 1. Remove module files
+# 1. Remove module files (includes docs/ -- back up if wanted)
 rm -rf MMOCoreORB/src/server/zone/managers/customskills/
 
 # 2. Remove scripts
@@ -187,8 +196,8 @@ rm -rf MMOCoreORB/bin/scripts/customskills/
 
 # 3. Reverse patch
 cd /path/to/Core3
-git apply --check --reverse --ignore-space-change /path/to/customskills-mod/integration/core3-hooks.patch
-git apply --reverse --ignore-space-change /path/to/customskills-mod/integration/core3-hooks.patch
+git apply --check --reverse --ignore-space-change <module-backup>/integration/core3-hooks.patch
+git apply --reverse --ignore-space-change <module-backup>/integration/core3-hooks.patch
 
 # 4. Rebuild & restart
 ```

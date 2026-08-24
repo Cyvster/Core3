@@ -2,15 +2,14 @@
 
 > Subordinate to [docs/rules/project-design.md](docs/rules/project-design.md)
 > -- the master document for project rules. New contributors start with
-> [../START-HERE.md](../START-HERE.md) (workspace root).
+> the workspace-root [START-HERE.md](../../../../START-HERE.md).
 
-This directory is the standalone project and portable distribution copy of
-the SWGEmu Core3 Custom Skills module.
-
-The development installation is maintained in `../Core3` (branch `cyvster3`).
-The distributable copy is maintained under `package/`, using the same
-relative paths the files have inside a Core3 checkout. Both trees must stay
-in sync ([PROC R6.6] in `docs/rules/process.md`).
+This directory IS the Custom Skills module, inside the Core3 repository:
+module code, its documentation (`docs/`), and the integration patch
+(`integration/core3-hooks.patch`) used to install it onto other Core3
+checkouts. Runtime-required files outside this directory are limited to two
+script files under `MMOCoreORB/bin/scripts/` (see [PROC R6.5] containment
+rule in `docs/rules/process.md`).
 
 ## Current milestone
 
@@ -21,17 +20,14 @@ in `docs/tracking/objectives.md`.
 
 ## Directory roles
 
-- `package/` contains copies of files owned by the module.
+- `*.h/.cpp` + service subdirs (`combat/`, `buffs/`, ...) -- module code.
 - `docs/rules/` contains governing documents (design master, process, errata).
 - `docs/reference/` contains architecture and developer reference material.
 - `docs/tracking/`, `docs/briefs/` contain task state and delegable work.
 - `docs/installation/`, `docs/user-guide/` serve admins and players.
 - `docs/archive/` preserves superseded documents.
-- `integration/` documents the minimal edits required in existing Core3 files.
-- `MANIFEST.md` lists every distributed file and integration point.
-
-The package must remain installable without copying this repository's Git
-history or unrelated Core3 files.
+- `integration/` holds the patch of minimal edits made in existing Core3 files.
+- `MANIFEST.md` lists every module file and integration point.
 
 ## Document map
 
@@ -41,4 +37,5 @@ preserved under `docs/archive/` -- they are not current authority.
 
 ---
 
-**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free).
+**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) --
+BRIEF-002: rewritten for single-tree layout after migration into Core3 repo.

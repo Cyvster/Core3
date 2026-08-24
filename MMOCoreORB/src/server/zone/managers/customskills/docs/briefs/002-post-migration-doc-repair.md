@@ -1,6 +1,6 @@
 # BRIEF-002 -- Post-migration documentation & governance repair
 
-- Status: UNCLAIMED
+- Status: CLAIMED -- ox-alpha (opencode/x-preview-f-free), 2026-08-23
 - Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
 - Prerequisite: [BRIEF-001](001-migrate-mod-into-core3.md) DELIVERED. All
   paths in this brief are post-migration, relative to

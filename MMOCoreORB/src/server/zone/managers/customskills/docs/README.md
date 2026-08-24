@@ -96,12 +96,13 @@ research not intended to become permanent documentation.
 
 | File | Purpose |
 |------|---------|
-| `../../START-HERE.md` | Contributor entry point, required reading order, code tour |
+| `../../../../START-HERE.md` | Workspace-root entry point, required reading order, code tour |
 | `../README.md` | Module summary and directory roles |
-| `../MANIFEST.md` | Every distributed file + integration points (living tracker) |
+| `../MANIFEST.md` | Every module-owned file + integration points (living tracker) |
 | `installation/INSTALLATION.md` | Canonical install/configure/verify/remove guide (the archived `integration/INSTALL.md` was its duplicate) |
 | `../integration/core3-hooks.patch` | Core3 integration patch (file list in MANIFEST) |
-| `../package/MMOCoreORB/bin/scripts/customskills/config.lua` | Server configuration |
+| `../../../bin/scripts/customskills/config.lua` | Server configuration |
+| `../../../bin/scripts/commands/customSkills.lua` | Command registration |
 
 ---
 

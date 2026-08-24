@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Operational guide for the Core3 development tree (`../Core3`): building,
+Operational guide for this Core3 repository: building,
 configuring, running, and testing. For code structure and patterns, see
 [CORE3_CODE_REFERENCE.md](CORE3_CODE_REFERENCE.md).
 
@@ -198,22 +198,23 @@ here. What does port:
 
 ## Deploying Module Changes
 
+The module is part of this repository -- no patch application or mirroring
+is needed for local development:
+
 ```bash
-# In ../Core3:
-git apply --check --ignore-space-change ../customskills-mod/integration/core3-hooks.patch
-git apply --ignore-space-change ../customskills-mod/integration/core3-hooks.patch
+# From repo root:
 cmake -B build && cmake --build build --target core3 -j$(nproc)
 # Deploy: core3 binary + updated files under MMOCoreORB/bin/scripts/
 ```
 
-Reverse the patch with `git apply --reverse`. If check fails, port hunks
-manually per `customskills-mod/MANIFEST.md`; never force. Full
-install/verify/remove procedure:
-[../installation/INSTALLATION.md](../installation/INSTALLATION.md).
+`<module>/integration/core3-hooks.patch` exists for installing the module
+onto a DIFFERENT (vanilla) Core3 checkout; see
+[../installation/INSTALLATION.md](../installation/INSTALLATION.md). Reverse
+it there with `git apply --reverse`; if check fails, port hunks manually per
+`<module>/MANIFEST.md`; never force.
 
-Remember ([PROC R6.5/R6.6] in `../../docs/rules/process.md`): mirror every
-module file change into `customskills-mod/package/` and update docs in the
-same session.
+Remember ([PROC R6.5/R6.6] in `../rules/process.md`): commit code AND its
+doc updates together under your traceability tag.
 
 ---
 

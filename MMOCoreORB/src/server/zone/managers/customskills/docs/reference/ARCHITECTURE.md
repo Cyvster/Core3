@@ -45,11 +45,14 @@ MMOCoreORB/src/server/zone/managers/customskills/
 ├── CustomSkillsModifierType.h        # Modifier type enum
 ├── CustomSkillsMenu.{h,cpp}          # C++ SUI menu
 ├── CustomSkillsSuiCallback.{h,cpp}   # SUI event handling
-└── MENU_DESIGN.md                    # Menu design notes (package mirror)
+└── MENU_DESIGN.md                    # Menu design notes
 ```
 
-Package mirror: `customskills-mod/package/MMOCoreORB/` mirrors this
-structure for distribution (kept in sync per [PROC R6.6]).
+The module lives inside the Core3 repository; this directory IS the
+distribution source. Runtime-required files outside it:
+`MMOCoreORB/bin/scripts/customskills/config.lua` and
+`MMOCoreORB/bin/scripts/commands/customSkills.lua` (see [PROC R6.5]
+containment rule).
 
 ---
 
@@ -473,20 +476,22 @@ Development labels `(CRIT)/(DOUBLE)/(TRIPLE)/(QUAD)` are temporary
 8. **Badge assignments**: update `config.lua` (+ BADGE_REFERENCE.md for new
    badges); respect master-doc exclusions (pilot/JTL, admin/event)
 9. **Menu**: add category/page in `CustomSkillsMenu` and the SUI section above
-10. **Docs + package** ([PROC R6.6]): MODIFIER_REFERENCE.md entry, MANIFEST.md,
-    package mirror, INSTALLATION.md config reference if schema changed
+10. **Docs** ([PROC R6.6]): MODIFIER_REFERENCE.md entry, MANIFEST.md,
+    INSTALLATION.md config reference if schema changed
 
 ---
 
 ## Patch Management
 
-Apply / verify / reverse:
+The patch exists for installing the module onto OTHER Core3 checkouts; this
+repository already contains all edits. Apply / verify / reverse on a target
+checkout:
 
 ```bash
-git apply --check --ignore-space-change ../customskills-mod/integration/core3-hooks.patch
-git apply --ignore-space-change ../customskills-mod/integration/core3-hooks.patch
-git apply --check --reverse --ignore-space-change ../customskills-mod/integration/core3-hooks.patch
-git apply --reverse --ignore-space-change ../customskills-mod/integration/core3-hooks.patch
+git apply --check --ignore-space-change <module>/integration/core3-hooks.patch
+git apply --ignore-space-change <module>/integration/core3-hooks.patch
+git apply --check --reverse --ignore-space-change <module>/integration/core3-hooks.patch
+git apply --reverse --ignore-space-change <module>/integration/core3-hooks.patch
 ```
 
 If check fails, the target revision differs — port hunks manually using

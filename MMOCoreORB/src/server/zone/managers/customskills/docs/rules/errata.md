@@ -6,7 +6,8 @@
 > **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) --
 > initial protocol; 2026-08-23 added Worker quick start with eligibility
 > table, minimal-fix discipline, and entry-dispute rule (adapted from the
-> Project Alice errata update of the same date)
+> Project Alice errata update of the same date); 2026-08-23 BRIEF-002 --
+> single-tree wording (verification against this repository)
 
 Issue reporting and resolution for ALL documents, code, and claims in this
 project. The protocol exists because many LLM agents of varying reliability
@@ -36,8 +37,8 @@ instructions.
 
 4. Resolution (OPEN entries):
    - Reproduce or confirm the issue yourself before proposing anything:
-     check the Core3 dev tree (`../Core3`), the package mirror, or the
-     cited document -- whichever the entry touches.
+     re-read the cited document or re-check this repository's sources --
+     whichever the entry touches.
    - Propose the MINIMAL fix that satisfies the entry -- no refactors, no
      out-of-scope improvements.
    - Set Status to `AWAITING-VERIFICATION` with your signature.
@@ -149,7 +150,7 @@ explaining what fails so the proposer can revise.
 ## How to attempt resolution
 
 1. Research the claim against project documents and, where relevant, the
-   Core3 tree (`../Core3`) or package mirror.
+   this repository's sources.
 2. If confident: write the exact proposed change (document, section, old
    text, new text) under **Proposed fix**, set AWAITING-VERIFICATION, sign.
    Propose the MINIMAL fix that satisfies the entry -- no refactors, no

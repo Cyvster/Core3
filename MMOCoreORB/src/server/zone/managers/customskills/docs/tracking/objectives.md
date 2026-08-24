@@ -50,19 +50,13 @@ Core3-side wiring. See
 
 ## Infrastructure & continuous
 
-- [ ] **Mirror Core3-only work into package/ + MANIFEST** (discovered
-      2026-08-23): rarity naming (H16), Server Config menu category,
-      exceptional-color default, and related commits exist in `../Core3`
-      (branch cyvster3, through 504bb6cb15) but are absent from `package/`
-      and `MANIFEST.md`. Per [PROC R6.6] this is outstanding debt.
-- [ ] Update `docs/reference/ARCHITECTURE.md` hook inventory with
-      H16 placement details once mirrored.
-- [ ] Decide whether module repository should gain its own git history
-      (currently only `Core3/` is version-controlled; affects [PROC R6.5]
-      record-keeping). Owner decision.
-      **Update 2026-08-23:** superseded by owner directive to migrate all
-      module artifacts into the Core3 repo (briefs 001-003) -- docs gain git
-      versioning by moving under
+- [x] ~~Mirror Core3-only work into package/ + MANIFEST~~ -- OBSOLETE:
+      package mirror dissolved by BRIEF-001 (2026-08-23); remaining content
+      accuracy work (H16 inventory, patch coverage, modifier count) moved to
+      [../briefs/003-reconcile-hooks-patch-modifier-count.md](../briefs/003-reconcile-hooks-patch-modifier-count.md).
+- [x] ~~Decide whether module repository should gain its own git history~~ --
+      RESOLVED 2026-08-23: owner directive migrated all module artifacts INTO
+      the Core3 repo; docs now version-controlled at
       `MMOCoreORB/src/server/zone/managers/customskills/docs/`.
 
 ## Archive
@@ -95,7 +89,7 @@ Core3-side wiring. See
 
 ---
 
-**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free).
+**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- package-sync objective marked obsolete via BRIEF-001 migration; git-history objective resolved.
 
 ## Contributors
 

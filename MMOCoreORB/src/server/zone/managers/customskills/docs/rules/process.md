@@ -5,12 +5,15 @@
 
 > **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) --
 > initial draft; 2026-08-23 added Repository & Release Conventions
-> (salvaged from archived quickstart/overview docs during compression)
+> (salvaged from archived quickstart/overview docs during compression);
+> 2026-08-23 BRIEF-002: single-tree rewrite (R6.5/R6.6, containment rule,
+> release conventions) after the package mirror was dissolved
 
 The written process for any work on this repository, whether by Daniel, a
 single LLM session, or multiple coordinated entities. Adopted 2026-08-23,
-adapted from the Project Alice process framework and tailored to this
-project's two-tree layout (Core3 dev tree + package mirror).
+adapted from the Project Alice process framework. Originally written for a
+two-tree layout (Core3 dev tree + package mirror); rewritten 2026-08-23 for
+the single-tree layout after BRIEF-001 dissolved the mirror.
 
 ## Scope
 
@@ -74,24 +77,26 @@ materially changes, so staleness is detectable.
 
 ## Rule 6.5 -- Record work where it lands
 
-This repository directory has no VCS; version control lives in the Core3 dev
-tree (`../Core3`). Therefore:
+Everything -- module code, scripts, docs, and the integration patch -- lives
+inside this Core3 repository (module dir:
+`MMOCoreORB/src/server/zone/managers/customskills/`). Therefore:
 
-1. Module code changes are committed in `../Core3` (branch `cyvster3`) with
-   a traceability tag per R6.8.
-2. The same change is mirrored into `package/` and documented before the
-   session ends (see R6.6). An unmirrored change is an incomplete delivery.
-3. Documentation-only changes here carry their own reconciliation stamp and,
+1. All changes (code AND documentation) are committed in this repository
+   (branch `cyvster3`) under your own identity with a traceability tag per
+   R6.8. Uncommitted work is an incomplete delivery.
+2. Documentation-only changes carry their own reconciliation stamp and,
    where applicable, a Contributors entry.
+3. The standalone mirror folder (`customskills-mod/`, with its `package/`
+   copy) was dissolved 2026-08-23; references to it are historical only.
 
-## Rule 6.6 -- Change completeness (package-sync rule)
+## Rule 6.6 -- Change completeness
 
 A change that alters module behavior, files, or integration points MUST, in
-the same working session, also update everything that describes it:
+the same working session and commit set, also update everything that
+describes it:
 
 | If you changed... | You must also update... |
 |-------------------|------------------------|
-| Any module-owned C++/Lua file | Same file under `package/MMOCoreORB/...` |
 | Hook placement or behavior | `docs/reference/ARCHITECTURE.md` hook inventory + `integration/core3-hooks.patch` |
 | Modifier units, defaults, caps, badges | `docs/reference/MODIFIER_REFERENCE.md` + `config.lua` defaults |
 | Files added/removed/renamed | `MANIFEST.md` |
@@ -99,7 +104,7 @@ the same working session, also update everything that describes it:
 | Config schema | `docs/installation/INSTALLATION.md` config reference |
 
 Reviewers must reject deliveries that modify behavior without updating the
-corresponding documentation and mirror.
+corresponding documentation.
 
 ## Rule 6.7 -- Reference, don't duplicate
 
@@ -107,11 +112,12 @@ Documents must not copy or restate rules, formats, or procedures defined in
 another document. Reference the source document and section instead. Rules
 are defined ONCE; when a rule changes, it changes in one place.
 
-Example: "Per [PROC R6.6], mirror module files into `package/`."
+Example: "Per [PROC R6.6], update the hook inventory when hook behavior
+changes."
 
 ## Rule 6.8 -- Every change names its authority
 
-Every commit in `../Core3` that adds, changes, or removes tracked files
+Every commit that adds, changes, or removes tracked files
 carries a traceability tag (first line or body):
 
 - `[BRIEF-NNN]` -- work claimed and delivered under a brief
@@ -133,11 +139,19 @@ disagreement, and nobody files the same dispute under multiple numbers.
 
 ## Repository & Release Conventions
 
-- Development happens in `../Core3` on branch `cyvster3`.
+- Development happens in this repository on branch `cyvster3`.
+- **Containment rule**: module-owned files stay inside
+  `MMOCoreORB/src/server/zone/managers/customskills/` except where Core3's
+  runtime layout requires otherwise. The sanctioned exceptions are:
+  `MMOCoreORB/bin/scripts/customskills/config.lua` (runtime config) and
+  `MMOCoreORB/bin/scripts/commands/customSkills.lua` (command registration),
+  plus delegation hooks inside existing Core3 sources (documented via the
+  patch + MANIFEST).
 - Before deleting a working branch: tag the completed module, install on a
   clean integration branch, and verify there before removing anything.
-- `package/` must remain installable without git history or unrelated Core3
-  files.
+- Distribution: the module is part of the repo; to install onto another
+  server, copy the module directory, the two script files, and apply
+  `integration/core3-hooks.patch`. See `docs/installation/INSTALLATION.md`.
 - `MANIFEST.md` and the installation guide are updated with every material
   change ([PROC R6.6]).
 

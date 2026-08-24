@@ -6,7 +6,7 @@
 > Core3" scope -- the dual-tree problem this brief once tracked disappears
 > with the migration.
 
-- Status: CLAIMED -- ox-alpha (opencode/x-preview-f-free), 2026-08-23
+- Status: DELIVERED -- ox-alpha (opencode/x-preview-f-free), 2026-08-23; commit a682058144
 - Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
 - Rewritten: 2026-08-23 by ox-alpha (opencode/x-preview-f-free), owner
   directive
@@ -79,3 +79,16 @@ Execute from `G:\Data\swgemu customskills\` (paths below relative to it):
 
 - Fixing links/governance text broken BY the move -> BRIEF-002
 - Patch regeneration / modifier-count reconciliation -> BRIEF-003
+
+## Delivery notes (2026-08-23)
+
+- Single commit `a682058144` on cyvster3: 37 files (docs tree, MANIFEST,
+  README, patch) relocated into the module directory.
+- Package redundancy evidence: every differing package file matched an
+  ANCESTOR commit of HEAD exactly (Config.cpp=3327f4d3c6, Config.h=778c6d5fa7,
+  Menu.cpp=882cdfa338, Menu.h=46efb45dbd, Modifiers.cpp=eb9980c79a,
+  Modifiers.h=f36b211ac8, ModifierType.h=304231bf57,
+  Combat.cpp=778c6d5fa7, config.lua=e92796c3ee) -- dev tree strictly newer
+  in all cases; no reverse divergence; discarded per plan.
+- customSkills.lua byte-identical package/dev; customskills-mod folder
+  deleted; working tree clean after commit.

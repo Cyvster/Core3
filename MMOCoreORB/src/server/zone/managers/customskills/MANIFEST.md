@@ -6,44 +6,45 @@ file or integration point is added, removed, or renamed ([PROC R6.6] in
 
 > Subordinate to [docs/rules/project-design.md](docs/rules/project-design.md).
 
-**Known divergence (2026-08-23):** Core3 commits
-`4b441424ba..504bb6cb15` (Bonuses category, Server Config menu, H16 rarity
-naming in LootManagerImplementation.cpp, CRITICAL_MULTIPLIER promotion) are
-NOT yet reflected in `package/` or in the lists below. Reconciliation is
-tracked as [BRIEF-001](docs/briefs/001-sync-package-with-core3.md); until it
-delivers, the Core3 dev tree is authoritative for current behavior.
+**Layout (2026-08-23, BRIEF-001):** the module lives inside the Core3 repo.
+This manifest sits at the module dir root; paths below are relative to a
+Core3 checkout root. The former standalone mirror (`customskills-mod/`,
+`package/`) was dissolved; its successor mapping table at the bottom remains
+as history.
 
 ## Module-owned files
 
-- `package/MMOCoreORB/src/server/zone/managers/customskills/CustomSkillsCommand.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/CustomSkillsMenu.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/CustomSkillsMenu.cpp`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/CustomSkillsSuiCallback.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/CustomSkillsSuiCallback.cpp`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/CustomSkillsConfig.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/CustomSkillsConfig.cpp`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/CustomSkillsModifiers.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/CustomSkillsModifiers.cpp`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/CustomSkillsModifierType.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/MENU_DESIGN.md`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/combat/CustomSkillsCombat.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/combat/CustomSkillsCombat.cpp`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/buffs/CustomSkillsBuffs.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/buffs/CustomSkillsBuffs.cpp`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/crafting/CustomSkillsCrafting.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/crafting/CustomSkillsCrafting.cpp`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/durability/CustomSkillsDurability.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/durability/CustomSkillsDurability.cpp`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/gathering/CustomSkillsGathering.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/gathering/CustomSkillsGathering.cpp`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/movement/CustomSkillsMovement.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/movement/CustomSkillsMovement.cpp`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/progression/CustomSkillsProgression.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/progression/CustomSkillsProgression.cpp`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/skillmods/CustomSkillsSkillMods.h`
-- `package/MMOCoreORB/src/server/zone/managers/customskills/skillmods/CustomSkillsSkillMods.cpp`
-- `package/MMOCoreORB/bin/scripts/commands/customSkills.lua`
-- `package/MMOCoreORB/bin/scripts/customskills/config.lua`
+Paths relative to `MMOCoreORB/`:
+
+- `src/server/zone/managers/customskills/CustomSkillsCommand.h`
+- `src/server/zone/managers/customskills/CustomSkillsMenu.h`
+- `src/server/zone/managers/customskills/CustomSkillsMenu.cpp`
+- `src/server/zone/managers/customskills/CustomSkillsSuiCallback.h`
+- `src/server/zone/managers/customskills/CustomSkillsSuiCallback.cpp`
+- `src/server/zone/managers/customskills/CustomSkillsConfig.h`
+- `src/server/zone/managers/customskills/CustomSkillsConfig.cpp`
+- `src/server/zone/managers/customskills/CustomSkillsModifiers.h`
+- `src/server/zone/managers/customskills/CustomSkillsModifiers.cpp`
+- `src/server/zone/managers/customskills/CustomSkillsModifierType.h`
+- `src/server/zone/managers/customskills/MENU_DESIGN.md`
+- `src/server/zone/managers/customskills/combat/CustomSkillsCombat.h`
+- `src/server/zone/managers/customskills/combat/CustomSkillsCombat.cpp`
+- `src/server/zone/managers/customskills/buffs/CustomSkillsBuffs.h`
+- `src/server/zone/managers/customskills/buffs/CustomSkillsBuffs.cpp`
+- `src/server/zone/managers/customskills/crafting/CustomSkillsCrafting.h`
+- `src/server/zone/managers/customskills/crafting/CustomSkillsCrafting.cpp`
+- `src/server/zone/managers/customskills/durability/CustomSkillsDurability.h`
+- `src/server/zone/managers/customskills/durability/CustomSkillsDurability.cpp`
+- `src/server/zone/managers/customskills/gathering/CustomSkillsGathering.h`
+- `src/server/zone/managers/customskills/gathering/CustomSkillsGathering.cpp`
+- `src/server/zone/managers/customskills/movement/CustomSkillsMovement.h`
+- `src/server/zone/managers/customskills/movement/CustomSkillsMovement.cpp`
+- `src/server/zone/managers/customskills/progression/CustomSkillsProgression.h`
+- `src/server/zone/managers/customskills/progression/CustomSkillsProgression.cpp`
+- `src/server/zone/managers/customskills/skillmods/CustomSkillsSkillMods.h`
+- `src/server/zone/managers/customskills/skillmods/CustomSkillsSkillMods.cpp`
+- `bin/scripts/commands/customSkills.lua`
+- `bin/scripts/customskills/config.lua`
 
 ## Existing Core3 integration points
 
@@ -102,7 +103,7 @@ Full mapping: [docs/README.md](docs/README.md).
 
 ---
 
-**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) --
+**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- BRIEF-002: header + paths rewritten for single-tree layout; --
 links updated to post-restructuring locations; known package divergence
 recorded above pending BRIEF-001; 2026-08-23 compression pass -- successor
 table updated for consolidated reference set; install pointer redirected to

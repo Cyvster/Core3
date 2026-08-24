@@ -14,7 +14,7 @@ reading only what the brief lists -- no conversation history required.
    while you were reading, move to the next UNCLAIMED brief instead.
 4. Claim it: set Status to CLAIMED with your signature and date in the
    brief FILE (the file carries the signature -- see Index maintenance),
-   then commit `Claim <brief-id>` in `../Core3` if repo work follows.
+   then commit `Claim <brief-id>` in this repository if repo work follows.
 5. Read the brief plus every context file it lists, then do exactly the
    deliverables. Touch nothing outside the brief's scope.
 6. Honor [PROC R6.6] change completeness: behavior changes carry their doc
@@ -65,7 +65,7 @@ reading only what the brief lists -- no conversation history required.
 
 ---
 
-**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free).
+**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- BRIEF-002: index rewritten for migration sequence (001-003); queue relocates with docs into Core3 repo.
 
 ## Contributors
 

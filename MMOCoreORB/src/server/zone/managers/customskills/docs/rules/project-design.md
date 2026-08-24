@@ -2,12 +2,14 @@
 
 > **Status:** Ratified
 > **Created:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
-> **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
+> **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free);
+> 2026-08-23 BRIEF-002 -- Integration Policy rewritten for single-tree layout
 
 ## Master Document Notice
 
 This is the **master document** for all project rules and design decisions.
-Every other document in `customskills-mod/docs/` is subordinate to it. When a
+Every other document in this module's `docs/` tree is subordinate to it. When
+a
 subdocument contradicts this document, this document prevails. Subdocuments
 may provide operational detail, procedural steps, or implementation guidance,
 but they may not redefine principles, override decisions, or introduce
@@ -90,12 +92,19 @@ ratification recorded in this document or an ERR entry.
 - Hook inventory H01-H16 (H02 rejected) is defined in
   `docs/reference/ARCHITECTURE.md`; that document is the operational
   authority on hook placement and MUST stay consistent with the applied patch.
-- `MANIFEST.md` lists every module-owned file and every edited Core3 file.
-  It is updated whenever a module file or integration point is added,
-  removed, or renamed -- in the same change (per [PROC R6.6]).
-- The development tree is `../Core3` (branch `cyvster3`). The distributable
-  mirror is `package/`, using the same relative paths as inside a Core3
-  checkout. Both trees MUST contain identical module files at all times.
+- `MANIFEST.md` (module dir root) lists every module-owned file and every
+  edited Core3 file. It is updated whenever a module file or integration
+  point is added, removed, or renamed -- in the same change (per
+  [PROC R6.6]).
+- The module lives inside this repository at
+  `MMOCoreORB/src/server/zone/managers/customskills/`. **Containment rule**:
+  module-owned files stay in that directory except where Core3's runtime
+  layout requires otherwise; the sanctioned exceptions are the two script
+  files under `MMOCoreORB/bin/scripts/` and the delegation hooks inside
+  existing Core3 sources. Distribution = copy module dir + scripts + apply
+  `integration/core3-hooks.patch`.
+- The standalone mirror folder (`customskills-mod/`, `package/`) was
+  dissolved on 2026-08-23 ([BRIEF-001]); references to it are historical.
 
 ## Gameplay Conventions
 
