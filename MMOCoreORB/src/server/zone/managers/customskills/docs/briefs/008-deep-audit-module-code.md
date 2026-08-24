@@ -1,6 +1,6 @@
 # BRIEF-008 -- Deep code audit of the Custom Skills module; produce remediation brief(s)
 
-- Status: UNCLAIMED
+- Status: CLAIMED by ox-alpha (opencode/x-preview-f-free), 08242026
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Context: the module was authored substantially by novice
   contributors; the owner wants a rigorous quality review of ALL
