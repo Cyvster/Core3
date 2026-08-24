@@ -16,11 +16,12 @@ see bonuses that cannot proc.
   delegation (`CustomSkillsCombat::applyDamage`) -- NO new SWGEmu hooks.
 - After the critical-hit roll, roll repeat tiers highest-first:
   Quad -> Triple -> Double. Only ONE tier triggers per hit.
-- Triggered tier multiplies the incoming damage by 2 / 3 / 4. Because
-  armor mitigation is proportional, multiplying pre-mitigation damage is
-  equivalent to repeating the finalized hit; matches documented
-  "repeats finalized damage" semantics and composes with crit
-  ("repeats apply to critical-adjusted damage").
+- Triggered tier RESENDS the already-calculated hit through the retained
+  `applyVanillaDamage` -- real applications, not a damage multiplier
+  (owner design, revised from the original multiplication draft). Each
+  application runs the full vanilla path (armor, native spam line,
+  observers); sequence stops if the defender dies or is incapacitated;
+  function returns the primary hit result.
 - Effective chance per modifier = its capped config total (basis points
   of 10000), same convention as Critical Chance.
 - Label-free: delivered after the owner's combat-spam-label removal
