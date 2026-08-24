@@ -8,7 +8,7 @@ reading only what the brief lists -- no conversation history required.
 
 ## Pickup protocol (for executing LLMs)
 
-1. Read the workspace-root ``START-HERE.md`` (``G:\Data\swgemu customskills\START-HERE.md``) fully first.
+1. Read the workspace-root ``START-HERE.md`` (``G:\Data\Projects\project customskills\START-HERE.md``) fully first.
 2. In the index below, find the **first** brief whose Status is UNCLAIMED.
 3. Before claiming, re-read the index -- if another contributor claimed
    while you were reading, move to the next UNCLAIMED brief instead.

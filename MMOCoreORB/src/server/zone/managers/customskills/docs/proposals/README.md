@@ -2,7 +2,7 @@
 
 How proposals are written, reviewed, decided, and archived here. Adapted
 from the Project Alice proposals framework (read-only reference:
-`G:\Data\project alice\github\alice\docs\proposals\README.md`). Any
+`G:\Data\Projects\project alice\github\alice\docs\proposals\README.md`). Any
 contributor may author a proposal; only Daniel adopts or rejects one.
 
 **If you were told to work on proposal `<YYYY-MM-DD>-<short-name>`**: open

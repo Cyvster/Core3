@@ -12,7 +12,7 @@
 Project Alice lives outside this repository:
 
 ```
-G:\Data\project alice\                          <- workspace root
+G:\Data\Projects\project alice\                          <- workspace root
 ├── START-HERE.md                               <- Alice entry point
 └── github\alice\                               <- Alice repository
     └── docs\
@@ -80,7 +80,7 @@ as a loose paraphrase. Consequences:
   ([PROC R6.7] sweep clean; grep `name/model>` and `<origin>`)
 - ERR-006 links to the clarified text; open/closed status matches reality
 - Owner-decision items listed and unanswered ones clearly marked pending
-- Project Alice repository untouched (`git -C "G:\Data\project alice\github\alice" status`
+- Project Alice repository untouched (`git -C "G:\Data\Projects\project alice\github\alice" status`
   clean before and after)
 
 ## Out of scope

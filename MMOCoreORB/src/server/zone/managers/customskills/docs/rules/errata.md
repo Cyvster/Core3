@@ -21,7 +21,7 @@ Every contributor can be wrong -- including in confident tones.
 need is in this document plus the Errata Log below. Do not wait for further
 instructions.
 
-1. Read the workspace-root ``START-HERE.md`` (``G:\Data\swgemu customskills\START-HERE.md``) fully first.
+1. Read the workspace-root ``START-HERE.md`` (``G:\Data\Projects\project customskills\START-HERE.md``) fully first.
 2. Pick the first eligible entry by scanning the Errata Log, oldest number
    first:
    - An **OPEN** entry -> your job is RESOLUTION (research + proposed fix).
