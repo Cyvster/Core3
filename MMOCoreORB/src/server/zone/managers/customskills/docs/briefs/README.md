@@ -74,8 +74,9 @@ reading only what the brief lists -- no conversation history required.
 
 **Last reconciled:** 2026-08-24 by ox-alpha (opencode/x-preview-f-free) --
 BRIEF-006 DELIVERED (recording conventions reconciled with Project Alice;
-slot semantics + short format codified in process.md; OD-1 date-format
-ratification pending with owner). Prior: 2026-08-23 by hy3-free (opencode/hy3-free) --
+slot semantics + short format codified in process.md; OD-1 answered same
+day via [DIRECTIVE 08242026]: dates switch to MMDDYYYY going forward).
+Prior: 2026-08-23 by hy3-free (opencode/hy3-free) --
 BRIEF-004 DELIVERED (MODIFIER_REFERENCE refreshed against config.lua;
 rarityNaming + badgeOverrides documented in INSTALLATION; ARCHITECTURE SUI
 menu categories corrected). Prior: hy3-free (opencode/hy3-free), 2026-08-23 --

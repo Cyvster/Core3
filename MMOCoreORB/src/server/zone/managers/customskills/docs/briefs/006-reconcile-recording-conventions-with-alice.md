@@ -1,7 +1,7 @@
 # BRIEF-006 -- Reconcile recording conventions with the Project Alice framework
 
 - Status: DELIVERED by ox-alpha (opencode/x-preview-f-free), 2026-08-24
-  (owner decision OD-1 pending; see reconciliation section)
+  (OD-1 answered same day -- [DIRECTIVE 08242026] below)
 - Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Context: ERR-006 (hy3-free signature slip) exposed that the
   governance adoption ported Alice's recording conventions INCOMPLETELY --
@@ -129,7 +129,7 @@ and after delivery):
 | I2 long format | ADAPT | kept, with ISO date per OD-1; added explicit slot semantics: name slot = contributor model/persona identifier as used in Contributors rosters; origin slot = harness/model-id string. Closes the ERR-006 loophole |
 | I3 owner signs as Daniel | ADOPT | unchanged |
 | I4 short format | ADOPT | restored after the unrecorded drop; derivation rule + example codified in process.md; long remains default; never used in governing docs or git attribution |
-| I5 date format | OWNER-DECISION | current tree keeps ISO YYYY-MM-DD (pre-existing deviation, hundreds of same-day records); ratification requested below as OD-1; no flip without directive |
+| I5 date format | OWNER-DECISION -> ANSWERED | was: keep ISO deviation pending ratification. ANSWERED 08242026: Daniel directed adoption of MMDDYYYY going forward (framework default restored); historical ISO records unchanged. See [DIRECTIVE 08242026] below |
 | I6 time zone | ADOPT | UTC offsets and never-local-time duty added to process.md; Central Time already aligned |
 | I7 reference-don't-restate | ALREADY ADOPTED | enforced via PROC R6.7; sweep executed this delivery (below) |
 | I8 Contributors section rule | ADOPT | unchanged |
@@ -162,8 +162,21 @@ Intentional survivors outside process.md (not restatements):
 
 - **OD-1 (date format):** confirm DEVIATE -- keep ISO YYYY-MM-DD,
   permanently reversing the Alice MMDDYYYY default -- or direct migration.
-  Recommendation: keep ISO. Pending; until answered, process.md keeps ISO
-  and marks the deviation as tracked here. Record the answer as a
-  `[DIRECTIVE <YYYY-MM-DD>]` note appended to this brief.
+  Recommendation: keep ISO.
+
+### ANSWER -- OD-1 [DIRECTIVE 08242026]
+
+Owner directive, received 2026-08-24 (Central Time), verbatim selection:
+"Switch to MMDDYYYY". Effect: all dates recorded from the moment of this
+directive use MMDDYYYY with leading zeros; dates already recorded in ISO
+format anywhere remain as written. process.md -> Date format updated
+accordingly (including format templates: reconciliation stamps, DIRECTIVE
+tags, Original-author trailers, long signatures) and errata.md entry
+template Date field aligned. Known follow-up outside this brief's scope:
+docs/proposals/README.md proposal-folder naming templates still read
+YYYY-MM-DD and need a separate alignment decision.
+
+Applied by ox-alpha (opencode/x-preview-f-free), 2026-08-24.
 
 Delivered in single commit tagged [BRIEF-006] on branch cyvster3.
+Directive application committed under [DIRECTIVE 08242026][BRIEF-006].

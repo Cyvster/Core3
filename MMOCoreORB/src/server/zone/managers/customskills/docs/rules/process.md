@@ -6,7 +6,9 @@
 > **Last reconciled:** 2026-08-24 by ox-alpha (opencode/x-preview-f-free) --
 > BRIEF-006: recording conventions reconciled with the Project Alice
 > framework (explicit slot semantics, short format adopted, deviation and
-> scope tracking); prior: 2026-08-23 by ox-alpha
+> scope tracking); [DIRECTIVE 08242026]: date format switched to MMDDYYYY
+> going forward (OD-1 answered; format templates updated; historical ISO
+> records unchanged); prior: 2026-08-23 by ox-alpha
 > (opencode/x-preview-f-free) -- R8 added (shared-tree coordination, four
 > adopted proposals); prior: 
 > initial draft; 2026-08-23 added Repository & Release Conventions
@@ -72,7 +74,7 @@ return to the queue with partial work preserved and credited.
 Every living tracker ends its status section with:
 
 ```
-**Last reconciled:** <YYYY-MM-DD> by <name/model (<origin>)>.
+**Last reconciled:** <MMDDYYYY> by <name/model (<origin>)>.
 ```
 
 Living trackers in this project: `MANIFEST.md`, `docs/tracking/objectives.md`,
@@ -132,7 +134,7 @@ carries a traceability tag (first line or body):
 - `[BRIEF-NNN]` -- work claimed and delivered under a brief
 - `[ERR-NNN]` -- resolution of a filed erratum
 - `[M#]` -- milestone-directed work without a brief (e.g. `[M5]`)
-- `[DIRECTIVE <YYYY-MM-DD>]` -- owner instruction given outside the repo;
+- `[DIRECTIVE <MMDDYYYY>]` -- owner instruction given outside the repo;
   quote the directive verbatim in the commit body where feasible
 
 Documentation-only commits follow the same rule. A tag without a real
@@ -168,7 +170,7 @@ C1. Before ANY commit, in order: (1) porcelain check per S2;
     rebase only on divergence -- never commit behind origin;
     (3) stage explicit paths; commit.
 C2. Commits integrating another session's work carry in the body:
-    `Original-author: <name/model> (<origin>), <YYYY-MM-DD>`
+    `Original-author: <name/model> (<origin>), <MMDDYYYY>`
 C3. These duties attach to whoever commits; no permanent coordinator role.
 
 ### Repository topology (per-worker-topology, E1-E5) -- POLICY
@@ -218,7 +220,7 @@ Every substantive contribution -- document edits, errata entries,
 verifications, brief claims/deliveries -- is signed in the long format:
 
 ```
-<name/model> (<origin>), <YYYY-MM-DD>
+<name/model> (<origin>), <MMDDYYYY>
 ```
 
 Slot semantics: the name slot holds the contributor's model/persona
@@ -246,10 +248,12 @@ governing documents or git history attribution.
 
 ### Date format
 
-All dates use ISO format `YYYY-MM-DD`, recorded in Central Time (below).
-This is a tracked deviation from the Alice framework default (`MMDDYYYY`);
-the deviation rationale and its owner-decision status live in the BRIEF-006
-reconciliation table. Do not convert historical dates.
+All dates use MMDDYYYY with leading zeros -- exactly eight characters,
+enabling consistent sorting, comparison, and filename embedding.
+Adopted 2026-08-24 by owner directive [DIRECTIVE 08242026] (BRIEF-006
+OD-1), restoring the Alice framework default. Examples: January 3, 2026 ->
+01032026; August 24, 2026 -> 08242026. Dates already recorded in ISO
+format (YYYY-MM-DD) remain as written; do not convert historical records.
 
 ### Time zone
 

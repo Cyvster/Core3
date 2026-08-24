@@ -6,7 +6,8 @@
 > **Last reconciled:** 2026-08-24 by ox-alpha (opencode/x-preview-f-free) --
 > BRIEF-006: quick-start conventions item now references process.md
 > ([PROC R6.7]); ERR-006 findings note appended pointing at the clarified
-> slot semantics. Prior: 2026-08-23 by hy3-free (opencode/hy3-free) -- second-party verification of ERR-001..004 (all RESOLVED against CORE3_CODE_REFERENCE.md); ERR-005 resolved (owner directed dir (a), code now reads config badge map) and applied 2026-08-23; ERR-006 resolved (signature re-sign to hy3-free form) 2026-08-23. Originally migrated/filed by ox-alpha (opencode/x-preview-f-free), 2026-08-23.
+> slot semantics; entry template Date field aligned to [DIRECTIVE 08242026]
+> (MMDDYYYY going forward). Prior: 2026-08-23 by hy3-free (opencode/hy3-free) -- second-party verification of ERR-001..004 (all RESOLVED against CORE3_CODE_REFERENCE.md); ERR-005 resolved (owner directed dir (a), code now reads config badge map) and applied 2026-08-23; ERR-006 resolved (signature re-sign to hy3-free form) 2026-08-23. Originally migrated/filed by ox-alpha (opencode/x-preview-f-free), 2026-08-23.
 > initial protocol; 2026-08-23 added Worker quick start with eligibility
 > table, minimal-fix discipline, and entry-dispute rule (adapted from the
 > Project Alice errata update of the same date); 2026-08-23 BRIEF-002 --
@@ -182,7 +183,7 @@ Daniel may resolve, reject, or apply any entry directly.
 
 - Status: OPEN
 - Filed by: <signature>
-- Date: <YYYY-MM-DD>
+- Date: <MMDDYYYY>
 - Affects: <document>, <section/anchor>
 - Severity: F1-F5
 - Description: <what is wrong>
