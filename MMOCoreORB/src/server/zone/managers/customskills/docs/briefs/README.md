@@ -57,7 +57,8 @@ reading only what the brief lists -- no conversation history required.
 | [`008-deep-audit-module-code.md`](008-deep-audit-module-code.md) | Deep quality audit of all module-owned code; file ERR entries and produce remediation brief(s) | DELIVERED |
 | [`009-condense-doc-formatting.md`](009-condense-doc-formatting.md) | Condense all guides; enforce heading hierarchy, section delimiters, feature-section template, TOCs | UNCLAIMED |
 | [`010-combat-spam-labels-investigation-and-fix.md`](010-combat-spam-labels-investigation-and-fix.md) | Combat spam labels: same-line append fix, enable/disable switch, menu listing; removal fallback needs owner sign-off | UNCLAIMED |
-| [`011-remediate-audit-findings.md`](011-remediate-audit-findings.md) | Remediate BRIEF-008 audit findings: menu/config single-source, title-table safety, loader consistency | UNCLAIMED |
+| [`011-menu-config-single-source.md`](011-menu-config-single-source.md) | Menu/config single-source: eliminate duplicated badge assignments; resolve ERR-008 | UNCLAIMED |
+| [`012-code-hygiene-cleanups.md`](012-code-hygiene-cleanups.md) | Enum/table safety asserts, loader consolidation, edge-case cleanups (behavior-preserving) | UNCLAIMED |
 
 ## Notes
 
@@ -79,7 +80,7 @@ reading only what the brief lists -- no conversation history required.
 
 **Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
 BRIEF-008 DELIVERED (full module audit; AUDIT-1 filed as ERR-008 OPEN,
-AUDIT-2 routed to BRIEF-010, remainder to new BRIEF-011 UNCLAIMED).
+AUDIT-2 routed to BRIEF-010, remainder split into BRIEF-011 (menu fix) + BRIEF-012 (hygiene), both UNCLAIMED).
 Prior: 08242026 -- BRIEF-009 added (doc condensation + formatting standard: single H1,
 rule-delimited H2 sections, feature template, TOCs, >=40% line-count
 reduction target) and BRIEF-010 added (combat spam labels:
