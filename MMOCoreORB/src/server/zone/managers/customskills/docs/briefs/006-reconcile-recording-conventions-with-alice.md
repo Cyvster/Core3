@@ -1,8 +1,8 @@
 # BRIEF-006 -- Reconcile recording conventions with the Project Alice framework
 
-- Status: DELIVERED by ox-alpha (opencode/x-preview-f-free), 2026-08-24
+- Status: DELIVERED by ox-alpha (opencode/x-preview-f-free), 08242026
   (OD-1 answered same day -- [DIRECTIVE 08242026] below)
-- Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free), owner
+- Created: 08232026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Context: ERR-006 (hy3-free signature slip) exposed that the
   governance adoption ported Alice's recording conventions INCOMPLETELY --
   slot semantics, short format, and several definitional details were lost,
@@ -34,7 +34,7 @@ as a loose paraphrase. Consequences:
 1. Name-slot vs origin-slot semantics were never defined, so hy3-free signed
    as `opencode (opencode/hy3-free)` (ERR-006).
 2. Alice's SHORT signature format was dropped without a recorded decision.
-3. The ISO `YYYY-MM-DD` date deviation from Alice's `MMDDYYYY` is documented
+3. The ISO `MMDDYYYY` date deviation from Alice's `MMDDYYYY` is documented
    as intentional, but exists only as an inline remark -- not as part of a
    tracked adoption/reconciliation.
 4. Other documents restate signature format instead of referencing process.md
@@ -54,7 +54,7 @@ as a loose paraphrase. Consequences:
      contributor's model/persona identifier as used in Contributors rosters;
      origin slot = harness/model-id. Closes the ERR-006 loophole.
    - Short format: ADOPT (opt-in per context, Alice's rules) or OWNER-DECISION.
-   - Date format: DEVIATE (keep `YYYY-MM-DD`) recommended -- hundreds of
+   - Date format: DEVIATE (keep `MMDDYYYY`) recommended -- hundreds of
      existing same-day records already use ISO; switching formats would
      rewrite history for zero truth value. Mark as OWNER-DECISION since it
      reverses a framework default; do NOT flip silently.
@@ -69,7 +69,7 @@ as a loose paraphrase. Consequences:
 6. Any DEVIATE/OWNER-DECISION rows that Daniel must settle: collect them
    under a single `Owner decisions requested` subsection; do not implement
    either side until answered; record answers as
-   `[DIRECTIVE <YYYY-MM-DD>]` notes in this brief.
+   `[DIRECTIVE <MMDDYYYY>]` notes in this brief.
 7. Stamps on every touched doc; single commit tagged `[BRIEF-006]`.
 
 ## Acceptance criteria
@@ -93,7 +93,7 @@ as a loose paraphrase. Consequences:
 
 ---
 
-## Delivery record -- 2026-08-24 by ox-alpha (opencode/x-preview-f-free)
+## Delivery record -- 08242026 by ox-alpha (opencode/x-preview-f-free)
 
 ### Inventory of Alice recording-convention items
 
@@ -151,22 +151,22 @@ Intentional survivors outside process.md (not restatements):
 - ERR-006 Description quotes the wrong-form signature as filed evidence --
   historical record protected by PROC R2/R7
 - docs/archive/* -- retired documents, explicitly not extended
-- proposals/README.md YYYY-MM-DD tokens are filename templates, not
+- proposals/README.md MMDDYYYY tokens are filename templates, not
   signature conventions
-- docs/proposals/2026-08-23-coordinator-pull-before-commit/proposal.md
+- docs/proposals/08232026-coordinator-pull-before-commit/proposal.md
   quotes the Original-author trailer inside the adopted proposal record;
   the live rule is carried by process.md rule C2
 - this brief's own acceptance-criteria text names the grep tokens
 
 ### Owner decisions requested
 
-- **OD-1 (date format):** confirm DEVIATE -- keep ISO YYYY-MM-DD,
+- **OD-1 (date format):** confirm DEVIATE -- keep ISO MMDDYYYY,
   permanently reversing the Alice MMDDYYYY default -- or direct migration.
   Recommendation: keep ISO.
 
 ### ANSWER -- OD-1 [DIRECTIVE 08242026]
 
-Owner directive, received 2026-08-24 (Central Time), verbatim selection:
+Owner directive, received 08242026 (Central Time), verbatim selection:
 "Switch to MMDDYYYY". Effect: all dates recorded from the moment of this
 directive use MMDDYYYY with leading zeros; dates already recorded in ISO
 format anywhere remain as written. process.md -> Date format updated
@@ -174,9 +174,21 @@ accordingly (including format templates: reconciliation stamps, DIRECTIVE
 tags, Original-author trailers, long signatures) and errata.md entry
 template Date field aligned. Known follow-up outside this brief's scope:
 docs/proposals/README.md proposal-folder naming templates still read
-YYYY-MM-DD and need a separate alignment decision.
+MMDDYYYY and need a separate alignment decision.
 
-Applied by ox-alpha (opencode/x-preview-f-free), 2026-08-24.
+Applied by ox-alpha (opencode/x-preview-f-free), 08242026.
+
+### ADDENDUM -- same-day directive extension [DIRECTIVE 08242026]
+
+After OD-1 was applied, Daniel directed a full sweep: update ALL date
+formats across the customskills mod to MMDDYYYY, superseding the
+"historical ISO remains as written" clause, and settle the flagged
+follow-up (proposal-folder naming templates). Scope limits per the
+directive: the customskills mod only; SWGEmu code/files are not touched.
+Executed: proposal folders renamed to the 08232026-* form,
+docs/proposals/README.md naming templates + conventions line converted,
+and every module-owned document migrated (signatures, stamps, entries,
+evidence quotes included). See commit tagged [DIRECTIVE 08242026].
 
 Delivered in single commit tagged [BRIEF-006] on branch cyvster3.
 Directive application committed under [DIRECTIVE 08242026][BRIEF-006].

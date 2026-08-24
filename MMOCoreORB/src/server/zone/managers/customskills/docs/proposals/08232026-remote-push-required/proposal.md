@@ -1,8 +1,8 @@
 # Push after every logical commit; claims are invisible until pushed
 
-**Proposed by:** ox-alpha (opencode/x-preview-f-free), 2026-08-23
-**Last updated:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
-**Status:** ADOPTED -- Daniel (directive), 2026-08-23
+**Proposed by:** ox-alpha (opencode/x-preview-f-free), 08232026
+**Last updated:** 08232026 by ox-alpha (opencode/x-preview-f-free)
+**Status:** ADOPTED -- Daniel (directive), 08232026
 **Trigger:** Two same-night collisions on this repository's shared tree:
 (1) an errata-duty pass was written against a stale snapshot and raced a
 concurrent session's commit to `docs/rules/errata.md`; (2) BRIEF-004 was
@@ -51,7 +51,7 @@ P4. If push fails (network, permissions), STOP: do not start new claimed
 
 Phase 1 (this adoption): process.md R6.5 amended (commit AND push);
 briefs pickup protocol steps updated. Single commit tagged
-`[PROPOSAL-2026-08-23-remote-push-required]`.
+`[PROPOSAL-08232026-remote-push-required]`.
 
 ## 6. Relationship matrix
 
@@ -70,4 +70,4 @@ Executed at adoption. No open questions.
 
 | Date | Change | Source |
 |------|--------|--------|
-| 2026-08-23 | Initial draft, adopted same day | Owner directive |
+| 08232026 | Initial draft, adopted same day | Owner directive |

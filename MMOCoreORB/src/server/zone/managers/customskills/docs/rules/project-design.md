@@ -1,9 +1,9 @@
 # Custom Skills -- Project Design (Master Document)
 
 > **Status:** Ratified
-> **Created:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
-> **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free);
-> 2026-08-23 BRIEF-002 -- Integration Policy rewritten for single-tree layout
+> **Created:** 08232026 by ox-alpha (opencode/x-preview-f-free)
+> **Last reconciled:** 08232026 by ox-alpha (opencode/x-preview-f-free);
+> 08232026 BRIEF-002 -- Integration Policy rewritten for single-tree layout
 
 ## Master Document Notice
 
@@ -104,11 +104,11 @@ ratification recorded in this document or an ERR entry.
   existing Core3 sources. Distribution = copy module dir + scripts + apply
   `integration/core3-hooks.patch`.
 - The standalone mirror folder (`customskills-mod/`, `package/`) was
-  dissolved on 2026-08-23 ([BRIEF-001]); references to it are historical.
+  dissolved on 08232026 ([BRIEF-001]); references to it are historical.
 
 ## Gameplay Conventions
 
-- All 18 modifiers (CRITICAL_MULTIPLIER promoted to standalone 2026-08-23) are enumerated in
+- All 18 modifiers (CRITICAL_MULTIPLIER promoted to standalone 08232026) are enumerated in
   `docs/reference/MODIFIER_REFERENCE.md`, which is the authority on per-
   modifier units, defaults, caps, and badge assignments.
 - Badge pool: 111 eligible badges of 140 total (9 pilot/JTL and 20
@@ -144,6 +144,6 @@ remain feature-local decisions).
 ## Contributors
 
 - **Daniel** -- project owner; final authority on design decisions
-- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- initial structure,
+- ox-alpha (opencode/x-preview-f-free), 08232026 -- initial structure,
   consolidating principles formerly spread across ARCHITECTURE.md and
   archive/DESIGN.md

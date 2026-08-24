@@ -55,11 +55,11 @@ Core3-side wiring. See
       build session).
 
 - [x] ~~Mirror Core3-only work into package/ + MANIFEST~~ -- OBSOLETE:
-      package mirror dissolved by BRIEF-001 (2026-08-23); remaining content
+      package mirror dissolved by BRIEF-001 (08232026); remaining content
       accuracy work (H16 inventory, patch coverage, modifier count) moved to
       [../briefs/003-reconcile-hooks-patch-modifier-count.md](../briefs/003-reconcile-hooks-patch-modifier-count.md).
 - [x] ~~Decide whether module repository should gain its own git history~~ --
-      RESOLVED 2026-08-23: owner directive migrated all module artifacts INTO
+      RESOLVED 08232026: owner directive migrated all module artifacts INTO
       the Core3 repo; docs now version-controlled at
       `MMOCoreORB/src/server/zone/managers/customskills/docs/`.
 
@@ -74,31 +74,31 @@ Core3-side wiring. See
 - M4 badge assignments & config, 111 badges mapped -- complete
 - Documentation governance adoption (rules/, tracking/, briefs/,
   reference/ migration, START-HERE) -- ox-alpha
-  (opencode/x-preview-f-free), 2026-08-23
+  (opencode/x-preview-f-free), 08232026
 - Core3 infrastructure research + two-guide split: CORE3_CODE_REFERENCE.md
   (patterns/systems, from retired SWGEMU_CODE_GUIDE.md) and
   CORE3_USER_GUIDE.md (build/run/test; verified unit-test suite findings:
   GoogleTest 1.13 compiled into core3 binary, ~264 cases, MariaDB required
   for all boot paths incl. tests, no CI) -- ox-alpha
-  (opencode/x-preview-f-free), 2026-08-23
+  (opencode/x-preview-f-free), 08232026
 - Documentation compression: IMPLEMENTATION_GUIDE + MENU_SYSTEM merged into
   ARCHITECTURE.md (single module reference); PROJECT_OVERVIEW,
   DEVELOPER_QUICKSTART, integration/INSTALL archived as redundant (unique
   content salvaged to START-HERE / INSTALLATION / process.md); reference/
-  reduced to 5 docs -- ox-alpha (opencode/x-preview-f-free), 2026-08-23
+  reduced to 5 docs -- ox-alpha (opencode/x-preview-f-free), 08232026
 - Retired workspace-root SWGEMU_CUSTOMSKILLS_CONTEXT.md (the project's
   original mission-control doc) after salvaging its tech-stack summary into
   the root START-HERE.md; entry point relocated from customskills-mod/ to
-  workspace root same day -- ox-alpha (opencode/x-preview-f-free), 2026-08-23
+  workspace root same day -- ox-alpha (opencode/x-preview-f-free), 08232026
 
 ---
 
-**Last reconciled:** 2026-08-24 by ox-alpha (opencode/x-preview-f-free) --
+**Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
 BRIEF-006: claim-line signature example replaced with a reference to
-process.md ([PROC R6.7]). Prior: 2026-08-23 by ox-alpha
+process.md ([PROC R6.7]). Prior: 08232026 by ox-alpha
 (opencode/x-preview-f-free) -- package-sync objective marked obsolete via BRIEF-001 migration; git-history objective resolved.
 
 ## Contributors
 
 - **Daniel** -- project owner
-- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- initial tracker
+- ox-alpha (opencode/x-preview-f-free), 08232026 -- initial tracker

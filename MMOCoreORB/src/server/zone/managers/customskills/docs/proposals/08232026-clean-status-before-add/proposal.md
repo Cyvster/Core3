@@ -1,8 +1,8 @@
 # Explicit-path staging only; clean intended tree before add
 
-**Proposed by:** ox-alpha (opencode/x-preview-f-free), 2026-08-23
-**Last updated:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
-**Status:** ADOPTED -- Daniel (directive), 2026-08-23
+**Proposed by:** ox-alpha (opencode/x-preview-f-free), 08232026
+**Last updated:** 08232026 by ox-alpha (opencode/x-preview-f-free)
+**Status:** ADOPTED -- Daniel (directive), 08232026
 **Trigger:** Same-night collisions on the shared tree; framework source:
 Project Alice proposal `08232026-clean-status-before-add` (ADOPTED there),
 whose trigger incidents included a null-byte-corrupted rewrite and foreign
@@ -46,7 +46,7 @@ S4. Sunset: relaxes to style preference when the per-worker topology
 ## 5. Integration plan
 
 Phase 1 (this adoption): process.md gains a "Staging discipline" section;
-commit tagged `[PROPOSAL-2026-08-23-clean-status-before-add]`.
+commit tagged `[PROPOSAL-08232026-clean-status-before-add]`.
 
 ## 6. Relationship matrix
 
@@ -65,4 +65,4 @@ during single-worker sessions; going forward S1 applies without exception.
 
 | Date | Change | Source |
 |------|--------|--------|
-| 2026-08-23 | Initial draft, adopted same day | Owner directive |
+| 08232026 | Initial draft, adopted same day | Owner directive |

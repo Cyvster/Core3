@@ -1,7 +1,7 @@
 # BRIEF-003 -- Reconcile hook inventory, patch coverage, and modifier count
 
-- Status: DELIVERED -- ox-alpha (opencode/x-preview-f-free), 2026-08-23
-- Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
+- Status: DELIVERED -- ox-alpha (opencode/x-preview-f-free), 08232026
+- Created: 08232026 by ox-alpha (opencode/x-preview-f-free)
 - Prerequisite: [BRIEF-002](002-post-migration-doc-repair.md) DELIVERED
   (paths below assume the settled post-migration layout). Paths relative to
   the module dir unless noted.
@@ -47,7 +47,7 @@ fully reflect, and `integration/core3-hooks.patch` predates H16.
   "seventeen" outside archive/)
 - Hook inventory carries no "pending sync" caveats
 
-## Delivery notes (2026-08-23)
+## Delivery notes (08232026)
 
 1. Patch: appended the LootManagerImplementation.cpp hunk (include +
    setCustomObjectName delegation, diff `6ba32f4954~1..HEAD`); patch now

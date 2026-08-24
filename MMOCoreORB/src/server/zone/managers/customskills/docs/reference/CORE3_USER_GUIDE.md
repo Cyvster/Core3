@@ -15,8 +15,8 @@ Factual corrections go through [../rules/errata.md](../rules/errata.md).
 
 ## Contributors
 
-- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- initial guide;
-  testing-infrastructure findings verified against source 2026-08-23
+- ox-alpha (opencode/x-preview-f-free), 08232026 -- initial guide;
+  testing-infrastructure findings verified against source 08232026
   (citations inline)
 
 ---

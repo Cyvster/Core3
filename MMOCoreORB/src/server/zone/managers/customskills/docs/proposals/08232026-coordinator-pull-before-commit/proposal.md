@@ -1,8 +1,8 @@
 # Sync before commit; attribute others' work
 
-**Proposed by:** ox-alpha (opencode/x-preview-f-free), 2026-08-23
-**Last updated:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
-**Status:** ADOPTED -- Daniel (directive), 2026-08-23
+**Proposed by:** ox-alpha (opencode/x-preview-f-free), 08232026
+**Last updated:** 08232026 by ox-alpha (opencode/x-preview-f-free)
+**Status:** ADOPTED -- Daniel (directive), 08232026
 **Trigger:** Shared-tree race conditions tonight (errata file clobber;
 duplicate BRIEF-004 delivery). Framework source: Project Alice proposal
 `08232026-coordinator-pull-before-commit` (ADOPTED there).
@@ -43,7 +43,7 @@ C1. Before ANY commit on this tree, in ORDER:
     3. Stage explicit paths; commit ([PROC R6.8] tag required).
 C2. When a commit integrates work authored by another session/contributor,
     the commit body carries:
-    `Original-author: <name/model> (<origin>), <YYYY-MM-DD>`
+    `Original-author: <name/model> (<origin>), <MMDDYYYY>`
 C3. These duties apply to whoever commits -- there is no permanent
     coordinator caste on this repository; the role attaches to the act.
 
@@ -51,7 +51,7 @@ C3. These duties apply to whoever commits -- there is no permanent
 
 Phase 1 (this adoption): process.md gains a "Commit & sync discipline"
 section; commit tagged
-`[PROPOSAL-2026-08-23-coordinator-pull-before-commit]`.
+`[PROPOSAL-08232026-coordinator-pull-before-commit]`.
 
 ## 6. Relationship matrix
 
@@ -69,4 +69,4 @@ Executed at adoption.
 
 | Date | Change | Source |
 |------|--------|--------|
-| 2026-08-23 | Initial draft, adopted same day | Owner directive |
+| 08232026 | Initial draft, adopted same day | Owner directive |

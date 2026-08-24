@@ -1,7 +1,7 @@
 # BRIEF-002 -- Post-migration documentation & governance repair
 
-- Status: DELIVERED -- ox-alpha (opencode/x-preview-f-free), 2026-08-23; commit 49a22bd54a
-- Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
+- Status: DELIVERED -- ox-alpha (opencode/x-preview-f-free), 08232026; commit 49a22bd54a
+- Created: 08232026 by ox-alpha (opencode/x-preview-f-free)
 - Prerequisite: [BRIEF-001](001-migrate-mod-into-core3.md) DELIVERED. All
   paths in this brief are post-migration, relative to
   `Core3/MMOCoreORB/src/server/zone/managers/customskills/` (= "module dir").
@@ -57,7 +57,7 @@ governance rules still describe a dual-tree world that no longer exists.
 - process.md contains no two-tree/mirror instructions
 - Stamps updated on all modified documents
 
-## Delivery notes (2026-08-23)
+## Delivery notes (08232026)
 
 All eight deliverables completed in commit `49a22bd54a`: governance rewrite
 (R6.5/R6.6/containment/release conventions), master-doc Integration Policy,

@@ -12,9 +12,9 @@ Complete registry of all 18 modifiers with configuration, units, badge assignmen
 ## Contributors
 
 - **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
-- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- BRIEF-003: count
+- ox-alpha (opencode/x-preview-f-free), 08232026 -- BRIEF-003: count
   reconciliation, Critical Multiplier standalone entry, staleness banner
-- hy3-free (opencode/hy3-free), 2026-08-23 -- BRIEF-004: refresh all
+- hy3-free (opencode/hy3-free), 08232026 -- BRIEF-004: refresh all
   per-modifier tables to config.lua; badgeOverrides/rarityNaming conventions;
   regenerate Maximum Theoretical Totals
 

@@ -12,7 +12,7 @@ Three new fourbyfour skill trees for the Challenge Tier system using the
 - **XP type**: `challenge_tier`
 - **POINTS_REQUIRED**: 0 (all entries)
 
-### challenge_tier XP acquisition (agreed 2026-08-21)
+### challenge_tier XP acquisition (agreed 08212026)
 
 - Awarded **only while the player is in Challenge Tier 1 or higher** (opted into the system).
   Zero XP at tier 0 / opted out.
@@ -29,7 +29,7 @@ Three new fourbyfour skill trees for the Challenge Tier system using the
   completing everything else. Progression speed must be gated behind *high* challenge tiers;
   low-tier farming should not be able to fund meaningful tree progress.
 
-## XP costs v2 - APPROVED 2026-08-21; implemented in skills.csv
+## XP costs v2 - APPROVED 08212026; implemented in skills.csv
 
 Per user direction: requirements **increase per tree** but are **uniform within a tree**
 (every box in a tree costs the same, novice through master).
@@ -54,13 +54,13 @@ economically excluded. Scale factor is a single dial -- double all three constan
 ~3,200-kill ceiling if playtests feel too fast.
 
 **Implementation status**: all 57 rows (3 hidden tree roots + 54 boxes) appended to
-`G:\Data\swgemu server\TRE builder\datatables\skill\skills.csv` on 2026-08-21. Verified:
+`G:\Data\swgemu server\TRE builder\datatables\skill\skills.csv` on 08212026. Verified:
 unique names, 27 columns per row, per-mod sums exactly match the Distribution v1 targets,
 per-tree XP totals 1.8M / 6.3M / 18M = 26.1M grand total. Rebuild `skills.iff` with the
 TRE builder to deploy. Banking cap comes from `xp_limits.iff` (`challenge_tier` = 5,100,000,
 already present); every box also declares XP_CAP 5100000 as a self-contained fallback.
 
-~~v1 (SUPERSEDED 2026-08-21): tier-escalating costs 25k/50k/85k/130k, masters 250k,
+~~v1 (SUPERSEDED 08212026): tier-escalating costs 25k/50k/85k/130k, masters 250k,
 tree factors x1/x2/x3, grand total 8.5M -- rejected in favor of uniform-within-tree pricing.~~
 
 ## Selected skill mods
@@ -90,7 +90,7 @@ everything). Distribution across trees/branches/tiers is fixed by Distribution v
 | DoT resistance | `bleed_resist` | **100** | |
 | DoT resistance | `fire_resist` | **100** | |
 | DoT resistance | `poison_disease_resist` | **100** | stacks with native `resistance_poison` / `resistance_disease` in DoT potency checks |
-| Gathering | `creature_harvesting` | **1000** | high-rate server decision (2026-08-21). Mod = % of corpse max yield, so 1000 ~ 10x base corpse yield before density (up to x1.25) and group (up to x1.4) multipliers -- up to ~19.5x with full bonuses. Natives reach only ~115, so tree masters see an order-of-magnitude jump. Verify resource-container stack limits handle the yields during testing |
+| Gathering | `creature_harvesting` | **1000** | high-rate server decision (08212026). Mod = % of corpse max yield, so 1000 ~ 10x base corpse yield before density (up to x1.25) and group (up to x1.4) multipliers -- up to ~19.5x with full bonuses. Natives reach only ~115, so tree masters see an order-of-magnitude jump. Verify resource-container stack limits handle the yields during testing |
 
 ### Mod pool reference
 
@@ -114,7 +114,7 @@ everything). Distribution across trees/branches/tiers is fixed by Distribution v
 - `posture_change_down_defense`
 - `posture_change_up_defense`
 
-### Additional (confirmed engine-readable, added 2026-08-21)
+### Additional (confirmed engine-readable, added 08212026)
 
 All verified as generic `getSkillMod()` readers -- work from learned-skill (SKILLBOX) grants:
 
@@ -139,7 +139,7 @@ All verified as generic `getSkillMod()` readers -- work from learned-skill (SKIL
 
 ### Excluded after investigation
 
-- **`enhanced_regen`** -- rejected 2026-08-21. It is only read by the Trandoshan innate `/regen`
+- **`enhanced_regen`** -- rejected 08212026. It is only read by the Trandoshan innate `/regen`
   command (`RegenerationCommand.h`): converts points to CONSTITUTION on the 5-min innate buff
   (1 point = +1.75 CON, cap 100), which then regenerates ~CON x 0.00619 HP/s. Species-locked and
   command-gated, so it does nothing for any other species and nothing passively. No generic
@@ -153,7 +153,7 @@ All verified as generic `getSkillMod()` readers -- work from learned-skill (SKIL
 - Unlock flag: each tree's `master` box is the prerequisite for the next tree's novice.
 - No cross-tree skill gates otherwise; internal branch prereqs only.
 
-## Distribution v1 - APPROVED 2026-08-21
+## Distribution v1 - APPROVED 08212026
 
 Budgets escalate with progression depth: **600 / 1010 / 1300** = 2910 total points,
 exactly matching the sum of all mod targets in the table above.
@@ -251,4 +251,4 @@ Per-mod totals: equilibrium/intimidate/force_luck = **100 each**; creature_harve
 
 ---
 
-**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- governance banners added; content otherwise unchanged.
+**Last reconciled:** 08232026 by ox-alpha (opencode/x-preview-f-free) -- governance banners added; content otherwise unchanged.

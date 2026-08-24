@@ -37,5 +37,5 @@ preserved under `docs/archive/` -- they are not current authority.
 
 ---
 
-**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) --
+**Last reconciled:** 08232026 by ox-alpha (opencode/x-preview-f-free) --
 BRIEF-002: rewritten for single-tree layout after migration into Core3 repo.

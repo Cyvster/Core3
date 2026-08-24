@@ -1,11 +1,11 @@
 # BRIEF-004 -- Refresh MODIFIER_REFERENCE against current config.lua
 
-- Status: DELIVERED -- hy3-free (opencode/hy3-free), 2026-08-23
-- Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free) during
+- Status: DELIVERED -- hy3-free (opencode/hy3-free), 08232026
+- Created: 08232026 by ox-alpha (opencode/x-preview-f-free) during
   [BRIEF-003](003-reconcile-hooks-patch-modifier-count.md) delivery
 - Prerequisite: none (can run in parallel with nothing else touching
   MODIFIER_REFERENCE)
-- Delivered: 2026-08-23 by hy3-free (opencode/hy3-free) -- refreshed
+- Delivered: 08232026 by hy3-free (opencode/hy3-free) -- refreshed
   MODIFIER_REFERENCE.md against config.lua (all 18 modifiers, caps/badges,
   badgeOverrides + rarityNaming conventions, regenerated Maximum Theoretical
   Totals, removed staleness banner); documented rarityNaming + badgeOverrides

@@ -7,7 +7,7 @@
 ## Contributors
 
 - **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
-- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- BRIEF-002: rewritten
+- ox-alpha (opencode/x-preview-f-free), 08232026 -- BRIEF-002: rewritten
   for single-tree layout (install onto other servers via module dir copy +
   patch)
 

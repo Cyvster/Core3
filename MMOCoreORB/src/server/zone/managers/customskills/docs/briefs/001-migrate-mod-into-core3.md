@@ -1,14 +1,14 @@
 # BRIEF-001 -- Migrate customskills-mod into the Core3 repository
 
-> Rewritten 2026-08-23 by owner directive (Daniel): the standalone
+> Rewritten 08232026 by owner directive (Daniel): the standalone
 > `customskills-mod` folder is dissolved; the Core3 dev tree becomes the
 > single home of the module. This replaces the former "sync package with
 > Core3" scope -- the dual-tree problem this brief once tracked disappears
 > with the migration.
 
-- Status: DELIVERED -- ox-alpha (opencode/x-preview-f-free), 2026-08-23; commit a682058144
-- Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
-- Rewritten: 2026-08-23 by ox-alpha (opencode/x-preview-f-free), owner
+- Status: DELIVERED -- ox-alpha (opencode/x-preview-f-free), 08232026; commit a682058144
+- Created: 08232026 by ox-alpha (opencode/x-preview-f-free)
+- Rewritten: 08232026 by ox-alpha (opencode/x-preview-f-free), owner
   directive
 
 ## Goal
@@ -19,7 +19,7 @@ code and docs are contained under
 runtime location requires otherwise (already true: see Containment audit).
 After this brief, `G:\Data\swgemu customskills\customskills-mod\` is deleted.
 
-## Pre-migration state (verified 2026-08-23)
+## Pre-migration state (verified 08232026)
 
 - Dev tree module code at `MMOCoreORB/src/server/zone/managers/customskills/`
   is AHEAD of the package mirror (contains H16 rarity naming, Server Config
@@ -80,7 +80,7 @@ Execute from `G:\Data\swgemu customskills\` (paths below relative to it):
 - Fixing links/governance text broken BY the move -> BRIEF-002
 - Patch regeneration / modifier-count reconciliation -> BRIEF-003
 
-## Delivery notes (2026-08-23)
+## Delivery notes (08232026)
 
 - Single commit `a682058144` on cyvster3: 37 files (docs tree, MANIFEST,
   README, patch) relocated into the module directory.

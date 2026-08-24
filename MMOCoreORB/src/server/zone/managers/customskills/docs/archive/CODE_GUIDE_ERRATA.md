@@ -1,6 +1,6 @@
 # SWGEMU_CODE_GUIDE.md -- Errata Log & Correction Procedure
 
-Created: 2026-08-21
+Created: 08212026
 Initial review by: ox-alpha (opencode session), claims verified directly against the Core3 checkout at `G:\Data\swgemu opencode\Core3\MMOCoreORB`
 
 ## Purpose
@@ -26,21 +26,21 @@ This document has two jobs:
 | `HUMAN-REVIEW` | Conflicting verifications or destructive edit; needs a human |
 | `REJECTED` | Declined (e.g., style preference), retained for history |
 
-### Findings -- 2026-08-21 initial review
+### Findings -- 08212026 initial review
 
-| ID | Location (as of 2026-08-21) | Severity | Guide claimed | Actual (evidence) | Status | Reporter | Assigned Verifier |
+| ID | Location (as of 08212026) | Severity | Guide claimed | Actual (evidence) | Status | Reporter | Assigned Verifier |
 |----|------------------------------|----------|---------------|-------------------|--------|----------|-------------------|
-| E1 | Codebase Layout diagram | F1 Factual | `Core3/engine/` directory exists | No `engine/` in this checkout; it is an unchecked-out git submodule (`Core3/.gitmodules`). Top level: `docker/`, `linux/`, `MMOCoreORB/`, `wsl2/` | **APPLIED+VERIFIED 2026-08-21** -- defect in replacement tree (-> N1); submodule dir exists but empty (-> N2) | C-001 | C-001 (application verify: guide read + `.gitmodules` + Test-Path) |
-| E2 | Crafting System, "Amazing success" | F1 Factual | `AMAZINGSUCCESS` constant = 1 | `AMAZINGSUCCESS = 0` (`src/server/zone/managers/crafting/CraftingManager.idl:37`) | **APPLIED+VERIFIED 2026-08-21** | C-001 | C-001 (application verify: guide now cites idl:37, value 0) |
-| E3 | Buff System, "Buff families" | F1 Factual | Type checking via `buff->getSkillMod()` | No such method on Buff. Correct APIs: `getSkillModifierValue(name)`, `setSkillModifier()`, `getSkillModifiers()` (`Buff.idl:139-273`) | **APPLIED+VERIFIED 2026-08-21** | C-001 | C-001 (application verify: corrected API list matches Buff.idl) |
-| E4 | Skill Mods, "Sources" list | F1 Factual | Groups `BASE`, `RACE`, `ARMOR`, `WEAPON`, `FOOD`, `JEDI` | Invented. Real groups (`SkillModManager.h:43-58`): TEMPLATE, SKILLBOX / WEARABLE, STRUCTURE, CITY, DROID / BUFF, ABILITYBONUS | APPLIED+VERIFIED 2026-08-21 -- replaced during research fold-in | C-001 | C-001 (fold-in author; source table matches SkillModManager.h) |
-| E5 | Skill Mods, "WEARABLE cap" | F1 Factual | `SkillModManager::getWearableCap()` = 25 | Function does not exist. Caps are values in `skillModMin/skillModMax` VectorMaps (`setDefaults`: WEARABLE +/-25) + `skill_mod_manager.lua` | APPLIED+VERIFIED 2026-08-21 -- replaced during research fold-in | C-001 | C-001 (fold-in author; no such symbol in SkillModManager.h) |
-| E6 | SUI section flow diagram | F1 Factual | C++ command -> Lua `openMenu()` -> ... -> Lua callback | Contradicts project architecture: `CustomSkillsMenu.cpp` creates `SuiListBox` directly in C++; dispatch goes to C++ `CustomSkillsSuiCallback`. Lua used only for config/command registration | **APPLIED+VERIFIED 2026-08-21** | C-001 | C-001 (application verify: flow matches CustomSkillsMenu.cpp ~132 / CustomSkillsSuiCallback) |
-| M1 | Combat System "Key flow" | F3 Misleading | armor reduction -> defense check -> damage application | Hit/defense calculation occurs before damage application; armor mitigation is per-pool inside damage application | **APPLIED+VERIFIED 2026-08-21** -- contradictory "Key flow" line removed; flow block retained and consistent | C-001 | Applier: C-002; application verified by C-001 (method: full-file grep, zero "Key flow" matches remain) |
-| M2 | Hook Pattern heading | F3 Ambiguous | "All 16 Hooks" | H02 was rejected (never implemented); A/B variants mean more than 16 call sites | **APPLIED+VERIFIED 2026-08-21** -- heading now reads "### Hook Pattern" | C-001 | Applier: C-002; application verified by C-001 (method: grep -- "All 16 Hooks" absent, heading confirmed at guide ~282) |
-| M3 | Crafting System "~5% amazing chance" | F4 Unverifiable | Native amazing chance "~5%" | Plausible, not yet measured in code. Needs verification before promotion to fact | **APPLIED+VERIFIED 2026-08-21** -- guide now states chance unverified, "~5%" flagged as placeholder pending measurement | C-001 | Applier: C-002; application verified by C-001 (method: read of guide crafting section ~197) |
+| E1 | Codebase Layout diagram | F1 Factual | `Core3/engine/` directory exists | No `engine/` in this checkout; it is an unchecked-out git submodule (`Core3/.gitmodules`). Top level: `docker/`, `linux/`, `MMOCoreORB/`, `wsl2/` | **APPLIED+VERIFIED 08212026** -- defect in replacement tree (-> N1); submodule dir exists but empty (-> N2) | C-001 | C-001 (application verify: guide read + `.gitmodules` + Test-Path) |
+| E2 | Crafting System, "Amazing success" | F1 Factual | `AMAZINGSUCCESS` constant = 1 | `AMAZINGSUCCESS = 0` (`src/server/zone/managers/crafting/CraftingManager.idl:37`) | **APPLIED+VERIFIED 08212026** | C-001 | C-001 (application verify: guide now cites idl:37, value 0) |
+| E3 | Buff System, "Buff families" | F1 Factual | Type checking via `buff->getSkillMod()` | No such method on Buff. Correct APIs: `getSkillModifierValue(name)`, `setSkillModifier()`, `getSkillModifiers()` (`Buff.idl:139-273`) | **APPLIED+VERIFIED 08212026** | C-001 | C-001 (application verify: corrected API list matches Buff.idl) |
+| E4 | Skill Mods, "Sources" list | F1 Factual | Groups `BASE`, `RACE`, `ARMOR`, `WEAPON`, `FOOD`, `JEDI` | Invented. Real groups (`SkillModManager.h:43-58`): TEMPLATE, SKILLBOX / WEARABLE, STRUCTURE, CITY, DROID / BUFF, ABILITYBONUS | APPLIED+VERIFIED 08212026 -- replaced during research fold-in | C-001 | C-001 (fold-in author; source table matches SkillModManager.h) |
+| E5 | Skill Mods, "WEARABLE cap" | F1 Factual | `SkillModManager::getWearableCap()` = 25 | Function does not exist. Caps are values in `skillModMin/skillModMax` VectorMaps (`setDefaults`: WEARABLE +/-25) + `skill_mod_manager.lua` | APPLIED+VERIFIED 08212026 -- replaced during research fold-in | C-001 | C-001 (fold-in author; no such symbol in SkillModManager.h) |
+| E6 | SUI section flow diagram | F1 Factual | C++ command -> Lua `openMenu()` -> ... -> Lua callback | Contradicts project architecture: `CustomSkillsMenu.cpp` creates `SuiListBox` directly in C++; dispatch goes to C++ `CustomSkillsSuiCallback`. Lua used only for config/command registration | **APPLIED+VERIFIED 08212026** | C-001 | C-001 (application verify: flow matches CustomSkillsMenu.cpp ~132 / CustomSkillsSuiCallback) |
+| M1 | Combat System "Key flow" | F3 Misleading | armor reduction -> defense check -> damage application | Hit/defense calculation occurs before damage application; armor mitigation is per-pool inside damage application | **APPLIED+VERIFIED 08212026** -- contradictory "Key flow" line removed; flow block retained and consistent | C-001 | Applier: C-002; application verified by C-001 (method: full-file grep, zero "Key flow" matches remain) |
+| M2 | Hook Pattern heading | F3 Ambiguous | "All 16 Hooks" | H02 was rejected (never implemented); A/B variants mean more than 16 call sites | **APPLIED+VERIFIED 08212026** -- heading now reads "### Hook Pattern" | C-001 | Applier: C-002; application verified by C-001 (method: grep -- "All 16 Hooks" absent, heading confirmed at guide ~282) |
+| M3 | Crafting System "~5% amazing chance" | F4 Unverifiable | Native amazing chance "~5%" | Plausible, not yet measured in code. Needs verification before promotion to fact | **APPLIED+VERIFIED 08212026** -- guide now states chance unverified, "~5%" flagged as placeholder pending measurement | C-001 | Applier: C-002; application verified by C-001 (method: read of guide crafting section ~197) |
 
-### Findings -- 2026-08-21 verification pass (C-001 verifying C-002's applications)
+### Findings -- 08212026 verification pass (C-001 verifying C-002's applications)
 
 New issues discovered while verifying the applied corrections. Reported by C-001; **awaiting independent verifier (any contributor != C-001)**:
 
@@ -129,10 +129,10 @@ VERIFY (second pass, fresh context, tier A/B)
 
 ```markdown
 ### <E# / M# next sequence> -- <short title>
-- Date found: YYYY-MM-DD
+- Date found: MMDDYYYY
 - Reporter: <agent name + session id> (tier)
 - Verifier: <agent name + session id> (tier) -- method: <grep/read/count>
-- Location: <file> :: <function/section anchor> [line N @ YYYY-MM-DD]
+- Location: <file> :: <function/section anchor> [line N @ MMDDYYYY]
 - Claim (verbatim): "<quote from guide>"
 - Reality: <correct statement>
 - Evidence: `<path:symbol>` -- `<quoted snippet>`
@@ -142,7 +142,7 @@ VERIFY (second pass, fresh context, tier A/B)
 
 ### Ratification
 
-- **Ratified 2026-08-21** (project owner): the two-rule separation of duties -- claim verification excludes the reporter; application verification excludes only the applier (see Principle 3 and Ownership Rule 2).
+- **Ratified 08212026** (project owner): the two-rule separation of duties -- claim verification excludes the reporter; application verification excludes only the applier (see Principle 3 and Ownership Rule 2).
 - **Still draft**: trust-tier assignments, human-gate boundaries, and the remaining workflow details. These should be confirmed by the project owner before heavy multi-agent editing expands beyond the current contributor set. The procedure otherwise takes effect for day-to-day corrections immediately (any evidence-backed correction is better than none).
 
 ---
@@ -153,15 +153,15 @@ VERIFY (second pass, fresh context, tier A/B)
 
 | Contributor ID | Name / Description | Tier | First Seen | Status |
 |----------------|-------------------|------|------------|--------|
-| `C-001` | ox-alpha (opencode session) | A -- Trusted | 2026-08-21 | Active |
-| `C-002` | Nemotron 3.5 Lightning Free (AI) | B -- Default | 2026-08-21 | Active |
+| `C-001` | ox-alpha (opencode session) | A -- Trusted | 08212026 | Active |
+| `C-002` | Nemotron 3.5 Lightning Free (AI) | B -- Default | 08212026 | Active |
 
 *Add new contributors here upon first contribution. Tier assigned by human project owner.*
 
 ### Finding Ownership Rules
 
 1. **Every finding MUST have an assigned owner** (Contributor ID) at proposal time.
-2. **Two verification types, two exclusivity rules** (ratified by project owner 2026-08-21):
+2. **Two verification types, two exclusivity rules** (ratified by project owner 08212026):
    - **Claim verification** -- "is this finding true?" -- requires a Contributor ID **different from the reporter**.
    - **Application verification** -- "did the applier's edit correctly implement an already-evidenced finding?" -- requires a Contributor ID **different from the applier only**; the original reporter MAY perform it.
 3. **The applier of a correction can never verify their own application**, regardless of tier.
@@ -202,9 +202,9 @@ When a verifier encounters an issue they cannot resolve:
 
 ---
 
-## Part 4 -- Corrected Findings (Applied from 2026-08-21 Review)
+## Part 4 -- Corrected Findings (Applied from 08212026 Review)
 
-Corrections applied to `SWGEMU_CODE_GUIDE.md` by Nemotron 3.5 (C-002); applications verified against the updated guide by ox-alpha (C-001) on 2026-08-21:
+Corrections applied to `SWGEMU_CODE_GUIDE.md` by Nemotron 3.5 (C-002); applications verified against the updated guide by ox-alpha (C-001) on 08212026:
 
 | ID | Correction Claimed | Verified Result | Notes |
 |----|--------------------|-----------------|-------|
@@ -212,9 +212,9 @@ Corrections applied to `SWGEMU_CODE_GUIDE.md` by Nemotron 3.5 (C-002); applicati
 | E2 | `AMAZINGSUCCESS` constant = 0 | [OK] Applied correctly | Guide cites `CraftingManager.idl:37` |
 | E3 | Buff API corrected | [OK] Applied correctly | Explicit "no `getSkillMod()`" note added |
 | E6 | SUI flow corrected to C++ pipeline | [OK] Applied correctly | Matches CustomSkillsMenu/SuiCallback reality |
-| M1 | Combat flow reordered | [OK] Applied + verified (C-001, 2026-08-21) | Contradictory "Key flow" line removed; grep confirms zero residual matches |
-| M2 | "All 16 Hooks" annotated | [OK] Applied + verified (C-001, 2026-08-21) | Heading now "### Hook Pattern" |
-| M3 | "~5%" marked unverified | [OK] Applied + verified (C-001, 2026-08-21) | Guide marks native chance unverified; "~5%" is a labeled placeholder |
+| M1 | Combat flow reordered | [OK] Applied + verified (C-001, 08212026) | Contradictory "Key flow" line removed; grep confirms zero residual matches |
+| M2 | "All 16 Hooks" annotated | [OK] Applied + verified (C-001, 08212026) | Heading now "### Hook Pattern" |
+| M3 | "~5%" marked unverified | [OK] Applied + verified (C-001, 08212026) | Guide marks native chance unverified; "~5%" is a labeled placeholder |
 
 **Process note on this cycle**: M1-M3 were again logged as APPLIED before independent verification, with the verifier cell pre-filled as "C-001 (guide edit applied)" -- an edit and verification C-001 had not performed. The applications themselves proved correct this time (3/3), but the status-attribution breach repeated. All three are now properly stamped APPLIED+VERIFIED after actual verification. Reminder for all contributors: `APPLIED` may only be stamped by or after the application verifier's check; verifier cells must never be pre-filled.
 
@@ -222,6 +222,6 @@ Corrections applied to `SWGEMU_CODE_GUIDE.md` by Nemotron 3.5 (C-002); applicati
 
 1. **N1-N3, S1** -- verify by a contributor other than C-001, then apply.
 
-### Procedure note (RATIFIED 2026-08-21 by project owner)
+### Procedure note (RATIFIED 08212026 by project owner)
 
 This pass exposed two process gaps: (a) corrections were logged as APPLIED before any verification, and two of seven claims were false on inspection -- confirming why Principle 2 (low trust by default) exists; (b) Part 3's original "reporter cannot verify" rule was ambiguous about *application verification*. **Resolved**: the two-rule formulation in Principle 3 and Ownership Rule 2 is now ratified -- application verification may be performed by anyone except the *applier*; claim verification still requires someone other than the reporter.

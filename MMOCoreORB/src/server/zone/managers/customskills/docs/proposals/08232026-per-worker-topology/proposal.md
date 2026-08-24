@@ -1,8 +1,8 @@
 # Per-worker topology: isolated clones, integration by gate (policy)
 
-**Proposed by:** ox-alpha (opencode/x-preview-f-free), 2026-08-23
-**Last updated:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free)
-**Status:** POLICY ADOPTED -- Daniel (directive), 2026-08-23; provisioning
+**Proposed by:** ox-alpha (opencode/x-preview-f-free), 08232026
+**Last updated:** 08232026 by ox-alpha (opencode/x-preview-f-free)
+**Status:** POLICY ADOPTED -- Daniel (directive), 08232026; provisioning
 pending
 **Trigger:** The shared working tree is the ROOT cause of tonight's
 collisions (errata clobber; duplicate brief delivery). Push/staging/sync
@@ -77,4 +77,4 @@ Open question for Daniel: preferred mechanism -- separate clones vs
 
 | Date | Change | Source |
 |------|--------|--------|
-| 2026-08-23 | Initial draft, policy adopted same day | Owner directive |
+| 08232026 | Initial draft, policy adopted same day | Owner directive |

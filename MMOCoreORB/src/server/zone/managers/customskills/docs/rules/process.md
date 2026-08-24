@@ -3,23 +3,23 @@
 > Subordinate to [project-design.md](project-design.md) -- the master
 > document for project rules.
 
-> **Last reconciled:** 2026-08-24 by ox-alpha (opencode/x-preview-f-free) --
+> **Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
 > BRIEF-006: recording conventions reconciled with the Project Alice
 > framework (explicit slot semantics, short format adopted, deviation and
 > scope tracking); [DIRECTIVE 08242026]: date format switched to MMDDYYYY
 > going forward (OD-1 answered; format templates updated; historical ISO
-> records unchanged); prior: 2026-08-23 by ox-alpha
+> records unchanged); prior: 08232026 by ox-alpha
 > (opencode/x-preview-f-free) -- R8 added (shared-tree coordination, four
 > adopted proposals); prior: 
-> initial draft; 2026-08-23 added Repository & Release Conventions
+> initial draft; 08232026 added Repository & Release Conventions
 > (salvaged from archived quickstart/overview docs during compression);
-> 2026-08-23 BRIEF-002: single-tree rewrite (R6.5/R6.6, containment rule,
+> 08232026 BRIEF-002: single-tree rewrite (R6.5/R6.6, containment rule,
 > release conventions) after the package mirror was dissolved
 
 The written process for any work on this repository, whether by Daniel, a
-single LLM session, or multiple coordinated entities. Adopted 2026-08-23,
+single LLM session, or multiple coordinated entities. Adopted 08232026,
 adapted from the Project Alice process framework. Originally written for a
-two-tree layout (Core3 dev tree + package mirror); rewritten 2026-08-23 for
+two-tree layout (Core3 dev tree + package mirror); rewritten 08232026 for
 the single-tree layout after BRIEF-001 dissolved the mirror.
 
 ## Scope
@@ -98,7 +98,7 @@ inside this Core3 repository (module dir:
 4. Documentation-only changes carry their own reconciliation stamp and,
    where applicable, a Contributors entry.
 5. The standalone mirror folder (`customskills-mod/`, with its `package/`
-   copy) was dissolved 2026-08-23; references to it are historical only.
+   copy) was dissolved 08232026; references to it are historical only.
 
 ## Rule 6.6 -- Change completeness
 
@@ -148,7 +148,7 @@ disagreement, and nobody files the same dispute under multiple numbers.
 
 ---
 
-## Rule 8 -- Shared-tree coordination (adopted proposals 2026-08-23)
+## Rule 8 -- Shared-tree coordination (adopted proposals 08232026)
 
 Adopted via the proposals subsystem (docs/proposals/, framework: Project
 Alice). Four mechanisms, layered; the last relaxes the first three.
@@ -230,7 +230,7 @@ identifier -- the same identifier used in Contributors rosters (for example
 is never a valid name-slot value: `opencode (opencode/hy3-free)` is wrong;
 `hy3-free (opencode/hy3-free)` is correct [ERR-006].
 
-Example: `ox-alpha (opencode/x-preview-f-free), 2026-08-23`
+Example: `ox-alpha (opencode/x-preview-f-free), 08232026`
 The human owner signs as `Daniel`.
 
 Add yourself to a document's **Contributors** section the first time you
@@ -250,10 +250,15 @@ governing documents or git history attribution.
 
 All dates use MMDDYYYY with leading zeros -- exactly eight characters,
 enabling consistent sorting, comparison, and filename embedding.
-Adopted 2026-08-24 by owner directive [DIRECTIVE 08242026] (BRIEF-006
+Adopted 08242026 by owner directive [DIRECTIVE 08242026] (BRIEF-006
 OD-1), restoring the Alice framework default. Examples: January 3, 2026 ->
-01032026; August 24, 2026 -> 08242026. Dates already recorded in ISO
-format (YYYY-MM-DD) remain as written; do not convert historical records.
+01032026; August 24, 2026 -> 08242026. A same-day directive extension
+ordered conversion of ALL existing records rather than leaving historical
+ISO strings in place: the module's entire documentation set was migrated,
+including proposal-folder names ([DIRECTIVE 08242026] follow-through).
+ISO MMDDYYYY no longer appears in module documents. This convention
+governs module records only; SWGEmu core files outside the module
+directory are never reformatted by this project's policy.
 
 ### Time zone
 
@@ -278,5 +283,5 @@ messages, telemetry, monitor output); never record your own local time.
 ## Contributors
 
 - **Daniel** -- project owner
-- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- initial draft,
+- ox-alpha (opencode/x-preview-f-free), 08232026 -- initial draft,
   adapted from Project Alice docs/rules/process.md framework

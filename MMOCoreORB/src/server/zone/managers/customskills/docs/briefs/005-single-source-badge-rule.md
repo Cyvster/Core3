@@ -1,8 +1,8 @@
 # BRIEF-005 -- Document single-source-of-truth rule for badge-backed modifiers
 
 - Status: DELIVERED
-- Created: 2026-08-23 by hy3-free (opencode/hy3-free)
-- Prerequisite: [ERR-005](../rules/errata.md) (resolved 2026-08-23; owner
+- Created: 08232026 by hy3-free (opencode/hy3-free)
+- Prerequisite: [ERR-005](../rules/errata.md) (resolved 08232026; owner
   directed fix direction (a))
 
 ## Problem
@@ -53,10 +53,10 @@ recur.
 
 ---
 
-**Last reconciled:** 2026-08-23 by hy3-free (opencode/hy3-free) -- created
+**Last reconciled:** 08232026 by hy3-free (opencode/hy3-free) -- created
 and delivered same session as the ERR-005 fix.
 
 ## Contributors
 
 - **Daniel** -- project owner; directed ERR-005 fix direction (a)
-- hy3-free (opencode/hy3-free), 2026-08-23 -- created and delivered
+- hy3-free (opencode/hy3-free), 08232026 -- created and delivered

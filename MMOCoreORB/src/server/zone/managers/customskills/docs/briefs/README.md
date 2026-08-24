@@ -56,7 +56,7 @@ reading only what the brief lists -- no conversation history required.
 
 ## Notes
 
-- Briefs 001-003 were executed in sequence on 2026-08-23 (001 physically
+- Briefs 001-003 were executed in sequence on 08232026 (001 physically
   relocated the module into this repo; 002 repaired references/governance;
   003 reconciled hooks/patch/count). Each lists its prerequisite.
 - Brief 004 was opened from 003 delivery findings: config.lua drifted far
@@ -67,25 +67,25 @@ reading only what the brief lists -- no conversation history required.
   queue lives at
   `Core3/MMOCoreORB/src/server/zone/managers/customskills/docs/briefs/`.
 - The original 001 ("sync package with core3") was superseded by owner
-  directive 2026-08-23 when the dual-tree model was abolished; its remaining
+  directive 08232026 when the dual-tree model was abolished; its remaining
   content-accuracy work was carried into 003.
 
 ---
 
-**Last reconciled:** 2026-08-24 by ox-alpha (opencode/x-preview-f-free) --
+**Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
 BRIEF-006 DELIVERED (recording conventions reconciled with Project Alice;
 slot semantics + short format codified in process.md; OD-1 answered same
 day via [DIRECTIVE 08242026]: dates switch to MMDDYYYY going forward).
-Prior: 2026-08-23 by hy3-free (opencode/hy3-free) --
+Prior: 08232026 by hy3-free (opencode/hy3-free) --
 BRIEF-004 DELIVERED (MODIFIER_REFERENCE refreshed against config.lua;
 rarityNaming + badgeOverrides documented in INSTALLATION; ARCHITECTURE SUI
-menu categories corrected). Prior: hy3-free (opencode/hy3-free), 2026-08-23 --
+menu categories corrected). Prior: hy3-free (opencode/hy3-free), 08232026 --
 BRIEF-005 added and DELIVERED (single-source rule for badge-backed modifiers,
-spawned from ERR-005); ox-alpha (opencode/x-preview-f-free), 2026-08-23 --
+spawned from ERR-005); ox-alpha (opencode/x-preview-f-free), 08232026 --
 BRIEF-002 index rewrite; BRIEF-003 statuses 001-003 DELIVERED, added brief 004.
 
 ## Contributors
 
 - **Daniel** -- project owner
-- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- initial queue
-- hy3-free (opencode/hy3-free), 2026-08-23 -- BRIEF-005
+- ox-alpha (opencode/x-preview-f-free), 08232026 -- initial queue
+- hy3-free (opencode/hy3-free), 08232026 -- BRIEF-005

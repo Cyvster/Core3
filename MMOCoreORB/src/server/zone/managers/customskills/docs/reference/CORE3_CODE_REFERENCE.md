@@ -18,7 +18,7 @@ historical correction log for its predecessor lives at
 ## Contributors
 
 - **Nemotron 3.5 Lightning Free (AI)** -- initial creation (as SWGEMU_CODE_GUIDE.md)
-- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- split into code
+- ox-alpha (opencode/x-preview-f-free), 08232026 -- split into code
   reference + user guide pair; errata routing updated
 
 ---

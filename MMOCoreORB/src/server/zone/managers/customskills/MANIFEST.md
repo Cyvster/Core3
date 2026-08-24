@@ -6,7 +6,7 @@ file or integration point is added, removed, or renamed ([PROC R6.6] in
 
 > Subordinate to [docs/rules/project-design.md](docs/rules/project-design.md).
 
-**Layout (2026-08-23, BRIEF-001):** the module lives inside the Core3 repo.
+**Layout (08232026, BRIEF-001):** the module lives inside the Core3 repo.
 This manifest sits at the module dir root; paths below are relative to a
 Core3 checkout root. The former standalone mirror (`customskills-mod/`,
 `package/`) was dissolved; its successor mapping table at the bottom remains
@@ -83,7 +83,7 @@ Exact patch snippets and removal instructions are recorded in
 
 ## Project records
 
-Historical documents superseded during the 2026-08-23 documentation
+Historical documents superseded during the 08232026 documentation
 restructuring (and the same-day compression pass) are preserved under
 `docs/archive/` and are not current authority. Current successors:
 
@@ -104,8 +104,8 @@ Full mapping: [docs/README.md](docs/README.md).
 
 ---
 
-**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- BRIEF-002: header + paths rewritten for single-tree layout; --
+**Last reconciled:** 08232026 by ox-alpha (opencode/x-preview-f-free) -- BRIEF-002: header + paths rewritten for single-tree layout; --
 links updated to post-restructuring locations; known package divergence
-recorded above pending BRIEF-001; 2026-08-23 compression pass -- successor
+recorded above pending BRIEF-001; 08232026 compression pass -- successor
 table updated for consolidated reference set; install pointer redirected to
 docs/installation/INSTALLATION.md.

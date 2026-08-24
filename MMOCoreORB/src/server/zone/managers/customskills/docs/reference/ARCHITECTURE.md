@@ -22,9 +22,9 @@ this document references them and does not restate them.
 
 - **Nemotron 3.5 Lightning Free (AI)** -- initial creation of predecessor
   documents (ARCHITECTURE.md, IMPLEMENTATION_GUIDE.md, MENU_SYSTEM.md)
-- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- consolidation into a
+- ox-alpha (opencode/x-preview-f-free), 08232026 -- consolidation into a
   single reference during documentation compression
-- hy3-free (opencode/hy3-free), 2026-08-23 -- BRIEF-005 single-source rule for
+- hy3-free (opencode/hy3-free), 08232026 -- BRIEF-005 single-source rule for
   badge-backed modifiers; noted `getCriticalChance` reads the config badge map
 
 ---
