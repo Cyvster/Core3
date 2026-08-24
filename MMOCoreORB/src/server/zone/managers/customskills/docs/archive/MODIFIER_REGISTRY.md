@@ -85,7 +85,7 @@ When adding new server config options, follow these conventions:
 ### Bottom pane (listbox items)
 - Category items: `Category Name (N)` where N is enabled option count
 - Option items at category level: `Option Name ENABLED` or `Option Name DISABLED`
-  (all caps, color coded green/red). No count — these are not categories.
+  (all caps, color coded green/red). No count -- these are not categories.
 - Option detail items: current values with color swatches where applicable
 
 ### Config loading

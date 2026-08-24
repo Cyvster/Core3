@@ -25,10 +25,10 @@ Factual corrections go through [../rules/errata.md](../rules/errata.md).
 
 ```
 Core3/
-├── MMOCoreORB/          # Server sources, scripts, sql schemas, CMake
-├── docker/              # Dockerfile + build.sh/run.sh (containerized dev)
-├── linux/bootstrap.sh   # Native Debian dependency bootstrap
-└── wsl2/                # WSL2 setup notes
+|---- MMOCoreORB/          # Server sources, scripts, sql schemas, CMake
+|---- docker/              # Dockerfile + build.sh/run.sh (containerized dev)
+|---- linux/bootstrap.sh   # Native Debian dependency bootstrap
+`---- wsl2/                # WSL2 setup notes
 ```
 
 ---

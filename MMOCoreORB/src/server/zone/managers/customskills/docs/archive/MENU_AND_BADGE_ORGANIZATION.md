@@ -4,8 +4,8 @@
 
 The project needs two related but distinct hierarchies:
 
-1. **Modifier hierarchy** — organizes the totals a character wants to inspect.
-2. **Badge hierarchy** — organizes the 140 badge definitions that may
+1. **Modifier hierarchy** -- organizes the totals a character wants to inspect.
+2. **Badge hierarchy** -- organizes the 140 badge definitions that may
    contribute to those totals.
 
 The main `/customskills` interface starts with the character's accumulated
@@ -105,7 +105,7 @@ Badges
 Core3's accumulation records are real, automatically awarded badges. They are
 presented in two explicit menu categories:
 
-### Milestone Badges (12) — +12.5% Crit Multiplier, +1% Crit Chance each
+### Milestone Badges (12) -- +12.5% Crit Multiplier, +1% Crit Chance each
 
 Accumulation:
 
@@ -139,7 +139,7 @@ The Exploration page lists planets. Selecting a planet lists its associated
 badges. Risk subtypes (`easy`, `dangerous`, and `jedi`) remain badge metadata
 and can be shown in the badge detail text, but are not navigation levels.
 
-#### Tatooine (3 easy) — +100% Practice XP, +25% Buff Duration, +25% Gathering Quantity each
+#### Tatooine (3 easy) -- +100% Practice XP, +25% Buff Duration, +25% Gathering Quantity each
 
 Easy:
 
@@ -147,21 +147,21 @@ Easy:
 - `exp_tat_lars_homestead`
 - `exp_tat_bens_hut`
 
-#### Tatooine (4 dangerous) — +15 SEA Cap each
+#### Tatooine (4 dangerous) -- +15 SEA Cap each
 
 - `exp_tat_tusken_pool`
 - `exp_tat_krayt_skeleton`
 - `exp_tat_sarlacc_pit`
 - `exp_tat_krayt_graveyard`
 
-#### Naboo (4) — +25% Movement Speed each (100% max)
+#### Naboo (4) -- +25% Movement Speed each (100% max)
 
 - `exp_nab_gungan_sacred_place`
 - `bdg_exp_nab_theed_falls_bottom`
 - `bdg_exp_nab_deeja_falls_top`
 - `bdg_exp_nab_amidalas_sandy_beach`
 
-#### Corellia (5) — +100% Experience Bonus each (500% max)
+#### Corellia (5) -- +100% Experience Bonus each (500% max)
 
 - `exp_cor_agrilat_swamp`
 - `bdg_exp_cor_rebel_hideout`
@@ -171,11 +171,11 @@ Easy:
 
 #### Yavin IV (3)
 
-- `exp_yav_temple_exar_kun` — +5 Defense Cap, +5% Amazing Success, +10% Amazing Results
-- `exp_yav_temple_woolamander` — +100% Practice XP, +25% Gathering Quantity, +25% Buff Duration
-- `exp_yav_temple_blueleaf` — +100% Practice XP, +25% Gathering Quantity, +25% Buff Duration
+- `exp_yav_temple_exar_kun` -- +5 Defense Cap, +5% Amazing Success, +10% Amazing Results
+- `exp_yav_temple_woolamander` -- +100% Practice XP, +25% Gathering Quantity, +25% Buff Duration
+- `exp_yav_temple_blueleaf` -- +100% Practice XP, +25% Gathering Quantity, +25% Buff Duration
 
-#### Lok (3) — +5 Defense Cap, +5% Amazing Success, +10% Amazing Results each
+#### Lok (3) -- +5 Defense Cap, +5% Amazing Success, +10% Amazing Results each
 
 - `exp_lok_volcano`
 - `bdg_exp_lok_imp_outpost`
@@ -183,7 +183,7 @@ Easy:
 
 #### Dathomir (7)
 
-#### Dathomir (6 easy) — +5 Defense Cap, +5% Amazing Success, +10% Amazing Results each
+#### Dathomir (6 easy) -- +5 Defense Cap, +5% Amazing Success, +10% Amazing Results each
 
 Easy:
 
@@ -194,32 +194,32 @@ Easy:
 - `bdg_exp_dat_crashed_ship`
 - `bdg_exp_dat_imp_prison`
 
-Dangerous (1) — +15 SEA Cap:
+Dangerous (1) -- +15 SEA Cap:
 
 - `exp_dat_sarlacc`
 
-#### Dantooine (4) — +12.5% Weapon Degradation Reduction each
+#### Dantooine (4) -- +12.5% Weapon Degradation Reduction each
 
 - `exp_dan_jedi_temple`
 - `exp_dan_rebel_base`
 - `bdg_exp_dan_dantari_village1`
 - `bdg_exp_dan_dantari_village2`
 
-#### Endor (4) — +12.5% Weapon Degradation Reduction each
+#### Endor (4) -- +12.5% Weapon Degradation Reduction each
 
 - `bdg_exp_end_ewok_tree_village`
 - `bdg_exp_end_ewok_lake_village`
 - `bdg_exp_end_dulok_village`
 - `bdg_exp_end_imp_outpost`
 
-#### Talus (4) — +12.5% Armor Degradation Reduction each
+#### Talus (4) -- +12.5% Armor Degradation Reduction each
 
 - `bdg_exp_tal_creature_village`
 - `bdg_exp_tal_imp_base`
 - `bdg_exp_tal_imp_vs_reb_battle`
 - `bdg_exp_tal_aqualish_cave`
 
-#### Rori (4) — +12.5% Armor Degradation Reduction each
+#### Rori (4) -- +12.5% Armor Degradation Reduction each
 
 - `bdg_exp_ror_kobala_spice_mine`
 - `bdg_exp_ror_rebel_outpost`
@@ -228,11 +228,11 @@ Dangerous (1) — +15 SEA Cap:
 
 ### Profession
 
-#### Combat (12) — +4% Crit Chance, +2% Triple, +2% Quad each (bounty hunter gets +3% Triple, +3% Quad)
+#### Combat (12) -- +4% Crit Chance, +2% Triple, +2% Quad each (bounty hunter gets +3% Triple, +3% Quad)
 
 - `combat_1hsword_master`
 - `combat_2hsword_master`
-- `combat_bountyhunter_master` — +4% Crit, +3% Triple, +3% Quad
+- `combat_bountyhunter_master` -- +4% Crit, +3% Triple, +3% Quad
 - `combat_brawler_master`
 - `combat_carbine_master`
 - `combat_commando_master`
@@ -243,7 +243,7 @@ Dangerous (1) — +15 SEA Cap:
 - `combat_smuggler_master`
 - `combat_unarmed_master`
 
-#### Crafting (9) — +10% Crafting Speed each
+#### Crafting (9) -- +10% Crafting Speed each
 
 - `crafting_architect_master`
 - `crafting_armorsmith_master`
@@ -255,7 +255,7 @@ Dangerous (1) — +15 SEA Cap:
 - `crafting_tailor_master`
 - `crafting_weaponsmith_master`
 
-#### Outdoors (5) — +115% Gathering Quantity each
+#### Outdoors (5) -- +115% Gathering Quantity each
 
 - `outdoors_bio_engineer_master`
 - `outdoors_creaturehandler_master`
@@ -263,13 +263,13 @@ Dangerous (1) — +15 SEA Cap:
 - `outdoors_scout_master`
 - `outdoors_squadleader_master`
 
-#### Science (3) — +100% Gathering Quantity, +25% Buff Duration each; Doctor also gets +10% Crafting Speed
+#### Science (3) -- +100% Gathering Quantity, +25% Buff Duration each; Doctor also gets +10% Crafting Speed
 
 - `science_combatmedic_master`
-- `science_doctor_master` — +10% Crafting Speed
+- `science_doctor_master` -- +10% Crafting Speed
 - `science_medic_master`
 
-#### Social (5) — +20% Buff Duration, +100% Practice XP each
+#### Social (5) -- +20% Buff Duration, +100% Practice XP each
 
 - `social_dancer_master`
 - `social_entertainer_master`
@@ -277,7 +277,7 @@ Dangerous (1) — +15 SEA Cap:
 - `social_musician_master`
 - `social_politician_master`
 
-#### Pilot (9) — excluded from bonuses until JTL is available
+#### Pilot (9) -- excluded from bonuses until JTL is available
 
 - `pilot_imperial_navy_corellia`
 - `pilot_imperial_navy_naboo`
@@ -291,7 +291,7 @@ Dangerous (1) — +15 SEA Cap:
 
 ### Quest
 
-#### Hero of Tatooine (5) — +10% Triple Attack, +5% Quad Attack, +10 Defense Cap each
+#### Hero of Tatooine (5) -- +10% Triple Attack, +5% Quad Attack, +10 Defense Cap each
 
 - `poi_rabidbeast`
 - `poi_prisonbreak`
@@ -299,19 +299,19 @@ Dangerous (1) — +15 SEA Cap:
 - `poi_factoryliberation`
 - `poi_heromark`
 
-#### Warren (2) — +20% Double Attack Chance each
+#### Warren (2) -- +20% Double Attack Chance each
 
 - `warren_compassion`
 - `warren_hero`
 
-#### Theme Parks (4) — +20% Double Attack Chance each
+#### Theme Parks (4) -- +20% Double Attack Chance each
 
 - `bdg_thm_park_jabba_badge`
 - `bdg_thm_park_imperial_badge`
 - `bdg_thm_park_rebel_badge`
 - `bdg_thm_park_nym_badge`
 
-#### Corellian Corvette (9) — +1 Armor Penetration each
+#### Corellian Corvette (9) -- +1 Armor Penetration each
 
 - `bdg_corvette_imp_destroy`
 - `bdg_corvette_imp_rescue`
@@ -333,7 +333,7 @@ Dangerous (1) — +15 SEA Cap:
 - `event_coa3_rebel`
 - `event_project_dead_eye_1`
 
-#### Accolades (7) — admin event badges, excluded from bonuses
+#### Accolades (7) -- admin event badges, excluded from bonuses
 
 - `acc_brave_soldier`
 - `acc_fascinating_background`
@@ -347,7 +347,7 @@ Dangerous (1) — +15 SEA Cap:
 
 - `bdg_library_trivia`
 
-#### Racing (6) — 3 visible, 3 admin event (excluded from bonuses)
+#### Racing (6) -- 3 visible, 3 admin event (excluded from bonuses)
 
 Visible:
 
@@ -361,7 +361,7 @@ Admin event (excluded):
 - `bdg_racing_narmle_memorial`
 - `bdg_racing_nashal_river`
 
-#### Death Star (1) — admin event, excluded from bonuses
+#### Death Star (1) -- admin event, excluded from bonuses
 
 - `destroy_deathstar`
 

@@ -1,4 +1,4 @@
-# Custom Skills — Modifier Reference
+# Custom Skills -- Modifier Reference
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
@@ -11,10 +11,10 @@ Complete registry of all 18 modifiers with configuration, units, badge assignmen
 
 ## Contributors
 
-- **Nemotron 3.5 Lightning Free (AI)** — Initial creation
-- ox-alpha (opencode/x-preview-f-free), 2026-08-23 — BRIEF-003: count
+- **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
+- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- BRIEF-003: count
   reconciliation, Critical Multiplier standalone entry, staleness banner
-- hy3-free (opencode/hy3-free), 2026-08-23 — BRIEF-004: refresh all
+- hy3-free (opencode/hy3-free), 2026-08-23 -- BRIEF-004: refresh all
   per-modifier tables to config.lua; badgeOverrides/rarityNaming conventions;
   regenerate Maximum Theoretical Totals
 
@@ -106,7 +106,7 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Combat spam label** | `(DOUBLE)` |
 | **Badges (config.lua)** | Warren (2), Theme Parks (4) = 6 total |
 
-**Behavior**: Repeats finalized damage 2× total. Checked last (after Quad, Triple). Only one tier triggers per hit.
+**Behavior**: Repeats finalized damage 2x total. Checked last (after Quad, Triple). Only one tier triggers per hit.
 
 ---
 
@@ -119,9 +119,9 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Badge bonus (config.lua)** | 200 bp (2.00%); BH mastery overridden to 300 bp |
 | **Cap (config.lua)** | 7500 (75%) |
 | **Combat spam label** | `(TRIPLE)` |
-| **Badges (config.lua)** | 12 combat mastery (11 × 200 bp, BH × 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) × 200 bp = 17 total |
+| **Badges (config.lua)** | 12 combat mastery (11 x 200 bp, BH x 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 200 bp = 17 total |
 
-**Behavior**: Repeats finalized damage 3× total. Checked after Quad, before Double.
+**Behavior**: Repeats finalized damage 3x total. Checked after Quad, before Double.
 
 ---
 
@@ -134,9 +134,9 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Badge bonus (config.lua)** | 200 bp (2.00%); BH mastery overridden to 300 bp |
 | **Cap (config.lua)** | 5000 (50%) |
 | **Combat spam label** | `(QUAD)` |
-| **Badges (config.lua)** | 12 combat mastery (11 × 200 bp, BH × 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) × 200 bp = 17 total |
+| **Badges (config.lua)** | 12 combat mastery (11 x 200 bp, BH x 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 200 bp = 17 total |
 
-**Behavior**: Repeats finalized damage 4× total. Checked first.
+**Behavior**: Repeats finalized damage 4x total. Checked first.
 
 ---
 
@@ -150,7 +150,7 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Cap (config.lua)** | 3 levels |
 | **Badges (config.lua)** | Corellian Corvette (9) = 9 total |
 
-**Behavior**: Reduces defender effective armor by 1 level per point: Heavy → Medium → Light → None. Floor: None. Does not affect weapon Armor Piercing. Applied before native armor-piercing comparison.
+**Behavior**: Reduces defender effective armor by 1 level per point: Heavy -> Medium -> Light -> None. Floor: None. Does not affect weapon Armor Piercing. Applied before native armor-piercing comparison.
 
 ---
 
@@ -164,7 +164,7 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Enabled (config.lua)** | `true` |
 | **Badge bonus (config.lua)** | 5 points |
 | **Cap (config.lua)** | 0 (uncapped) |
-| **Badges (config.lua)** | 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) × 5, Yavin IV Exar Kun (5), Lok (3 × 5), Dathomir easy (6 × 5) = 15 total |
+| **Badges (config.lua)** | 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 5, Yavin IV Exar Kun (5), Lok (3 x 5), Dathomir easy (6 x 5) = 15 total |
 
 **Behavior**: Raises native 125 hard cap on primary/secondary defense calculations. Does not affect SEA/tape above-cap contributions.
 
@@ -196,7 +196,7 @@ current bonus cap 15000 -> 300% maximum crit damage
 
 **Behavior**: Native weapon degradation chance (base 5% + powerup adjustment) reduced multiplicatively:
 ```
-effectiveChance = nativeChance × (10000 - reduction) / 10000
+effectiveChance = nativeChance x (10000 - reduction) / 10000
 ```
 Condition loss amount unchanged on successful roll.
 
@@ -210,7 +210,7 @@ Condition loss amount unchanged on successful roll.
 | **Enabled (config.lua)** | `true` |
 | **Badge bonus (config.lua)** | 15 points |
 | **Cap (config.lua)** | 0 (uncapped) |
-| **Badges (config.lua)** | Tatooine dangerous (4 × 15), Dathomir Sarlacc (15) = 5 total |
+| **Badges (config.lua)** | Tatooine dangerous (4 x 15), Dathomir Sarlacc (15) = 5 total |
 
 **Behavior**: Raises wearable (attachments/tapes) contribution cap above native +25. Does not raise normal defense cap. SEA/tape bonuses retain ability to exceed normal cap.
 
@@ -226,9 +226,9 @@ Condition loss amount unchanged on successful roll.
 | **Enabled (config.lua)** | `true` |
 | **Badge bonus (config.lua)** | 2500 bp (25.00%) |
 | **Cap (config.lua)** | 0 (uncapped) |
-| **Badges (config.lua)** | Naboo (4 × 2500) = 4 total |
+| **Badges (config.lua)** | Naboo (4 x 2500) = 4 total |
 
-**Behavior**: Multiplies final native speed in ALL travel modes (foot, mount, vehicle). Applied once — not added to mount then reapplied. Synchronized client (H13A) and server (H13B).
+**Behavior**: Multiplies final native speed in ALL travel modes (foot, mount, vehicle). Applied once -- not added to mount then reapplied. Synchronized client (H13A) and server (H13B).
 
 ---
 
@@ -240,7 +240,7 @@ Condition loss amount unchanged on successful roll.
 | **Enabled (config.lua)** | `true` |
 | **Badge bonus (config.lua)** | 2500 bp (25.00%); Social mastery overridden to 2000 bp |
 | **Cap (config.lua)** | 0 (uncapped) |
-| **Badges (config.lua)** | Tatooine easy (3 × 2500), Yavin IV Woolamander/Blueleaf (2 × 2500), Science mastery (3 × 2500), Social mastery (5 × 2000) = 13 total |
+| **Badges (config.lua)** | Tatooine easy (3 x 2500), Yavin IV Woolamander/Blueleaf (2 x 2500), Science mastery (3 x 2500), Social mastery (5 x 2000) = 13 total |
 
 **Behavior**: Increases initial duration of eligible buff families only:
 - **Included**: Medical, Performance, Food/Drink, Spice-up, positive Jedi/Force
@@ -258,14 +258,14 @@ Explicit renewals (H12B) apply current bonus to new native duration. DB reload/i
 | **Enabled (config.lua)** | `true` |
 | **Badge bonus (config.lua)** | 10000 bp (100.00%) |
 | **Cap (config.lua)** | 0 (uncapped) |
-| **Badges (config.lua)** | Corellia (5 × 10000) = 5 total |
+| **Badges (config.lua)** | Corellia (5 x 10000) = 5 total |
 
 **Behavior**: Multiplies ALL positive XP awards on normal modifier path:
 ```
-finalXP = base × species × buff × local × global × customMultiplier
+finalXP = base x species x buff x local x global x customMultiplier
 ```
 Does not affect: XP deductions, conversion costs, `applyModifiers == false` awards.
-Composes multiplicatively: 100 XP × 2x server × 5x character = 1000 XP (10x total).
+Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x total).
 
 ---
 
@@ -277,7 +277,7 @@ Composes multiplicatively: 100 XP × 2x server × 5x character = 1000 XP (10x to
 | **Enabled (config.lua)** | `true` |
 | **Badge bonus (config.lua)** | 10000 bp (100.00%) |
 | **Cap (config.lua)** | 0 (uncapped) |
-| **Badges (config.lua)** | Tatooine easy (3 × 10000), Yavin IV Woolamander/Blueleaf (2 × 10000), Social mastery (5 × 10000) = 10 total |
+| **Badges (config.lua)** | Tatooine easy (3 x 10000), Yavin IV Woolamander/Blueleaf (2 x 10000), Social mastery (5 x 10000) = 10 total |
 
 **Behavior**: Applies when `createItem == false` (practice mode). Order:
 1. Base crafting XP
@@ -297,10 +297,10 @@ Composes multiplicatively: 100 XP × 2x server × 5x character = 1000 XP (10x to
 | **Enabled (config.lua)** | `true` |
 | **Badge bonus (config.lua)** | 1000 bp (10.00%) |
 | **Cap (config.lua)** | 0 (uncapped) |
-| **Badges (config.lua)** | Crafting mastery (9 × 1000), Doctor mastery (1000) = 10 total |
+| **Badges (config.lua)** | Crafting mastery (9 x 1000), Doctor mastery (1000) = 10 total |
 
 **Behavior**:
-- **Personal**: `nativeDuration / multiplier`, clamp ≥1s. Uses crafter's current bonus.
+- **Personal**: `nativeDuration / multiplier`, clamp >=1s. Uses crafter's current bonus.
 - **Factory**: Snapshots **activator's** multiplier at run start. Persists across logout/restart. Badge changes mid-run don't affect current run. Stop/restart to recapture.
 
 ---
@@ -313,9 +313,9 @@ Composes multiplicatively: 100 XP × 2x server × 5x character = 1000 XP (10x to
 | **Enabled (config.lua)** | `true` |
 | **Badge bonus (config.lua)** | 500 bp (5.00%) |
 | **Cap (config.lua)** | 10000 (100%) |
-| **Badges (config.lua)** | Yavin IV Exar Kun (500), Lok (3 × 500), Yavin IV Woolamander/Blueleaf (2 × 500) = 6 total |
+| **Badges (config.lua)** | Yavin IV Exar Kun (500), Lok (3 x 500), Yavin IV Woolamander/Blueleaf (2 x 500) = 6 total |
 
-**Behavior**: Adds bp to native Amazing Success probability (assembly & experimentation). Does NOT multiply native chance. Same policy at both roll sites. Clamped to configured cap. Target: max-bonus character reaches ≥50% final chance.
+**Behavior**: Adds bp to native Amazing Success probability (assembly & experimentation). Does NOT multiply native chance. Same policy at both roll sites. Clamped to configured cap. Target: max-bonus character reaches >=50% final chance.
 
 ---
 
@@ -327,11 +327,11 @@ Composes multiplicatively: 100 XP × 2x server × 5x character = 1000 XP (10x to
 | **Enabled (config.lua)** | `true` |
 | **Badge bonus (config.lua)** | 1000 bp (10.00%) |
 | **Cap (config.lua)** | 10000 (100%) |
-| **Badges (config.lua)** | Yavin IV Exar Kun (1000), Lok (3 × 1000), Yavin IV Woolamander/Blueleaf (2 × 1000) = 6 total |
+| **Badges (config.lua)** | Yavin IV Exar Kun (1000), Lok (3 x 1000), Yavin IV Woolamander/Blueleaf (2 x 1000) = 6 total |
 
 **Behavior**: On actual `AMAZINGSUCCESS`, for each affected attribute:
 ```
-enhanced = nativeResult + ((schematicCap - nativeResult) × strength / 10000)
+enhanced = nativeResult + ((schematicCap - nativeResult) x strength / 10000)
 ```
 Raises resource-derived ceiling only enough to retain enhanced value.
 - **Assembly**: All applicable initial attributes
@@ -351,7 +351,7 @@ Raises resource-derived ceiling only enough to retain enhanced value.
 | **Enabled (config.lua)** | `true` |
 | **Badge bonus (base, config.lua)** | 2500 bp (25.00%); Outdoors mastery overridden to 11500 bp, Science mastery to 10000 bp |
 | **Cap (config.lua)** | 0 (uncapped) |
-| **Badges (config.lua)** | Outdoors mastery (5 × 11500), Science mastery (3 × 10000), Tatooine easy (3 × 2500), Yavin IV Woolamander/Blueleaf (2 × 2500) = 13 total |
+| **Badges (config.lua)** | Outdoors mastery (5 x 11500), Science mastery (3 x 10000), Tatooine easy (3 x 2500), Yavin IV Woolamander/Blueleaf (2 x 2500) = 13 total |
 
 **Behavior**: Bonuses add together, then multiply native quantity:
 ```

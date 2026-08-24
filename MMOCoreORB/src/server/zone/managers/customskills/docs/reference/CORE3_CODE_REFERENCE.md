@@ -27,28 +27,28 @@ historical correction log for its predecessor lives at
 
 ```
 Core3/
-├── MMOCoreORB/                    # Main server code
-│   ├── src/
-│   │   ├── server/
-│   │   │   ├── zone/              # Zone server (gameplay logic)
-│   │   │   │   ├── managers/      # System managers (combat, crafting, player, etc.)
-│   │   │   │   ├── objects/       # Game objects (creature, player, installation, etc.)
-│   │   │   │   └── packets/       # Network packets (baselines, deltas, messages)
-│   │   │   ├── db/                # MySQL/Mantis database layers
-│   │   │   └── ...
-│   │   ├── tests/                 # GoogleTest sources (compiled INTO the core3 binary)
-│   │   └── main.cpp               # Entry point + CLI mode flags
-│   ├── bin/
-│   │   ├── conf/config.lua        # Runtime configuration (DB, server toggles)
-│   │   └── scripts/               # Lua: commands, config, screenplays, managers
-│   ├── sql/                       # Schema dumps (swgemu.sql, mantis.sql, datatables.sql)
-│   ├── utils/
-│   │   ├── engine3/               # Core engine (git submodule: swgemu/engine3)
-│   │   └── googletest-release-1.13.0/  # Vendored GoogleTest/GoogleMock
-│   └── CMakeLists.txt             # Build definition (see CORE3_USER_GUIDE)
-├── docker/                        # Container build/run scripts
-├── linux/                         # Native bootstrap script
-└── wsl2/                          # WSL2 setup notes
+|---- MMOCoreORB/                    # Main server code
+|   |---- src/
+|   |   |---- server/
+|   |   |   |---- zone/              # Zone server (gameplay logic)
+|   |   |   |   |---- managers/      # System managers (combat, crafting, player, etc.)
+|   |   |   |   |---- objects/       # Game objects (creature, player, installation, etc.)
+|   |   |   |   `---- packets/       # Network packets (baselines, deltas, messages)
+|   |   |   |---- db/                # MySQL/Mantis database layers
+|   |   |   `---- ...
+|   |   |---- tests/                 # GoogleTest sources (compiled INTO the core3 binary)
+|   |   `---- main.cpp               # Entry point + CLI mode flags
+|   |---- bin/
+|   |   |---- conf/config.lua        # Runtime configuration (DB, server toggles)
+|   |   `---- scripts/               # Lua: commands, config, screenplays, managers
+|   |---- sql/                       # Schema dumps (swgemu.sql, mantis.sql, datatables.sql)
+|   |---- utils/
+|   |   |---- engine3/               # Core engine (git submodule: swgemu/engine3)
+|   |   `---- googletest-release-1.13.0/  # Vendored GoogleTest/GoogleMock
+|   `---- CMakeLists.txt             # Build definition (see CORE3_USER_GUIDE)
+|---- docker/                        # Container build/run scripts
+|---- linux/                         # Native bootstrap script
+`---- wsl2/                          # WSL2 setup notes
 ```
 
 **Note**: the engine is NOT a top-level `engine/` directory; it lives at
@@ -344,14 +344,14 @@ Minimal delegation -> module-owned service does all logic. Hook inventory:
 
 ```
 MMOCoreORB/src/server/zone/managers/customskills/
-├── CustomSkillsConfig.h/.cpp       # Config singleton (loads config.lua)
-├── CustomSkillsModifiers.h/.cpp    # Central modifier authority
-├── CustomSkillsModifierType.h      # Modifier type enum
-├── CustomSkillsCommand.h/.cpp      # /customskills command
-├── CustomSkillsMenu.h/.cpp         # C++ SUI menu
-├── CustomSkillsSuiCallback.h/.cpp  # SUI event handling
-├── combat/  buffs/  crafting/  durability/
-├── gathering/  movement/  progression/  skillmods/
+|---- CustomSkillsConfig.h/.cpp       # Config singleton (loads config.lua)
+|---- CustomSkillsModifiers.h/.cpp    # Central modifier authority
+|---- CustomSkillsModifierType.h      # Modifier type enum
+|---- CustomSkillsCommand.h/.cpp      # /customskills command
+|---- CustomSkillsMenu.h/.cpp         # C++ SUI menu
+|---- CustomSkillsSuiCallback.h/.cpp  # SUI event handling
+|---- combat/  buffs/  crafting/  durability/
+|---- gathering/  movement/  progression/  skillmods/
 ```
 
 ---

@@ -1,6 +1,6 @@
-# Custom Skills — Architecture & Implementation Reference
+# Custom Skills -- Architecture & Implementation Reference
 
-> Subordinate to [../rules/project-design.md](../rules/project-design.md) — the master document for project rules.
+> Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
 ## Purpose
 
@@ -20,11 +20,11 @@ this document references them and does not restate them.
 
 ## Contributors
 
-- **Nemotron 3.5 Lightning Free (AI)** — initial creation of predecessor
+- **Nemotron 3.5 Lightning Free (AI)** -- initial creation of predecessor
   documents (ARCHITECTURE.md, IMPLEMENTATION_GUIDE.md, MENU_SYSTEM.md)
-- ox-alpha (opencode/x-preview-f-free), 2026-08-23 — consolidation into a
+- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- consolidation into a
   single reference during documentation compression
-- hy3-free (opencode/hy3-free), 2026-08-23 — BRIEF-005 single-source rule for
+- hy3-free (opencode/hy3-free), 2026-08-23 -- BRIEF-005 single-source rule for
   badge-backed modifiers; noted `getCriticalChance` reads the config badge map
 
 ---
@@ -33,21 +33,21 @@ this document references them and does not restate them.
 
 ```
 MMOCoreORB/src/server/zone/managers/customskills/
-├── combat/           # CustomSkillsCombat.{h,cpp}
-├── buffs/            # CustomSkillsBuffs.{h,cpp}
-├── crafting/         # CustomSkillsCrafting.{h,cpp}
-├── durability/       # CustomSkillsDurability.{h,cpp}
-├── gathering/        # CustomSkillsGathering.{h,cpp}
-├── movement/         # CustomSkillsMovement.{h,cpp}
-├── progression/      # CustomSkillsProgression.{h,cpp}
-├── skillmods/        # CustomSkillsSkillMods.{h,cpp}
-├── CustomSkillsCommand.{h,cpp}       # /customskills command entry
-├── CustomSkillsConfig.{h,cpp}        # Singleton config loader
-├── CustomSkillsModifiers.{h,cpp}     # Central modifier authority
-├── CustomSkillsModifierType.h        # Modifier type enum
-├── CustomSkillsMenu.{h,cpp}          # C++ SUI menu
-├── CustomSkillsSuiCallback.{h,cpp}   # SUI event handling
-└── MENU_DESIGN.md                    # Menu design notes
+|-- combat/           # CustomSkillsCombat.{h,cpp}
+|-- buffs/            # CustomSkillsBuffs.{h,cpp}
+|-- crafting/         # CustomSkillsCrafting.{h,cpp}
+|-- durability/       # CustomSkillsDurability.{h,cpp}
+|-- gathering/        # CustomSkillsGathering.{h,cpp}
+|-- movement/         # CustomSkillsMovement.{h,cpp}
+|-- progression/      # CustomSkillsProgression.{h,cpp}
+|-- skillmods/        # CustomSkillsSkillMods.{h,cpp}
+|-- CustomSkillsCommand.{h,cpp}       # /customskills command entry
+|-- CustomSkillsConfig.{h,cpp}        # Singleton config loader
+|-- CustomSkillsModifiers.{h,cpp}     # Central modifier authority
+|-- CustomSkillsModifierType.h        # Modifier type enum
+|-- CustomSkillsMenu.{h,cpp}          # C++ SUI menu
+|-- CustomSkillsSuiCallback.{h,cpp}   # SUI event handling
+`-- MENU_DESIGN.md                    # Menu design notes
 ```
 
 The module lives inside the Core3 repository; this directory IS the
@@ -61,39 +61,39 @@ containment rule).
 ## Data Flow
 
 ```
-┌─────────────────┐
-│  Badge Bitmasks │  (on PlayerObject — Core3 native persistence)
-│  (140 bits)     │
-└────────┬────────┘
-         ▼
-┌──────────────────────────────────────────────┐
-│         CustomSkillsModifiers                │  ◄── Central Authority [CS-3]
-│  • getModifierTotal(player, type)            │
-│  • getBadgeModifier(badgeKey, type)          │
-│  • isModifierEnabled(type)                   │
-│  • formatPercent/formatModifierBonus()       │
-└────────┬─────────────────────────────────────┘
-         ▼
-┌──────────────────────────────────────────────┐
-│         CustomSkillsConfig (Singleton)       │
-│  • Loads scripts/customskills/config.lua     │
-│  • Provides: enabled[], caps[], badgeBonuses │
-│  • Cached for combat performance             │
-└──────────────────────────────────────────────┘
-         │
-   ┌─────┴────┬──────────┬──────────┬─────────┐
-   ▼          ▼          ▼          ▼         ▼
+,-----------------,
+|  Badge Bitmasks |  (on PlayerObject -- Core3 native persistence)
+|  (140 bits)     |
+`--------+--------`
+         v
+,----------------------------------------------,
+|         CustomSkillsModifiers                |  <-- Central Authority [CS-3]
+|  * getModifierTotal(player, type)            |
+|  * getBadgeModifier(badgeKey, type)          |
+|  * isModifierEnabled(type)                   |
+|  * formatPercent/formatModifierBonus()       |
+`--------+-------------------------------------`
+         v
+,----------------------------------------------,
+|         CustomSkillsConfig (Singleton)       |
+|  * Loads scripts/customskills/config.lua     |
+|  * Provides: enabled[], caps[], badgeBonuses |
+|  * Cached for combat performance             |
+`----------------------------------------------`
+         |
+   ,-----+----+----------+----------+---------,
+   v          v          v          v         v
  Combat  Durability  Progression Crafting  Buffs   (Runtime Services)
  Movement SkillMods  Gathering                     (query Modifiers)
-   │          │          │          │         │
-   ▼          ▼          ▼          ▼         ▼
- Core3 Hooks ◄──────────────────────────────► Menu (CustomSkillsMenu)
-   │                                            │
-   └──────────────────┬─────────────────────────┘
-                      ▼
-             ┌──────────────────┐
-             │   Same Values    │  ◄── Single Source of Truth [CS-3]
-             └──────────────────┘
+   |          |          |          |         |
+   v          v          v          v         v
+ Core3 Hooks <------------------------------> Menu (CustomSkillsMenu)
+   |                                            |
+   `------------------+-------------------------`
+                      v
+             ,------------------,
+             |   Same Values    |  <-- Single Source of Truth [CS-3]
+             `------------------`
 ```
 
 ---
@@ -115,14 +115,14 @@ enum Type {
 
 ### CustomSkillsConfig (Singleton + Logger)
 
-- **Lifecycle**: constructed once at startup → `setDefaults()` → `load()`
+- **Lifecycle**: constructed once at startup -> `setDefaults()` -> `load()`
 - **Defaults**: all modifiers disabled; Critical Chance enabled (300 bp/badge,
   15000 multiplier)
 - **load()**: parses `scripts/customskills/config.lua` via the `Lua` object
 - **API**: `isModifierEnabled()`, `getModifierCap()`, `getBadgeBonus()`,
   `getBadgeBonuses()`, `getModifierCombatSpamLabel()`
-- **Cache**: gameplay reads config values directly — restart required on
-  config change; missing/invalid values → safe defaults + server-log warning
+- **Cache**: gameplay reads config values directly -- restart required on
+  config change; missing/invalid values -> safe defaults + server-log warning
 
 ```cpp
 // CustomSkillsConfig::load()
@@ -137,7 +137,7 @@ criticalChanceEnabled = critical.getBooleanField("enabled", true);
 criticalChancePerCombatBadge = critical.getIntField("badgeBonus", 300);
 criticalMultiplier = critical.getIntField("multiplier", 15000);
 
-// modifiers table — generic loader per modifier
+// modifiers table -- generic loader per modifier
 loadModifier(modifiers, "doubleAttackChance", DOUBLE_ATTACK_CHANCE, false, 0);
 // ... etc
 ```
@@ -147,7 +147,7 @@ Generic modifier config fields: `enabled`, `badgeBonus`, `cap`, `badges[]`,
 
 ### CustomSkillsModifiers (Static API)
 
-- **Central authority** — all modifier queries route here ([CS-3])
+- **Central authority** -- all modifier queries route here ([CS-3])
 - **Badge aggregation**: iterates config's badge map per modifier, checks
   `PlayerObject::hasBadge()`
 - **Caps**: applies `config->getModifierCap(type)` if > 0 (0 = uncapped),
@@ -167,12 +167,12 @@ Generic modifier config fields: `enabled`, `badgeBonus`, `cap`, `badges[]`,
 
 ---
 
-## Hook Inventory (H01–H16)
+## Hook Inventory (H01-H16)
 
 | ID | Module Call | Modifiers | Core3 Entry Point | Status |
 |----|-------------|-----------|-------------------|--------|
 | **H01** | `CustomSkillsCombat::modifyLandedDamage(context)` | Critical Chance/Multiplier, Double/Triple/Quad Attack | `CombatManager::applyDamage` wrapper | Implemented |
-| **H02** | — | None | — | Rejected (repeat-damage handled by H01) |
+| **H02** | -- | None | -- | Rejected (repeat-damage handled by H01) |
 | **H03** | `CustomSkillsCombat::getEffectiveArmorRating(attacker, nativeRating)` | Armor Penetration | `CombatManager::getArmorReduction` (after armor layer known, before armor-piercing) | Implemented |
 | **H04** | `CustomSkillsCombat::getDefenseCap(defender, nativeCap)` | Defense Cap Increase | Shared cap in `CombatManager` (primary & secondary) | Implemented |
 | **H05** | `CustomSkillsDurability::shouldDegradeArmor(defender, nativeChance)` | Armor Degradation Reduction | Before armor/PSG `inflictDamage` in combat mitigation | Implemented |
@@ -191,7 +191,7 @@ Generic modifier config fields: `enabled`, `badgeBonus`, `cap`, `badges[]`,
 | **H14B** | `CustomSkillsSkillMods::getEffectiveVisibleSkillMod(character, modName, nativeEntry, rawWearable)` | SEA Cap Increase | Character skill-mod delta/baseline prep & badge-cap refresh | Implemented |
 | **H15A** | `CustomSkillsGathering::modifyForageQuantity(player, resource, nativeQuantity)` | Gathering Quantity | `ForageManagerImplementation::forageGiveResource` (after roll) | Implemented |
 | **H15B** | `CustomSkillsGathering::modifyMilkQuantity(player, creature, resource, nativeQuantity)` | Gathering Quantity | `MilkCreatureTask::giveMilkToPlayer` (after density adjustment) | Implemented |
-| **H16** | `CustomSkillsModifiers::applyRarityNaming(object, excMod, legendaryModifier, exceptionalModifier)` | Server Config: Rarity Naming | `LootManagerImplementation::setCustomObjectName` — after per-item modifiers are computed, BEFORE native suffix selection; returns true to skip the vanilla `(Exceptional)`/`(Legendary)` suffix and use color-only naming (`rarityNaming` config: enabled, legendaryColor FF00FF, exceptionalColor 0000FF) | Implemented |
+| **H16** | `CustomSkillsModifiers::applyRarityNaming(object, excMod, legendaryModifier, exceptionalModifier)` | Server Config: Rarity Naming | `LootManagerImplementation::setCustomObjectName` -- after per-item modifiers are computed, BEFORE native suffix selection; returns true to skip the vanilla `(Exceptional)`/`(Legendary)` suffix and use color-only naming (`rarityNaming` config: enabled, legendaryColor FF00FF, exceptionalColor 0000FF) | Implemented |
 
 Hook pattern: minimal generic delegation in the Core3 file; module-owned
 service does all logic ([CS-2]).
@@ -212,7 +212,7 @@ service does all logic ([CS-2]).
 
 ## Runtime Services
 
-Each service is a static class with focused methods — no singleton state;
+Each service is a static class with focused methods -- no singleton state;
 pure functions of inputs.
 
 | Service | Key Methods | Hooks |
@@ -235,10 +235,10 @@ pure functions of inputs.
 ```
 1. Native landed hit resolved
 2. Custom critical chance + multiplier applied
-3. One repeat-damage tier checked (Quad → Triple → Double); one tier max
-4. Final custom damage → native damage pipeline
+3. One repeat-damage tier checked (Quad -> Triple -> Double); one tier max
+4. Final custom damage -> native damage pipeline
 5. Armor Penetration: reduces defender armor level BEFORE native
-   armor-piercing compare (Heavy→Medium→Light→None; floor None;
+   armor-piercing compare (Heavy->Medium->Light->None; floor None;
    does not touch weapon AP)
 6. Defense Cap Increase: raises native 125 cap ONLY; SEA/tape above-cap
    contributions preserved
@@ -247,11 +247,11 @@ pure functions of inputs.
 ### Experience Stacking
 
 ```
-Final XP = base × speciesMod × buffMod × localMod × globalExpMod × customMultiplier
+Final XP = base x speciesMod x buffMod x localMod x globalExpMod x customMultiplier
 
 - customMultiplier = 1.00x (10000 bp) when disabled [CS-9]
 - Applies ONLY to positive awards on normal modifier path
-- applyModifiers == false → skipped
+- applyModifiers == false -> skipped
 - Practice XP: native 5% applied FIRST, then custom practice bonus,
   then general multiplier via central award path
 - Overflow: keep multiplied award well below 2^31 (int32 chain)
@@ -261,9 +261,9 @@ Final XP = base × speciesMod × buffMod × localMod × globalExpMod × customMu
 
 | Phase | Hook | Behavior |
 |-------|------|----------|
-| Personal speed | H09A | `nativeDuration / multiplier`, clamp ≥ 1s; crafter's current bonus |
+| Personal speed | H09A | `nativeDuration / multiplier`, clamp >= 1s; crafter's current bonus |
 | Factory speed | H09B | Snapshots activator's multiplier at run start; persists across logout/restart; stop/restart to recapture |
-| Amazing Chance | H10 | Adds bp to native probability (assembly & experimentation); clamp to cap; does NOT multiply native chance; target: max-bonus char reaches ≥ 50% final |
+| Amazing Chance | H10 | Adds bp to native probability (assembly & experimentation); clamp to cap; does NOT multiply native chance; target: max-bonus char reaches >= 50% final |
 | Amazing Results | H11 | On actual AMAZINGSUCCESS: `enhanced = nativeResult + ((schematicCap - nativeResult) x strength / 10000)`; raises resource ceiling only enough to retain. Assembly: all applicable attrs; experimentation: selected row only. 0% = native; 100% = poor resources can yield perfect attributes |
 
 ### Buff Duration Eligibility
@@ -273,7 +273,7 @@ JEDI/Force.
 **Excluded**: negative buffs, spice downers, debuffs, states, traps, DoTs,
 cooldown/control markers, skill-item, innate, Squad Leader, concealment,
 gallop, vehicle buffs.
-**Implementation**: explicit classifier (CRC allowlist/exclusions) — buff
+**Implementation**: explicit classifier (CRC allowlist/exclusions) -- buff
 type alone is insufficient. Explicit renewals (H12B) apply current bonus to
 the new native duration; DB reload/internal reschedule preserves stored
 duration (no re-multiplication).
@@ -282,11 +282,11 @@ duration (no re-multiplication).
 
 | Hook | Purpose |
 |------|---------|
-| H13A | Client packet speed — feeds CREO4 baseline/delta |
-| H13B | Server validation — `PlayerManager::checkPlayerSpeedTest` |
+| H13A | Client packet speed -- feeds CREO4 baseline/delta |
+| H13B | Server validation -- `PlayerManager::checkPlayerSpeedTest` |
 
 Both MUST use the same calculation ([CS-8]). Mount/vehicle validation reads
-parent speed directly — H13A alone would desync client/server. Applied once
+parent speed directly -- H13A alone would desync client/server. Applied once
 to the final native speed in all travel modes (foot/mount/vehicle), not
 reapplied per hop.
 
@@ -295,9 +295,9 @@ reapplied per hop.
 Native `SkillModManager` caps WEARABLE source at +/-25; `SkillModList` has no
 character context, so:
 
-- **H14A (server)**: `getSkillMod()` → difference between native-clamped and
+- **H14A (server)**: `getSkillMod()` -> difference between native-clamped and
   custom-capped wearable contribution added to native total
-- **H14B (client)**: `getVisibleSkillMod()` → same difference applied to the
+- **H14B (client)**: `getVisibleSkillMod()` -> same difference applied to the
   visible entry
 - **Result**: only SEA/tape contribution raised above +25; all other source
   caps preserved; server = client visible ([CS-8])
@@ -314,11 +314,11 @@ creatures) is never duplicated.
 
 ## SUI Menu System
 
-- **C++ owned** (`CustomSkillsMenu`, `CustomSkillsSuiCallback`) — not a Lua
+- **C++ owned** (`CustomSkillsMenu`, `CustomSkillsSuiCallback`) -- not a Lua
   screenplay. Rationale: avoids Lua as a second calculation path; queries the
   same typed API as gameplay hooks ([CS-3])
-- **Entry**: `CustomSkillsCommand` → Lua bridge `CustomSkills:openMenu(pPlayer)`
-  → C++ menu creation
+- **Entry**: `CustomSkillsCommand` -> Lua bridge `CustomSkills:openMenu(pPlayer)`
+  -> C++ menu creation
 - **Character-scoped**: SUI page stored in the invoking character's
   PlayerObject SUI map ([CS-7])
 - **Multi-window**: multiple `/customskills` windows supported simultaneously
@@ -335,14 +335,14 @@ Server Config
 
 The top-level menu has three entries:
 
-- **Badges** — browse badges by category, with per-badge option to set as
+- **Badges** -- browse badges by category, with per-badge option to set as
   favorite or inspect its detail page.
-- **Bonuses** — browse accumulated bonuses grouped by Combat, Utility, and
+- **Bonuses** -- browse accumulated bonuses grouped by Combat, Utility, and
   Crafting (see Modifier Hierarchy). Only non-zero totals are shown.
-- **Server Config** — server-side toggle state, including the Rarity Naming
+- **Server Config** -- server-side toggle state, including the Rarity Naming
   detail page (see below).
 
-Accumulated Bonuses shows only non-zero totals from acquired badges — never
+Accumulated Bonuses shows only non-zero totals from acquired badges -- never
 total-possible values. Disabled modifiers are omitted from the active summary
 (or shown inactive per config).
 
@@ -384,15 +384,15 @@ Milestone: 25 Badges               +1.00%
 Total + source rows come from `CustomSkillsModifiers` (same as gameplay).
 Source rows sort by contribution magnitude (desc), then display name.
 Critical Chance is sourced from milestone exploration badges only (combat
-masteries no longer grant it — see [ERR-005]).
+masteries no longer grant it -- see [ERR-005]).
 
 ### Server Config
 
 The **Server Config** top-level category exposes server-side state:
 
-- **Mod Options** — when `rarityNaming` is enabled, reveals a **Rarity Naming**
+- **Mod Options** -- when `rarityNaming` is enabled, reveals a **Rarity Naming**
   detail page showing the configured legendary/exceptional color state.
-- **SWGEMU Options** — other server toggles.
+- **SWGEMU Options** -- other server toggles.
 
 This page is display-only; it reflects `config.lua` state loaded at server
 start (see Configuration).
@@ -435,7 +435,7 @@ O  Lars Homestead  (+2% Critical Chance, +2 Melee Defense)
 
 - Accumulated Bonuses: recursive total from acquired descendant badges
 - Category entries show acquired descendant count: `Tatooine (2)`
-- Badge rows: `O` (green, owned) or `X` (red, unowned) prefix — only the
+- Badge rows: `O` (green, owned) or `X` (red, unowned) prefix -- only the
   marker colored
 - Bonus suffix `(+X% Modifier)` in module summary color; omitted if no bonus
 
@@ -449,7 +449,7 @@ O  Lars Homestead  (+2% Critical Chance, +2 Melee Defense)
 | Badges (root) | All badge categories |
 
 Only acquired badges contribute. Totals come from the shared modifier
-service — the menu never independently adds display strings ([CS-3]).
+service -- the menu never independently adds display strings ([CS-3]).
 
 ### Navigation & Safety
 
@@ -517,7 +517,7 @@ git apply --check --reverse --ignore-space-change <module>/integration/core3-hoo
 git apply --reverse --ignore-space-change <module>/integration/core3-hooks.patch
 ```
 
-If check fails, the target revision differs — port hunks manually using
+If check fails, the target revision differs -- port hunks manually using
 [../../MANIFEST.md](../../MANIFEST.md); never force. Each hunk is a small
 generic delegation. Platform build details:
 [CORE3_USER_GUIDE.md](CORE3_USER_GUIDE.md). Full install/remove procedure:
@@ -564,7 +564,7 @@ Per-modifier focused tests:
 | Symptom | Check |
 |---------|-------|
 | Modifier not applying | `isModifierEnabled(type)` in config; badge keys match BadgeList exactly |
-| Menu != combat | Both use `CustomSkillsModifiers::getModifierTotal()` — verify same PlayerObject |
+| Menu != combat | Both use `CustomSkillsModifiers::getModifierTotal()` -- verify same PlayerObject |
 | Factory speed wrong | Activator snapshot at start; restart factory after badge change |
 | Movement desync | H13A & H13B must use same `CustomSkillsMovement::getSpeed()` |
 | SEA cap not visible | H14B refreshes on badge change; `refreshVisibleSkillMods()` |

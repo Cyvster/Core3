@@ -170,7 +170,7 @@ including slows and native speed modifiers, remain part of the calculation.
 
 The General Experience Bonus is a character multiplier applied to all positive
 experience awards that use the game's normal modifier system. It multiplies
-with—not adds to, replaces, or overrides—the server's XP rate and other native
+with--not adds to, replaces, or overrides--the server's XP rate and other native
 multipliers.
 
 Example:
@@ -225,7 +225,7 @@ item task.
 ### Factory Production Speed
 
 Factory Production Speed affects the per-item production time of a factory. It
-uses the bonus belonging to the character who starts that production run—not
+uses the bonus belonging to the character who starts that production run--not
 necessarily the factory owner.
 
 When a character activates the factory:

@@ -1,4 +1,4 @@
-# Custom Skills — Implementation Guide
+# Custom Skills -- Implementation Guide
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
@@ -6,35 +6,35 @@ Complete hook inventory, service architecture, and build/deployment process for 
 
 ## Contributors
 
-- **Nemotron 3.5 Lightning Free (AI)** — Initial creation
+- **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
 
 ---
 
-## Hook Inventory (H01–H16)
+## Hook Inventory (H01-H16)
 
 | ID | Module Call | Modifiers | Core3 Entry Point | Status |
 |----|-------------|-----------|-------------------|--------|
-| **H01** | `CustomSkillsCombat::modifyLandedDamage(context)` | Critical Chance, Critical Multiplier, Double/Triple/Quad Attack | `CombatManager::applyDamage` wrapper | ✅ Implemented |
-| **H02** | — | None | — | ❌ Rejected (repeat-damage in H01) |
-| **H03** | `CustomSkillsCombat::getEffectiveArmorRating(attacker, nativeRating)` | Armor Penetration | `CombatManager::getArmorReduction` (after armor layer known, before armor-piercing) | ✅ Implemented |
-| **H04** | `CustomSkillsCombat::getDefenseCap(defender, nativeCap)` | Defense Cap Increase | Shared cap in `CombatManager` (primary & secondary) | ✅ Implemented |
-| **H05** | `CustomSkillsDurability::shouldDegradeArmor(defender, nativeChance)` | Armor Degradation Reduction | Before armor/PSG `inflictDamage` in combat mitigation | ✅ Implemented |
-| **H06** | `CustomSkillsDurability::shouldDegradeWeapon(user, nativeChance)` | Weapon Degradation Reduction | `WeaponObjectImplementation::decay` at chance roll | ✅ Implemented |
-| **H07** | `CustomSkillsProgression::getExperienceMultiplier(player, xpType)` | Experience Bonus | `PlayerManagerImplementation::awardExperience` (inside `applyModifiers` calc) | ✅ Implemented |
-| **H08** | `CustomSkillsCrafting::modifyPracticeExperience(crafter, nativeAmount)` | Practice XP Bonus | `CraftingSessionImplementation::createPrototype` (`createItem==false` branch) | ✅ Implemented |
-| **H09A** | `CustomSkillsCrafting::getPersonalCraftingDuration(crafter, nativeSeconds)` | Crafting Speed | `CraftingSessionImplementation::startCreationTasks` (before scheduling) | ✅ Implemented |
-| **H09B** | `CustomSkillsCrafting::getFactoryProductionDuration(activator, factory, schematic, nativeSeconds)` | Crafting Speed | `FactoryObjectImplementation::startFactory` (after native timer calc, before first task) | ✅ Implemented |
-| **H10** | `CustomSkillsCrafting::getAmazingChanceBonus(crafter, phase)` | Amazing Success Chance | `SharedLabratory::calculateAssemblySuccess` & `CraftingManagerImplementation::calculateExperimentationSuccess` | ✅ Implemented |
-| **H11** | `CustomSkillsCrafting::applyAmazingResults(crafter, phase, attrs, strength)` | Amazing Results | Resource/genetic lab assembly & experimentation (only on `AMAZINGSUCCESS`) | ✅ Implemented |
-| **H12A** | `CustomSkillsBuffs::modifyInitialDuration(recipient, buff, nativeDuration)` | Buff Duration | `BuffImplementation::activate` (before `scheduleBuffEvent`) | ✅ Implemented |
-| **H12B** | `CustomSkillsBuffs::modifyRenewedDuration(recipient, buff, nativeDuration)` | Buff Duration | `CreatureObjectImplementation::renewBuff` (before assigning renewal) | ✅ Implemented |
-| **H13A** | `CustomSkillsMovement::getEffectiveRunSpeed(character, nativeSpeed, travelMode)` | Movement Speed | Client packet speed (`CreatureObjectMessage4`/`DeltaMessage4`) | ✅ Implemented |
-| **H13B** | `CustomSkillsMovement::getEffectiveAllowedSpeed(character, nativeSpeed, travelMode)` | Movement Speed | `PlayerManagerImplementation::checkPlayerSpeedTest` (server validation) | ✅ Implemented |
-| **H14A** | `CustomSkillsSkillMods::getEffectiveSkillMod(character, modName, nativeTotal, rawWearable)` | SEA Cap Increase | `CreatureObjectImplementation::getSkillMod` (after `SkillModList` aggregation) | ✅ Implemented |
-| **H14B** | `CustomSkillsSkillMods::getEffectiveVisibleSkillMod(character, modName, nativeEntry, rawWearable)` | SEA Cap Increase | Character skill-mod delta/baseline prep & badge-cap refresh | ✅ Implemented |
-| **H15A** | `CustomSkillsGathering::modifyForageQuantity(player, resource, nativeQuantity)` | Gathering Quantity | `ForageManagerImplementation::forageGiveResource` (after roll, before `harvestResourceToPlayer`) | ✅ Implemented |
-| **H15B** | `CustomSkillsGathering::modifyMilkQuantity(player, creature, resource, nativeQuantity)` | Gathering Quantity | `MilkCreatureTask::giveMilkToPlayer` (after density adjustment, before harvest) | ✅ Implemented |
-| **H16** | `CustomSkillsModifiers::applyRarityNaming(object, ...)` | Server Config: Rarity Naming | `LootManagerImplementation::setCustomObjectName` (after base name, before suffix) | ✅ Implemented |
+| **H01** | `CustomSkillsCombat::modifyLandedDamage(context)` | Critical Chance, Critical Multiplier, Double/Triple/Quad Attack | `CombatManager::applyDamage` wrapper | [OK] Implemented |
+| **H02** | -- | None | -- | [X] Rejected (repeat-damage in H01) |
+| **H03** | `CustomSkillsCombat::getEffectiveArmorRating(attacker, nativeRating)` | Armor Penetration | `CombatManager::getArmorReduction` (after armor layer known, before armor-piercing) | [OK] Implemented |
+| **H04** | `CustomSkillsCombat::getDefenseCap(defender, nativeCap)` | Defense Cap Increase | Shared cap in `CombatManager` (primary & secondary) | [OK] Implemented |
+| **H05** | `CustomSkillsDurability::shouldDegradeArmor(defender, nativeChance)` | Armor Degradation Reduction | Before armor/PSG `inflictDamage` in combat mitigation | [OK] Implemented |
+| **H06** | `CustomSkillsDurability::shouldDegradeWeapon(user, nativeChance)` | Weapon Degradation Reduction | `WeaponObjectImplementation::decay` at chance roll | [OK] Implemented |
+| **H07** | `CustomSkillsProgression::getExperienceMultiplier(player, xpType)` | Experience Bonus | `PlayerManagerImplementation::awardExperience` (inside `applyModifiers` calc) | [OK] Implemented |
+| **H08** | `CustomSkillsCrafting::modifyPracticeExperience(crafter, nativeAmount)` | Practice XP Bonus | `CraftingSessionImplementation::createPrototype` (`createItem==false` branch) | [OK] Implemented |
+| **H09A** | `CustomSkillsCrafting::getPersonalCraftingDuration(crafter, nativeSeconds)` | Crafting Speed | `CraftingSessionImplementation::startCreationTasks` (before scheduling) | [OK] Implemented |
+| **H09B** | `CustomSkillsCrafting::getFactoryProductionDuration(activator, factory, schematic, nativeSeconds)` | Crafting Speed | `FactoryObjectImplementation::startFactory` (after native timer calc, before first task) | [OK] Implemented |
+| **H10** | `CustomSkillsCrafting::getAmazingChanceBonus(crafter, phase)` | Amazing Success Chance | `SharedLabratory::calculateAssemblySuccess` & `CraftingManagerImplementation::calculateExperimentationSuccess` | [OK] Implemented |
+| **H11** | `CustomSkillsCrafting::applyAmazingResults(crafter, phase, attrs, strength)` | Amazing Results | Resource/genetic lab assembly & experimentation (only on `AMAZINGSUCCESS`) | [OK] Implemented |
+| **H12A** | `CustomSkillsBuffs::modifyInitialDuration(recipient, buff, nativeDuration)` | Buff Duration | `BuffImplementation::activate` (before `scheduleBuffEvent`) | [OK] Implemented |
+| **H12B** | `CustomSkillsBuffs::modifyRenewedDuration(recipient, buff, nativeDuration)` | Buff Duration | `CreatureObjectImplementation::renewBuff` (before assigning renewal) | [OK] Implemented |
+| **H13A** | `CustomSkillsMovement::getEffectiveRunSpeed(character, nativeSpeed, travelMode)` | Movement Speed | Client packet speed (`CreatureObjectMessage4`/`DeltaMessage4`) | [OK] Implemented |
+| **H13B** | `CustomSkillsMovement::getEffectiveAllowedSpeed(character, nativeSpeed, travelMode)` | Movement Speed | `PlayerManagerImplementation::checkPlayerSpeedTest` (server validation) | [OK] Implemented |
+| **H14A** | `CustomSkillsSkillMods::getEffectiveSkillMod(character, modName, nativeTotal, rawWearable)` | SEA Cap Increase | `CreatureObjectImplementation::getSkillMod` (after `SkillModList` aggregation) | [OK] Implemented |
+| **H14B** | `CustomSkillsSkillMods::getEffectiveVisibleSkillMod(character, modName, nativeEntry, rawWearable)` | SEA Cap Increase | Character skill-mod delta/baseline prep & badge-cap refresh | [OK] Implemented |
+| **H15A** | `CustomSkillsGathering::modifyForageQuantity(player, resource, nativeQuantity)` | Gathering Quantity | `ForageManagerImplementation::forageGiveResource` (after roll, before `harvestResourceToPlayer`) | [OK] Implemented |
+| **H15B** | `CustomSkillsGathering::modifyMilkQuantity(player, creature, resource, nativeQuantity)` | Gathering Quantity | `MilkCreatureTask::giveMilkToPlayer` (after density adjustment, before harvest) | [OK] Implemented |
+| **H16** | `CustomSkillsModifiers::applyRarityNaming(object, ...)` | Server Config: Rarity Naming | `LootManagerImplementation::setCustomObjectName` (after base name, before suffix) | [OK] Implemented |
 
 ---
 
@@ -57,26 +57,26 @@ Complete hook inventory, service architecture, and build/deployment process for 
 ### Configuration Authority
 ```
 CustomSkillsConfig (Singleton)
-├── Loads scripts/customskills/config.lua at startup
-├── Cached for combat performance (restart on change)
-├── Defaults: all disabled, Critical Chance enabled
-└── API: isModifierEnabled(), getModifierCap(), getBadgeBonus(), getBadgeBonuses()
+|---- Loads scripts/customskills/config.lua at startup
+|---- Cached for combat performance (restart on change)
+|---- Defaults: all disabled, Critical Chance enabled
+`---- API: isModifierEnabled(), getModifierCap(), getBadgeBonus(), getBadgeBonuses()
 ```
 
 ### Central Modifier Authority
 ```
 CustomSkillsModifiers (Static API)
-├── getModifierTotal(player, type) — aggregates badge bonuses, applies caps
-├── getBadgeModifier(badgeKey, type) — single badge contribution
-├── isModifierEnabled(type) — config proxy
-├── formatPercent(), formatModifierBonus(), colorizeCriticalText()
-├── notifyBadgeAwarded(player) — refreshes skill mods & run speed
-└── Combat helpers: getCriticalChance(), getCriticalMultiplier()
+|---- getModifierTotal(player, type) -- aggregates badge bonuses, applies caps
+|---- getBadgeModifier(badgeKey, type) -- single badge contribution
+|---- isModifierEnabled(type) -- config proxy
+|---- formatPercent(), formatModifierBonus(), colorizeCriticalText()
+|---- notifyBadgeAwarded(player) -- refreshes skill mods & run speed
+`---- Combat helpers: getCriticalChance(), getCriticalMultiplier()
 ```
 
 ### Runtime Services (Hook Targets)
 
-Each service is a static class with focused methods. No singleton state — pure functions of inputs.
+Each service is a static class with focused methods. No singleton state -- pure functions of inputs.
 
 | Service | Key Design |
 |---------|------------|
@@ -201,8 +201,8 @@ git apply --reverse --ignore-space-change /path/to/core3-hooks.patch
 
 ### If Check Fails
 - Target Core3 revision differs
-- **Do not force** — port hunks manually using `MANIFEST.md` (lists all 19 files)
-- Each hunk is a small, generic delegation — easy to port
+- **Do not force** -- port hunks manually using `MANIFEST.md` (lists all 19 files)
+- Each hunk is a small, generic delegation -- easy to port
 
 ### Patch Contents
 - Command registration (3 files)
@@ -222,9 +222,9 @@ git apply --reverse --ignore-space-change /path/to/core3-hooks.patch
 
 ## Configuration Reload
 
-- **No hot reload** — config cached for combat performance
+- **No hot reload** -- config cached for combat performance
 - **Restart required** after any `config.lua` change
-- Missing/invalid values → safe defaults + server warning (not error)
+- Missing/invalid values -> safe defaults + server warning (not error)
 
 ---
 
@@ -233,7 +233,7 @@ git apply --reverse --ignore-space-change /path/to/core3-hooks.patch
 | Issue | Check |
 |-------|-------|
 | Modifier not applying | `isModifierEnabled(type)` in config; badge keys match `BadgeList` exactly |
-| Menu ≠ combat | Both use `CustomSkillsModifiers::getModifierTotal()` — verify same `PlayerObject` |
+| Menu != combat | Both use `CustomSkillsModifiers::getModifierTotal()` -- verify same `PlayerObject` |
 | Factory speed wrong | Activator snapshot at start; restart factory after badge change |
 | Movement desync | H13A & H13B use same `CustomSkillsMovement::getSpeed()` |
 | SEA cap not visible | H14B refreshes on badge change; `CustomSkillsSkillMods::refreshVisibleSkillMods()` |

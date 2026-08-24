@@ -13,11 +13,11 @@ Project Alice lives outside this repository:
 
 ```
 G:\Data\Projects\project alice\                          <- workspace root
-├── START-HERE.md                               <- Alice entry point
-└── github\alice\                               <- Alice repository
-    └── docs\
-        ├── llm-guide.md                        -> "How to Work Here" -> Signing
-        └── rules\process.md                    -> Contributor Recording Conventions
+|---- START-HERE.md                               <- Alice entry point
+`---- github\alice\                               <- Alice repository
+    `---- docs\
+        |---- llm-guide.md                        -> "How to Work Here" -> Signing
+        `---- rules\process.md                    -> Contributor Recording Conventions
                                                     (THE canonical definitions: long/short
                                                     signature formats, date format, time zone)
 ```

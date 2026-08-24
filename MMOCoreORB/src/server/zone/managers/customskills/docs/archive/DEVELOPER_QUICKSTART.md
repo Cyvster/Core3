@@ -1,4 +1,4 @@
-# Custom Skills — Developer Quickstart
+# Custom Skills -- Developer Quickstart
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
@@ -6,7 +6,7 @@ Minimal steps to set up, understand, and start contributing to the Custom Skills
 
 ## Contributors
 
-- **Nemotron 3.5 Lightning Free (AI)** — Initial creation
+- **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
 
 ---
 
@@ -105,7 +105,7 @@ badges = {
 ```
 
 ### Add a New Modifier (Full Checklist)
-See `ARCHITECTURE.md` → "Adding a New Modifier" section.
+See `ARCHITECTURE.md` -> "Adding a New Modifier" section.
 
 ---
 
@@ -143,7 +143,7 @@ See `ARCHITECTURE.md` → "Adding a New Modifier" section.
 | Symptom | Check |
 |---------|-------|
 | Modifier not working | `isModifierEnabled(type)` in config; badge keys exact match |
-| Menu ≠ combat values | Both use `CustomSkillsModifiers::getModifierTotal()` |
+| Menu != combat values | Both use `CustomSkillsModifiers::getModifierTotal()` |
 | Factory speed stuck | Activator snapshot at start; stop/restart factory |
 | Movement desync | H13A (client) & H13B (server) use same `getSpeed()` |
 | SEA cap not visible | H14B refreshes on badge change; `refreshVisibleSkillMods()` |
@@ -188,10 +188,10 @@ cd /tmp && git clone <core3-repo> Core3-test
 **If you find a factual error in `CORE3_CODE_REFERENCE.md` or
 `CORE3_USER_GUIDE.md`:**
 
-1. **Do not fix it directly** — these guides require two-party verification
+1. **Do not fix it directly** -- these guides require two-party verification
 2. **File an ERR entry in `../rules/errata.md`** using the entry template
 3. **Wait for a different contributor** to verify independently
-4. **Only after verification** → the verifier applies the fix and marks it RESOLVED
+4. **Only after verification** -> the verifier applies the fix and marks it RESOLVED
 
 This prevents hallucinated APIs/constants from entering the guides.
 Historical note: the retired `SWGEMU_CODE_GUIDE.md` used its own log
@@ -207,7 +207,7 @@ Historical note: the retired `SWGEMU_CODE_GUIDE.md` used its own log
 | How does X modifier work? | `MODIFIER_REFERENCE.md` |
 | Where is Y hook in Core3? | `IMPLEMENTATION_GUIDE.md` hook table |
 | What badges grant Z? | `BADGE_REFERENCE.md` or `MENU_SYSTEM.md + BADGE_REFERENCE.md` |
-| How to add menu page? | `MENU_SYSTEM.md` → "Adding a New Menu Page" |
-| Config not reloading? | Restart server — config is cached |
+| How to add menu page? | `MENU_SYSTEM.md` -> "Adding a New Menu Page" |
+| Config not reloading? | Restart server -- config is cached |
 | Patch won't apply? | Port hunks manually per `MANIFEST.md` |
 | Found error in a Core3 guide? | File ERR in `../rules/errata.md` (two-party verification required) |

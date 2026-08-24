@@ -1,4 +1,4 @@
-# Custom Skills — Menu System (SUI)
+# Custom Skills -- Menu System (SUI)
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
@@ -6,11 +6,11 @@
 
 ## Contributors
 
-- **Nemotron 3.5 Lightning Free (AI)** — Initial creation
+- **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
 
-- **C++ owned** (`CustomSkillsMenu`, `CustomSkillsSuiCallback`) — not Lua screenplay
+- **C++ owned** (`CustomSkillsMenu`, `CustomSkillsSuiCallback`) -- not Lua screenplay
 - **Rationale**: Avoids Lua as second calculation path; queries same typed API as gameplay hooks
-- **Entry**: `CustomSkillsCommand` → Lua bridge `CustomSkills:openMenu(pPlayer)` → C++ menu creation
+- **Entry**: `CustomSkillsCommand` -> Lua bridge `CustomSkills:openMenu(pPlayer)` -> C++ menu creation
 - **Character-scoped**: SUI page stored in invoking character's `PlayerObject` SUI map (one player's page cannot resolve from another's)
 
 ---
@@ -153,7 +153,7 @@ O  Lars Homestead  (+2% Critical Chance, +2 Melee Defense)
 | Badges (root) | All badge categories |
 
 - **Only acquired badges contribute** to category totals
-- **Totals from shared modifier service** — honors stacking, caps, rounding
+- **Totals from shared modifier service** -- honors stacking, caps, rounding
 - **Menu never independently adds** display strings
 
 ---

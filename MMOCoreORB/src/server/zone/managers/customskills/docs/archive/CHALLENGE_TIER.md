@@ -32,9 +32,9 @@ challenge tier that scales their experience, loot, and combat encounters.
 - Client sees the bonus in its existing XP window.
 
 ### Code checks available
-- **Combat check**: `player->isInCombat()` — single method call
+- **Combat check**: `player->isInCombat()` -- single method call
 - **Cantina check**: `cast<BuildingObject*>(player->getRootParent())` then
-  `building->getPlanetMapCategory()->getName() == "cantina"` — same pattern
+  `building->getPlanetMapCategory()->getName() == "cantina"` -- same pattern
   used in `RegisterWithLocationCommand.h`
 
 ## Design open questions

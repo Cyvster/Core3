@@ -273,10 +273,10 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 			summary << endl;
 			String state = config->isRarityNamingEnabled() ? "\\#00FF00Enabled" : "\\#FF0000Disabled";
 			summary << "Status: " << state << "\\#." << endl;
-			summary << "Legendary color: \\#" + config->getLegendaryColor() + "███\\#. (" + config->getLegendaryColor() + ")" << endl;
-			summary << "  Default: \\#FF00FF███\\#. (FF00FF)" << endl;
-			summary << "Exceptional color: \\#" + config->getExceptionalColor() + "███\\#. (" + config->getExceptionalColor() + ")" << endl;
-			summary << "  Default: \\#0000FF███\\#. (0000FF)" << endl;
+			summary << "Legendary color: \\#" + config->getLegendaryColor() + "###\\#. (" + config->getLegendaryColor() + ")" << endl;
+			summary << "  Default: \\#FF00FF###\\#. (FF00FF)" << endl;
+			summary << "Exceptional color: \\#" + config->getExceptionalColor() + "###\\#. (" + config->getExceptionalColor() + ")" << endl;
+			summary << "  Default: \\#0000FF###\\#. (0000FF)" << endl;
 		} else if (page == MOD_OPTIONS) {
 			String rarityState = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
 			summary << rarityState << "\\#. Rarity Naming" << endl;
@@ -356,8 +356,8 @@ void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Pag
 		CustomSkillsConfig* config = CustomSkillsConfig::instance();
 		String rarityStatus = config->isRarityNamingEnabled() ? "\\#00FF00Enabled" : "\\#FF0000Disabled";
 		box->addMenuItem("Rarity Naming: " + rarityStatus + "\\#.");
-		box->addMenuItem("  Legendary color: \\#" + config->getLegendaryColor() + "███\\#. (" + config->getLegendaryColor() + ")");
-		box->addMenuItem("  Exceptional color: \\#" + config->getExceptionalColor() + "███\\#. (" + config->getExceptionalColor() + ")");
+		box->addMenuItem("  Legendary color: \\#" + config->getLegendaryColor() + "###\\#. (" + config->getLegendaryColor() + ")");
+		box->addMenuItem("  Exceptional color: \\#" + config->getExceptionalColor() + "###\\#. (" + config->getExceptionalColor() + ")");
 		break;
 	}
 	LEAF(MILESTONES, milestones); LEAF(EXPLORATION_MILESTONES, explorationMilestones); LEAF(CORELLIA, corellia); LEAF(DANTOOINE, dantooine); LEAF(DATHOMIR, dathomir); LEAF(ENDOR, endor); LEAF(LOK, lok); LEAF(NABOO, naboo); LEAF(RORI, rori); LEAF(TALUS, talus); LEAF(TATOOINE, tatooine); LEAF(YAVIN4, yavin4);

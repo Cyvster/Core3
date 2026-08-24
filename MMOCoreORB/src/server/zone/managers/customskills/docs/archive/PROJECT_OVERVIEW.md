@@ -1,4 +1,4 @@
-# Custom Skills — Project Overview
+# Custom Skills -- Project Overview
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
@@ -6,14 +6,14 @@
 
 ## Contributors
 
-- **Nemotron 3.5 Lightning Free (AI)** — Initial creation
+- **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
 
 Custom Skills is a **self-contained SWGEmu Core3 module** that adds badge-derived character bonuses across multiple gameplay systems. It provides:
 
-1. **Gameplay modifiers** — 17 bonus types affecting combat, crafting, gathering, movement, buffs, XP
-2. **Configuration system** — Server owners enable/disable modifiers and assign badge values via Lua
-3. **In-game menu** — `/customskills` SUI showing character-specific totals and badge-source breakdowns
-4. **Core3 integration** — 19 minimal delegation hooks at stable lifecycle boundaries
+1. **Gameplay modifiers** -- 17 bonus types affecting combat, crafting, gathering, movement, buffs, XP
+2. **Configuration system** -- Server owners enable/disable modifiers and assign badge values via Lua
+3. **In-game menu** -- `/customskills` SUI showing character-specific totals and badge-source breakdowns
+4. **Core3 integration** -- 19 minimal delegation hooks at stable lifecycle boundaries
 
 **Current status**: All 17 modifiers implemented with hooks; only Critical Chance enabled by default.
 
@@ -23,41 +23,41 @@ Custom Skills is a **self-contained SWGEmu Core3 module** that adds badge-derive
 
 ```
 customskills-mod/
-├── package/                          # Distributable module (mirrors Core3 paths)
-│   └── MMOCoreORB/
-│       ├── bin/scripts/
-│       │   ├── commands/customSkills.lua      # Command registration
-│       │   └── customskills/config.lua        # Server configuration
-│       └── src/server/zone/managers/customskills/
-│           ├── combat/         # Combat hooks (crit, repeat-damage, armor pen, defense cap)
-│           ├── buffs/          # Buff duration eligibility & calculation
-│           ├── crafting/       # Crafting speed, amazing success/results, practice XP
-│           ├── durability/     # Armor/weapon degradation reduction
-│           ├── gathering/      # Forage & milk quantity
-│           ├── movement/       # Client & server movement speed
-│           ├── progression/    # Experience multiplier
-│           ├── skillmods/      # SEA cap, visible skill mods
-│           ├── CustomSkillsCommand.h/.cpp      # /customskills command
-│           ├── CustomSkillsConfig.h/.cpp       # Singleton config loader
-│           ├── CustomSkillsModifiers.h/.cpp    # Central modifier authority
-│           ├── CustomSkillsModifierType.h      # 17-type enum
-│           ├── CustomSkillsMenu.h/.cpp         # C++ SUI menu
-│           ├── CustomSkillsSuiCallback.h/.cpp  # SUI event handling
-│           └── MENU_DESIGN.md                  # Menu design notes
-├── integration/
-│   ├── INSTALL.md              # Install/remove/verify instructions
-│   └── core3-hooks.patch       # 19-file patch for Core3 integration
-├── docs/
-│   ├── rules/                     # Governing docs: design master, process, errata
-│   ├── reference/                 # Developer documentation (this folder)
-│   ├── tracking/                  # Objectives & task state (living tracker)
-│   ├── briefs/                    # Delegable task queue
-│   ├── installation/              # Installation guide + how-it-works
-│   ├── user-guide/                # Player-facing mechanics guide
-│   ├── feature-planning/          # Active feature design (Challenge Tier)
-│   └── archive/                   # Superseded documents (historical)
-├── MANIFEST.md                 # Every distributed file & integration point
-└── README.md                   # Module summary & directory roles
+|-- package/                          # Distributable module (mirrors Core3 paths)
+|   `-- MMOCoreORB/
+|       |-- bin/scripts/
+|       |   |-- commands/customSkills.lua      # Command registration
+|       |   `-- customskills/config.lua        # Server configuration
+|       `-- src/server/zone/managers/customskills/
+|           |-- combat/         # Combat hooks (crit, repeat-damage, armor pen, defense cap)
+|           |-- buffs/          # Buff duration eligibility & calculation
+|           |-- crafting/       # Crafting speed, amazing success/results, practice XP
+|           |-- durability/     # Armor/weapon degradation reduction
+|           |-- gathering/      # Forage & milk quantity
+|           |-- movement/       # Client & server movement speed
+|           |-- progression/    # Experience multiplier
+|           |-- skillmods/      # SEA cap, visible skill mods
+|           |-- CustomSkillsCommand.h/.cpp      # /customskills command
+|           |-- CustomSkillsConfig.h/.cpp       # Singleton config loader
+|           |-- CustomSkillsModifiers.h/.cpp    # Central modifier authority
+|           |-- CustomSkillsModifierType.h      # 17-type enum
+|           |-- CustomSkillsMenu.h/.cpp         # C++ SUI menu
+|           |-- CustomSkillsSuiCallback.h/.cpp  # SUI event handling
+|           `-- MENU_DESIGN.md                  # Menu design notes
+|-- integration/
+|   |-- INSTALL.md              # Install/remove/verify instructions
+|   `-- core3-hooks.patch       # 19-file patch for Core3 integration
+|-- docs/
+|   |-- rules/                     # Governing docs: design master, process, errata
+|   |-- reference/                 # Developer documentation (this folder)
+|   |-- tracking/                  # Objectives & task state (living tracker)
+|   |-- briefs/                    # Delegable task queue
+|   |-- installation/              # Installation guide + how-it-works
+|   |-- user-guide/                # Player-facing mechanics guide
+|   |-- feature-planning/          # Active feature design (Challenge Tier)
+|   `-- archive/                   # Superseded documents (historical)
+|-- MANIFEST.md                 # Every distributed file & integration point
+`-- README.md                   # Module summary & directory roles
 ```
 
 ---
@@ -69,7 +69,7 @@ customskills-mod/
 | 1 | **Isolation** | Module-owned code in dedicated `customskills/` directories |
 | 2 | **Minimal Core3 edits** | Only generic delegation hooks at stable boundaries |
 | 3 | **Single source of truth** | `CustomSkillsModifiers` serves both gameplay hooks AND menu |
-| 4 | **Table-driven** | Badge→modifier mappings in Lua config, not hardcoded C++ |
+| 4 | **Table-driven** | Badge->modifier mappings in Lua config, not hardcoded C++ |
 | 5 | **Basis points** | 100 = 1.00% for precision; convert to display only at UI boundary |
 | 6 | **No new persistence** | Reads existing badge bitmasks on `PlayerObject` directly |
 | 7 | **Stable public API** | `/customskills` and `CustomSkills:openMenu()` are stable |
@@ -111,8 +111,8 @@ All use **basis points** except: `ARMOR_PENETRATION` (whole levels), `DEFENSE_CA
 **File**: `scripts/customskills/config.lua`
 
 - Loaded once at startup by `CustomSkillsConfig` singleton
-- **Cached for combat performance** — restart required after changes
-- Missing/invalid values → safe defaults + server-log warning
+- **Cached for combat performance** -- restart required after changes
+- Missing/invalid values -> safe defaults + server-log warning
 - Per-modifier tables: `enabled`, `badgeBonus`, `cap`, `badges[]`, optional `combatSpamLabel`
 
 ---
@@ -130,7 +130,7 @@ All use **basis points** except: `ARMOR_PENETRATION` (whole levels), `DEFENSE_CA
 
 | Area | Files Modified | Hook IDs |
 |------|----------------|----------|
-| Command registration | `CommandConfigManager.cpp`, `CommandConfigManager3.cpp`, `commands.lua` | — |
+| Command registration | `CommandConfigManager.cpp`, `CommandConfigManager3.cpp`, `commands.lua` | -- |
 | Combat (damage, armor, defense cap) | `CombatManager.h/.cpp` | H01, H03, H04 |
 | Crafting (amazing chance/results) | `CraftingManagerImplementation.cpp`, `SharedLabratory.cpp` | H10, H11 |
 | Factory | `FactoryObject.idl`, `FactoryObjectImplementation.cpp` | H09B |
@@ -143,7 +143,7 @@ All use **basis points** except: `ARMOR_PENETRATION` (whole levels), `DEFENSE_CA
 | SkillModList | `SkillModList.h` | H14A/H14B helpers |
 | Packets (client sync) | `CreatureObjectMessage4.h`, `CreatureObjectDeltaMessage4.h` | H13A, H14B |
 
-**Patch**: `integration/core3-hooks.patch` — self-contained, reversible, `--ignore-space-change`
+**Patch**: `integration/core3-hooks.patch` -- self-contained, reversible, `--ignore-space-change`
 
 ---
 
@@ -165,12 +165,12 @@ All use **basis points** except: `ARMOR_PENETRATION` (whole levels), `DEFENSE_CA
 
 | Milestone | Status |
 |-----------|--------|
-| **M1: Command-opened menu** | ✅ Complete — shell tested in-game |
-| **M2: First effective modifier (Critical Chance)** | ✅ Complete — 12 combat badges, 3% each, 150% multiplier |
-| **M3: All 17 modifiers + hooks implemented** | ✅ Complete — all services & Core3 delegations done |
-| **M4: Badge assignments & config** | ✅ Complete — 111 badges mapped per `MENU_SYSTEM.md + BADGE_REFERENCE.md` |
-| **M5: Challenge Tier system** | 🔄 Design phase (see `CHALLENGE_TIER.md`) |
-| **M6: Challenge Tier skill trees** | 🔄 Design phase (see `CHALLENGE_TIER_SKILLS.md`) |
+| **M1: Command-opened menu** | [OK] Complete -- shell tested in-game |
+| **M2: First effective modifier (Critical Chance)** | [OK] Complete -- 12 combat badges, 3% each, 150% multiplier |
+| **M3: All 17 modifiers + hooks implemented** | [OK] Complete -- all services & Core3 delegations done |
+| **M4: Badge assignments & config** | [OK] Complete -- 111 badges mapped per `MENU_SYSTEM.md + BADGE_REFERENCE.md` |
+| **M5: Challenge Tier system** | [CYCLE] Design phase (see `CHALLENGE_TIER.md`) |
+| **M6: Challenge Tier skill trees** | [CYCLE] Design phase (see `CHALLENGE_TIER_SKILLS.md`) |
 
 ---
 

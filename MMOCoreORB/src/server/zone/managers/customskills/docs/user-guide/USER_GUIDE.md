@@ -1,4 +1,4 @@
-# Custom Skills — Player User Guide
+# Custom Skills -- Player User Guide
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
@@ -6,7 +6,7 @@
 
 ## Contributors
 
-- **Nemotron 3.5 Lightning Free (AI)** — Initial creation
+- **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
 
 Custom Skills is a server-side addon that grants your character bonuses based on the badges you've earned. Bonuses apply to combat, crafting, gathering, movement, buffs, and experience.
 
@@ -40,9 +40,9 @@ Bonuses
 Server Config
 ```
 
-- **Badges** — Browse badges by category to see which ones contribute to your totals.
-- **Bonuses** — Your current accumulated totals, grouped by Combat, Utility, and Crafting. Only shows non-zero values.
-- **Server Config** — Server-side toggle state (e.g., Rarity Naming).
+- **Badges** -- Browse badges by category to see which ones contribute to your totals.
+- **Bonuses** -- Your current accumulated totals, grouped by Combat, Utility, and Crafting. Only shows non-zero values.
+- **Server Config** -- Server-side toggle state (e.g., Rarity Naming).
 
 ### Navigation
 
@@ -112,12 +112,12 @@ O  Lars Homestead  (+25% Movement Speed)
 |----------|--------------|---------|
 | **Critical Chance** | Chance for a landed attack to become a critical hit | +1% per milestone exploration badge (max +12%) |
 | **Critical Multiplier** | Damage multiplier on critical hits | 150% (1.5x damage) |
-| **Double/Triple/Quad Attack** | Repeats finalized damage 2/3/4 times total | Enabled — combat masteries +2% Triple/Quad (Bounty Hunter +3%); Theme Parks/Warren +20% Double |
-| **Armor Penetration** | Lowers target's effective armor by 1 level per point | Enabled — +1 level per Corellian Corvette badge |
+| **Double/Triple/Quad Attack** | Repeats finalized damage 2/3/4 times total | Enabled -- combat masteries +2% Triple/Quad (Bounty Hunter +3%); Theme Parks/Warren +20% Double |
+| **Armor Penetration** | Lowers target's effective armor by 1 level per point | Enabled -- +1 level per Corellian Corvette badge |
 
-**Critical hits**: Checked first, then repeat tiers (Quad — Triple — Double, only one triggers). Repeats apply to critical-adjusted damage.
+**Critical hits**: Checked first, then repeat tiers (Quad -- Triple -- Double, only one triggers). Repeats apply to critical-adjusted damage.
 
-**Armor Penetration**: Heavy — Medium — Light — No Armor. Floor: No Armor. Does not affect weapon's Armor Piercing.
+**Armor Penetration**: Heavy -- Medium -- Light -- No Armor. Floor: No Armor. Does not affect weapon's Armor Piercing.
 
 ### Defense & Equipment
 
@@ -134,16 +134,16 @@ O  Lars Homestead  (+25% Movement Speed)
 
 | Modifier | What It Does |
 |----------|--------------|
-| **Movement Speed** | Multiplies final native speed (on foot, mounted, in vehicle) — applied once, not doubled |
+| **Movement Speed** | Multiplies final native speed (on foot, mounted, in vehicle) -- applied once, not doubled |
 | **Buff Duration** | Extends beneficial buffs only (doctor, entertainer, food/drink, spice-up, positive Jedi/Force). Excludes debuffs, DoTs, states, traps, cooldowns, skill-item/innate/Squad Leader/concealment/gallop/vehicle buffs |
-| **Experience Bonus** | Multiplies **all positive XP awards** (combat, crafting, harvesting, quests, etc.). Stacks multiplicatively with server/buff/species rates. Example: 100 XP — 2x server — 5x character = 1,000 XP (10x total, not 7x) |
+| **Experience Bonus** | Multiplies **all positive XP awards** (combat, crafting, harvesting, quests, etc.). Stacks multiplicatively with server/buff/species rates. Example: 100 XP -- 2x server -- 5x character = 1,000 XP (10x total, not 7x) |
 | **Practice Mode XP Bonus** | Applies after Core3's native 5% practice bonus, before general XP multipliers |
 
 ### Crafting & Factories
 
 | Modifier | What It Does |
 |----------|--------------|
-| **Crafting Speed** | Divides native duration by your multiplier (min 1 second). Personal: uses crafter. Factory: snapshots **activator's** bonus at start — survives logout/restart, doesn't change mid-run |
+| **Crafting Speed** | Divides native duration by your multiplier (min 1 second). Personal: uses crafter. Factory: snapshots **activator's** bonus at start -- survives logout/restart, doesn't change mid-run |
 | **Amazing Success Chance** | Adds percentage points to native Amazing Success chance (assembly & experimentation). Does not multiply. Target: max-bonus character can reach =50% |
 | **Amazing Results** | On actual Amazing Success: closes % of distance between native result and schematic cap, raises resource ceiling to retain it. At 100%, poor resources can yield perfect attributes. Assembly: all attributes. Experimentation: selected row only |
 
@@ -173,7 +173,7 @@ O  Lars Homestead  (+25% Movement Speed)
 
 ---
 
-## Quick Reference: Badge — Bonus Assignments
+## Quick Reference: Badge -- Bonus Assignments
 
 *See `BADGE_REFERENCE.md` for the full list. Highlights:*
 

@@ -1,4 +1,4 @@
-# Custom Skills Module — Installation Guide
+# Custom Skills Module -- Installation Guide
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
@@ -6,7 +6,7 @@
 
 ## Contributors
 
-- **Nemotron 3.5 Lightning Free (AI)** — Initial creation
+- **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
 - ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- BRIEF-002: rewritten
   for single-tree layout (install onto other servers via module dir copy +
   patch)
@@ -26,7 +26,7 @@ Custom Skills is a SWGEmu Core3 module that adds badge-derived character bonuses
 | **Core3 Hooks** (19 files patched) | Minimal delegations at lifecycle boundaries (combat, crafting, XP, movement, etc.) |
 | **SUI Menu** (`/customskills`) | Displays acquired bonuses and badge-source breakdowns using same math as gameplay |
 
-**Data flow**: Badge bitmasks (on `PlayerObject`) — `CustomSkillsModifiers` (central authority) — Gameplay hooks AND Menu display. Single source of truth.
+**Data flow**: Badge bitmasks (on `PlayerObject`) -- `CustomSkillsModifiers` (central authority) -- Gameplay hooks AND Menu display. Single source of truth.
 
 ---
 
@@ -123,12 +123,12 @@ criticalChance = {
 ### Generic Modifiers
 
 Each modifier table accepts:
-- `enabled` — `true`/`false`
-- `badgeBonus` — basis points per badge (or whole levels for armor penetration, defense cap, SEA cap)
-- `cap` — maximum total (0 = uncapped)
-- `badges` — list of badge keys (from `BadgeList`)
-- `badgeOverrides` — optional `{ "badgeKey", value }` pairs overriding `badgeBonus` per badge
-- `combatSpamLabel` — optional, for repeat-damage tiers only
+- `enabled` -- `true`/`false`
+- `badgeBonus` -- basis points per badge (or whole levels for armor penetration, defense cap, SEA cap)
+- `cap` -- maximum total (0 = uncapped)
+- `badges` -- list of badge keys (from `BadgeList`)
+- `badgeOverrides` -- optional `{ "badgeKey", value }` pairs overriding `badgeBonus` per badge
+- `combatSpamLabel` -- optional, for repeat-damage tiers only
 
 ```lua
 modifiers = {
@@ -208,7 +208,7 @@ customSummaryColor = "00FF00"   -- RGB hex for menu modifier text color
 | Use BadgeList keys | Never hard-code indices (fragile across TRE changes) |
 | Exclude pilot/JTL badges | No bonuses until JTL is available on your server |
 | Exclude admin/event badges | See `EXCLUDED_BADGES.md` for full list |
-| Visible — grantable | `show = 0` badges can still grant modifiers if explicitly listed in config |
+| Visible -- grantable | `show = 0` badges can still grant modifiers if explicitly listed in config |
 
 ---
 
@@ -241,7 +241,7 @@ git apply --reverse --ignore-space-change <module-backup>/integration/core3-hook
 # 4. Rebuild & restart
 ```
 
-If reverse check fails (Core3 files edited since), remove Custom Skills hunks manually using `MANIFEST.md` — do not force.
+If reverse check fails (Core3 files edited since), remove Custom Skills hunks manually using `MANIFEST.md` -- do not force.
 
 ---
 
@@ -259,9 +259,9 @@ If reverse check fails (Core3 files edited since), remove Custom Skills hunks ma
 
 ## Related Documentation
 
-- **User Guide**: `../user-guide/USER_GUIDE.md` — Player-facing mechanics
-- **Architecture & Implementation**: `../reference/ARCHITECTURE.md` — Hooks, services, menu, verification matrix
-- **Modifier Reference**: `../reference/MODIFIER_REFERENCE.md` — All 18 modifiers with config
-- **Badge Reference**: `../reference/BADGE_REFERENCE.md` — Full badge catalog
+- **User Guide**: `../user-guide/USER_GUIDE.md` -- Player-facing mechanics
+- **Architecture & Implementation**: `../reference/ARCHITECTURE.md` -- Hooks, services, menu, verification matrix
+- **Modifier Reference**: `../reference/MODIFIER_REFERENCE.md` -- All 18 modifiers with config
+- **Badge Reference**: `../reference/BADGE_REFERENCE.md` -- Full badge catalog
 - **Core3 platform**: `../reference/CORE3_CODE_REFERENCE.md` + `../reference/CORE3_USER_GUIDE.md`
 

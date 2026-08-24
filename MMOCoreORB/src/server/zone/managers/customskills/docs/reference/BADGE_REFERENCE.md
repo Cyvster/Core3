@@ -1,4 +1,4 @@
-# Custom Skills — Badge Reference
+# Custom Skills -- Badge Reference
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
@@ -6,7 +6,7 @@ Complete badge catalog from `badge_map.iff` with Core3 types, menu organization,
 
 ## Contributors
 
-- **Nemotron 3.5 Lightning Free (AI)** — Initial creation
+- **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
 
 ---
 
@@ -22,9 +22,9 @@ Complete badge catalog from `badge_map.iff` with Core3 types, menu organization,
 | `CONTENT` | `content` | 15 | 11 | 4 |
 | **Total** | | **140** | **124** | **16** |
 
-- Indices: contiguous 0–139, no duplicates
+- Indices: contiguous 0-139, no duplicates
 - Columns: index, stable key, music, client category, show flag, type
-- **Always use stable keys** — never hard-code indices (fragile across TRE changes)
+- **Always use stable keys** -- never hard-code indices (fragile across TRE changes)
 
 ---
 
@@ -49,7 +49,7 @@ Complete badge catalog from `badge_map.iff` with Core3 types, menu organization,
 
 ---
 
-### Interest (5) — Hero of Tatooine Progression
+### Interest (5) -- Hero of Tatooine Progression
 
 | Index | Key |
 |-------|-----|
@@ -228,41 +228,41 @@ Complete badge catalog from `badge_map.iff` with Core3 types, menu organization,
 
 ## Menu Organization (Player-Facing Groups)
 
-Core3's 6 internal types → 4 menu groups:
+Core3's 6 internal types -> 4 menu groups:
 
 ```
 Badges
   Milestone Badges          (Accumulation: 7 count_* + 5 bdg_exp_*_badges)
   Exploration
     Milestone Exploration   (bdg_exp_10/20/30/40/45_badges)
-    Tatooine (7)            → 3 easy, 4 dangerous
+    Tatooine (7)            -> 3 easy, 4 dangerous
     Naboo (4)
     Corellia (5)
     Yavin IV (3)
     Lok (3)
-    Dathomir (7)            → 6 easy, 1 dangerous
+    Dathomir (7)            -> 6 easy, 1 dangerous
     Dantooine (4)
     Endor (4)
     Talus (4)
     Rori (4)
   Profession
     Combat (12)
-    Crafting (9)            → 8 ground + Shipwright
+    Crafting (9)            -> 8 ground + Shipwright
     Outdoors (5)
     Science (3)
     Social (5)
-    Pilot (9)               → EXCLUDED (no JTL)
+    Pilot (9)               -> EXCLUDED (no JTL)
   Quest
-    Hero of Tatooine (5)    → Interest: poi_*
-    Warren (2)              → Content: warren_*
-    Theme Parks (4)         → Content: bdg_thm_park_*
-    Corellian Corvette (9)  → Content: bdg_corvette_*
+    Hero of Tatooine (5)    -> Interest: poi_*
+    Warren (2)              -> Content: warren_*
+    Theme Parks (4)         -> Content: bdg_thm_park_*
+    Corellian Corvette (9)  -> Content: bdg_corvette_*
   Event
-    Cries of Alderaan (5)   → Events: event_coa2/3_*
-    Accolades (7)           → EXCLUDED (admin)
-    Librarian (1)           → bdg_library_trivia
-    Racing (6)              → 3 visible, 3 EXCLUDED
-    Death Star (1)          → EXCLUDED
+    Cries of Alderaan (5)   -> Events: event_coa2/3_*
+    Accolades (7)           -> EXCLUDED (admin)
+    Librarian (1)           -> bdg_library_trivia
+    Racing (6)              -> 3 visible, 3 EXCLUDED
+    Death Star (1)          -> EXCLUDED
 ```
 
 ---
@@ -281,7 +281,7 @@ Badges
 
 ## Excluded Badge List (Must Not Grant Modifiers)
 
-### Pilot / JTL (9) — No bonuses until JTL available
+### Pilot / JTL (9) -- No bonuses until JTL available
 ```
 pilot_imperial_navy_corellia
 pilot_imperial_navy_naboo
@@ -294,7 +294,7 @@ pilot_rebel_navy_naboo
 pilot_rebel_navy_tatooine
 ```
 
-### Admin / Special Event (20) — Not part of normal progression
+### Admin / Special Event (20) -- Not part of normal progression
 ```
 acc_brave_soldier
 acc_fascinating_background
@@ -327,13 +327,13 @@ event_project_dead_eye_1
 | `show = 1` | May appear in normal badge browsing |
 | `show = 0` | Hidden from general browser by default |
 | Hidden + enabled in config | Still shown in `/customskills` modifier breakdown (so totals stay explained) |
-| Visibility ≠ ownership | `show` flag is metadata only; does not determine if badge is owned |
+| Visibility != ownership | `show` flag is metadata only; does not determine if badge is owned |
 
 ---
 
 ## Badge-to-Modifier Assignments (menu grouping in ARCHITECTURE.md; gameplay assignments below)
 
-### Milestone Badges (12) — +12.5% Crit Multiplier, +1% Crit Chance each
+### Milestone Badges (12) -- +12.5% Crit Multiplier, +1% Crit Chance each
 - `count_5` through `count_125` (7)
 - `bdg_exp_10/20/30/40/45_badges` (5)
 
@@ -393,7 +393,7 @@ event_project_dead_eye_1
 
 ### For Config Authors (`config.lua`)
 
-1. **Use stable keys only** — `BadgeList::get(key)` resolves index
+1. **Use stable keys only** -- `BadgeList::get(key)` resolves index
 2. **Never include excluded badges** in `badges[]` arrays
 3. **Pilot badges**: Only add if JTL is actually implemented on your server
 4. **Basis points**: 100 = 1.00% for percentages; whole units for armor pen/def cap/SEA cap
@@ -403,7 +403,7 @@ event_project_dead_eye_1
 
 - **BadgeDefinition** (metadata): key, resolved index, Core3 type, exploration subtype, source group, show flag
 - **BadgeModifierAssignment** (gameplay): badge key, modifier ID, amount, stacking rule
-- **Keep separate** — prevents menu grouping from becoming gameplay logic
+- **Keep separate** -- prevents menu grouping from becoming gameplay logic
 - **Allows** other servers to replace badge indices without rewriting modifier definitions
 
 ### Resolution at Runtime
@@ -411,7 +411,7 @@ event_project_dead_eye_1
 ```cpp
 // CustomSkillsModifiers::getModifierTotal()
 const BadgeList* badgeList = BadgeList::instance();
-const Badge* badge = badgeList->get(badgeKey);  // stable key → index
+const Badge* badge = badgeList->get(badgeKey);  // stable key -> index
 if (badge && ghost->hasBadge(badge->getIndex()))
     total += bonus;
 ```
@@ -429,4 +429,4 @@ if (badge && ghost->hasBadge(badge->getIndex()))
 | 4 | Event (14) | 3 shown, 11 hidden |
 | 5 | Event (11) | 11 shown |
 
-*Client category is separate from Core3 type enum — used for client-side badge browser only.*
+*Client category is separate from Core3 type enum -- used for client-side badge browser only.*
