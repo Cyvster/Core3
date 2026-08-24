@@ -1,6 +1,6 @@
 # BRIEF-011 -- Menu/config single-source: stop /customskills from duplicating badge assignments (resolves ERR-008)
 
-- Status: UNCLAIMED
+- Status: CLAIMED by ox-alpha (opencode/x-preview-f-free), 08242026
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), produced by
   the BRIEF-008 deep audit; split from the original consolidated
   remediation brief so the behavioral fix gets an isolated delivery.
