@@ -4,7 +4,8 @@
 > document for project rules.
 
 > **Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
-> R6.9 added (discovery capture: session learnings land in owning reference
+> R6.10 added (code-verify documented claims; owner directive); R6.9
+> added (discovery capture: session learnings land in owning reference
 > docs same-session; owner directive); prior: 08242026 -- BRIEF-006:
 > recording conventions reconciled with the Project Alice framework
 > (explicit slot semantics, short format adopted, deviation and scope
@@ -153,6 +154,21 @@ notes, or planning documents. Division of labor: planning documents record
 decisions; reference documents record mechanisms. If no reference document
 owns the topic, file an erratum proposing a home instead of inventing a
 new document unilaterally.
+
+## Rule 6.10 -- Code-verify documented claims
+
+Factual or technical claims added to any document -- formulas, ordering
+rules, values, defaults, API behavior -- MUST be verified against the
+actual code or config at the time of writing, citing the verifying
+source (file + function; quote the snippet where it is short). A
+document must never substantiate a claim by pointing at another
+document that merely restates it: [PROC R6.7] governs where a rule
+lives; THIS rule governs how its content is proven. Worked examples and
+sample calculations are claims and follow the same standard. When code
+verification is genuinely impossible (toolchain/environment limits),
+mark the claim `unverified -- pending code check` instead of presenting
+it as established fact; later sessions resolve such marks via
+[PROC R6.9] capture.
 
 ## Rule 7 -- Disputes graduate, never escalate inline
 

@@ -62,6 +62,36 @@
    signed.
 4. Stamps updated on touched trackers ([PROC R6]); index wording in
    docs/README.md adjusted if it references structure that changed.
+5. **Worked formula examples** added where a modifier has non-obvious
+   math, placed in CODE_REFERENCE.md Appendix A entries (developer
+   numbers) with a simplified echo in USER_GUIDE where players benefit.
+   Every example is a factual claim: verify against code and cite the
+   source per [PROC R6.10]. Required at minimum:
+   - **Armor Penetration x weapon Armor Piercing ordering** (owner-
+     required example, math pre-verified against source -- reproduce
+     faithfully):
+     Vanilla rule (`CombatManager::getArmorPiercing`, quoted):
+     `AP > armor -> damage x 1.25^(AP - armor)` /
+     `armor >= AP -> damage x 0.50^(armor - AP)`.
+     The module's penetration lowers the defender's armor level first
+     (`CustomSkillsCombat::getEffectiveArmorRating`:
+     `max(0, nativeArmor - penetration)`), then the vanilla exponent
+     evaluates. Example: Heavy armor (level 3) vs AP-1 weapon ->
+     `0.50^(3-1)` = 0.25x damage; with +2 penetration -> armor 1 vs AP 1
+     -> 1.00x; with +3 -> armor 0 vs AP 1 -> `1.25^(1-0)` = 1.25x. Both
+     mechanics feed one exponent on opposite sides -- they compound;
+     neither nullifies the other.
+   - Critical hit chain: crit chance roll -> crit damage
+     `(preArmorDamage x (150% base + badge bonus total))` -> repeat-tier
+     check order Quad -> Triple -> Double (one tier only).
+   - Experience composition: multiplicative
+     `base x server x buff x custom` (100 x 2 x 5 = 1000, not 700).
+   - Gathering Quantity: badge bonuses ADD, then multiply native yield
+     (1 badge = 3x, 2 = 5x); rounded down; never below native.
+   - Crafting Speed: `nativeDuration / multiplier` (min 1s); factory
+     snapshot semantics noted.
+6. Index wording in docs/README.md adjusted if it references structure
+   that changed (already listed in item 4 -- keep both true).
 
 ## Acceptance criteria
 
