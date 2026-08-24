@@ -1,0 +1,73 @@
+# Task Briefs
+
+Self-contained, delegable task specifications. Any LLM can execute one by
+reading only what the brief lists -- no conversation history required.
+
+> Subordinate to [../rules/project-design.md](../rules/project-design.md).
+> Follow the pickup protocol and [../rules/process.md](../rules/process.md).
+
+## Pickup protocol (for executing LLMs)
+
+1. Read the workspace-root ``START-HERE.md`` (``G:\Data\swgemu customskills\START-HERE.md``) fully first.
+2. In the index below, find the **first** brief whose Status is UNCLAIMED.
+3. Before claiming, re-read the index -- if another contributor claimed
+   while you were reading, move to the next UNCLAIMED brief instead.
+4. Claim it: set Status to CLAIMED with your signature and date in the
+   brief FILE (the file carries the signature -- see Index maintenance),
+   then commit `Claim <brief-id>` in `../Core3` if repo work follows.
+5. Read the brief plus every context file it lists, then do exactly the
+   deliverables. Touch nothing outside the brief's scope.
+6. Honor [PROC R6.6] change completeness: behavior changes carry their doc
+   + package-mirror updates.
+7. Set Status DELIVERED with notes on where the work landed; update
+   [../tracking/objectives.md](../tracking/objectives.md) if the brief maps
+   to an objective.
+8. Problems or disputes go through [../rules/errata.md](../rules/errata.md)
+   -- never silent edits outside your scope.
+9. If no brief is UNCLAIMED, stop and report back -- do not invent work.
+
+## How delegation works
+
+**For Daniel:** hand an LLM this one instruction:
+
+> Read the workspace-root START-HERE.md fully, then follow the pickup protocol
+> in docs/briefs/README.md: claim the next UNCLAIMED brief and complete it.
+
+**Index maintenance:**
+
+- Append new rows at the bottom of the SINGLE table, Status UNCLAIMED.
+  Keep rows in numeric order. Numbers are never reused ([PROC R3]).
+- Index cells carry the state word only (`DELIVERED`, `UNCLAIMED`,
+  `CLAIMED`, `WITHDRAWN`) -- never a name or date. Attribution lives in
+  the brief file's signed Status line and in git history ([PROC R6.7]).
+- The brief FILE's Status line is authoritative and IS signed. If file and
+  index disagree, fix both; the file wins.
+
+## Brief index
+
+| File | Title | Status |
+|------|-------|--------|
+| [`001-migrate-mod-into-core3.md`](001-migrate-mod-into-core3.md) | Migrate customskills-mod into the Core3 repository; dissolve dual tree | UNCLAIMED |
+| [`002-post-migration-doc-repair.md`](002-post-migration-doc-repair.md) | Post-migration documentation & governance repair (links, R6.5/R6.6, START-HERE) | UNCLAIMED |
+| [`003-reconcile-hooks-patch-modifier-count.md`](003-reconcile-hooks-patch-modifier-count.md) | Regenerate patch incl. H16; reconcile modifier count + menu docs | UNCLAIMED |
+
+## Notes
+
+- Briefs 001-003 form a sequence: execute in numeric order (001 physically
+  relocates everything; 002 repairs references/governance; 003 reconciles
+  content accuracy). Each lists its prerequisite.
+- Brief file paths are stable across the migration: after 001 delivers, this
+  queue lives at
+  `Core3/MMOCoreORB/src/server/zone/managers/customskills/docs/briefs/`.
+- The original 001 ("sync package with core3") was superseded by owner
+  directive 2026-08-23 when the dual-tree model was abolished; its remaining
+  content-accuracy work was carried into 003.
+
+---
+
+**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free).
+
+## Contributors
+
+- **Daniel** -- project owner
+- ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- initial queue
