@@ -47,13 +47,12 @@ reading only what the brief lists -- no conversation history required.
 
 | File | Title | Status |
 |------|-------|--------|
-| [`001-migrate-mod-into-core3.md`](001-migrate-mod-into-core3.md) | Migrate customskills-mod into the Core3 repository; dissolve dual tree | UNCLAIMED |
-| [`002-post-migration-doc-repair.md`](002-post-migration-doc-repair.md) | Post-migration documentation & governance repair (links, R6.5/R6.6, START-HERE) | UNCLAIMED |
+| [`001-migrate-mod-into-core3.md`](001-migrate-mod-into-core3.md) | Migrate customskills-mod into the Core3 repository; dissolve dual tree | DELIVERED |
+| [`002-post-migration-doc-repair.md`](002-post-migration-doc-repair.md) | Post-migration documentation & governance repair (links, R6.5/R6.6, START-HERE) | DELIVERED |
 | [`003-reconcile-hooks-patch-modifier-count.md`](003-reconcile-hooks-patch-modifier-count.md) | Regenerate patch incl. H16; reconcile modifier count + menu docs | DELIVERED |
 | [`004-modifier-reference-refresh.md`](004-modifier-reference-refresh.md) | Refresh MODIFIER_REFERENCE against current config.lua (badgeOverrides, rarityNaming) | UNCLAIMED |
 | [`005-single-source-badge-rule.md`](005-single-source-badge-rule.md) | Document single-source-of-truth rule for badge-backed modifiers | DELIVERED |
 | [`006-reconcile-recording-conventions-with-alice.md`](006-reconcile-recording-conventions-with-alice.md) | Reconcile recording conventions with Project Alice framework (slots, short format, deviations) | UNCLAIMED |
-| [`005-single-source-badge-rule.md`](005-single-source-badge-rule.md) | Document single-source-of-truth rule for badge-backed modifiers (prevent ERR-005 recurrence) | DELIVERED |
 
 ## Notes
 
