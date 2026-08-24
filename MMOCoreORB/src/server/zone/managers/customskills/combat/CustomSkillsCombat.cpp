@@ -26,6 +26,28 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 					creo->sendCustomCombatSpam(UnicodeString(label), 11);
 			}
 		}
+
+		// Attack repeat tiers (ERR-009): Quad > Triple > Double, one tier
+		// only. Multiplies the crit-adjusted damage; armor mitigation is
+		// proportional, so this is equivalent to repeating the finalized
+		// hit. Chances are the capped config totals in basis points.
+		int quadTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::QUAD_ATTACK_CHANCE,
+				CustomSkillsModifiers::getModifierTotal(creo, CustomSkillsModifierType::QUAD_ATTACK_CHANCE));
+		int tripleTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE,
+				CustomSkillsModifiers::getModifierTotal(creo, CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE));
+		int doubleTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::DOUBLE_ATTACK_CHANCE,
+				CustomSkillsModifiers::getModifierTotal(creo, CustomSkillsModifierType::DOUBLE_ATTACK_CHANCE));
+
+		int repeatMultiplier = 1;
+		if (quadTotal > 0 && System::random(9999) < quadTotal)
+			repeatMultiplier = 4;
+		else if (tripleTotal > 0 && System::random(9999) < tripleTotal)
+			repeatMultiplier = 3;
+		else if (doubleTotal > 0 && System::random(9999) < doubleTotal)
+			repeatMultiplier = 2;
+
+		if (repeatMultiplier > 1)
+			damage = static_cast<int>(static_cast<int64>(damage) * repeatMultiplier);
 	}
 
 	return combatManager->applyVanillaDamage(attacker, weapon, defender, defenderHitList, damage,

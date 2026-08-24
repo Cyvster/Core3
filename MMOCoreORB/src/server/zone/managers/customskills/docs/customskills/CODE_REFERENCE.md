@@ -678,6 +678,7 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Badges (default)** | Warren (2), Theme Parks (4) = 6 total |
 
 **Behavior**: Repeats finalized damage 2x total. Checked last (after Quad, Triple). Only one tier triggers per hit.
+**Implemented**: yes (BRIEF-015).
 
 ---
 
@@ -693,6 +694,7 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Badges (default)** | 12 combat mastery (11 x 200 bp, BH x 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 200 bp = 17 total |
 
 **Behavior**: Repeats finalized damage 3x total. Checked after Quad, before Double.
+**Implemented**: yes (BRIEF-015).
 
 ---
 
@@ -708,6 +710,7 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Badges (default)** | 12 combat mastery (11 x 200 bp, BH x 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 200 bp = 17 total |
 
 **Behavior**: Repeats finalized damage 4x total. Checked first.
+**Implemented**: yes (BRIEF-015).
 
 ---
 

@@ -382,7 +382,7 @@ Daniel may resolve, reject, or apply any entry directly.
 
 ## ERR-009 -- Double/Triple/Quad attack chance modifiers have no gameplay implementation
 
-- Status: OPEN
+- Status: RESOLVED
 - Filed by: ox-alpha (opencode/x-preview-f-free)
 - Date: 08242026
 - Affects: `config.lua` (doubleAttackChance, tripleAttackChance,
@@ -408,4 +408,14 @@ Daniel may resolve, reject, or apply any entry directly.
   lists, owned counts, and totals directly from the config map via
   `getBadgeBonuses(type)` (single source of truth). Verified: Critical
   Chance page iterates all 60 config keys. Applied 08242026 by ox-alpha
+  (opencode/x-preview-f-free); self-verified under [DIRECTIVE 08242026].
+
+- Resolution: RESOLVED -- owner elected to build the mechanic (Option a).
+  BRIEF-015 implemented attack repeat tiers inside the existing
+  `CustomSkillsCombat::applyDamage` delegation (no new SWGEmu hooks):
+  Quad -> Triple -> Double rolled highest-first, one tier per hit,
+  chances = capped config totals in basis points; triggered tier
+  multiplies the crit-adjusted damage before mitigation (equivalent to
+  repeating the finalized hit). Label-free per the combat-spam removal
+  directive. Applied 08242026 by ox-alpha
   (opencode/x-preview-f-free); self-verified under [DIRECTIVE 08242026].
