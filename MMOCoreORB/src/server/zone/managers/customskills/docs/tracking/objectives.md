@@ -37,10 +37,13 @@ Core3-side wiring. See
 
 ## M5/M6 -- Challenge Tier system
 
-- [ ] Settle open question: how many Challenge Tiers exist and what XP bonus
-      each grants (planning assumes 1000% at high tiers) -- blocks final cost
-      calibration. Decision by Daniel, recorded in feature-planning doc.
-- [ ] Skill display names for all 57 boxes (currently TBD in tree tables).
+- [x] ~~Settle open question: how many Challenge Tiers exist and what XP bonus
+      each grants (planning assumes 1000% at high tiers)~~ -- DECIDED
+      08242026: ten tiers, +25/+50/+100/+175/+275/+400/+550/+700/+850/+1000%.
+      Recorded in feature-planning doc (Challenge Tier ladder).
+- [x] ~~Skill display names for all 57 boxes (currently TBD in tree tables)~~ --
+      DECIDED 08242026: scheme A (Novice/Master + Branch I-IV); filled into
+      the tree tables. Stringfile entries pending deployment.
 - [ ] Verify resource-container stack limits handle creature_harvesting=1000
       yields during live testing.
 - [ ] Implement Challenge Tier XP award gating (award only at Tier 1+,
@@ -94,9 +97,11 @@ Core3-side wiring. See
 ---
 
 **Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
-BRIEF-006: claim-line signature example replaced with a reference to
-process.md ([PROC R6.7]). Prior: 08232026 by ox-alpha
-(opencode/x-preview-f-free) -- package-sync objective marked obsolete via BRIEF-001 migration; git-history objective resolved.
+M6 owner inputs resolved (CT ladder + display names); remaining M6 items
+are implementation/testing. Prior: 08242026 -- BRIEF-006: claim-line
+signature example replaced with a reference to process.md ([PROC R6.7]).
+Prior: 08232026 -- package-sync objective marked obsolete via BRIEF-001
+migration; git-history objective resolved.
 
 ## Contributors
 

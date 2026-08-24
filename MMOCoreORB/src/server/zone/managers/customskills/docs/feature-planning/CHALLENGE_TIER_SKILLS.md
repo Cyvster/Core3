@@ -29,6 +29,21 @@ Three new fourbyfour skill trees for the Challenge Tier system using the
   completing everything else. Progression speed must be gated behind *high* challenge tiers;
   low-tier farming should not be able to fund meaningful tree progress.
 
+## Challenge Tier ladder - APPROVED 08242026
+
+Ten tiers; players opt in by entering Tier 1 (`challenge_tier` XP requires Tier 1+).
+XP bonus per tier, applied to qualifying kills (composes with badge Experience Bonus
+per the agreed composition rule):
+
+| Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|------|---|---|---|---|---|---|---|---|---|----|
+| XP bonus | +25% | +50% | +100% | +175% | +275% | +400% | +550% | +700% | +850% | +1000% |
+
+Top of ladder = 11x, exactly the planning assumption behind XP costs v2
+(CL x 11 x ~6 badge multiplier = CL x 66 endgame rate). Early tiers are
+deliberately small so opted-in low-tier farming stays weak until deep tiers,
+preserving the gating intent.
+
 ## XP costs v2 - APPROVED 08212026; implemented in skills.csv
 
 Per user direction: requirements **increase per tree** but are **uniform within a tree**
@@ -209,8 +224,10 @@ Per-mod totals: equilibrium/intimidate/force_luck = **100 each**; creature_harve
 - ~~What secondary defense mods go in which tree?~~ -- see Distribution v1 (approved)
 - ~~Prerequisites between trees?~~ -- sequential stacking via master boxes (approved)
 - ~~What are the XP costs and caps per tier?~~ -- uniform per-tree pricing, see XP costs v2 (approved + implemented)
-- How many Challenge Tiers exist, and what bonus does each tier grant? (planning assumes 1000% at high tiers)
-- Skill names (display strings) per box?
+- ~~How many Challenge Tiers exist, and what bonus does each tier grant?~~ --
+  ten tiers, +25% to +1000%; see Challenge Tier ladder (approved 08242026)
+- ~~Skill names (display strings) per box?~~ -- scheme A approved 08242026;
+  filled into the Trees tables below; ships via skill_n.stf at deployment
 
 ## Trees
 
@@ -220,35 +237,48 @@ Per-mod totals: equilibrium/intimidate/force_luck = **100 each**; creature_harve
 
 | Skill | Name | XP Cost | XP Cap | Skill Mods |
 |-------|------|---------|--------|------------|
-| novice | TBD | 100000 | 5100000 | bleed_resist=5, fire_resist=5, poison_disease_resist=5, knockdown_defense=5, posture_change_down_defense=5, posture_change_up_defense=5 |
-| ironblood_01-04 | TBD | 100000 | 5100000 | bleed/fire/poison each =10/15/20/25 |
-| unshakeable_01-04 | TBD | 100000 | 5100000 | knockdown_defense=15/20/25/30 |
-| anchored_01-04 | TBD | 100000 | 5100000 | posture_change_down_defense=15/20/25/30 |
-| rising_01-04 | TBD | 100000 | 5100000 | posture_change_up_defense=15/20/25/30 |
-| master | TBD | 100000 | 5100000 | bleed/fire/poison +25 each, knockdown +5, posture-down +5, posture-up +5 |
+| novice | Novice Survivor | 100000 | 5100000 | bleed_resist=5, fire_resist=5, poison_disease_resist=5, knockdown_defense=5, posture_change_down_defense=5, posture_change_up_defense=5 |
+| ironblood_01-04 | Iron Blood I-IV | 100000 | 5100000 | bleed/fire/poison each =10/15/20/25 |
+| unshakeable_01-04 | Unshakeable I-IV | 100000 | 5100000 | knockdown_defense=15/20/25/30 |
+| anchored_01-04 | Anchored I-IV | 100000 | 5100000 | posture_change_down_defense=15/20/25/30 |
+| rising_01-04 | Rising I-IV | 100000 | 5100000 | posture_change_up_defense=15/20/25/30 |
+| master | Master Survivor | 100000 | 5100000 | bleed/fire/poison +25 each, knockdown +5, posture-down +5, posture-up +5 |
 
 ### Tree 2: veteran - 350,000 XP per box (implemented)
 
 | Skill | Name | XP Cost | XP Cap | Skill Mods |
 |-------|------|---------|--------|------------|
-| novice | TBD | 350000 | 5100000 | melee_defense=5, ranged_defense=5, melee_accuracy=5, ranged_accuracy=5, dodge=5 |
-| bulwark_01-04 | TBD | 350000 | 5100000 | melee_defense & ranged_defense =15/20/25/30 each |
-| deadeye_01-04 | TBD | 350000 | 5100000 | melee_accuracy & ranged_accuracy =15/20/25/30 each |
-| weaponwork_01-04 | TBD | 350000 | 5100000 | block, counterattack, dodge =10/15/20/25 each |
-| senses_01-04 | TBD | 350000 | 5100000 | stun/dizzy/blind_defense =10/15/20/25 each; dodge_attack=2/2/3/3 |
-| master | TBD | 350000 | 5100000 | primaries +5 each, block +30, counter +30, dodge +25, states +30 each |
+| novice | Novice Veteran | 350000 | 5100000 | melee_defense=5, ranged_defense=5, melee_accuracy=5, ranged_accuracy=5, dodge=5 |
+| bulwark_01-04 | Bulwark I-IV | 350000 | 5100000 | melee_defense & ranged_defense =15/20/25/30 each |
+| deadeye_01-04 | Deadeye I-IV | 350000 | 5100000 | melee_accuracy & ranged_accuracy =15/20/25/30 each |
+| weaponwork_01-04 | Weaponwork I-IV | 350000 | 5100000 | block, counterattack, dodge =10/15/20/25 each |
+| senses_01-04 | Senses I-IV | 350000 | 5100000 | stun/dizzy/blind_defense =10/15/20/25 each; dodge_attack=2/2/3/3 |
+| master | Master Veteran | 350000 | 5100000 | primaries +5 each, block +30, counter +30, dodge +25, states +30 each |
 
 ### Tree 3: paragon - 1,000,000 XP per box (implemented)
 
 | Skill | Name | XP Cost | XP Cap | Skill Mods |
 |-------|------|---------|--------|------------|
-| novice | TBD | 1000000 | 5100000 | combat_equillibrium=5, intimidate_defense=5, force_luck=5, creature_harvesting=50 |
-| composure_01-04 | TBD | 1000000 | 5100000 | combat_equillibrium=15/20/25/30 |
-| resolve_01-04 | TBD | 1000000 | 5100000 | intimidate_defense=15/20/25/30 |
-| fortuna_01-04 | TBD | 1000000 | 5100000 | force_luck=15/20/25/30 |
-| harvester_01-04 | TBD | 1000000 | 5100000 | creature_harvesting=150/200/250/300 |
-| master | TBD | 1000000 | 5100000 | eq +5, intim +5, luck +5, harvesting +50 |
+| novice | Novice Paragon | 1000000 | 5100000 | combat_equillibrium=5, intimidate_defense=5, force_luck=5, creature_harvesting=50 |
+| composure_01-04 | Composure I-IV | 1000000 | 5100000 | combat_equillibrium=15/20/25/30 |
+| resolve_01-04 | Resolve I-IV | 1000000 | 5100000 | intimidate_defense=15/20/25/30 |
+| fortuna_01-04 | Fortuna I-IV | 1000000 | 5100000 | force_luck=15/20/25/30 |
+| harvester_01-04 | Harvester I-IV | 1000000 | 5100000 | creature_harvesting=150/200/250/300 |
+| master | Master Paragon | 1000000 | 5100000 | eq +5, intim +5, luck +5, harvesting +50 |
+
+### Display names - APPROVED 08242026
+
+Owner-approved scheme A: `Novice <Tree>` / `<Branch> I-IV` / `Master <Tree>`
+using the existing branch themes. Hidden tree roots
+(`challenge_survivor` / `challenge_veteran` / `challenge_paragon`) display
+as Survivor / Veteran / Paragon if ever surfaced. Internal skill keys are
+unchanged; names ship as client stringfile entries (skill_n.stf source for
+the TRE builder -- same mechanism as the challenge_tier entry in
+exp_n.stf) during deployment.
 
 ---
 
-**Last reconciled:** 08232026 by ox-alpha (opencode/x-preview-f-free) -- governance banners added; content otherwise unchanged.
+**Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
+owner decisions recorded: Challenge Tier ladder (10 tiers, +25%..+1000%)
+and box display names (scheme A, filled into tree tables); open questions
+resolved. Prior: 08232026 -- governance banners added.
