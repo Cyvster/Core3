@@ -25,17 +25,17 @@
    | armorPenetration | 1 (unchanged) | 9 | 9 -> clamped 3 = cap |
    | amazingSuccessChance | 1000 | 10 | 10000 = cap 10000 exact |
    | amazingResults | 1000 (unchanged) | 10 | 10000 = cap exact |
-   | defenseCapIncrease | 5 | 15 | 75 pts (uncapped) |
+   | defenseCapIncrease | 8 | 15 | 120 pts (uncapped; owner-cited historical ceiling) |
    | armorDegradeReduction | 1250 (unchanged) | 8 | 100% |
    | weaponDegradeReduction | 1250 (unchanged) | 8 | 100% |
    | seaCapIncrease | 15 (unchanged) | 5 | 75 pts |
    | movementSpeed | 2500 (unchanged) | 4 | 100% |
-   | buffDuration | 2500 | 13 | 325% |
+   | buffDuration | 2500 | 13 | 325% (slight rise from former 300% -- flagged) |
    | experienceMultiplier | 10000 (unchanged) | 5 | 500% |
    | practiceExperienceBonus | 10000 (unchanged) | 10 | 1000% |
    | craftingSpeed | 1000 (unchanged) | 10 | 100% |
    | amazingResults covered above; gatheringQuantity below |
-   | gatheringQuantity | 2500 | 13 | 325% (uncapped) |
+   | gatheringQuantity | 7700 | 13 | 100100 bp ~= 1000% (uncapped; preserves prior ceiling) |
 
 3. **config.lua -- placeholder block for EVERY modifier**, directly under
    its badges list, inactive (commented out) with instructional notes:
@@ -52,10 +52,18 @@
    Use keys drawn from THAT modifier's own badges list in its example so
    owners see a copy-paste-realistic starting point.
 
-4. **Known balance shifts to document** (accepted by owner): Defense Cap
-   100 -> 75 pts; Buff Duration 300% -> 325%; Gathering Quantity 1000% ->
-   325%. Record these in the commit message and CODE_REFERENCE Appendix A
-   totals table.
+4. **Faction-exclusivity accounting**: faction-paired badge sets
+   (Corellian Corvette Imp/Reb/Neutral, Cries of Alderaan Rebel/Imperial)
+   are partially mutually exclusive per character -- a player can hold
+   only one faction side plus neutrals. Reachable-max annotations in
+   CODE_REFERENCE.md Appendix A must state per-player reachable totals
+   where they differ from listed totals, and intentional over-cap
+   attainment via faction paths (e.g. Defense Cap reaching 120 pts) is
+   PRESERVED, not treated as drift.
+5. **Known shifts to document**: Buff Duration rises 300% -> 325%
+   (uniform-rate artifact, flagged for owner awareness); Defense Cap and
+   Gathering ceilings preserved via recalibrated badgeBonus (see table).
+   Record in commit message and Appendix A.
 
 5. **Docs** ([PROC R6.6]):
    - CODE_REFERENCE.md Appendix A: regenerate affected sections/totals
@@ -82,5 +90,5 @@
 
 - ERR-009 tier implementation (delivered separately, BRIEF-015).
 - Changing any cap value.
-- Adding new badges to any list (lists stay as-is per the recalibration
-  table above).
+- Adding badges beyond what the recalibration requires (list sizes stay
+  as-is unless a ceiling proves unreachable with uniform values).
