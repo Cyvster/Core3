@@ -1,6 +1,6 @@
 # BRIEF-013 -- Delegated broadcastCombatSpam: module-owned combat spam pipeline with same-line labels
 
-- Status: UNCLAIMED
+- Status: UNCLAIMED (amended 08242026: client-settings research gate added)
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive resolving the BRIEF-010 AWAITING-OWNER decision (Option A --
   full-line replacement via delegated broadcast). Owner intent: full
@@ -17,8 +17,42 @@ Phase 1 evidence). All hit spam funnels through ONE function:
 file, stringName, color)`. Delegating that function to module code gives
 us total authority over emission while every caller site stays untouched.
 
+## Phase 0 -- Client-settings research (GATING: do before any code)
+
+Players customize combat spam client-side. Documented options (SWG
+Options -> Combat / Chat color; sources: swg.fandom.com/wiki/Options,
+swglegends.com/wiki/Options):
+
+- **Brief vs Verbose combat messages**: Brief = "Korren hits a bolma male
+  528 points"; Verbose = prose format naming the special attack used.
+- **Verbose sub-toggles**: Show Attacker's Weapon, Show Damage Detail
+  (energy/kinetic + elemental split), Show Armor Absorption.
+- **Chat color customization**: players set per-channel/message colors in
+  the Chat color tab.
+
+The client composes these variants FROM THE PACKET FIELDS. A raw-text
+replacement line is fixed server-side and CANNOT honor Brief/Verbose,
+the verbose sub-toggles, or player chat colors. Therefore:
+
+- The naive raw-text full-line replacement from the original draft is a
+  LAST RESORT and violates this gate as a primary mechanism.
+- **Preferred compliant mechanism**: keep stringId-mode packets and swap
+  WHICH stf key they reference when a label fires -- e.g. broadcast
+  `cbt_spam:attack_hit_crit` instead of `attack_hit`. The `(CRIT)` text
+  lives in custom stf entries shipped via Daniel's TRE builder (client-
+  side), so the CLIENT composes the line itself: every Brief/Verbose/
+  weapon/detail/color setting keeps working, because the packet path is
+  unchanged. Server picks the key; client renders.
+- If research shows the variant-key approach cannot preserve some
+  setting, STOP and report AWAITING-OWNER with specifics.
+
 ## Deliverables
 
+0. **Client-settings research record** appended to this brief: confirm
+   each listed option's interaction with both packet modes (stringId vs
+   raw-text), citing code paths (`broadcastCombatSpam` construction) and
+   client documentation. Conclude explicitly whether the variant-stf-key
+   approach preserves every player option.
 1. **Delegation** (`CombatManager.cpp`, existing patched file): replace
    the body of `broadcastCombatSpam` with a single delegation call to
    `CustomSkillsCombat::broadcastCombatSpam(this, ...)` -- mirror the
@@ -30,11 +64,11 @@ us total authority over emission while every caller site stays untouched.
      same stringId-mode packet construction, same color defaults.
      Cite upstream origin in a header comment so future audits track
      drift.
-   - Suffix pending on the attacker -> build ONE raw-text packet
-     containing the complete line: resolve `file:stringName` via
-     `StringIdManager`, substitute `%DI` -> damage and `%TU`/`%TT` ->
-     attacker/defender names, append the pending label, send to each
-     in-range player (per-receiver loop preserved).
+   - Suffix pending on the attacker -> emit the label via the compliant
+     mechanism chosen in Phase 0 (preferred: swap stringName to the
+     `_crit` stf variant key so the CLIENT still composes Brief/Verbose/
+     colored output itself; raw-text fallback only if Phase 0 proves
+     variant keys insufficient, and then AWAITING-OWNER before shipping).
    - Clear the pending suffix after emission regardless of path.
 3. **Suffix carrier** (`CreatureObject.idl`): add
    `public transient unicode pendingSpamSuffix;` (precedent:
@@ -80,6 +114,7 @@ future work.
 - Patch regenerated and applies cleanly to a vanilla checkout (reverse
   check documented).
 - MANIFEST + ARCHITECTURE + INSTALLATION updated; ERR-009 untouched.
+- Player-settings preservation verified: Brief mode, Verbose mode (+weapon/detail/absorption sub-toggles), and chat colors all behave with labels ON and OFF.
 - Compile/idlc deferred to Docker build environment (documented), as
   with BRIEF-007.
 - Single commit tagged `[BRIEF-013]`, pushed.
