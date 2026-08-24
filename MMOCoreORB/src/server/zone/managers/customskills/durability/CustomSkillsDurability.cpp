@@ -13,7 +13,7 @@ bool CustomSkillsDurability::shouldDegradeArmor(CreatureObject* wearer) {
 bool CustomSkillsDurability::shouldDegradeWeapon(CreatureObject* user, int nativeChancePercent) {
 	int reduction = CustomSkillsModifiers::getModifierTotal(user, CustomSkillsModifierType::WEAPON_DEGRADE_REDUCTION);
 	if (reduction <= 0)
-		return System::random(100) < nativeChancePercent;
+		return System::random(9999) < nativeChancePercent * 100;
 	int effectiveChance = Math::max(0, nativeChancePercent * (10000 - reduction) / 100);
 	return System::random(9999) < effectiveChance;
 }

@@ -96,6 +96,7 @@ String CustomSkillsModifiers::getModifierName(CustomSkillsModifierType::Type typ
 		"SEA Cap", "Movement Speed", "Buff Duration", "Experience Bonus", "Practice Experience Bonus",
 		"Crafting Speed", "Amazing Success Chance", "Amazing Results", "Gathering Quantity"
 	};
+	static_assert(sizeof(names) / sizeof(names[0]) == static_cast<size_t>(CustomSkillsModifierType::COUNT), "names[] out of sync with CustomSkillsModifierType enum");
 	return type >= 0 && type < CustomSkillsModifierType::COUNT ? names[type] : "Unknown Modifier";
 }
 

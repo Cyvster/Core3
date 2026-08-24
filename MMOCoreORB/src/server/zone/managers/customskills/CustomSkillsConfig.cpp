@@ -93,6 +93,8 @@ void CustomSkillsConfig::loadModifier(LuaObject& modifiers, const String& name,
 	modifier.pop();
 }
 
+// Note: an override whose key is absent from badges[] ADDS that key to the
+// assignment map (by design -- overrides are the explicit per-badge source).
 void CustomSkillsConfig::loadBadgeOverrides(LuaObject& table, CustomSkillsModifierType::Type type) {
 	LuaObject overrides = table.getObjectField("badgeOverrides");
 	if (overrides.isValidTable()) {
@@ -148,8 +150,9 @@ void CustomSkillsConfig::load() {
 		setUniformBadgeBonus(CustomSkillsModifierType::CRITICAL_CHANCE, criticalChanceFallbackBonus);
 
 		int cap = critical.getIntField("cap", modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE]);
-		if (cap >= 0)
-			modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE] = cap;
+		if (cap < 0)
+			cap = 0;
+		modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE] = cap;
 
 		LuaObject ccBadges = critical.getObjectField("badges");
 		if (ccBadges.isValidTable()) {
@@ -213,7 +216,8 @@ void CustomSkillsConfig::load() {
 		loadModifier(modifiers, "craftingSpeed", CustomSkillsModifierType::CRAFTING_SPEED, false, 0);
 		loadModifier(modifiers, "amazingSuccessChance", CustomSkillsModifierType::AMAZING_SUCCESS_CHANCE, false, 0);
 		loadModifier(modifiers, "amazingResults", CustomSkillsModifierType::AMAZING_RESULTS, false, 0);
-		loadModifier(modifiers, "gatheringQuantity", CustomSkillsModifierType::GATHERING_QUANTITY, false, 20000);
+		static constexpr int DEFAULT_GATHERING_QUANTITY_BONUS = 20000;
+		loadModifier(modifiers, "gatheringQuantity", CustomSkillsModifierType::GATHERING_QUANTITY, false, DEFAULT_GATHERING_QUANTITY_BONUS);
 	}
 	modifiers.pop();
 	root.pop();

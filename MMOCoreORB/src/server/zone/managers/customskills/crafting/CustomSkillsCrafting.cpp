@@ -12,6 +12,7 @@ int CustomSkillsCrafting::modifyPracticeExperience(CreatureObject* crafter, int 
 }
 
 int CustomSkillsCrafting::divideDuration(CreatureObject* crafter, int nativeSeconds) {
+	// Durations below 1 second are clamped to 1 (documented edge behavior).
 	if (nativeSeconds <= 1)
 		return 1;
 	int bonus = CustomSkillsModifiers::getModifierTotal(crafter, CustomSkillsModifierType::CRAFTING_SPEED);

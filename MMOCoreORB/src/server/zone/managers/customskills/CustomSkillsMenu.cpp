@@ -345,24 +345,35 @@ bool CustomSkillsMenu::hasChildPages(Page page) {
 }
 
 CustomSkillsMenu::Page CustomSkillsMenu::getParent(Page page) {
-	if (page == BADGES) return MAIN;
-	if (page == BONUSES) return MAIN;
-	if (page == SERVER_CONFIG) return MAIN;
-	if (page == MOD_OPTIONS || page == SWGEMU_OPTIONS) return SERVER_CONFIG;
-	if (page == RARITY_NAMING) return MOD_OPTIONS;
-	if (page >= MILESTONES && page <= EVENT) return BADGES;
-	if (page >= EXPLORATION_MILESTONES && page <= YAVIN4) return EXPLORATION;
-	if (page >= PROFESSION_COMBAT && page <= PROFESSION_PILOT) return PROFESSION;
-	if (page >= QUEST_HERO && page <= QUEST_CORVETTE) return QUEST;
-	if (page >= EVENT_COA && page <= EVENT_DEATH_STAR) return EVENT;
-	if (page == BONUS_COMBAT || page == BONUS_UTILITY || page == BONUS_CRAFTING) return BONUSES;
-	if (page >= BONUS_CRIT_CHANCE && page <= BONUS_DEF_CAP) return BONUS_COMBAT;
-	if (page >= BONUS_ARMOR_DEGRADE && page <= BONUS_GATHERING) return BONUS_UTILITY;
-	if (page >= BONUS_PRACTICE_XP && page <= BONUS_AMAZING_RESULTS) return BONUS_CRAFTING;
+	// Explicit mapping: order-independent, no reliance on enum sequence.
+#define PARENT(pageName, parentName) case pageName: return parentName
+	switch (page) {
+		PARENT(MAIN, MAIN);
+		PARENT(BADGES, MAIN);
+		PARENT(MILESTONES, BADGES); PARENT(EXPLORATION, BADGES); PARENT(PROFESSION, BADGES); PARENT(QUEST, BADGES); PARENT(EVENT, BADGES);
+		PARENT(EXPLORATION_MILESTONES, EXPLORATION); PARENT(CORELLIA, EXPLORATION); PARENT(DANTOOINE, EXPLORATION); PARENT(DATHOMIR, EXPLORATION); PARENT(ENDOR, EXPLORATION); PARENT(LOK, EXPLORATION); PARENT(NABOO, EXPLORATION); PARENT(RORI, EXPLORATION); PARENT(TALUS, EXPLORATION); PARENT(TATOOINE, EXPLORATION); PARENT(YAVIN4, EXPLORATION);
+		PARENT(PROFESSION_COMBAT, PROFESSION); PARENT(PROFESSION_CRAFTING, PROFESSION); PARENT(PROFESSION_OUTDOORS, PROFESSION); PARENT(PROFESSION_SCIENCE, PROFESSION); PARENT(PROFESSION_SOCIAL, PROFESSION); PARENT(PROFESSION_PILOT, PROFESSION);
+		PARENT(QUEST_HERO, QUEST); PARENT(QUEST_WARREN, QUEST); PARENT(QUEST_THEME_PARKS, QUEST); PARENT(QUEST_CORVETTE, QUEST);
+		PARENT(EVENT_COA, EVENT); PARENT(EVENT_ACCOLADES, EVENT); PARENT(EVENT_LIBRARIAN, EVENT); PARENT(EVENT_RACING, EVENT); PARENT(EVENT_DEATH_STAR, EVENT);
+		PARENT(BONUSES, MAIN);
+		PARENT(BONUS_COMBAT, BONUSES); PARENT(BONUS_UTILITY, BONUSES); PARENT(BONUS_CRAFTING, BONUSES);
+		PARENT(BONUS_CRIT_CHANCE, BONUS_COMBAT); PARENT(BONUS_CRIT_MULTI, BONUS_COMBAT); PARENT(BONUS_DOUBLE, BONUS_COMBAT); PARENT(BONUS_TRIPLE, BONUS_COMBAT); PARENT(BONUS_QUAD, BONUS_COMBAT); PARENT(BONUS_ARMOR_PEN, BONUS_COMBAT); PARENT(BONUS_DEF_CAP, BONUS_COMBAT);
+		PARENT(BONUS_ARMOR_DEGRADE, BONUS_UTILITY); PARENT(BONUS_WEAPON_DEGRADE, BONUS_UTILITY); PARENT(BONUS_SEA_CAP, BONUS_UTILITY); PARENT(BONUS_MOVE_SPEED, BONUS_UTILITY); PARENT(BONUS_BUFF_DUR, BONUS_UTILITY); PARENT(BONUS_EXP_BONUS, BONUS_UTILITY); PARENT(BONUS_GATHERING, BONUS_UTILITY);
+		PARENT(BONUS_PRACTICE_XP, BONUS_CRAFTING); PARENT(BONUS_CRAFT_SPEED, BONUS_CRAFTING); PARENT(BONUS_AMAZING_SUCCESS, BONUS_CRAFTING); PARENT(BONUS_AMAZING_RESULTS, BONUS_CRAFTING);
+		PARENT(SERVER_CONFIG, MAIN);
+		PARENT(MOD_OPTIONS, SERVER_CONFIG);
+		PARENT(RARITY_NAMING, MOD_OPTIONS);
+		PARENT(SWGEMU_OPTIONS, SERVER_CONFIG);
+	}
+#undef PARENT
 	return MAIN;
 }
 
 String CustomSkillsMenu::getTitle(Page page) {
 	static const char* const titles[] = {"Custom Skills", "Custom Skills > Badges", "Badges > Milestone Badges", "Badges > Exploration", "Badges > Profession", "Badges > Quest", "Badges > Event", "Exploration > Milestone Exploration", "Exploration > Corellia", "Exploration > Dantooine", "Exploration > Dathomir", "Exploration > Endor", "Exploration > Lok", "Exploration > Naboo", "Exploration > Rori", "Exploration > Talus", "Exploration > Tatooine", "Exploration > Yavin IV", "Profession > Combat", "Profession > Crafting", "Profession > Outdoors", "Profession > Science", "Profession > Social", "Profession > Pilot", "Quest > Hero of Tatooine", "Quest > Warren", "Quest > Theme Parks", "Quest > Corellian Corvette", "Event > Cries of Alderaan", "Event > Accolades", "Event > Librarian", "Event > Racing", "Event > Death Star", "Custom Skills > Bonuses", "Bonuses > Combat", "Bonuses > Utility", "Bonuses > Crafting", "Combat > Critical Chance", "Combat > Critical Multiplier", "Combat > Double Attack", "Combat > Triple Attack", "Combat > Quad Attack", "Combat > Armor Penetration", "Combat > Defense Cap", "Utility > Armor Degrade Reduction", "Utility > Weapon Degrade Reduction", "Utility > SEA Cap", "Utility > Movement Speed", "Utility > Buff Duration", "Utility > Experience Bonus", "Utility > Gathering Quantity", "Crafting > Practice XP", "Crafting > Crafting Speed", "Crafting > Amazing Success", "Crafting > Amazing Results", "Custom Skills > Server Config", "Server Config > Mod Options", "Mod Options > Rarity Naming", "Server Config > SWGEMU Options"};
-	return titles[static_cast<int>(page)];
+	static_assert(sizeof(titles) / sizeof(titles[0]) == static_cast<size_t>(Page::SWGEMU_OPTIONS) + 1, "titles[] out of sync with Page enum");
+	int index = static_cast<int>(page);
+	if (index < 0 || index >= static_cast<int>(sizeof(titles) / sizeof(titles[0])))
+		return "Custom Skills";
+	return titles[index];
 }
