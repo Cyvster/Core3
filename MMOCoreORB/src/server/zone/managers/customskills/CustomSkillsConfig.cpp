@@ -95,6 +95,9 @@ void CustomSkillsConfig::loadModifier(LuaObject& modifiers, const String& name,
 
 // Note: an override whose key is absent from badges[] ADDS that key to the
 // assignment map (by design -- overrides are the explicit per-badge source).
+// Contract: overrides REPLACE the badgeBonus entry for that key -- they
+// never stack with it. A badge listed in both badges[] and badgeOverrides
+// contributes only its override value. One value per badge key, always.
 void CustomSkillsConfig::loadBadgeOverrides(LuaObject& table, CustomSkillsModifierType::Type type) {
 	LuaObject overrides = table.getObjectField("badgeOverrides");
 	if (overrides.isValidTable()) {
