@@ -1,6 +1,6 @@
 # BRIEF-006 -- Reconcile recording conventions with the Project Alice framework
 
-- Status: UNCLAIMED
+- Status: CLAIMED by ox-alpha (opencode/x-preview-f-free), 2026-08-24
 - Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Context: ERR-006 (hy3-free signature slip) exposed that the
   governance adoption ported Alice's recording conventions INCOMPLETELY --
