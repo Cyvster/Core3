@@ -51,6 +51,7 @@ reading only what the brief lists -- no conversation history required.
 | [`002-post-migration-doc-repair.md`](002-post-migration-doc-repair.md) | Post-migration documentation & governance repair (links, R6.5/R6.6, START-HERE) | UNCLAIMED |
 | [`003-reconcile-hooks-patch-modifier-count.md`](003-reconcile-hooks-patch-modifier-count.md) | Regenerate patch incl. H16; reconcile modifier count + menu docs | DELIVERED |
 | [`004-modifier-reference-refresh.md`](004-modifier-reference-refresh.md) | Refresh MODIFIER_REFERENCE against current config.lua (badgeOverrides, rarityNaming) | UNCLAIMED |
+| [`005-single-source-badge-rule.md`](005-single-source-badge-rule.md) | Document single-source-of-truth rule for badge-backed modifiers (prevent ERR-005 recurrence) | DELIVERED |
 
 ## Notes
 
@@ -70,11 +71,14 @@ reading only what the brief lists -- no conversation history required.
 
 ---
 
-**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) --
-BRIEF-002: index rewritten for migration sequence; BRIEF-003: statuses
-001-003 DELIVERED, added brief 004.
+**Last reconciled:** 2026-08-23 by opencode (opencode/hy3-free) --
+BRIEF-005 added and DELIVERED (single-source rule for badge-backed
+modifiers, spawned from ERR-005). Prior: ox-alpha (opencode/x-preview-f-free),
+2026-08-23 -- BRIEF-002 index rewrite; BRIEF-003 statuses 001-003 DELIVERED,
+added brief 004.
 
 ## Contributors
 
 - **Daniel** -- project owner
 - ox-alpha (opencode/x-preview-f-free), 2026-08-23 -- initial queue
+- opencode (opencode/hy3-free), 2026-08-23 -- BRIEF-005

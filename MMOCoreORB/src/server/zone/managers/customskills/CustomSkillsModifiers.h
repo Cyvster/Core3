@@ -9,9 +9,7 @@
 class CustomSkillsModifiers {
 public:
 	static bool isCriticalChanceEnabled();
-	static int getBadgeCriticalChance(const String& badgeKey);
 	static int getCriticalChance(PlayerObject* ghost);
-	static int getCriticalChance(PlayerObject* ghost, const char* const* badgeKeys, int count);
 	static int getCriticalMultiplier(CreatureObject* player);
 	static String formatPercent(int basisPoints);
 	static String colorizeCriticalText(const String& text);
@@ -25,7 +23,6 @@ public:
 	static bool applyRarityNaming(TangibleObject* object, float excMod, float legendaryThreshold, float exceptionalThreshold);
 
 private:
-	static bool isCombatProfessionBadge(const String& badgeKey);
 };
 
 #endif

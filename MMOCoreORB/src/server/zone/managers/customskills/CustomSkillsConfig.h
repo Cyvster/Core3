@@ -12,7 +12,6 @@ public:
 	CustomSkillsConfig();
 
 	bool isCriticalChanceEnabled() const { return criticalChanceEnabled; }
-	int getCriticalChancePerCombatBadge() const { return criticalChancePerCombatBadge; }
 	int getCriticalMultiplier() const { return criticalMultiplier; }
 	const String& getCustomSummaryColor() const { return customSummaryColor; }
 	const String& getCriticalCombatSpamLabel() const { return criticalCombatSpamLabel; }

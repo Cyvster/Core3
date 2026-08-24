@@ -6,55 +6,29 @@
 #include "server/zone/objects/creature/CreatureObject.h"
 #include "server/zone/managers/customskills/skillmods/CustomSkillsSkillMods.h"
 
-namespace {
-	const char* const combatProfessionBadges[] = {
-		"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
-		"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
-		"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
-		"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master"
-	};
-
-	static_assert(sizeof(combatProfessionBadges) / sizeof(combatProfessionBadges[0]) == 12,
-		"Critical Chance must be assigned to exactly 12 combat profession badges");
-}
-
-bool CustomSkillsModifiers::isCombatProfessionBadge(const String& badgeKey) {
-	for (const char* key : combatProfessionBadges) {
-		if (badgeKey == key)
-			return true;
-	}
-
-	return false;
-}
-
-int CustomSkillsModifiers::getBadgeCriticalChance(const String& badgeKey) {
-	CustomSkillsConfig* config = CustomSkillsConfig::instance();
-	return config->isCriticalChanceEnabled() && isCombatProfessionBadge(badgeKey) ?
-		config->getCriticalChancePerCombatBadge() : 0;
-}
-
 bool CustomSkillsModifiers::isCriticalChanceEnabled() {
 	return CustomSkillsConfig::instance()->isCriticalChanceEnabled();
 }
 
 int CustomSkillsModifiers::getCriticalChance(PlayerObject* ghost) {
-	return getCriticalChance(ghost, combatProfessionBadges, sizeof(combatProfessionBadges) / sizeof(combatProfessionBadges[0]));
-}
+	if (ghost == nullptr)
+		return 0;
 
-int CustomSkillsModifiers::getCriticalChance(PlayerObject* ghost, const char* const* badgeKeys, int count) {
-	if (ghost == nullptr || badgeKeys == nullptr || count <= 0)
+	CustomSkillsConfig* config = CustomSkillsConfig::instance();
+	if (!config->isCriticalChanceEnabled())
 		return 0;
 
 	const BadgeList* badgeList = BadgeList::instance();
-	int chance = 0;
-
-	for (int i = 0; i < count; ++i) {
-		const Badge* badge = badgeList->get(badgeKeys[i]);
+	const VectorMap<String, int>& bonuses = config->getBadgeBonuses(CustomSkillsModifierType::CRITICAL_CHANCE);
+	int total = 0;
+	for (int i = 0; i < bonuses.size(); ++i) {
+		const Badge* badge = badgeList->get(bonuses.elementAt(i).getKey());
 		if (badge != nullptr && ghost->hasBadge(badge->getIndex()))
-			chance += getBadgeCriticalChance(badge->getKey());
+			total += bonuses.elementAt(i).getValue();
 	}
 
-	return Math::min(chance, 10000);
+	int cap = config->getModifierCap(CustomSkillsModifierType::CRITICAL_CHANCE);
+	return cap > 0 ? Math::min(total, cap) : total;
 }
 
 int CustomSkillsModifiers::getCriticalMultiplier(CreatureObject* player) {

@@ -24,6 +24,8 @@ this document references them and does not restate them.
   documents (ARCHITECTURE.md, IMPLEMENTATION_GUIDE.md, MENU_SYSTEM.md)
 - ox-alpha (opencode/x-preview-f-free), 2026-08-23 — consolidation into a
   single reference during documentation compression
+- opencode (opencode/hy3-free), 2026-08-23 — BRIEF-005 single-source rule for
+  badge-backed modifiers; noted `getCriticalChance` reads the config badge map
 
 ---
 
@@ -150,8 +152,14 @@ Generic modifier config fields: `enabled`, `badgeBonus`, `cap`, `badges[]`,
   `PlayerObject::hasBadge()`
 - **Caps**: applies `config->getModifierCap(type)` if > 0 (0 = uncapped),
   after aggregation
-- **Combat helpers**: `isCriticalChanceEnabled()`, `getCriticalChance()`,
-  `getCriticalMultiplier()`
+- **Single source of truth ([CS-3])**: every badge-driven value -- gameplay
+  hooks AND the SUI menu -- resolves from
+  `CustomSkillsConfig::getBadgeBonuses(type)` / `getModifierTotal()`. C++ must
+  never hardcode a modifier's badge key list or per-badge rates; doing so
+  re-creates the ERR-005 (combat/menu divergence) failure.
+- **Combat helpers**: `isCriticalChanceEnabled()`, `getCriticalChance()`
+  (reads the config badge map -- same source as the menu; no hardcoded badge
+  list), `getCriticalMultiplier()`
 - **Formatting**: `formatPercent(bp)`, `colorizeCriticalText()`,
   `formatModifierBonus(type, value)`
 - **Badge change notification**: `notifyBadgeAwarded(player)` refreshes

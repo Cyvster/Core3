@@ -38,19 +38,22 @@ Complete registry of all 18 modifiers with configuration, units, badge assignmen
 |----------|-------|
 | **Unit** | Basis points |
 | **Default enabled** | `true` |
-| **Default badge bonus** | 300 bp (3.00%) |
-| **Default cap** | 10000 (100%) |
-| **Eligible badges** | 12 ground combat mastery |
+| **Badge bonus** | 100 bp (1.00%) each via `badgeOverrides` (base `badgeBonus` 400 bp overridden) |
+| **Default cap** | 6000 (60.00%) |
+| **Eligible badges** | 12 milestone exploration badges |
 | **Config key** | `criticalChance` (special table) |
 
-**Behavior**: Chance for landed attack to become custom critical hit. Checked before repeat-damage tiers.
+**Behavior**: Chance for a landed attack to become a custom critical hit.
+Checked before repeat-damage tiers. Both the combat roll
+(`CustomSkillsCombat::applyDamage`) and the SUI menu read this value from the
+config badge map (`CustomSkillsConfig::getBadgeBonuses(CRITICAL_CHANCE)` /
+`getModifierTotal`) -- a single source of truth ([CS-3]); it is fully
+configurable in `config.lua`.
 
-**Default badges** (all 300 bp each):
+**Badges** (all 100 bp each, via `badgeOverrides`):
 ```
-combat_1hsword_master, combat_2hsword_master, combat_bountyhunter_master,
-combat_brawler_master, combat_carbine_master, combat_commando_master,
-combat_marksman_master, combat_pistol_master, combat_polearm_master,
-combat_rifleman_master, combat_smuggler_master, combat_unarmed_master
+count_5, count_10, count_25, count_50, count_75, count_100, count_125,
+bdg_exp_10_badges, bdg_exp_20_badges, bdg_exp_30_badges, bdg_exp_40_badges, bdg_exp_45_badges
 ```
 
 ---
