@@ -28,9 +28,7 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 		}
 
 		// Attack repeat tiers (ERR-009): Quad > Triple > Double, one tier
-		// only. Multiplies the crit-adjusted damage; armor mitigation is
-		// proportional, so this is equivalent to repeating the finalized
-		// hit. Chances are the capped config totals in basis points.
+		// only. Chances are the capped config totals in basis points.
 		int quadTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::QUAD_ATTACK_CHANCE,
 				CustomSkillsModifiers::getModifierTotal(creo, CustomSkillsModifierType::QUAD_ATTACK_CHANCE));
 		int tripleTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE,
@@ -38,18 +36,29 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 		int doubleTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::DOUBLE_ATTACK_CHANCE,
 				CustomSkillsModifiers::getModifierTotal(creo, CustomSkillsModifierType::DOUBLE_ATTACK_CHANCE));
 
-		int repeatMultiplier = 1;
+		int repeats = 1;
 		if (quadTotal > 0 && System::random(9999) < quadTotal)
-			repeatMultiplier = 4;
+			repeats = 4;
 		else if (tripleTotal > 0 && System::random(9999) < tripleTotal)
-			repeatMultiplier = 3;
+			repeats = 3;
 		else if (doubleTotal > 0 && System::random(9999) < doubleTotal)
-			repeatMultiplier = 2;
+			repeats = 2;
 
-		if (repeatMultiplier > 1)
-			damage = static_cast<int>(static_cast<int64>(damage) * repeatMultiplier);
+		// Resend the already-calculated hit. Each application runs the full
+		// vanilla path (armor, spam, observers), so multi-hits are real hits.
+		// Stop early if the defender dies or is incapacitated mid-sequence.
+		int result = combatManager->applyVanillaDamage(attacker, weapon, defender, defenderHitList, damage,
+				damageMultiplier, poolsToDamage, hitLocation, data);
+		for (int i = 1; i < repeats; ++i) {
+			if (defender == nullptr || defender->isDead() || defender->isIncapacitated())
+				break;
+			result = combatManager->applyVanillaDamage(attacker, weapon, defender, defenderHitList, damage,
+					damageMultiplier, poolsToDamage, hitLocation, data);
+		}
+		return result;
 	}
 
+	// Non-player attackers (and zero-damage hits): straight vanilla path.
 	return combatManager->applyVanillaDamage(attacker, weapon, defender, defenderHitList, damage,
 		damageMultiplier, poolsToDamage, hitLocation, data);
 }
