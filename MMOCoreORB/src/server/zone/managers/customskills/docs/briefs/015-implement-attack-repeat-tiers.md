@@ -14,8 +14,10 @@ see bonuses that cannot proc.
 
 - Implemented inside the EXISTING `CombatManager::applyDamage`
   delegation (`CustomSkillsCombat::applyDamage`) -- NO new SWGEmu hooks.
-- After the critical-hit roll, roll repeat tiers highest-first:
-  Quad -> Triple -> Double. Only ONE tier triggers per hit.
+- After ALL calculations (crit included), run the sequential upgrade
+  chain off the landed hit: roll Double -> on success roll Triple ->
+  on success roll Quad. First failure ends the chain; each success
+  adds one extra application of the same calculated hit.
 - Triggered tier RESENDS the already-calculated hit through the retained
   `applyVanillaDamage` -- real applications, not a damage multiplier
   (owner design, revised from the original multiplication draft). Each

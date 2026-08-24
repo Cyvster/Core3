@@ -27,22 +27,26 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 			}
 		}
 
-		// Attack repeat tiers (ERR-009): Quad > Triple > Double, one tier
-		// only. Chances are the capped config totals in basis points.
-		int quadTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::QUAD_ATTACK_CHANCE,
-				CustomSkillsModifiers::getModifierTotal(creo, CustomSkillsModifierType::QUAD_ATTACK_CHANCE));
-		int tripleTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE,
-				CustomSkillsModifiers::getModifierTotal(creo, CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE));
+		// Attack repeat tiers (ERR-009): sequential upgrade chain off the
+		// landed hit -- Double -> Triple -> Quad. Each stage rolls only if
+		// the previous succeeded; the first failure ends the chain.
+		// Chances are the capped config totals in basis points.
 		int doubleTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::DOUBLE_ATTACK_CHANCE,
 				CustomSkillsModifiers::getModifierTotal(creo, CustomSkillsModifierType::DOUBLE_ATTACK_CHANCE));
+		int tripleTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE,
+				CustomSkillsModifiers::getModifierTotal(creo, CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE));
+		int quadTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::QUAD_ATTACK_CHANCE,
+				CustomSkillsModifiers::getModifierTotal(creo, CustomSkillsModifierType::QUAD_ATTACK_CHANCE));
 
 		int repeats = 1;
-		if (quadTotal > 0 && System::random(9999) < quadTotal)
-			repeats = 4;
-		else if (tripleTotal > 0 && System::random(9999) < tripleTotal)
-			repeats = 3;
-		else if (doubleTotal > 0 && System::random(9999) < doubleTotal)
+		if (doubleTotal > 0 && System::random(9999) < doubleTotal) {
 			repeats = 2;
+			if (tripleTotal > 0 && System::random(9999) < tripleTotal) {
+				repeats = 3;
+				if (quadTotal > 0 && System::random(9999) < quadTotal)
+					repeats = 4;
+			}
+		}
 
 		// Resend the already-calculated hit. Each application runs the full
 		// vanilla path (armor, spam, observers), so multi-hits are real hits.

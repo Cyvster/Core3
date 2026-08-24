@@ -677,7 +677,9 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Combat spam label** | `(DOUBLE)` |
 | **Badges (default)** | Warren (2), Theme Parks (4) = 6 total |
 
-**Behavior**: Repeats finalized damage 2x total. Checked last (after Quad, Triple). Only one tier triggers per hit.
+**Behavior**: Sequential upgrade chain start. Rolled first off the landed hit;
+success upgrades the attack to 2 hits and enables the Triple roll. First
+failed stage ends the chain.
 **Implemented**: yes (BRIEF-015).
 
 ---
@@ -693,7 +695,8 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Combat spam label** | `(TRIPLE)` |
 | **Badges (default)** | 12 combat mastery (11 x 200 bp, BH x 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 200 bp = 17 total |
 
-**Behavior**: Repeats finalized damage 3x total. Checked after Quad, before Double.
+**Behavior**: Rolled only after Double succeeds in the same chain; success
+upgrades to 3 hits and enables the Quad roll.
 **Implemented**: yes (BRIEF-015).
 
 ---
@@ -709,7 +712,8 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Combat spam label** | `(QUAD)` |
 | **Badges (default)** | 12 combat mastery (11 x 200 bp, BH x 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 200 bp = 17 total |
 
-**Behavior**: Repeats finalized damage 4x total. Checked first.
+**Behavior**: Rolled only after Triple succeeds in the same chain; success
+upgrades to 4 hits. Highest possible tier.
 **Implemented**: yes (BRIEF-015).
 
 ---
