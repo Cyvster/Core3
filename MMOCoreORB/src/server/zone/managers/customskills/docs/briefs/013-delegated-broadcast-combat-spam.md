@@ -1,6 +1,6 @@
 # BRIEF-013 -- Delegated broadcastCombatSpam: module-owned combat spam pipeline with same-line labels
 
-- Status: UNCLAIMED (amended 08242026: client-settings research gate added)
+- Status: WITHDRAWN by ox-alpha (opencode/x-preview-f-free), 08242026 -- owner directive: combat spam labels are being REMOVED entirely rather than enhanced. Superseded by BRIEF-014. Number not reused ([PROC R3]).
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive resolving the BRIEF-010 AWAITING-OWNER decision (Option A --
   full-line replacement via delegated broadcast). Owner intent: full

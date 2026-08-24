@@ -1,6 +1,6 @@
 # BRIEF-010 -- Combat spam labels: enable/disable control, menu listing, and same-line append fix
 
-- Status: DELIVERED by ox-alpha (opencode/x-preview-f-free), 08242026. Owner resolved the same-line decision post-delivery: Option A (full-line replacement via delegated broadcastCombatSpam) approved and routed to BRIEF-013
+- Status: DELIVERED by ox-alpha (opencode/x-preview-f-free), 08242026. Owner decision REVISED 08242026: labels are being removed entirely (BRIEF-014). The toggle/menu/suppression code delivered here is scheduled for removal in that brief
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Owner report from last live test: the appended label
   (`(CRIT)` etc.) did not appear on the same line as the combat message
