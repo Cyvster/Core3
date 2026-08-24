@@ -1,10 +1,18 @@
 # BRIEF-004 -- Refresh MODIFIER_REFERENCE against current config.lua
 
-- Status: UNCLAIMED
+- Status: DELIVERED -- hy3-free (opencode/hy3-free), 2026-08-23
 - Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free) during
   [BRIEF-003](003-reconcile-hooks-patch-modifier-count.md) delivery
 - Prerequisite: none (can run in parallel with nothing else touching
   MODIFIER_REFERENCE)
+- Delivered: 2026-08-23 by hy3-free (opencode/hy3-free) -- refreshed
+  MODIFIER_REFERENCE.md against config.lua (all 18 modifiers, caps/badges,
+  badgeOverrides + rarityNaming conventions, regenerated Maximum Theoretical
+  Totals, removed staleness banner); documented rarityNaming + badgeOverrides
+  in INSTALLATION.md; corrected ARCHITECTURE.md SUI menu (Badges/Bonuses/Server
+  Config, Combat/Utility/Crafting, Rarity Naming page) and the Critical Chance
+  detail example. The criticalChance code-vs-config divergence was resolved in
+  ERR-005 (combat path now reads the config badge map) -- no dead config.
 
 ## Problem
 

@@ -35,16 +35,14 @@ Custom Skills is a server-side addon that grants your character bonuses based on
 ```
 Custom Skills
 
-Accumulated Bonuses
-+7% Critical Chance
-+4 Melee Defense
-+2% Movement Speed
-
 Badges
+Bonuses
+Server Config
 ```
 
-- **Accumulated Bonuses** — Your current totals from all acquired badges. Only shows non-zero values.
 - **Badges** — Browse badges by category to see which ones contribute to your totals.
+- **Bonuses** — Your current accumulated totals, grouped by Combat, Utility, and Crafting. Only shows non-zero values.
+- **Server Config** — Server-side toggle state (e.g., Rarity Naming).
 
 ### Navigation
 
@@ -93,12 +91,11 @@ Each category page shows **Accumulated Bonuses** from all acquired descendant ba
 Badges > Exploration > Tatooine
 
 Accumulated Bonuses
-+3% Critical Chance
-+2 Melee Defense
++50% Movement Speed
 
-O  Ben Kenobi's Old Home  (+1% Critical Chance)
-X  Pool Beneath Fort Tusken  (+1% Critical Chance)
-O  Lars Homestead  (+2% Critical Chance, +2 Melee Defense)
+O  Ben Kenobi's Old Home  (+25% Movement Speed)
+X  Pool Beneath Fort Tusken  (+25% Movement Speed)
+O  Lars Homestead  (+25% Movement Speed)
 ```
 
 - Only **acquired** badges contribute to category totals
@@ -113,10 +110,10 @@ O  Lars Homestead  (+2% Critical Chance, +2 Melee Defense)
 
 | Modifier | What It Does | Default |
 |----------|--------------|---------|
-| **Critical Chance** | Chance for a landed attack to become a critical hit | +3% per combat mastery badge (max 36%) |
+| **Critical Chance** | Chance for a landed attack to become a critical hit | +1% per milestone exploration badge (max +12%) |
 | **Critical Multiplier** | Damage multiplier on critical hits | 150% (1.5x damage) |
-| **Double/Triple/Quad Attack** | Repeats finalized damage 2/3/4 times total | Disabled by default |
-| **Armor Penetration** | Lowers target's effective armor by 1 level per point | Disabled by default |
+| **Double/Triple/Quad Attack** | Repeats finalized damage 2/3/4 times total | Enabled — combat masteries +2% Triple/Quad (Bounty Hunter +3%); Theme Parks/Warren +20% Double |
+| **Armor Penetration** | Lowers target's effective armor by 1 level per point | Enabled — +1 level per Corellian Corvette badge |
 
 **Critical hits**: Checked first, then repeat tiers (Quad — Triple — Double, only one triggers). Repeats apply to critical-adjusted damage.
 
@@ -182,13 +179,13 @@ O  Lars Homestead  (+2% Critical Chance, +2 Melee Defense)
 
 | Badge Group | Example Bonuses |
 |-------------|-----------------|
-| **Combat Mastery (12)** | +4% Crit Chance, +2% Triple, +2% Quad each (Bounty Hunter: +3% Triple/Quad) |
+| **Combat Mastery (12)** | +2% Triple, +2% Quad each (Bounty Hunter: +3% Triple/Quad); no longer grants Critical Chance |
 | **Crafting Mastery (9)** | +10% Crafting Speed each |
 | **Outdoors Mastery (5)** | +115% Gathering Quantity each |
 | **Science Mastery (3)** | +100% Gathering, +25% Buff Duration (Doctor also +10% Crafting Speed) |
 | **Social Mastery (5)** | +20% Buff Duration, +100% Practice XP each |
 | **Corellian Corvette (9)** | +1 Armor Penetration each |
-| **Hero of Tatooine (5)** | +10% Triple, +5% Quad, +10 Defense Cap each |
+| **Hero of Tatooine (5)** | +2% Triple, +2% Quad, +5 Defense Cap each |
 | **Theme Parks (4)** | +20% Double Attack each |
 | **Warren (2)** | +20% Double Attack each |
 

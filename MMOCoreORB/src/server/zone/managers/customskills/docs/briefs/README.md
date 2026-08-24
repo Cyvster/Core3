@@ -50,7 +50,7 @@ reading only what the brief lists -- no conversation history required.
 | [`001-migrate-mod-into-core3.md`](001-migrate-mod-into-core3.md) | Migrate customskills-mod into the Core3 repository; dissolve dual tree | DELIVERED |
 | [`002-post-migration-doc-repair.md`](002-post-migration-doc-repair.md) | Post-migration documentation & governance repair (links, R6.5/R6.6, START-HERE) | DELIVERED |
 | [`003-reconcile-hooks-patch-modifier-count.md`](003-reconcile-hooks-patch-modifier-count.md) | Regenerate patch incl. H16; reconcile modifier count + menu docs | DELIVERED |
-| [`004-modifier-reference-refresh.md`](004-modifier-reference-refresh.md) | Refresh MODIFIER_REFERENCE against current config.lua (badgeOverrides, rarityNaming) | UNCLAIMED |
+| [`004-modifier-reference-refresh.md`](004-modifier-reference-refresh.md) | Refresh MODIFIER_REFERENCE against current config.lua (badgeOverrides, rarityNaming) | DELIVERED |
 | [`005-single-source-badge-rule.md`](005-single-source-badge-rule.md) | Document single-source-of-truth rule for badge-backed modifiers | DELIVERED |
 | [`006-reconcile-recording-conventions-with-alice.md`](006-reconcile-recording-conventions-with-alice.md) | Reconcile recording conventions with Project Alice framework (slots, short format, deviations) | UNCLAIMED |
 
@@ -73,10 +73,12 @@ reading only what the brief lists -- no conversation history required.
 ---
 
 **Last reconciled:** 2026-08-23 by hy3-free (opencode/hy3-free) --
-BRIEF-005 added and DELIVERED (single-source rule for badge-backed
-modifiers, spawned from ERR-005). Prior: ox-alpha (opencode/x-preview-f-free),
-2026-08-23 -- BRIEF-002 index rewrite; BRIEF-003 statuses 001-003 DELIVERED,
-added brief 004.
+BRIEF-004 DELIVERED (MODIFIER_REFERENCE refreshed against config.lua;
+rarityNaming + badgeOverrides documented in INSTALLATION; ARCHITECTURE SUI
+menu categories corrected). Prior: hy3-free (opencode/hy3-free), 2026-08-23 --
+BRIEF-005 added and DELIVERED (single-source rule for badge-backed modifiers,
+spawned from ERR-005); ox-alpha (opencode/x-preview-f-free), 2026-08-23 --
+BRIEF-002 index rewrite; BRIEF-003 statuses 001-003 DELIVERED, added brief 004.
 
 ## Contributors
 

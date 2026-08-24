@@ -328,13 +328,19 @@ creatures) is never duplicated.
 ```
 Custom Skills
 
-Accumulated Bonuses
-+7% Critical Chance
-+4 Melee Defense
-+2% Movement Speed
-
 Badges
+Bonuses
+Server Config
 ```
+
+The top-level menu has three entries:
+
+- **Badges** — browse badges by category, with per-badge option to set as
+  favorite or inspect its detail page.
+- **Bonuses** — browse accumulated bonuses grouped by Combat, Utility, and
+  Crafting (see Modifier Hierarchy). Only non-zero totals are shown.
+- **Server Config** — server-side toggle state, including the Rarity Naming
+  detail page (see below).
 
 Accumulated Bonuses shows only non-zero totals from acquired badges — never
 total-possible values. Disabled modifiers are omitted from the active summary
@@ -342,22 +348,21 @@ total-possible values. Disabled modifiers are omitted from the active summary
 
 ### Modifier Hierarchy
 
+The **Bonuses** category groups modifiers into three sub-trees:
+
 ```
-Custom Skills
-  Offense
+Custom Skills > Bonuses
+  Combat
     Critical Chance / Critical Multiplier
     Double / Triple / Quad Attack Chance
-    Armor Penetration
-  Defense and Equipment
-    Defense Cap Increase / SEA Cap Increase
-    Armor Degradation Reduction / Weapon Degradation Reduction
+    Armor Penetration / Defense Cap Increase
   Utility
-    Movement Speed / Buff Duration
-    Experience Bonus / Practice Mode Experience Bonus
-  Crafting and Gathering
-    Crafting Speed
-    Crafting Amazing Success Chance / Amazing Results
-    Gathering Quantity
+    Armor Degradation Reduction / Weapon Degradation Reduction
+    SEA Cap Increase / Movement Speed
+    Buff Duration / Experience Bonus / Gathering Quantity
+  Crafting
+    Practice Mode Experience Bonus / Crafting Speed
+    Amazing Success Chance / Amazing Results
 ```
 
 Display rules: stable configured display order (not badge index);
@@ -367,16 +372,30 @@ visible but marked inactive.
 ### Modifier Detail Page
 
 ```
-Custom Skills > Offense > Critical Chance
+Custom Skills > Bonuses > Combat > Critical Chance
 
-Total                                      +3.00%
-Ben Kenobi's Old Home                      +1.00%
-Master Pistoleer                           +1.00%
-Rebel Corvette: Destroy                    +1.00%
+Total                              +12.00%
+Milestone: 5 Badges                +1.00%
+Milestone: 10 Badges               +1.00%
+Milestone: 25 Badges               +1.00%
+... (12 milestone exploration badges @ 100bp via badgeOverrides)
 ```
 
 Total + source rows come from `CustomSkillsModifiers` (same as gameplay).
 Source rows sort by contribution magnitude (desc), then display name.
+Critical Chance is sourced from milestone exploration badges only (combat
+masteries no longer grant it — see [ERR-005]).
+
+### Server Config
+
+The **Server Config** top-level category exposes server-side state:
+
+- **Mod Options** — when `rarityNaming` is enabled, reveals a **Rarity Naming**
+  detail page showing the configured legendary/exceptional color state.
+- **SWGEMU Options** — other server toggles.
+
+This page is display-only; it reflects `config.lua` state loaded at server
+start (see Configuration).
 
 ### Badge Hierarchy
 
