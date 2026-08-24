@@ -22,8 +22,10 @@ customSkillsConfig = {
 		enabled = true,
 		cap = 6000,
 
-		-- Critical Chance granted by each acquired combat profession badge.
-		badgeBonus = 400,
+		-- Fallback for any listed badge that lacks an explicit override
+		-- below. Kept at 0: every badge declares its own value via
+		-- badgeOverrides, so nothing is granted silently.
+		badgeBonus = 0,
 
 		-- Critical damage multiplier. 15000 = 150.00% damage.
 		multiplier = 15000,
@@ -31,12 +33,14 @@ customSkillsConfig = {
 		-- Compact label sent when this effect activates.
 		combatSpamLabel = "(CRIT)",
 
-		-- Milestone exploration badges: +1% Crit each.
+		-- Milestone exploration badges: +1% (100 bp) crit chance each,
+		-- declared per badge in badgeOverrides.
 		badges = {
 			"count_5", "count_10", "count_25", "count_50", "count_75", "count_100", "count_125",
 			"bdg_exp_10_badges", "bdg_exp_20_badges", "bdg_exp_30_badges", "bdg_exp_40_badges", "bdg_exp_45_badges",
 		},
 		badgeOverrides = {
+			-- Per-badge crit chance in basis points (100 = 1%).
 			{ "count_5", 100 }, { "count_10", 100 }, { "count_25", 100 },
 			{ "count_50", 100 }, { "count_75", 100 }, { "count_100", 100 }, { "count_125", 100 },
 			{ "bdg_exp_10_badges", 100 }, { "bdg_exp_20_badges", 100 }, { "bdg_exp_30_badges", 100 },
