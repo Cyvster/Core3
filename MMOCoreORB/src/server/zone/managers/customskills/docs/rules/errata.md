@@ -4,10 +4,11 @@
 > document for project rules.
 
 > **Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
-> BRIEF-006: quick-start conventions item now references process.md
-> ([PROC R6.7]); ERR-006 findings note appended pointing at the clarified
-> slot semantics; entry template Date field aligned to [DIRECTIVE 08242026]
-> (MMDDYYYY going forward). Prior: 08232026 by hy3-free (opencode/hy3-free) -- second-party verification of ERR-001..004 (all RESOLVED against CORE3_CODE_REFERENCE.md); ERR-005 resolved (owner directed dir (a), code now reads config badge map) and applied 08232026; ERR-006 resolved (signature re-sign to hy3-free form) 08232026. Originally migrated/filed by ox-alpha (opencode/x-preview-f-free), 08232026.
+> owner delegation recorded: sole-worker self-verification authorized
+> ([DIRECTIVE 08242026]); BRIEF-006: quick-start conventions item now
+> references process.md ([PROC R6.7]); ERR-006 findings note appended
+> pointing at the clarified slot semantics; entry template Date field
+> aligned to [DIRECTIVE 08242026] (MMDDYYYY going forward). Prior: 08232026 by hy3-free (opencode/hy3-free) -- second-party verification of ERR-001..004 (all RESOLVED against CORE3_CODE_REFERENCE.md); ERR-005 resolved (owner directed dir (a), code now reads config badge map) and applied 08232026; ERR-006 resolved (signature re-sign to hy3-free form) 08232026. Originally migrated/filed by ox-alpha (opencode/x-preview-f-free), 08232026.
 > initial protocol; 08232026 added Worker quick start with eligibility
 > table, minimal-fix discipline, and entry-dispute rule (adapted from the
 > Project Alice errata update of the same date); 08232026 BRIEF-002 --
@@ -66,6 +67,14 @@ instructions.
 
 Verification eligibility summary: the FILER never verifies their own entry;
 anyone else may; Daniel is exempt from both restrictions.
+
+> **Owner delegation ([DIRECTIVE 08242026]):** Daniel (project owner;
+> "Cyvster" online) authorized sole-worker sessions to perform their own
+> verification. Verbatim: "you are the single worker. you will need to
+> perform your own verification. note that you were delegated this
+> authority by the project owner cyvster." Self-verified resolutions are
+> marked `self-verified under [DIRECTIVE 08242026]` and remain challengeable
+> via a new ERR entry ([PROC R7]).
 
 ## Scope
 
