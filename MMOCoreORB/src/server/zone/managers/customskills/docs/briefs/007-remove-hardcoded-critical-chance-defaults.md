@@ -1,6 +1,6 @@
 # BRIEF-007 -- Remove residual hardcoded critical-chance defaults; restore cap reachability via explicit per-badge overrides
 
-- Status: UNCLAIMED
+- Status: CLAIMED by ox-alpha (opencode/x-preview-f-free), 08242026
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive (work session, Central Time). Context: while rebalancing
   badge bonuses it was discovered that the ERR-005-era cleanup did NOT
