@@ -188,7 +188,7 @@ modifiers = {
 ```
 
 Badge keys must exist in `BadgeList` (check `badge_map.iff`); see
-[BADGE_REFERENCE.md](../customskills/BADGE_REFERENCE.md) for the full catalog.
+[CODE_REFERENCE.md Appendix B](../customskills/CODE_REFERENCE.md) for the full badge catalog.
 Restart Core3 after editing.
 
 ### Root Settings
@@ -261,7 +261,7 @@ If reverse check fails (Core3 files edited since), remove Custom Skills hunks ma
 
 - **User Guide**: `../customskills/USER_GUIDE.md` -- Player-facing mechanics
 - **Architecture & Implementation**: `../customskills/CODE_REFERENCE.md` -- Hooks, services, menu, verification matrix
-- **Modifier Reference**: `../customskills/MODIFIER_REFERENCE.md` -- All 18 modifiers with config
-- **Badge Reference**: `../customskills/BADGE_REFERENCE.md` -- Full badge catalog
+- **Modifier Specification**: `../customskills/CODE_REFERENCE.md` -> Appendix A -- all 18 modifiers with config
+- **Badge Catalog**: `../customskills/CODE_REFERENCE.md` -> Appendix B
 - **Core3 platform (emulator guides)**: `../swgemu/CODE_REFERENCE.md` + `../swgemu/USER_GUIDE.md`
 

@@ -25,7 +25,8 @@ in `docs/tracking/objectives.md`.
 - `docs/swgemu/` contains emulator-facing guides: player user guide +
   Core3 developer code reference (kept separate from module content).
 - `docs/customskills/` contains module-facing guides: player user guide,
-  module code reference, modifier/badge references, LLM contributor guide.
+  module code reference (with modifier/badge specification appendices),
+  LLM contributor guide.
 - `docs/tracking/`, `docs/briefs/` contain task state and delegable work.
 - `docs/installation/` serves server administrators.
 - `docs/archive/` preserves superseded documents.

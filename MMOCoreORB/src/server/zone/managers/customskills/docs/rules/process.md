@@ -111,7 +111,7 @@ describes it:
 | If you changed... | You must also update... |
 |-------------------|------------------------|
 | Hook placement or behavior | `docs/customskills/CODE_REFERENCE.md` hook inventory + `integration/core3-hooks.patch` |
-| Modifier units, defaults, caps, badges | `docs/customskills/MODIFIER_REFERENCE.md` + `config.lua` defaults |
+| Modifier units, defaults, caps, badges | `docs/customskills/CODE_REFERENCE.md` Appendix A + `config.lua` defaults |
 | Files added/removed/renamed | `MANIFEST.md` |
 | Menu structure | `docs/customskills/CODE_REFERENCE.md` SUI section + package `MENU_DESIGN.md` |
 | Config schema | `docs/installation/INSTALLATION.md` config reference |

@@ -81,11 +81,41 @@ same document -> Client data archives.
 - Pushing is part of committing: an unpushed commit does not exist for
   coordination purposes ([PROC R6.5/P1]).
 
+## Badge & modifier integration rules
+
+When working on badge assignments or modifier configuration
+(`config.lua`), follow these rules (moved here from the old badge
+reference; they are worker instructions, not reference data):
+
+### For config authors (`config.lua`)
+
+1. **Use stable keys only** -- `BadgeList::get(key)` resolves index;
+   never hard-code indices (fragile across TRE changes).
+2. **Never include excluded badges** in `badges[]` arrays (pilot/JTL +
+   admin/event exclusions -- see CODE_REFERENCE Appendix B excluded
+   list).
+3. **Pilot badges**: only add if JTL is actually implemented on the
+   target server.
+4. **Basis points**: 100 = 1.00% for percentages; whole units for armor
+   penetration / defense cap / SEA cap.
+5. **Cap values**: 0 = uncapped; applied after badge aggregation.
+
+### For developers
+
+- **BadgeDefinition** (metadata): key, resolved index, Core3 type,
+  exploration subtype, source group, show flag.
+- **BadgeModifierAssignment** (gameplay): badge key, modifier ID,
+  amount, stacking rule.
+- **Keep separate** -- prevents menu grouping from becoming gameplay
+  logic; allows other servers to replace badge indices without
+  rewriting modifier definitions.
+
 ---
 
 **Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
 initial guide, owner-directed audience split (swgemu/customskills/LLM);
-absorbs the workspace-root START-HERE role.
+absorbs the workspace-root START-HERE role; 08242026 badge/modifier
+integration rules moved in from BADGE_REFERENCE fold (owner directive).
 
 ## Contributors
 

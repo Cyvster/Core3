@@ -4,10 +4,6 @@
 
 ## What Is Custom Skills?
 
-## Contributors
-
-- **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
-
 Custom Skills is a server-side addon that grants your character bonuses based on the badges you've earned. Bonuses apply to combat, crafting, gathering, movement, buffs, and experience.
 
 **Open the menu anytime with:**
@@ -15,7 +11,12 @@ Custom Skills is a server-side addon that grants your character bonuses based on
 /customskills
 ```
 
----
+## Contributors
+
+- **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
+- ox-alpha (opencode/x-preview-f-free), 08242026 -- feature-section
+  restructure; modifier/badge reference material folded in per owner
+  directive
 
 ## Key Concepts
 
@@ -25,6 +26,18 @@ Custom Skills is a server-side addon that grants your character bonuses based on
 | **Only acquired badges count** | Unowned badges show in the menu but grant zero bonus |
 | **Server-controlled** | The server owner decides which bonuses are enabled, which badges grant them, and how large each bonus is |
 | **Authoritative source** | Values shown by `/customskills` are the true values for your character on this server |
+
+## Features (server-owner toggles)
+
+Every feature below is individually enable/disable-able by the server
+owner. If a feature is disabled on your server, its entry appears
+inactive in `/customskills` and has no gameplay effect -- skip its
+section here. Enabled state, badge assignments, and values always come
+from the server's configuration; what `/customskills` displays is what
+your server actually runs.
+
+Each feature section answers three questions: what it does for you,
+which badges power it, and how big it can get on a default setup.
 
 ---
 
@@ -104,54 +117,126 @@ O  Lars Homestead  (+25% Movement Speed)
 
 ---
 
-## Modifier Categories & Mechanics
+# Feature Sections
 
-### Offense
+## Offense
 
-| Modifier | What It Does | Default |
-|----------|--------------|---------|
-| **Critical Chance** | Chance for a landed attack to become a critical hit | +1% per milestone exploration badge (max +12%) |
-| **Critical Multiplier** | Damage multiplier on critical hits | 150% (1.5x damage) |
-| **Double/Triple/Quad Attack** | Repeats finalized damage 2/3/4 times total | Enabled -- combat masteries +2% Triple/Quad (Bounty Hunter +3%); Theme Parks/Warren +20% Double |
-| **Armor Penetration** | Lowers target's effective armor by 1 level per point | Enabled -- +1 level per Corellian Corvette badge |
+### Critical Chance
 
-**Critical hits**: Checked first, then repeat tiers (Quad -- Triple -- Double, only one triggers). Repeats apply to critical-adjusted damage.
+- **What it does**: Gives landed attacks a chance to become critical hits, dealing bonus damage.
+- **Powered by**: The 12 exploration milestone badges (5/10/25/50/75/100/125 badges counted, plus the 10/20/30/40/45-badge exploration awards).
+- **Typical maximum**: +12% critical chance.
+- **Combat spam**: `(CRIT)` appears when it triggers.
 
-**Armor Penetration**: Heavy -- Medium -- Light -- No Armor. Floor: No Armor. Does not affect weapon's Armor Piercing.
+### Critical Multiplier
 
-### Defense & Equipment
+- **What it does**: Increases damage dealt BY critical hits (on top of the base 150%).
+- **Powered by**: Same 12 milestone badges as Critical Chance.
+- **Typical maximum**: up to 300% total crit damage.
 
-| Modifier | What It Does |
-|----------|--------------|
-| **Defense Cap Increase** | Raises the normal 125 cap on primary/secondary defense calculations |
-| **SEA Cap Increase** | Raises the wearable (attachments/tapes) contribution cap above +25 |
-| **Armor Degradation Reduction** | Lowers chance of armor condition loss events (native 100% chance) |
-| **Weapon Degradation Reduction** | Lowers weapon degradation event chance multiplicatively |
+### Double Attack Chance
 
-**SEA Cap vs Defense Cap**: Independent. SEA Cap only affects attachment/tape contributions; Defense Cap affects primary/secondary defense totals.
+- **What it does**: Chance for an attack to strike twice.
+- **Powered by**: Warren (2 badges), Theme Parks (4 badges).
+- **Typical maximum**: +100% chance (always double).
+- **Combat spam**: `(DOUBLE)`.
 
-### Utility
+### Triple Attack Chance
 
-| Modifier | What It Does |
-|----------|--------------|
-| **Movement Speed** | Multiplies final native speed (on foot, mounted, in vehicle) -- applied once, not doubled |
-| **Buff Duration** | Extends beneficial buffs only (doctor, entertainer, food/drink, spice-up, positive Jedi/Force). Excludes debuffs, DoTs, states, traps, cooldowns, skill-item/innate/Squad Leader/concealment/gallop/vehicle buffs |
-| **Experience Bonus** | Multiplies **all positive XP awards** (combat, crafting, harvesting, quests, etc.). Stacks multiplicatively with server/buff/species rates. Example: 100 XP -- 2x server -- 5x character = 1,000 XP (10x total, not 7x) |
-| **Practice Mode XP Bonus** | Applies after Core3's native 5% practice bonus, before general XP multipliers |
+- **What it does**: Chance for an attack to strike three times.
+- **Powered by**: All 12 combat profession masteries (Bounty Hunter counts extra), plus the 5 Hero of Tatooine quest badges.
+- **Typical maximum**: +35%.
+- **Combat spam**: `(TRIPLE)`.
 
-### Crafting & Factories
+### Quad Attack Chance
 
-| Modifier | What It Does |
-|----------|--------------|
-| **Crafting Speed** | Divides native duration by your multiplier (min 1 second). Personal: uses crafter. Factory: snapshots **activator's** bonus at start -- survives logout/restart, doesn't change mid-run |
-| **Amazing Success Chance** | Adds percentage points to native Amazing Success chance (assembly & experimentation). Does not multiply. Target: max-bonus character can reach =50% |
-| **Amazing Results** | On actual Amazing Success: closes % of distance between native result and schematic cap, raises resource ceiling to retain it. At 100%, poor resources can yield perfect attributes. Assembly: all attributes. Experimentation: selected row only |
+- **What it does**: Chance for an attack to strike four times.
+- **Powered by**: Same set as Triple Attack.
+- **Typical maximum**: +50%.
+- **Combat spam**: `(QUAD)`.
 
-### Gathering
+**How repeats interact**: Quad is checked first, then Triple, then Double -- only one tier triggers per hit. Repeats apply after critical damage adjustment. Armor Penetration (below) applies before the native armor comparison.
 
-| Modifier | What It Does |
-|----------|--------------|
-| **Gathering Quantity** | Multiplies resource quantity from foraging (flora/shellfish/lair eggs) and milking. Default +200% per badge (additive: 1 badge = 3x, 2 badges = 5x). Rounded down, never below native. Does not affect discrete loot (food, bait, rare items, live creatures) |
+### Armor Penetration
+
+- **What it does**: Each point lowers the target's effective armor one level (Heavy -> Medium -> Light -> None). Never drops below No Armor; does not change the weapon's Armor Piercing rating.
+- **Powered by**: The 9 Corellian Corvette badges.
+- **Typical maximum**: 3 levels.
+
+## Defense & Equipment
+
+### Defense Cap Increase
+
+- **What it does**: Raises the normal 125 hard cap on primary/secondary defense calculations. Does not affect attachment/tape bonuses.
+- **Powered by**: Hero of Tatooine (5 badges), Lok dangerous (3), Dathomir (7), Yavin IV Exar Kun.
+
+### SEA Cap Increase
+
+- **What it does**: Raises the wearable-attachment ("SEA"/tape) contribution cap above the native +25. Independent of Defense Cap.
+- **Powered by**: Tatooine dangerous locations (4) and the Dathomir Sarlacc.
+
+### Armor Degradation Reduction
+
+- **What it does**: Lowers the chance that worn armor loses condition on use (native chance is 100%). Covers armor, PSGs, NPC armor, vehicle armor.
+- **Powered by**: Talus exploration (4) and Rori exploration (4).
+
+### Weapon Degradation Reduction
+
+- **What it does**: Reduces weapon degradation event chance multiplicatively. Condition loss amount per event is unchanged.
+- **Powered by**: Dantooine exploration (4) and Endor exploration (4).
+
+## Character & Utility
+
+### Movement Speed
+
+- **What it does**: Multiplies your final movement speed everywhere -- on foot, mounted, and in vehicles (applied once, never doubled).
+- **Powered by**: Naboo exploration (4 badges).
+- **Typical maximum**: +100% speed.
+
+### Buff Duration
+
+- **What it does**: Extends beneficial buffs only -- medical, entertainer, food/drink, spice-up, positive Jedi/Force buffs. Does NOT extend debuffs, DoTs, states, traps, cooldowns, innates, Squad Leader, concealment, gallop, or vehicle buffs.
+- **Powered by**: Tatooine easy (3), Yavin IV Woolamander/Blueleaf (2), Science masteries (3), Social masteries (5).
+
+### Experience Bonus
+
+- **What it does**: Multiplies ALL positive XP you earn (combat, crafting, harvesting, quests...). Stacks multiplicatively with server and buff rates: 100 XP x 2x server x 5x character = 1,000 XP (10x total, not 7x).
+- **Powered by**: Corellia exploration (5 badges).
+- **Typical maximum**: +500%.
+
+### Practice Mode XP Bonus
+
+- **What it does**: Boosts XP from practicing crafts (the no-item mode). Applies after the native 5% practice bonus, before general Experience multipliers.
+- **Powered by**: Tatooine easy (3), Yavin IV (2), Social masteries (5).
+
+## Crafting
+
+### Crafting Speed
+
+- **What it does**: Speeds up crafting sessions (duration divided by your bonus, minimum 1 second). In factories, the run snapshots the STARTING player's bonus -- it persists through logout/restart and doesn't change mid-run.
+- **Powered by**: All 9 crafting masteries (plus Shipwright) and Doctor mastery.
+
+### Amazing Success Chance
+
+- **What it does**: Adds percentage points to the natural Amazing Success roll during assembly and experimentation.
+- **Powered by**: Exar Kun's Temple, Lok dangerous (3), Yavin IV Woolamander/Blueleaf (2).
+
+### Amazing Results
+
+- **What it does**: When an Amazing Success actually happens, each affected attribute lands closer to the schematic cap -- at high bonuses even poor resources can produce near-perfect results. Assembly affects all attributes; experimentation affects the selected line only.
+- **Powered by**: Same badges as Amazing Success Chance.
+
+## Gathering
+
+### Gathering Quantity
+
+- **What it does**: Multiplies resource quantity from foraging (flora/shellfish/lair eggs) and milking. Bonuses add together before multiplying: 1 badge = 3x yield, 2 badges = 5x. Never reduces yields, rounded down. Does not affect discrete loot (food, bait, rare items, live creatures).
+- **Powered by**: Outdoors masteries (5, boosted rate), Science masteries (3), Tatooine easy (3), Yavin IV (2).
+
+## Rarity Naming
+
+- **What it does**: Instead of appending "(Exceptional)"/"(Legendary)" to crafted item names, item names display in color (blue/purple by default). Also fixes quest turn-ins that match items by exact name -- suffixes break those matches.
+- **Toggle**: Fully independent of badge bonuses; configured by the server owner.
 
 ---
 
@@ -162,34 +247,30 @@ O  Lars Homestead  (+25% Movement Speed)
 | `+3% Critical Chance` | Adds 3 percentage points to the chance |
 | `5x Experience` | Multiplies the applicable value. Missing/disabled = `1x` (no change) |
 
----
-
 ## Important Notes
 
 - **Pilot/JTL badges**: Grant no bonuses while Jump to Lightspeed is unavailable
 - **Hidden badges** (`show = 0`): Still visible in `/customskills` if they contribute to your totals (so totals stay explained)
-- **Disabled modifiers**: Show in menu as inactive but don't affect gameplay
+- **Disabled features**: Show in menu as inactive but don't affect gameplay
 - **Config changes**: Require server restart. Values you see in `/customskills` always match what the server is actually using
-
----
 
 ## Quick Reference: Badge -- Bonus Assignments
 
-*See `BADGE_REFERENCE.md` for the full list. Highlights:*
+*Complete catalog with exact badge keys lives in
+[CODE_REFERENCE.md](CODE_REFERENCE.md) -> Appendix B (developer-facing).*
 
 | Badge Group | Example Bonuses |
 |-------------|-----------------|
-| **Combat Mastery (12)** | +2% Triple, +2% Quad each (Bounty Hunter: +3% Triple/Quad); no longer grants Critical Chance |
+| **Milestones (12)** | +1% Crit Chance, +12.5% Crit Multiplier each |
+| **Combat Mastery (12)** | +2% Triple, +2% Quad each (Bounty Hunter: +3%/+3%) |
 | **Crafting Mastery (9)** | +10% Crafting Speed each |
 | **Outdoors Mastery (5)** | +115% Gathering Quantity each |
 | **Science Mastery (3)** | +100% Gathering, +25% Buff Duration (Doctor also +10% Crafting Speed) |
 | **Social Mastery (5)** | +20% Buff Duration, +100% Practice XP each |
 | **Corellian Corvette (9)** | +1 Armor Penetration each |
-| **Hero of Tatooine (5)** | +2% Triple, +2% Quad, +5 Defense Cap each |
+| **Hero of Tatooine (5)** | +10% Triple, +5% Quad, +10 Def Cap total |
 | **Theme Parks (4)** | +20% Double Attack each |
 | **Warren (2)** | +20% Double Attack each |
-
----
 
 ## Reading Updates
 

@@ -89,13 +89,13 @@ restructuring (and the same-day compression pass) are preserved under
 
 | Superseded (archive/) | Current authority |
 |-----------------------|-------------------|
-| `MODIFIER_REGISTRY.md` | `docs/customskills/MODIFIER_REFERENCE.md` |
+| `MODIFIER_REGISTRY.md` | `docs/customskills/CODE_REFERENCE.md` Appendix A |
 | `IMPLEMENTATION_PLAN.md` | `docs/customskills/CODE_REFERENCE.md` |
 | `PLAYER_BONUS_GUIDE.md` | `docs/customskills/USER_GUIDE.md` |
 | `SCREENPLAYS.md` | `docs/customskills/CODE_REFERENCE.md` (SUI Menu System section) |
-| `BADGE_CATALOG.md` | `docs/customskills/BADGE_REFERENCE.md` |
-| `MENU_AND_BADGE_ORGANIZATION.md` | `docs/customskills/CODE_REFERENCE.md` + `docs/customskills/BADGE_REFERENCE.md` |
-| `EXCLUDED_BADGES.md` | `docs/customskills/BADGE_REFERENCE.md` |
+| `BADGE_CATALOG.md` | `docs/customskills/CODE_REFERENCE.md` Appendix B |
+| `MENU_AND_BADGE_ORGANIZATION.md` | `docs/customskills/CODE_REFERENCE.md` (Part I + Appendix B) |
+| `EXCLUDED_BADGES.md` | `docs/customskills/CODE_REFERENCE.md` Appendix B excluded list |
 | `SWGEMU_CODE_GUIDE.md` | `docs/swgemu/CODE_REFERENCE.md` (merged: former CORE3_CODE_REFERENCE + CORE3_USER_GUIDE) |
 | `IMPLEMENTATION_GUIDE.md`, `MENU_SYSTEM.md`, `PROJECT_OVERVIEW.md`, `DEVELOPER_QUICKSTART.md`, `integration-INSTALL.md` | `docs/customskills/CODE_REFERENCE.md`, `docs/customskills/LLM_GUIDE.md`, `docs/installation/INSTALLATION.md`, `docs/rules/process.md` |
 

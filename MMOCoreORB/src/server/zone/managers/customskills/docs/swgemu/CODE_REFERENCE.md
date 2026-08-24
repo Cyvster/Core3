@@ -399,8 +399,7 @@ Append new gotchas with reproduced evidence; factual corrections go through
 ## Related Documentation
 
 - Module code reference (hooks, services, menu): [../../customskills/CODE_REFERENCE.md](../../customskills/CODE_REFERENCE.md)
-- Modifier specs: [../../customskills/MODIFIER_REFERENCE.md](../../customskills/MODIFIER_REFERENCE.md)
-- Badge catalog: [../../customskills/BADGE_REFERENCE.md](../../customskills/BADGE_REFERENCE.md)
+- Module modifier/badge specifications: [../../customskills/CODE_REFERENCE.md](../../customskills/CODE_REFERENCE.md) Appendices A-B
 - Player-facing emulator guide: [USER_GUIDE.md](USER_GUIDE.md)
 
 

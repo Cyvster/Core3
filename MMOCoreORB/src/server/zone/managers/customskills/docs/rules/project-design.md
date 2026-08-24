@@ -109,7 +109,7 @@ ratification recorded in this document or an ERR entry.
 ## Gameplay Conventions
 
 - All 18 modifiers (CRITICAL_MULTIPLIER promoted to standalone 08232026) are enumerated in
-  `docs/customskills/MODIFIER_REFERENCE.md`, which is the authority on per-
+  `docs/customskills/CODE_REFERENCE.md` Appendix A, which is the authority on per-
   modifier units, defaults, caps, and badge assignments.
 - Badge pool: 111 eligible badges of 140 total (9 pilot/JTL and 20
   admin/event badges excluded).
