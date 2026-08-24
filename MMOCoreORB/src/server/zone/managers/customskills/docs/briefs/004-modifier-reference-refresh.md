@@ -42,6 +42,11 @@ documents. Discovered during BRIEF-003:
 5. Update the "Maximum Theoretical Totals" table to match new assignments or
    remove it with a note if no longer meaningful.
 6. Remove the staleness banner at the top of MODIFIER_REFERENCE.md once true.
+7. Document the in-code menu categories (Bonuses category on main menu,
+    Server Config menu with rarity detail page) in ARCHITECTURE.md's SUI
+    Menu System section -- deferred here from BRIEF-003 delivery notes.
+8. Pass USER_GUIDE.md mechanics text for the same staleness (Critical
+    Multiplier description and any per-modifier examples).
 
 ## Acceptance criteria
 

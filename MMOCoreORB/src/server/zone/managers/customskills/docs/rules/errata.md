@@ -3,7 +3,7 @@
 > Subordinate to [project-design.md](project-design.md) -- the master
 > document for project rules.
 
-> **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) --
+> **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- migrated legacy N1/N2/N3/S1 findings as ERR-001..004 (all RESOLVED via successor document)
 > initial protocol; 2026-08-23 added Worker quick start with eligibility
 > table, minimal-fix discipline, and entry-dispute rule (adapted from the
 > Project Alice errata update of the same date); 2026-08-23 BRIEF-002 --
@@ -193,7 +193,52 @@ Daniel may resolve, reject, or apply any entry directly.
 
 ## Errata Log
 
-*(entries appended below; none exist yet)*
+---
+
+## ERR-001 -- Codebase layout tree misplaced engine3 submodule (legacy N1)
+
+- Status: RESOLVED
+- Filed by: migrated from archive/CODE_GUIDE_ERRATA.md (originally PROPOSED, C-001, 2026-08-21)
+- Date: 2026-08-23
+- Affects: docs/reference/CORE3_CODE_REFERENCE.md, Codebase Layout
+- Severity: F1
+- Description: predecessor guide nested `utils/engine3` under `MMOCoreORB/src/` and used a duplicate branch character; actual registered path is `MMOCoreORB/utils/engine3`.
+- Evidence: `Core3/.gitmodules`: `path = MMOCoreORB/utils/engine3`; legacy log entry N1 (archive/CODE_GUIDE_ERRATA.md).
+- Proposed fix: correct the tree and note submodule registration.
+- Resolution: RESOLVED during the 2026-08-23 guide split -- CORE3_CODE_REFERENCE.md layout shows `MMOCoreORB/utils/engine3` at top level with `.gitmodules` note. Verified against `.gitmodules` by ox-alpha (opencode/x-preview-f-free), 2026-08-23.
+
+## ERR-002 -- Empty engine3 submodule presented as browsable (legacy N2)
+
+- Status: RESOLVED
+- Filed by: migrated from archive/CODE_GUIDE_ERRATA.md (originally PROPOSED, C-001, 2026-08-21)
+- Date: 2026-08-23
+- Affects: docs/reference/CORE3_CODE_REFERENCE.md, Codebase Layout note
+- Severity: F4
+- Description: submodule directory exists but is empty until initialized; doc implied engine source browsable.
+- Evidence: legacy log entry N2 (`Test-Path .../engine3/src/engine/lua/Lua.h` -> False on uninit checkout).
+- Resolution: RESOLVED -- current guide states "The submodule directory is empty until initialized; include paths like `engine/lua/Lua.h` resolve only when it is checked out." ox-alpha (opencode/x-preview-f-free), 2026-08-23.
+
+## ERR-003 -- `engine/lua/Lua.h` listed as filesystem location (legacy N3)
+
+- Status: RESOLVED
+- Filed by: migrated from archive/CODE_GUIDE_ERRATA.md (originally PROPOSED, C-001, 2026-08-21)
+- Date: 2026-08-23
+- Affects: docs/reference/CORE3_CODE_REFERENCE.md, Scripting table
+- Severity: F3
+- Description: `engine/lua/Lua.h` is an include path valid only when the submodule is checked out, not a workspace file location.
+- Evidence: legacy log entry N3; CustomSkillsConfig.cpp include usage.
+- Resolution: RESOLVED -- current Scripting table annotates it "(include path; requires engine3 submodule)". ox-alpha (opencode/x-preview-f-free), 2026-08-23.
+
+## ERR-004 -- Duplicate overlapping gotcha sections (legacy S1)
+
+- Status: RESOLVED
+- Filed by: migrated from archive/CODE_GUIDE_ERRATA.md (originally PROPOSED, S1 structural)
+- Date: 2026-08-23
+- Affects: docs/reference/CORE3_CODE_REFERENCE.md, Common Gotchas
+- Severity: F5
+- Description: predecessor guide had two overlapping gotcha sections (original + empty "Extended" placeholder).
+- Evidence: legacy log entry S1; direct read of retired SWGEMU_CODE_GUIDE.md lines 347-375.
+- Resolution: RESOLVED -- consolidated CORE3_CODE_REFERENCE.md carries a single Common Gotchas table with an append instruction. ox-alpha (opencode/x-preview-f-free), 2026-08-23.
 
 ---
 

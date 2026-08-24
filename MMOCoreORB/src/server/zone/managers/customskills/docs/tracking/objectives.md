@@ -50,6 +50,10 @@ Core3-side wiring. See
 
 ## Infrastructure & continuous
 
+- [ ] Verify regenerated core3-hooks.patch with a full reverse-check on a
+      clean checkout (deferred from BRIEF-003 delivery; needs a vanilla-base
+      build session).
+
 - [x] ~~Mirror Core3-only work into package/ + MANIFEST~~ -- OBSOLETE:
       package mirror dissolved by BRIEF-001 (2026-08-23); remaining content
       accuracy work (H16 inventory, patch coverage, modifier count) moved to
