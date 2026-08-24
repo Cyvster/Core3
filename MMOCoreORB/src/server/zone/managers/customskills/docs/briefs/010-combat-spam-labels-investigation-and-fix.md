@@ -1,6 +1,6 @@
 # BRIEF-010 -- Combat spam labels: enable/disable control, menu listing, and same-line append fix
 
-- Status: UNCLAIMED
+- Status: CLAIMED by ox-alpha (opencode/x-preview-f-free), 08242026
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Owner report from last live test: the appended label
   (`(CRIT)` etc.) did not appear on the same line as the combat message
