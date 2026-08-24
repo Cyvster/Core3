@@ -14,9 +14,9 @@ continue in the same direction.
 ## How to use this file
 
 1. Read **Current Focus** first. Work on that unless the item is claimed.
-2. Claim an item by appending your signature to its line
-   (`-- <name/model (<origin>)>, <YYYY-MM-DD>`). One active claim per
-   contributor.
+2. Claim an item by appending your signature to its line (signature
+   format: [../rules/process.md](../rules/process.md) -> Contributor
+   Recording Conventions). One active claim per contributor.
 3. Check off items only when the acceptance criterion actually holds.
 4. Add newly discovered objectives under the right section instead of
    leaving them implicit.
@@ -93,7 +93,10 @@ Core3-side wiring. See
 
 ---
 
-**Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- package-sync objective marked obsolete via BRIEF-001 migration; git-history objective resolved.
+**Last reconciled:** 2026-08-24 by ox-alpha (opencode/x-preview-f-free) --
+BRIEF-006: claim-line signature example replaced with a reference to
+process.md ([PROC R6.7]). Prior: 2026-08-23 by ox-alpha
+(opencode/x-preview-f-free) -- package-sync objective marked obsolete via BRIEF-001 migration; git-history objective resolved.
 
 ## Contributors
 

@@ -1,6 +1,7 @@
 # BRIEF-006 -- Reconcile recording conventions with the Project Alice framework
 
-- Status: CLAIMED by ox-alpha (opencode/x-preview-f-free), 2026-08-24
+- Status: DELIVERED by ox-alpha (opencode/x-preview-f-free), 2026-08-24
+  (owner decision OD-1 pending; see reconciliation section)
 - Created: 2026-08-23 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Context: ERR-006 (hy3-free signature slip) exposed that the
   governance adoption ported Alice's recording conventions INCOMPLETELY --
@@ -89,3 +90,80 @@ as a loose paraphrase. Consequences:
   routing, executed separately)
 - Changing any date already recorded anywhere
 - Modifying Alice's documents or processes
+
+---
+
+## Delivery record -- 2026-08-24 by ox-alpha (opencode/x-preview-f-free)
+
+### Inventory of Alice recording-convention items
+
+Sources read read-only (Alice repository untouched; verified clean before
+and after delivery):
+
+1. `docs/rules/process.md` -> Contributor Recording Conventions:
+   - I1 universal scope: rules govern every signed contribution across all
+     documents (errata entries, audit findings, adjudication decisions,
+     objective updates, roster additions, brief claims/deliveries, code
+     commits)
+   - I2 long signature format: name/model + origin + date, for every
+     substantive contribution
+   - I3 the human owner signs as Daniel
+   - I4 short format: first 3 chars of model identifier + first 3 chars of
+     a distinguishing version/origin identifier; only where explicitly
+     specified (compact tables, monitor displays); long format is the
+     default everywhere, short is opt-in per context
+   - I5 date format MMDDYYYY with leading zeros (fixed-width rationale)
+   - I6 time zone Central Time with UTC offsets, conversion duty before
+     recording anywhere, never record own local time
+2. `docs/llm-guide.md` -> How to Work Here -> Signing:
+   - I7 reference-don't-restate: canonical formats live in process.md;
+     other documents point at them
+   - I8 add yourself to a document's Contributors section on first
+     contribution
+
+### Reconciliation table
+
+| Item | Disposition | Where it landed / notes |
+|------|-------------|-------------------------|
+| I1 scope | ADOPT | process.md -> Contributor Recording Conventions intro now enumerates governed contribution types |
+| I2 long format | ADAPT | kept, with ISO date per OD-1; added explicit slot semantics: name slot = contributor model/persona identifier as used in Contributors rosters; origin slot = harness/model-id string. Closes the ERR-006 loophole |
+| I3 owner signs as Daniel | ADOPT | unchanged |
+| I4 short format | ADOPT | restored after the unrecorded drop; derivation rule + example codified in process.md; long remains default; never used in governing docs or git attribution |
+| I5 date format | OWNER-DECISION | current tree keeps ISO YYYY-MM-DD (pre-existing deviation, hundreds of same-day records); ratification requested below as OD-1; no flip without directive |
+| I6 time zone | ADOPT | UTC offsets and never-local-time duty added to process.md; Central Time already aligned |
+| I7 reference-don't-restate | ALREADY ADOPTED | enforced via PROC R6.7; sweep executed this delivery (below) |
+| I8 Contributors section rule | ADOPT | unchanged |
+
+### [PROC R6.7] sweep result
+
+Restatements found and replaced with references to process.md:
+
+1. errata.md Worker quick start item 6 (inline ISO/Central/long-format list)
+2. docs/tracking/objectives.md claim instruction line 18 (inline example)
+3. workspace-root START-HERE.md key-rules bullet (inline format string;
+   file lives outside the repo, edited without commit)
+
+errata.md Principles #4 was found ALREADY referencing PROC R6.8 with no
+inline template (fixed before this brief); no action needed.
+
+Intentional survivors outside process.md (not restatements):
+
+- ERR-006 Description quotes the wrong-form signature as filed evidence --
+  historical record protected by PROC R2/R7
+- docs/archive/* -- retired documents, explicitly not extended
+- proposals/README.md YYYY-MM-DD tokens are filename templates, not
+  signature conventions
+- docs/proposals/2026-08-23-coordinator-pull-before-commit/proposal.md
+  quotes the Original-author trailer inside the adopted proposal record;
+  the live rule is carried by process.md rule C2
+- this brief's own acceptance-criteria text names the grep tokens
+
+### Owner decisions requested
+
+- **OD-1 (date format):** confirm DEVIATE -- keep ISO YYYY-MM-DD,
+  permanently reversing the Alice MMDDYYYY default -- or direct migration.
+  Recommendation: keep ISO. Pending; until answered, process.md keeps ISO
+  and marks the deviation as tracked here. Record the answer as a
+  `[DIRECTIVE <YYYY-MM-DD>]` note appended to this brief.
+
+Delivered in single commit tagged [BRIEF-006] on branch cyvster3.

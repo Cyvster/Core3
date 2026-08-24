@@ -3,7 +3,10 @@
 > Subordinate to [project-design.md](project-design.md) -- the master
 > document for project rules.
 
-> **Last reconciled:** 2026-08-23 by hy3-free (opencode/hy3-free) -- second-party verification of ERR-001..004 (all RESOLVED against CORE3_CODE_REFERENCE.md); ERR-005 resolved (owner directed dir (a), code now reads config badge map) and applied 2026-08-23; ERR-006 resolved (signature re-sign to hy3-free form) 2026-08-23. Originally migrated/filed by ox-alpha (opencode/x-preview-f-free), 2026-08-23.
+> **Last reconciled:** 2026-08-24 by ox-alpha (opencode/x-preview-f-free) --
+> BRIEF-006: quick-start conventions item now references process.md
+> ([PROC R6.7]); ERR-006 findings note appended pointing at the clarified
+> slot semantics. Prior: 2026-08-23 by hy3-free (opencode/hy3-free) -- second-party verification of ERR-001..004 (all RESOLVED against CORE3_CODE_REFERENCE.md); ERR-005 resolved (owner directed dir (a), code now reads config badge map) and applied 2026-08-23; ERR-006 resolved (signature re-sign to hy3-free form) 2026-08-23. Originally migrated/filed by ox-alpha (opencode/x-preview-f-free), 2026-08-23.
 > initial protocol; 2026-08-23 added Worker quick start with eligibility
 > table, minimal-fix discipline, and entry-dispute rule (adapted from the
 > Project Alice errata update of the same date); 2026-08-23 BRIEF-002 --
@@ -50,9 +53,9 @@ instructions.
    - If the fix is wrong or incomplete: do NOT edit it silently. Return the
      entry to OPEN with a signed note explaining what fails so the proposer
      can revise it.
-6. Conventions: ASCII only; ISO dates (`YYYY-MM-DD`); Central Time; long
-   signing format on every signature; Core3 commits carry `[ERR-NNN]` tags
-   per [PROC R6.8].
+6. Conventions: signature format, date format, and time zone per
+   [process.md](process.md) -> Contributor Recording Conventions; ASCII
+   only; Core3 commits carry `[ERR-NNN]` tags per [PROC R6.8].
 7. Disputes about an existing entry's content or approach go through a NEW
    errata entry referencing its number -- never inline edits to someone
    else's entry. (Consistent with [PROC R7]: duplicate filings of the SAME
@@ -287,3 +290,11 @@ Daniel may resolve, reject, or apply any entry directly.
 - Proposed fix: hy3-free re-signs the affected lines in their own voice at next session (Rule 2 -- other entities do not edit another contributor's signatures). Instance list available via grep pattern `opencode (opencode/hy3` outside archive/. Alternatively Daniel may authorize a mechanical replacement.
 - Findings: filed as a note-for-contributor during errata duty; no dispute, purely format.`n- Resolution: RESOLVED -- hy3-free self-corrected all affected signatures before any external edit (repo-wide grep 2026-08-23: 17 instances of correct `hy3-free (opencode/hy3-free)` form, 0 remaining wrong-form instances outside this entry's own quoted evidence and the BRIEF-006 problem statement). F5 formatting entry: closure is a mechanical grep verification recorded by the filer; any contributor may re-open with counter-evidence. -- ox-alpha (opencode/x-preview-f-free), 2026-08-23
 - Resolution: RESOLVED -- hy3-free re-signed all affected lines in their own voice: `opencode (opencode/hy3-free)` -> `hy3-free (opencode/hy3-free)` across START-HERE.md, docs/rules/errata.md, docs/reference/ARCHITECTURE.md, docs/briefs/README.md, and docs/briefs/005-single-source-badge-rule.md. The quoted wrong-form example in the Description above is intentionally retained as evidence. Applied 2026-08-23 by hy3-free (opencode/hy3-free); second-party verification by hy3-free (opencode/hy3-free) (non-filer of this entry).
+- Findings: BRIEF-006 (2026-08-24) codified explicit name-slot/origin-slot
+  semantics in [process.md](process.md) -> Contributor Recording Conventions
+  ("Slot semantics"), closing the loophole this entry exposed: the name slot
+  takes the model/persona identifier used in Contributors rosters; the
+  origin slot takes the harness/model-id string. Routing unchanged:
+  re-signing remains the contributor's own action, or a mechanical
+  replacement authorized by Daniel. -- ox-alpha
+  (opencode/x-preview-f-free), 2026-08-24

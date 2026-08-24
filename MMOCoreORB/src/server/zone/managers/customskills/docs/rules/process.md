@@ -3,7 +3,12 @@
 > Subordinate to [project-design.md](project-design.md) -- the master
 > document for project rules.
 
-> **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- R8 added (shared-tree coordination, four adopted proposals); prior: 
+> **Last reconciled:** 2026-08-24 by ox-alpha (opencode/x-preview-f-free) --
+> BRIEF-006: recording conventions reconciled with the Project Alice
+> framework (explicit slot semantics, short format adopted, deviation and
+> scope tracking); prior: 2026-08-23 by ox-alpha
+> (opencode/x-preview-f-free) -- R8 added (shared-tree coordination, four
+> adopted proposals); prior: 
 > initial draft; 2026-08-23 added Repository & Release Conventions
 > (salvaged from archived quickstart/overview docs during compression);
 > 2026-08-23 BRIEF-002: single-tree rewrite (R6.5/R6.6, containment rule,
@@ -199,14 +204,29 @@ E5. INTERIM (until provisioning): concurrent sessions STAGGER SCOPES --
 
 ## Contributor Recording Conventions
 
-### Signing format
+Adopted from the Project Alice framework (`docs/rules/process.md` ->
+Contributor Recording Conventions and `docs/llm-guide.md` -> "How to Work
+Here" -> Signing). Item-by-item dispositions are tracked in the BRIEF-006
+reconciliation table (docs/briefs/006-reconcile-recording-conventions-with-alice.md).
+These rules apply universally to every signed contribution across all
+documents: errata entries, audit findings, objective updates, contributor
+roster additions, brief claims/deliveries, and code commits.
+
+### Signing format (long format -- the default)
 
 Every substantive contribution -- document edits, errata entries,
-verifications, brief claims/deliveries -- is signed:
+verifications, brief claims/deliveries -- is signed in the long format:
 
 ```
 <name/model> (<origin>), <YYYY-MM-DD>
 ```
+
+Slot semantics: the name slot holds the contributor's model/persona
+identifier -- the same identifier used in Contributors rosters (for example
+`ox-alpha`, `hy3-free`). The origin slot holds the harness/model-id string
+(for example `opencode/x-preview-f-free`). A harness or product name alone
+is never a valid name-slot value: `opencode (opencode/hy3-free)` is wrong;
+`hy3-free (opencode/hy3-free)` is correct [ERR-006].
 
 Example: `ox-alpha (opencode/x-preview-f-free), 2026-08-23`
 The human owner signs as `Daniel`.
@@ -215,16 +235,29 @@ Add yourself to a document's **Contributors** section the first time you
 contribute to it. Historical attributions (e.g. earlier model sessions) are
 never rewritten -- new entries are appended.
 
+### Signing format (short format -- opt-in)
+
+Use only where explicitly specified (compact tables, monitor-style
+displays): the first 3 characters of the model/persona identifier followed
+by the first 3 characters of a distinguishing version/origin identifier.
+Example: `ox-alpha (opencode/x-preview-f-free)` becomes `ox-x-p`. The long
+format remains the default everywhere; short format never appears in
+governing documents or git history attribution.
+
 ### Date format
 
-All dates use ISO format `YYYY-MM-DD`. This project standard intentionally
-differs from other internal projects and matches all existing customskills
-records; do not convert historical dates.
+All dates use ISO format `YYYY-MM-DD`, recorded in Central Time (below).
+This is a tracked deviation from the Alice framework default (`MMDDYYYY`);
+the deviation rationale and its owner-decision status live in the BRIEF-006
+reconciliation table. Do not convert historical dates.
 
 ### Time zone
 
-Dates are recorded in Central Time (US & Canada), Daniel's local time zone.
-Contributors in other time zones convert before recording.
+Dates are recorded in Central Time (US & Canada) -- Daniel's local time
+zone: UTC-6 during standard time (CST), UTC-5 during daylight saving time
+(CDT). Contributors in other time zones convert their local time to
+Central Time before recording anything in this project (documents, commit
+messages, telemetry, monitor output); never record your own local time.
 
 ---
 
