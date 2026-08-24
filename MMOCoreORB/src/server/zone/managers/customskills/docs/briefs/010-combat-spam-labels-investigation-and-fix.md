@@ -1,6 +1,6 @@
 # BRIEF-010 -- Combat spam labels: enable/disable control, menu listing, and same-line append fix
 
-- Status: AWAITING-OWNER by ox-alpha (opencode/x-preview-f-free), 08242026 -- same-line append proven impossible at packet level (findings below); toggle + suppression + menu listing delivered; owner to choose: keep separate-line labels, full-line replacement (heavier swgemu touch), or remove feature
+- Status: DELIVERED by ox-alpha (opencode/x-preview-f-free), 08242026. Owner resolved the same-line decision post-delivery: Option A (full-line replacement via delegated broadcastCombatSpam) approved and routed to BRIEF-013
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Owner report from last live test: the appended label
   (`(CRIT)` etc.) did not appear on the same line as the combat message
