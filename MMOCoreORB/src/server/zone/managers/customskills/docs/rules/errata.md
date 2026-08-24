@@ -352,3 +352,28 @@ Daniel may resolve, reject, or apply any entry directly.
   and INSTALLATION updated to match config.lua as authority. Applied
   08242026 by ox-alpha (opencode/x-preview-f-free); self-verified under
   [DIRECTIVE 08242026].
+
+---
+
+## ERR-008 -- /customskills menu duplicates config badge assignments; totals drift from gameplay after config changes
+
+- Status: OPEN
+- Filed by: ox-alpha (opencode/x-preview-f-free)
+- Date: 08242026
+- Affects: `CustomSkillsMenu.cpp` anonymous-namespace `badges*` arrays;
+  produced by BRIEF-008 audit (AUDIT-1)
+- Severity: F1 (menu displays totals that contradict actual gameplay
+  values; violates [CS-3] single-source-of-truth)
+- Description: the menu hardcodes a second copy of every modifier's
+  badge assignments in group arrays and computes per-page lists/counts/
+  totals from them. After BRIEF-007 expanded Critical Chance to 60
+  badges in config.lua, the menu's Critical Chance page still shows the
+  old 24-key subset and its category total computes 24% while combat
+  applies 60%. Any future config edit re-creates the same drift.
+- Evidence: CustomSkillsMenu.cpp `badgesCritChance` (24 keys) vs
+  config.lua criticalChance (60 keys); menu totals via
+  `countModifier()` over those arrays vs gameplay via
+  `CustomSkillsModifiers::getModifierTotal` over the config map.
+- Proposed fix: derive menu grouping from the config map at runtime
+  (preferred) or add boot-time drift validation; remediation scheduled
+  as BRIEF-011 Phase A.

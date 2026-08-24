@@ -1,6 +1,7 @@
 # BRIEF-008 -- Deep code audit of the Custom Skills module; produce remediation brief(s)
 
-- Status: CLAIMED by ox-alpha (opencode/x-preview-f-free), 08242026
+- Status: DELIVERED by ox-alpha (opencode/x-preview-f-free), 08242026
+  (remediation scheduled via BRIEF-011; ERR-008 filed OPEN)
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Context: the module was authored substantially by novice
   contributors; the owner wants a rigorous quality review of ALL
@@ -122,3 +123,73 @@ several:
 - Applying any fix (that is the remediation briefs' job).
 - Auditing SWGEmu/Core3 engine code, SQL schema, or TRE/datatable data.
 - Balance/value judgments about modifier numbers (owner domain).
+
+---
+
+## Audit report -- 08242026 by ox-alpha (opencode/x-preview-f-free)
+
+### Coverage checklist (all MANIFEST-listed module files reviewed)
+
+CustomSkillsCommand.h, CustomSkillsMenu.h/.cpp, CustomSkillsSuiCallback.h/.cpp,
+CustomSkillsConfig.h/.cpp, CustomSkillsModifiers.h/.cpp,
+CustomSkillsModifierType.h, combat/, buffs/, crafting/, durability/,
+gathering/, movement/, progression/, skillmods/ (.h+.cpp each),
+config.lua, customSkills.lua -- ALL READ IN FULL this session.
+Clean-per-dimension notes where no defect found are folded into the
+findings' "reviewed-clean" annotations below.
+
+### Findings
+
+**AUDIT-1 [F1 behavioral / correctness / consistency]** Menu badge
+assignments are a SECOND copy of config data. The anonymous namespace of
+`CustomSkillsMenu.cpp` hardcodes 24 group arrays (`badgesCritChance`,
+`badgesTriple`, ...) that mirror `config.lua` assignments. Drift is
+already live: after BRIEF-007 expanded Critical Chance to 60 badges, the
+menu's BONUS_CRIT_CHANCE page still lists only the old 24-key subset and
+its category totals compute from that subset (24%) while actual gameplay
+totals 60% ([CS-3] violated; menu contradicts `/customskills` prompt
+summary which reads the config map). Root cause: presentation grouping
+has no source-of-truth linkage to config assignments. Fix direction:
+derive menu lists from the config map at runtime, or add boot-time
+drift validation that warns loudly. Filed as **ERR-008 (OPEN)**.
+
+**AUDIT-2 [F1 behavioral]** Combat spam labels emit as SEPARATE messages
+(`sendCustomCombatSpam(criticalMessage, 11)` in
+`combat/CustomSkillsCombat.cpp::applyDamage`) instead of appending to
+the hit line -- root cause of the owner-reported newline drop. Already
+scheduled for fix/removal-fallback via **BRIEF-010**; not double-filed.
+
+**AUDIT-3 [F2 robustness]** `getTitle()` indexes a titles[] array by
+`(int)page` with no bounds check or static_assert; `getParent()` uses
+enum range comparisons; `getModifierName()` mirrors the modifier enum in
+a char* array. Any future enum insertion silently breaks titles/names
+(OOB read risk on titles). Fix: static_assert(array size == COUNT) at
+each site + bounds-guarded title lookup.
+
+**AUDIT-4 [F3 consistency]** Config loader special-cases criticalChance
+(duplicated logic vs `loadModifier`), carries a magic per-modifier C++
+default (`gatheringQuantity` defaultBadgeBonus = 20000 vs 0 everywhere
+else), applies different negative-cap validation per path, and allows
+badgeOverrides entries to introduce keys absent from badges[]
+(undocumented). Consolidation candidate.
+
+**AUDIT-5 [F5]** `divideDuration` maps durations <= 1s (including 0) to
+1s; `shouldDegradeWeapon` mixes random(100)/random(9999) granularity
+between native and modified paths; `formatModifierBonus` pads with
+trailing spaces for SUI column alignment (fragile). Cosmetic/edge.
+
+**AUDIT-6 [note, no action]** Concurrency posture: config singleton is
+populated once at construction and read-only afterward; safe given no
+runtime reload exists (restart-to-apply is documented behavior).
+Reviewed-clean dimensions elsewhere: buff eligibility CRC handling,
+gathering/movement/progression arithmetic (int64 intermediate math
+correct), practice-XP ordering, SEA-cap wearable adjustment math,
+SUI callback lifecycle (ManagedReference pattern), command state-mask
+checks.
+
+### Disposition
+
+- AUDIT-1 -> ERR-008 (OPEN) + remediation via BRIEF-011 Phase A
+- AUDIT-2 -> BRIEF-010 (existing)
+- AUDIT-3..5 -> BRIEF-011 Phases B/C
+- AUDIT-6 -> recorded, no action
