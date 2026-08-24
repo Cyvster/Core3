@@ -15,13 +15,17 @@ master, the master prevails.
 | Folder | Contains | Lifecycle |
 |--------|----------|-----------|
 | `rules/` | Governing documents: design master, process rules, errata protocol | Permanent; versioned alongside project |
-| `reference/` | Technical reference: architecture, modifier specs, hooks, menu, badges, Core3 code reference + user guide | Permanent; updated when code changes ([PROC R6.6]) |
+| `swgemu/` | Emulator-facing guides, kept separate from module content: player user guide + merged Core3 developer code reference (Part I patterns / Part II build-run-test) | Permanent; updated when emulator knowledge changes ([PROC R6.9]) |
+| `customskills/` | Module-facing guides: player user guide, module code reference, modifier/badge references, LLM contributor guide ([LLM_GUIDE.md](customskills/LLM_GUIDE.md)) | Permanent; updated when code changes ([PROC R6.6]) |
 | `tracking/` | Current objectives and task state | Living tracker; reconciliation-stamped per [PROC R6] |
 | `briefs/` | Task brief definitions (claim/deliver) | Permanent once delivered; archived periodically |
 | `installation/` | Server-administrator guide: install, config, verify, remove | Permanent; updated with every integration change |
-| `user-guide/` | Player-facing guide: menu mechanics, badge bonuses | Permanent; updated when behavior changes |
 | `feature-planning/` | Active feature design (Challenge Tier) | Living design docs; graduate into reference/rules or archive |
 | `archive/` | Superseded documents (historical reference only) | Frozen; never cited as current authority |
+
+Audience separation is a governing constraint (owner directive 08242026):
+emulator content stays under `swgemu/`; module content under
+`customskills/`; the two sets do not bleed into each other.
 
 ## Entry Point for Contributors
 
@@ -41,7 +45,8 @@ Start with the workspace-root ``START-HERE.md``, then read
 | Errata finding or resolution | `rules/errata.md` | Appended at bottom, next ERR-NNN |
 | Objective or task item | `tracking/objectives.md` | Under the relevant milestone heading |
 | Brief definition | `briefs/<NNN>-<name>.md` | Next sequential NNN number |
-| Technical deep-dive / spec | `reference/<TOPIC>.md` | ALL_CAPS_SNAKE matching existing names |
+| SWGEmu/emulator guide (player or developer) | `swgemu/<TOPIC>.md` | ALL_CAPS_SNAKE matching existing names |
+| Module guide (player, developer, or LLM) | `customskills/<TOPIC>.md` | ALL_CAPS_SNAKE matching existing names |
 | Feature design (pre-implementation) | `feature-planning/<NAME>.md` | Descriptive name |
 | Temporary note, scratch, draft | `temp/` (create as needed) | Descriptive name + lifespan marker |
 
@@ -108,15 +113,19 @@ research not intended to become permanent documentation.
 
 ## Contributing to Documentation
 
-- Keep audience separation clear: installation = admins, user-guide =
-  players, reference = developers, rules = governing authority.
+- Keep audience separation clear: swgemu/ = emulator players + Core3
+  developers; customskills/ = module players, developers, and LLMs;
+  installation = admins; rules = governing authority. The two guide sets
+  stay self-contained (owner directive 08242026).
 - Update the relevant guide when changing behavior ([PROC R6.6]).
-- Prefer consolidating into the existing five reference documents over
+- Record newly discovered toolchain/environment facts in their owning
+  reference document same-session ([PROC R6.9]).
+- Prefer consolidating into the existing reference documents over
   creating new ones; archive rather than delete (preserves history) and
   update links that pointed to archived docs.
-- **Update `reference/CORE3_CODE_REFERENCE.md`** when discovering new Core3
-  patterns useful for future AI researchers, and
-  `reference/CORE3_USER_GUIDE.md` when build/test operations change.
+- **Update `swgemu/CODE_REFERENCE.md`** when discovering new Core3
+  patterns useful for future researchers, and its Part II when
+  build/test/deploy operations change ([PROC R6.9] capture applies).
   Factual errors in either are filed via [rules/errata.md](rules/errata.md);
   the historical log for the retired SWGEMU_CODE_GUIDE lives in
   [archive/CODE_GUIDE_ERRATA.md](archive/CODE_GUIDE_ERRATA.md).

@@ -22,9 +22,12 @@ in `docs/tracking/objectives.md`.
 
 - `*.h/.cpp` + service subdirs (`combat/`, `buffs/`, ...) -- module code.
 - `docs/rules/` contains governing documents (design master, process, errata).
-- `docs/reference/` contains architecture and developer reference material.
+- `docs/swgemu/` contains emulator-facing guides: player user guide +
+  Core3 developer code reference (kept separate from module content).
+- `docs/customskills/` contains module-facing guides: player user guide,
+  module code reference, modifier/badge references, LLM contributor guide.
 - `docs/tracking/`, `docs/briefs/` contain task state and delegable work.
-- `docs/installation/`, `docs/user-guide/` serve admins and players.
+- `docs/installation/` serves server administrators.
 - `docs/archive/` preserves superseded documents.
 - `integration/` holds the patch of minimal edits made in existing Core3 files.
 - `MANIFEST.md` lists every module file and integration point.
@@ -37,5 +40,7 @@ preserved under `docs/archive/` -- they are not current authority.
 
 ---
 
-**Last reconciled:** 08232026 by ox-alpha (opencode/x-preview-f-free) --
-BRIEF-002: rewritten for single-tree layout after migration into Core3 repo.
+**Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
+owner-directed guide restructure: docs/ split into swgemu/ + customskills/
+audience subfolders. Prior: 08232026 -- BRIEF-002: rewritten for
+single-tree layout after migration into Core3 repo.

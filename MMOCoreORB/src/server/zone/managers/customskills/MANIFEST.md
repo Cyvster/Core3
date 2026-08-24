@@ -89,22 +89,25 @@ restructuring (and the same-day compression pass) are preserved under
 
 | Superseded (archive/) | Current authority |
 |-----------------------|-------------------|
-| `MODIFIER_REGISTRY.md` | `docs/reference/MODIFIER_REFERENCE.md` |
-| `IMPLEMENTATION_PLAN.md` | `docs/reference/ARCHITECTURE.md` |
-| `PLAYER_BONUS_GUIDE.md` | `docs/user-guide/USER_GUIDE.md` |
-| `SCREENPLAYS.md` | `docs/reference/ARCHITECTURE.md` (SUI Menu System section) |
-| `BADGE_CATALOG.md` | `docs/reference/BADGE_REFERENCE.md` |
-| `MENU_AND_BADGE_ORGANIZATION.md` | `docs/reference/ARCHITECTURE.md` + `docs/reference/BADGE_REFERENCE.md` |
-| `EXCLUDED_BADGES.md` | `docs/reference/BADGE_REFERENCE.md` |
-| `SWGEMU_CODE_GUIDE.md` | `docs/reference/CORE3_CODE_REFERENCE.md` + `CORE3_USER_GUIDE.md` |
-| `CODE_GUIDE_ERRATA.md` | `docs/rules/errata.md` (log preserved as history) |
-| `IMPLEMENTATION_GUIDE.md`, `MENU_SYSTEM.md`, `PROJECT_OVERVIEW.md`, `DEVELOPER_QUICKSTART.md`, `integration-INSTALL.md` | `docs/reference/ARCHITECTURE.md`, `START-HERE.md`, `docs/installation/INSTALLATION.md`, `docs/rules/process.md` |
+| `MODIFIER_REGISTRY.md` | `docs/customskills/MODIFIER_REFERENCE.md` |
+| `IMPLEMENTATION_PLAN.md` | `docs/customskills/CODE_REFERENCE.md` |
+| `PLAYER_BONUS_GUIDE.md` | `docs/customskills/USER_GUIDE.md` |
+| `SCREENPLAYS.md` | `docs/customskills/CODE_REFERENCE.md` (SUI Menu System section) |
+| `BADGE_CATALOG.md` | `docs/customskills/BADGE_REFERENCE.md` |
+| `MENU_AND_BADGE_ORGANIZATION.md` | `docs/customskills/CODE_REFERENCE.md` + `docs/customskills/BADGE_REFERENCE.md` |
+| `EXCLUDED_BADGES.md` | `docs/customskills/BADGE_REFERENCE.md` |
+| `SWGEMU_CODE_GUIDE.md` | `docs/swgemu/CODE_REFERENCE.md` (merged: former CORE3_CODE_REFERENCE + CORE3_USER_GUIDE) |
+| `IMPLEMENTATION_GUIDE.md`, `MENU_SYSTEM.md`, `PROJECT_OVERVIEW.md`, `DEVELOPER_QUICKSTART.md`, `integration-INSTALL.md` | `docs/customskills/CODE_REFERENCE.md`, `docs/customskills/LLM_GUIDE.md`, `docs/installation/INSTALLATION.md`, `docs/rules/process.md` |
 
 Full mapping: [docs/README.md](docs/README.md).
 
 ---
 
-**Last reconciled:** 08232026 by ox-alpha (opencode/x-preview-f-free) -- BRIEF-002: header + paths rewritten for single-tree layout; --
+**Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
+successor-table paths updated for the owner-directed guide restructure
+(docs/ split into swgemu/ + customskills/ audience subfolders; reference/
+and user-guide/ dissolved). Prior: 08232026 -- BRIEF-002: header + paths
+rewritten for single-tree layout; --
 links updated to post-restructuring locations; known package divergence
 recorded above pending BRIEF-001; 08232026 compression pass -- successor
 table updated for consolidated reference set; install pointer redirected to

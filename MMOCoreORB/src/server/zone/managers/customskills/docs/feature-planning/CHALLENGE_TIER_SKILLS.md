@@ -273,8 +273,8 @@ using the existing branch themes. Hidden tree roots
 (`challenge_survivor` / `challenge_veteran` / `challenge_paragon`) display
 as Survivor / Veteran / Paragon if ever surfaced. Internal skill keys are
 unchanged; names ship as client stringfile entries at deployment -- see
-[CORE3_USER_GUIDE.md](../reference/CORE3_USER_GUIDE.md) -> Deploying Module
-Changes -> Client data archives (TRE builder).
+[../../swgemu/CODE_REFERENCE.md](../../swgemu/CODE_REFERENCE.md)
+-> Deploying Module Changes -> Client data archives (TRE builder).
 
 ---
 

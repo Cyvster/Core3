@@ -66,7 +66,7 @@ git apply --check --ignore-space-change <module>/integration/core3-hooks.patch
 git apply --ignore-space-change <module>/integration/core3-hooks.patch
 ```
 
-**If `--check` fails**: The target Core3 revision differs. Port hunks manually using `MANIFEST.md` (lists all integration files) and `docs/reference/ARCHITECTURE.md` (describes each hook's purpose). Do not force the patch.
+**If `--check` fails**: The target Core3 revision differs. Port hunks manually using `MANIFEST.md` (lists all integration files) and `docs/customskills/CODE_REFERENCE.md` (describes each hook's purpose). Do not force the patch.
 
 ### 3. Reconfigure & Build
 
@@ -188,7 +188,7 @@ modifiers = {
 ```
 
 Badge keys must exist in `BadgeList` (check `badge_map.iff`); see
-[BADGE_REFERENCE.md](../reference/BADGE_REFERENCE.md) for the full catalog.
+[BADGE_REFERENCE.md](../customskills/BADGE_REFERENCE.md) for the full catalog.
 Restart Core3 after editing.
 
 ### Root Settings
@@ -219,7 +219,7 @@ customSummaryColor = "00FF00"   -- RGB hex for menu modifier text color
 3. **Navigation**: Open every category, use Back/Cancel, reopen repeatedly, test 2+ characters simultaneously
 4. **Critical Chance**: Each milestone exploration badge (via `badgeOverrides`) shows +1.00%, max +12.00% for all 12 (combat masteries no longer grant Critical Chance)
 5. **Combat test**: Critical attacks deal 150% of pre-armor damage
-6. **Before enabling new modifier**: Run focused tests from `docs/reference/ARCHITECTURE.md`
+6. **Before enabling new modifier**: Run focused tests from `docs/customskills/CODE_REFERENCE.md`
 
 ---
 
@@ -259,9 +259,9 @@ If reverse check fails (Core3 files edited since), remove Custom Skills hunks ma
 
 ## Related Documentation
 
-- **User Guide**: `../user-guide/USER_GUIDE.md` -- Player-facing mechanics
-- **Architecture & Implementation**: `../reference/ARCHITECTURE.md` -- Hooks, services, menu, verification matrix
-- **Modifier Reference**: `../reference/MODIFIER_REFERENCE.md` -- All 18 modifiers with config
-- **Badge Reference**: `../reference/BADGE_REFERENCE.md` -- Full badge catalog
-- **Core3 platform**: `../reference/CORE3_CODE_REFERENCE.md` + `../reference/CORE3_USER_GUIDE.md`
+- **User Guide**: `../customskills/USER_GUIDE.md` -- Player-facing mechanics
+- **Architecture & Implementation**: `../customskills/CODE_REFERENCE.md` -- Hooks, services, menu, verification matrix
+- **Modifier Reference**: `../customskills/MODIFIER_REFERENCE.md` -- All 18 modifiers with config
+- **Badge Reference**: `../customskills/BADGE_REFERENCE.md` -- Full badge catalog
+- **Core3 platform (emulator guides)**: `../swgemu/CODE_REFERENCE.md` + `../swgemu/USER_GUIDE.md`
 

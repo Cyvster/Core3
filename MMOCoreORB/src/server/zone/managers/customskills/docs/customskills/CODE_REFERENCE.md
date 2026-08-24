@@ -9,7 +9,8 @@ hook inventory, runtime services, menu system, configuration, extension
 procedures, and verification. Pure lookup data lives in
 [MODIFIER_REFERENCE.md](MODIFIER_REFERENCE.md) and
 [BADGE_REFERENCE.md](BADGE_REFERENCE.md). Build/run/test operations for the
-Core3 platform live in [CORE3_USER_GUIDE.md](CORE3_USER_GUIDE.md).
+Core3 platform live in [../../swgemu/CODE_REFERENCE.md](../../swgemu/CODE_REFERENCE.md)
+(Part II).
 
 Design *principles* are stated once in the master document ([CS-1..10]);
 this document references them and does not restate them.

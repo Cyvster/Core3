@@ -84,7 +84,7 @@ content:
 
 `docs/archive/CODE_GUIDE_ERRATA.md` is the historical errata log scoped to
 the retired `SWGEMU_CODE_GUIDE.md` (superseded by
-`docs/reference/CORE3_CODE_REFERENCE.md`), with its own entry scheme
+`docs/swgemu/CODE_REFERENCE.md`), with its own entry scheme
 (E1-E9, M1-M3, N1-N3, S1)
 and procedure. That log remains authoritative for its existing entries; it
 is **not extended**. New findings against any document -- including the code

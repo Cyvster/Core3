@@ -24,8 +24,8 @@ requirements that conflict with what is stated here.
 | [OBJ] | docs/tracking/objectives.md | Current objectives and task state | At session start; update on delivery |
 | [BRIEF-NNN] | docs/briefs/README.md | Delegable task queue | When picking up discrete work items |
 
-Reference material (not governing): `docs/reference/*`, `docs/installation/*`,
-`docs/user-guide/*`, `docs/feature-planning/*`, `MANIFEST.md`.
+Reference material (not governing): `docs/swgemu/*`, `docs/customskills/*`,
+`docs/installation/*`, `docs/feature-planning/*`, `MANIFEST.md`.
 
 ## Scope
 
@@ -38,7 +38,7 @@ This document contains ONLY design content:
   contributor collaboration and recording conventions
   (`docs/rules/process.md`); correction records (`docs/rules/errata.md`);
   current task state (`docs/tracking/objectives.md`); technical deep-dives
-  (`docs/reference/*`).
+  (`docs/customskills/*`, `docs/swgemu/*`).
 - **When a fact could be either:** design states WHAT the module is and WHY;
   process states HOW contributors work; errata records what was corrected.
 
@@ -90,7 +90,7 @@ ratification recorded in this document or an ERR entry.
 ## Integration Policy
 
 - Hook inventory H01-H16 (H02 rejected) is defined in
-  `docs/reference/ARCHITECTURE.md`; that document is the operational
+  `docs/customskills/CODE_REFERENCE.md`; that document is the operational
   authority on hook placement and MUST stay consistent with the applied patch.
 - `MANIFEST.md` (module dir root) lists every module-owned file and every
   edited Core3 file. It is updated whenever a module file or integration
@@ -109,7 +109,7 @@ ratification recorded in this document or an ERR entry.
 ## Gameplay Conventions
 
 - All 18 modifiers (CRITICAL_MULTIPLIER promoted to standalone 08232026) are enumerated in
-  `docs/reference/MODIFIER_REFERENCE.md`, which is the authority on per-
+  `docs/customskills/MODIFIER_REFERENCE.md`, which is the authority on per-
   modifier units, defaults, caps, and badge assignments.
 - Badge pool: 111 eligible badges of 140 total (9 pilot/JTL and 20
   admin/event badges excluded).
