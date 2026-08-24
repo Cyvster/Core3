@@ -55,6 +55,8 @@ reading only what the brief lists -- no conversation history required.
 | [`006-reconcile-recording-conventions-with-alice.md`](006-reconcile-recording-conventions-with-alice.md) | Reconcile recording conventions with Project Alice framework (slots, short format, deviations) | DELIVERED |
 | [`007-remove-hardcoded-critical-chance-defaults.md`](007-remove-hardcoded-critical-chance-defaults.md) | Remove residual C++ critical-chance seed/defaults; restore 60% cap via 60 explicit badge overrides | DELIVERED |
 | [`008-deep-audit-module-code.md`](008-deep-audit-module-code.md) | Deep quality audit of all module-owned code; file ERR entries and produce remediation brief(s) | UNCLAIMED |
+| [`009-condense-doc-formatting.md`](009-condense-doc-formatting.md) | Condense all guides; enforce heading hierarchy, section delimiters, feature-section template, TOCs | UNCLAIMED |
+| [`010-combat-spam-labels-investigation-and-fix.md`](010-combat-spam-labels-investigation-and-fix.md) | Combat spam labels: same-line append fix, enable/disable switch, menu listing; removal fallback needs owner sign-off | UNCLAIMED |
 
 ## Notes
 
@@ -75,7 +77,12 @@ reading only what the brief lists -- no conversation history required.
 ---
 
 **Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
-BRIEF-007 DELIVERED (C++ seed/constant removed; 60-badge x 100bp
+BRIEF-009 added (doc condensation + formatting standard: single H1,
+rule-delimited H2 sections, feature template, TOCs, >=40% line-count
+reduction target) and BRIEF-010 added (combat spam labels:
+investigate same-line append defect, add enable/disable switch +
+Server Config listing; removal only on owner sign-off). Prior:
+08242026 -- BRIEF-007 DELIVERED (C++ seed/constant removed; 60-badge x 100bp
 override set reaches the 60% cap exactly; ERR-007 filed RESOLVED
 self-verified under [DIRECTIVE 08242026]; compile check deferred to
 Docker build env). BRIEF-008 added earlier same day (audit, UNCLAIMED).
