@@ -6,7 +6,6 @@
 
 class CustomSkillsConfig : public Singleton<CustomSkillsConfig>, public Object, public Logger {
 public:
-	static const int DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE = 300;
 	static const int DEFAULT_CRITICAL_MULTIPLIER = 15000;
 
 	CustomSkillsConfig();
@@ -26,7 +25,7 @@ public:
 
 private:
 	bool criticalChanceEnabled;
-	int criticalChancePerCombatBadge;
+	int criticalChanceFallbackBonus;
 	int criticalMultiplier;
 	String customSummaryColor;
 	String criticalCombatSpamLabel;

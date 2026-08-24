@@ -1,6 +1,8 @@
 # BRIEF-007 -- Remove residual hardcoded critical-chance defaults; restore cap reachability via explicit per-badge overrides
 
-- Status: CLAIMED by ox-alpha (opencode/x-preview-f-free), 08242026
+- Status: DELIVERED by ox-alpha (opencode/x-preview-f-free), 08242026
+  (compile verification deferred -- engine3 submodule uninitialized in
+  dev environment; inspection-level checks documented in delivery)
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive (work session, Central Time). Context: while rebalancing
   badge bonuses it was discovered that the ERR-005-era cleanup did NOT
@@ -113,3 +115,29 @@ are independent).
   100%) -- owner will direct separately; do not touch their values.
 - Changing any cap value.
 - Renaming `criticalChancePerCombatBadge` if it turns non-trivial.
+
+---
+
+## Delivery record -- 08242026 by ox-alpha (opencode/x-preview-f-free)
+
+- C++: constructor seed (combatBadges[] + loop) and
+  `DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE` removed; member renamed to
+  `criticalChanceFallbackBonus` with explicit-0 default; load-path
+  fallback now 0 with corrected warning. Missing/invalid config yields
+  enabled + zero bonuses.
+- config.lua: criticalChance expanded to the owner-specified 60-badge
+  set; every key present in `badges` AND `badgeOverrides` at 100 bp;
+  verified programmatically: 60/60 identical keys, no duplicates,
+  sum 6000 bp = cap exactly.
+- Docs: Appendix A Critical Chance section rewritten (grouped 60-badge
+  table + history note), Max Totals rows corrected (Critical Chance
+  6000/60%; Amazing Success 5000/50%; Amazing Results 10000/100% --
+  stale 6-badge claims fixed against config.lua as authority);
+  USER_GUIDE Critical Chance feature section updated;
+  INSTALLATION Critical Chance example + verification step updated.
+- ERR-007 filed RESOLVED (self-verified under [DIRECTIVE 08242026]).
+- Compile verification DEFERRED: engine3 submodule is uninitialized in
+  this dev environment, so a full Core3 build cannot run here. Changes
+  verified by inspection only (identifier sweep clean, control flow
+  re-read post-edit). Docker build session should confirm before
+  deploy.

@@ -606,9 +606,9 @@ Complete registry of all 18 modifiers: configuration conventions, units, badge a
 |----------|-------|
 | **Unit** | Basis points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 100 bp (1.00%) each via `badgeOverrides` (base `badgeBonus` 400 bp overridden) |
+| **Badge bonus (default)** | 0 -- there is intentionally no non-zero code-side or blanket fallback; every badge declares its own value via `badgeOverrides` |
 | **Cap (default)** | 6000 (60.00%) |
-| **Badges (default)** | 12 milestone exploration badges |
+| **Badges (default)** | 60 achievement badges (see list below) |
 | **Config key** | `criticalChance` (special table) |
 
 **Behavior**: Chance for a landed attack to become a custom critical hit.
@@ -618,11 +618,28 @@ config badge map (`CustomSkillsConfig::getBadgeBonuses(CRITICAL_CHANCE)` /
 `getModifierTotal`) -- a single source of truth ([CS-3]); it is fully
 configurable in `config.lua`.
 
-**Badges** (all 100 bp each, via `badgeOverrides`):
-```
-count_5, count_10, count_25, count_50, count_75, count_100, count_125,
-bdg_exp_10_badges, bdg_exp_20_badges, bdg_exp_30_badges, bdg_exp_40_badges, bdg_exp_45_badges
-```
+**History**: before BRIEF-007 the C++ constructor seeded the 12 combat
+mastery badges at 300 bp via `DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE`
+(the ERR-005-era hardcode that survived cleanup). Removed; the config map
+is now the only source of badge values, and an empty/missing config yields
+zero bonuses rather than silent defaults.
+
+**Badges** (all 100 bp each, via explicit `badgeOverrides`; full set =
+6000 bp = cap):
+
+| Group | Keys |
+|-------|------|
+| Accumulation milestones (7) | `count_5` .. `count_125` |
+| Exploration milestones (5) | `bdg_exp_10_badges` .. `bdg_exp_45_badges` |
+| Combat profession masteries (12) | `combat_*_master` |
+| Hero of Tatooine (5) | `poi_rabidbeast`, `poi_prisonbreak`, `poi_twoliars`, `poi_factoryliberation`, `poi_heromark` |
+| Warren (2) | `warren_compassion`, `warren_hero` |
+| Theme Parks (4) | `bdg_thm_park_jabba/imperial/rebel/nym_badge` |
+| Corellian Corvette (9) | `bdg_corvette_*` (9 faction/mission combos) |
+| Exploration -- dangerous sites (5) | `exp_tat_tusken_pool`, `exp_tat_krayt_skeleton`, `exp_tat_sarlacc_pit`, `exp_tat_krayt_graveyard`, `exp_dat_sarlacc` |
+| Exploration -- Jedi sites (3) | `exp_tat_bens_hut`, `exp_yav_temple_exar_kun`, `exp_dan_jedi_temple` |
+| Outdoors masteries (5) | `outdoors_bio_engineer/creaturehandler/ranger/scout/squadleader_master` |
+| Science masteries (3) | `science_combatmedic/doctor/medic_master` |
 
 ---
 
@@ -867,7 +884,7 @@ Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x tota
 | **Default** | `true` |
 | **Badge bonus (default)** | 500 bp (5.00%) |
 | **Cap (default)** | 10000 (100%) |
-| **Badges (default)** | Yavin IV Exar Kun (500), Lok (3 x 500), Yavin IV Woolamander/Blueleaf (2 x 500) = 6 total |
+| **Badges (default)** | Yavin IV Exar Kun (500); Lok: volcano/imp outpost/kimogila skeleton (3 x 500); Dathomir: tarpit/escape pod/misty falls x2/crashed ship/imp prison (6 x 500) = 10 total |
 
 **Behavior**: Adds bp to native Amazing Success probability (assembly & experimentation). Does NOT multiply native chance. Same policy at both roll sites. Clamped to configured cap. Target: max-bonus character reaches >=50% final chance.
 
@@ -881,7 +898,7 @@ Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x tota
 | **Default** | `true` |
 | **Badge bonus (default)** | 1000 bp (10.00%) |
 | **Cap (default)** | 10000 (100%) |
-| **Badges (default)** | Yavin IV Exar Kun (1000), Lok (3 x 1000), Yavin IV Woolamander/Blueleaf (2 x 1000) = 6 total |
+| **Badges (default)** | same 10-badge set as Amazing Success Chance, each at 1000 bp = 10 total |
 
 **Behavior**: On actual `AMAZINGSUCCESS`, for each affected attribute:
 ```
@@ -926,7 +943,7 @@ is authoritative.
 
 | Modifier | Unit | Per-Badge (config) | Max Badges | Max Total (capped) |
 |----------|------|--------------------|------------|--------------------|
-| Critical Chance | bp | 100 (via badgeOverrides) | 12 | 1200 (12%) |
+| Critical Chance | bp | 100 (via badgeOverrides) | 60 | 6000 (60%) |
 | Critical Multiplier | bp | 1250 | 12 | 15000 bonus (300% total) |
 | Double Attack | bp | 2000 | 6 | 10000 (100%) |
 | Triple Attack | bp | 200 (BH 300) | 17 | 3500 (35%) |
@@ -941,7 +958,7 @@ is authoritative.
 | Experience Bonus | multiplier bp | 10000 | 5 | 50000 (500%) |
 | Practice XP Bonus | bp | 10000 | 10 | 100000 (1000%) |
 | Crafting Speed | multiplier bp | 1000 | 10 | 10000 (100%) |
-| Amazing Success | bp | 500 | 6 | 3000 (30%) |
+| Amazing Success | bp | 500 | 10 | 5000 (50%) |
 | Amazing Results | bp | 1000 | 6 | 6000 (60%) |
 | Gathering Quantity | bp | 2500 (Outdoors 11500, Science 10000) | 13 | 100000 (1000%) |
 

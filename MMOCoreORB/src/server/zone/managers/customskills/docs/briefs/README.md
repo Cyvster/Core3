@@ -53,7 +53,7 @@ reading only what the brief lists -- no conversation history required.
 | [`004-modifier-reference-refresh.md`](004-modifier-reference-refresh.md) | Refresh MODIFIER_REFERENCE against current config.lua (badgeOverrides, rarityNaming) | DELIVERED |
 | [`005-single-source-badge-rule.md`](005-single-source-badge-rule.md) | Document single-source-of-truth rule for badge-backed modifiers | DELIVERED |
 | [`006-reconcile-recording-conventions-with-alice.md`](006-reconcile-recording-conventions-with-alice.md) | Reconcile recording conventions with Project Alice framework (slots, short format, deviations) | DELIVERED |
-| [`007-remove-hardcoded-critical-chance-defaults.md`](007-remove-hardcoded-critical-chance-defaults.md) | Remove residual C++ critical-chance seed/defaults; restore 60% cap via 60 explicit badge overrides | UNCLAIMED |
+| [`007-remove-hardcoded-critical-chance-defaults.md`](007-remove-hardcoded-critical-chance-defaults.md) | Remove residual C++ critical-chance seed/defaults; restore 60% cap via 60 explicit badge overrides | DELIVERED |
 | [`008-deep-audit-module-code.md`](008-deep-audit-module-code.md) | Deep quality audit of all module-owned code; file ERR entries and produce remediation brief(s) | UNCLAIMED |
 
 ## Notes
@@ -75,9 +75,11 @@ reading only what the brief lists -- no conversation history required.
 ---
 
 **Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
-BRIEF-008 added (owner directive: deep audit of all module-owned code,
-read-only, producing remediation brief(s) + ERR filings); BRIEF-007
-added earlier same day. Prior:
+BRIEF-007 DELIVERED (C++ seed/constant removed; 60-badge x 100bp
+override set reaches the 60% cap exactly; ERR-007 filed RESOLVED
+self-verified under [DIRECTIVE 08242026]; compile check deferred to
+Docker build env). BRIEF-008 added earlier same day (audit, UNCLAIMED).
+Prior:
 08242026 -- BRIEF-006 DELIVERED (recording conventions reconciled with Project Alice;
 slot semantics + short format codified in process.md; OD-1 answered same
 day via [DIRECTIVE 08242026]: dates switch to MMDDYYYY going forward).

@@ -33,11 +33,39 @@ customSkillsConfig = {
 		-- Compact label sent when this effect activates.
 		combatSpamLabel = "(CRIT)",
 
-		-- Milestone exploration badges: +1% (100 bp) crit chance each,
-		-- declared per badge in badgeOverrides.
+		-- 60 achievement badges: +1% (100 bp) crit chance each, declared
+		-- per badge in badgeOverrides. Full set reaches the 60% cap.
 		badges = {
+			-- Accumulation milestones (7)
 			"count_5", "count_10", "count_25", "count_50", "count_75", "count_100", "count_125",
+			-- Exploration milestones (5)
 			"bdg_exp_10_badges", "bdg_exp_20_badges", "bdg_exp_30_badges", "bdg_exp_40_badges", "bdg_exp_45_badges",
+			-- Combat profession masteries (12)
+			"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
+			"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
+			"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
+			"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master",
+			-- Hero of Tatooine (5)
+			"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark",
+			-- Warren (2)
+			"warren_compassion", "warren_hero",
+			-- Theme Parks (4)
+			"bdg_thm_park_jabba_badge", "bdg_thm_park_imperial_badge",
+			"bdg_thm_park_rebel_badge", "bdg_thm_park_nym_badge",
+			-- Corellian Corvette (9)
+			"bdg_corvette_imp_destroy", "bdg_corvette_imp_rescue", "bdg_corvette_imp_assassin",
+			"bdg_corvette_neutral_destroy", "bdg_corvette_neutral_rescue", "bdg_corvette_neutral_assassin",
+			"bdg_corvette_reb_destroy", "bdg_corvette_reb_rescue", "bdg_corvette_reb_assassin",
+			-- Exploration: dangerous sites (5)
+			"exp_tat_tusken_pool", "exp_tat_krayt_skeleton", "exp_tat_sarlacc_pit",
+			"exp_tat_krayt_graveyard", "exp_dat_sarlacc",
+			-- Exploration: Jedi sites (3)
+			"exp_tat_bens_hut", "exp_yav_temple_exar_kun", "exp_dan_jedi_temple",
+			-- Outdoors masteries (5)
+			"outdoors_bio_engineer_master", "outdoors_creaturehandler_master",
+			"outdoors_ranger_master", "outdoors_scout_master", "outdoors_squadleader_master",
+			-- Science masteries (3)
+			"science_combatmedic_master", "science_doctor_master", "science_medic_master",
 		},
 		badgeOverrides = {
 			-- Per-badge crit chance in basis points (100 = 1%).
@@ -45,6 +73,31 @@ customSkillsConfig = {
 			{ "count_50", 100 }, { "count_75", 100 }, { "count_100", 100 }, { "count_125", 100 },
 			{ "bdg_exp_10_badges", 100 }, { "bdg_exp_20_badges", 100 }, { "bdg_exp_30_badges", 100 },
 			{ "bdg_exp_40_badges", 100 }, { "bdg_exp_45_badges", 100 },
+			{ "combat_1hsword_master", 100 }, { "combat_2hsword_master", 100 },
+			{ "combat_bountyhunter_master", 100 }, { "combat_brawler_master", 100 },
+			{ "combat_carbine_master", 100 }, { "combat_commando_master", 100 },
+			{ "combat_marksman_master", 100 }, { "combat_pistol_master", 100 },
+			{ "combat_polearm_master", 100 }, { "combat_rifleman_master", 100 },
+			{ "combat_smuggler_master", 100 }, { "combat_unarmed_master", 100 },
+			{ "poi_rabidbeast", 100 }, { "poi_prisonbreak", 100 }, { "poi_twoliars", 100 },
+			{ "poi_factoryliberation", 100 }, { "poi_heromark", 100 },
+			{ "warren_compassion", 100 }, { "warren_hero", 100 },
+			{ "bdg_thm_park_jabba_badge", 100 }, { "bdg_thm_park_imperial_badge", 100 },
+			{ "bdg_thm_park_rebel_badge", 100 }, { "bdg_thm_park_nym_badge", 100 },
+			{ "bdg_corvette_imp_destroy", 100 }, { "bdg_corvette_imp_rescue", 100 },
+			{ "bdg_corvette_imp_assassin", 100 }, { "bdg_corvette_neutral_destroy", 100 },
+			{ "bdg_corvette_neutral_rescue", 100 }, { "bdg_corvette_neutral_assassin", 100 },
+			{ "bdg_corvette_reb_destroy", 100 }, { "bdg_corvette_reb_rescue", 100 },
+			{ "bdg_corvette_reb_assassin", 100 },
+			{ "exp_tat_tusken_pool", 100 }, { "exp_tat_krayt_skeleton", 100 },
+			{ "exp_tat_sarlacc_pit", 100 }, { "exp_tat_krayt_graveyard", 100 },
+			{ "exp_dat_sarlacc", 100 },
+			{ "exp_tat_bens_hut", 100 }, { "exp_yav_temple_exar_kun", 100 }, { "exp_dan_jedi_temple", 100 },
+			{ "outdoors_bio_engineer_master", 100 }, { "outdoors_creaturehandler_master", 100 },
+			{ "outdoors_ranger_master", 100 }, { "outdoors_scout_master", 100 },
+			{ "outdoors_squadleader_master", 100 },
+			{ "science_combatmedic_master", 100 }, { "science_doctor_master", 100 },
+			{ "science_medic_master", 100 },
 		},
 	},
 

@@ -16,7 +16,9 @@ void CustomSkillsConfig::setDefaults() {
 	}
 
 	criticalChanceEnabled = true;
-	criticalChancePerCombatBadge = DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE;
+	// criticalChanceFallbackBonus stays 0: badge bonuses come exclusively
+	// from config.lua (badges[] + badgeOverrides); nothing is seeded here.
+	criticalChanceFallbackBonus = 0;
 	criticalMultiplier = DEFAULT_CRITICAL_MULTIPLIER;
 	customSummaryColor = "00FF00";
 	criticalCombatSpamLabel = "(CRIT)";
@@ -25,15 +27,6 @@ void CustomSkillsConfig::setDefaults() {
 	exceptionalColor = "0000FF";
 	modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = true;
 	modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE] = 6000;
-
-	const char* combatBadges[] = {
-		"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
-		"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
-		"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
-		"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master"
-	};
-	for (const char* badge : combatBadges)
-		modifierBadgeBonuses[CustomSkillsModifierType::CRITICAL_CHANCE].put(badge, DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE);
 }
 
 bool CustomSkillsConfig::isModifierEnabled(CustomSkillsModifierType::Type type) const {
@@ -142,12 +135,14 @@ void CustomSkillsConfig::load() {
 		criticalChanceEnabled = critical.getBooleanField("enabled", true);
 		modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = criticalChanceEnabled;
 
-		int badgeBonus = critical.getIntField("badgeBonus", DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE);
+		// Explicit 0 default: a listed badge without an override grants
+		// nothing. There is intentionally no non-zero code-side fallback.
+		int badgeBonus = critical.getIntField("badgeBonus", 0);
 		if (badgeBonus >= 0 && badgeBonus <= 10000)
-			criticalChancePerCombatBadge = badgeBonus;
+			criticalChanceFallbackBonus = badgeBonus;
 		else
-			warning("criticalChance.badgeBonus must be from 0 to 10000; using default");
-		setUniformBadgeBonus(CustomSkillsModifierType::CRITICAL_CHANCE, criticalChancePerCombatBadge);
+			warning("criticalChance.badgeBonus must be from 0 to 10000; treating as 0");
+		setUniformBadgeBonus(CustomSkillsModifierType::CRITICAL_CHANCE, criticalChanceFallbackBonus);
 
 		int cap = critical.getIntField("cap", modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE]);
 		if (cap >= 0)
@@ -158,7 +153,7 @@ void CustomSkillsConfig::load() {
 			for (int i = 1; i <= ccBadges.getTableSize(); ++i) {
 				String badge = ccBadges.getStringAt(i);
 				if (!badge.isEmpty())
-					modifierBadgeBonuses[CustomSkillsModifierType::CRITICAL_CHANCE].put(badge, criticalChancePerCombatBadge);
+					modifierBadgeBonuses[CustomSkillsModifierType::CRITICAL_CHANCE].put(badge, criticalChanceFallbackBonus);
 			}
 		}
 		ccBadges.pop();
