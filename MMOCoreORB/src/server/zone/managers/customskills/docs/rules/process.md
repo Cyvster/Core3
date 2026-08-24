@@ -3,7 +3,7 @@
 > Subordinate to [project-design.md](project-design.md) -- the master
 > document for project rules.
 
-> **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) --
+> **Last reconciled:** 2026-08-23 by ox-alpha (opencode/x-preview-f-free) -- R8 added (shared-tree coordination, four adopted proposals); prior: 
 > initial draft; 2026-08-23 added Repository & Release Conventions
 > (salvaged from archived quickstart/overview docs during compression);
 > 2026-08-23 BRIEF-002: single-tree rewrite (R6.5/R6.6, containment rule,
@@ -75,7 +75,7 @@ Living trackers in this project: `MANIFEST.md`, `docs/tracking/objectives.md`,
 under `docs/feature-planning/`. Update the stamp whenever the tracker
 materially changes, so staleness is detectable.
 
-## Rule 6.5 -- Record work where it lands
+## Rule 6.5 -- Record work where it lands; make it visible
 
 Everything -- module code, scripts, docs, and the integration patch -- lives
 inside this Core3 repository (module dir:
@@ -83,10 +83,14 @@ inside this Core3 repository (module dir:
 
 1. All changes (code AND documentation) are committed in this repository
    (branch `cyvster3`) under your own identity with a traceability tag per
-   R6.8. Uncommitted work is an incomplete delivery.
-2. Documentation-only changes carry their own reconciliation stamp and,
+   R6.8, then **pushed immediately** (R8/P1). A commit that is not pushed
+   does not exist for coordination purposes.
+2. Claim commits are pushed AT CLAIM TIME, before deliverable work begins;
+   an unpushed claim may be re-claimed without penalty (R8/P2).
+3. If push fails, STOP: do not start new claimed work; report per R4.
+4. Documentation-only changes carry their own reconciliation stamp and,
    where applicable, a Contributors entry.
-3. The standalone mirror folder (`customskills-mod/`, with its `package/`
+5. The standalone mirror folder (`customskills-mod/`, with its `package/`
    copy) was dissolved 2026-08-23; references to it are historical only.
 
 ## Rule 6.6 -- Change completeness
@@ -137,6 +141,44 @@ disagreement, and nobody files the same dispute under multiple numbers.
 
 ---
 
+## Rule 8 -- Shared-tree coordination (adopted proposals 2026-08-23)
+
+Adopted via the proposals subsystem (docs/proposals/, framework: Project
+Alice). Four mechanisms, layered; the last relaxes the first three.
+
+### Staging discipline (clean-status-before-add, S1-S4)
+
+S1. Stage with explicit file paths (`git add <path> ...`). `git add -A`
+    and `git add .` are prohibited on this tree.
+S2. Before staging, `git status --porcelain` must list ONLY the intended
+    change. Unexpected entries: STOP; never delete or stash another
+    session's files; report persistent strays via errata with owner.
+S3. Applies to every worker equally.
+S4. Sunset per Repository topology E4.
+
+### Commit & sync discipline (coordinator-pull-before-commit, C1-C3)
+
+C1. Before ANY commit, in order: (1) porcelain check per S2;
+    (2) `git fetch origin`, then ff-only pull when strictly behind,
+    rebase only on divergence -- never commit behind origin;
+    (3) stage explicit paths; commit.
+C2. Commits integrating another session's work carry in the body:
+    `Original-author: <name/model> (<origin>), <YYYY-MM-DD>`
+C3. These duties attach to whoever commits; no permanent coordinator role.
+
+### Repository topology (per-worker-topology, E1-E5) -- POLICY
+
+E1. Once provisioned, each session works in an isolated clone or dedicated
+    git worktree -- never directly in another session's checkout.
+E2. Work publishes to a personal branch (`work/<short-id>/<topic>`).
+E3. Integration to the shared base branch goes through an explicit
+    ff-only/rebase gate with Original-author trailers preserved.
+E4. The staging/sync guards above relax to style preferences when:
+    two workers provisioned AND gate used for one integration AND no
+    direct shared-tree commits for 7 consecutive days.
+E5. INTERIM (until provisioning): concurrent sessions STAGGER SCOPES --
+    check briefs index + recent commits before starting; stay inside your
+    declared scope while another session is active.
 ## Repository & Release Conventions
 
 - Development happens in this repository on branch `cyvster3`.

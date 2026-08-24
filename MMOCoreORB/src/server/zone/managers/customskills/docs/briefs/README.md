@@ -14,12 +14,12 @@ reading only what the brief lists -- no conversation history required.
    while you were reading, move to the next UNCLAIMED brief instead.
 4. Claim it: set Status to CLAIMED with your signature and date in the
    brief FILE (the file carries the signature -- see Index maintenance),
-   then commit `Claim <brief-id>` in this repository if repo work follows.
+   then commit `Claim <brief-id>` in this repository AND PUSH immediately -- an unpushed claim may be re-claimed ([PROC R6.5], R8/P2).
 5. Read the brief plus every context file it lists, then do exactly the
    deliverables. Touch nothing outside the brief's scope.
 6. Honor [PROC R6.6] change completeness: behavior changes carry their doc
    + package-mirror updates.
-7. Set Status DELIVERED with notes on where the work landed; update
+7. Set Status DELIVERED with notes on where the work landed; push; update
    [../tracking/objectives.md](../tracking/objectives.md) if the brief maps
    to an objective.
 8. Problems or disputes go through [../rules/errata.md](../rules/errata.md)
