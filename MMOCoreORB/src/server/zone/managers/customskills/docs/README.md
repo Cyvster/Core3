@@ -25,7 +25,7 @@ master, the master prevails.
 
 ## Entry Point for Contributors
 
-Start with [`../../START-HERE.md`](../../START-HERE.md), then read
+Start with the workspace-root ``START-HERE.md``, then read
 [rules/project-design.md](rules/project-design.md).
 
 ---
@@ -47,7 +47,7 @@ Start with [`../../START-HERE.md`](../../START-HERE.md), then read
 
 ### Required reading before creating documents
 
-1. [`../../START-HERE.md`](../../START-HERE.md)
+1. The workspace-root ``START-HERE.md``
 2. [rules/project-design.md](rules/project-design.md) -- Core Design
    Principles [CS-1..10]
 3. The section of the relevant existing document your change touches
@@ -96,7 +96,7 @@ research not intended to become permanent documentation.
 
 | File | Purpose |
 |------|---------|
-| `../../../../START-HERE.md` | Workspace-root entry point, required reading order, code tour |
+| workspace-root `START-HERE.md` | Contributor entry point, required reading order, code tour |
 | `../README.md` | Module summary and directory roles |
 | `../MANIFEST.md` | Every module-owned file + integration points (living tracker) |
 | `installation/INSTALLATION.md` | Canonical install/configure/verify/remove guide (the archived `integration/INSTALL.md` was its duplicate) |
