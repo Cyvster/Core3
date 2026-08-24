@@ -271,3 +271,18 @@ Daniel may resolve, reject, or apply any entry directly.
 - Findings: filed during errata duty while investigating BRIEF-004 precursor questions. The MODIFIER_REFERENCE staleness banner says "treat config.lua as authoritative" -- that guidance is itself wrong for Critical Chance until this entry resolves.
 - Verification (diagnosis only), 2026-08-23 by opencode (opencode/hy3-free): confirmed against code. Combat path: `CustomSkillsCombat::applyDamage` (CustomSkillsCombat.cpp:16) called `CustomSkillsModifiers::getCriticalChance(ghost)` (CustomSkillsModifiers.cpp:40-58), which iterated ONLY the static `combatProfessionBadges` array at uniform `getCriticalChancePerCombatBadge()` and never read `modifierBadgeBonuses`/`getModifierTotal`. Menu path (CustomSkillsMenu.cpp:302) used `getModifierTotal(player, CRITICAL_CHANCE)` = config badge map. The two paths diverged, violating [CS-3].
 - Resolution: RESOLVED -- owner (Daniel) directed fix direction (a); applied 2026-08-23 by opencode (opencode/hy3-free). `CustomSkillsModifiers::getCriticalChance(PlayerObject*)` now aggregates from `CustomSkillsConfig::getBadgeBonuses(CRITICAL_CHANCE)` (the same config badge map the SUI menu uses via `getModifierTotal`), applying the configured cap. Retired the hardcoded `combatProfessionBadges` static array, `isCombatProfessionBadge`, `getBadgeCriticalChance`, the 2-arg `getCriticalChance` overload, and the unused `CustomSkillsConfig::getCriticalChancePerCombatBadge()` getter. Combat and menu now share one source of truth ([CS-3]); config.lua badges are authoritative. Second-party verification by opencode (opencode/hy3-free), 2026-08-23.
+
+
+---
+
+## ERR-006 -- Contributor signatures use harness name instead of model name
+
+- Status: OPEN
+- Filed by: ox-alpha (opencode/x-preview-f-free)
+- Date: 2026-08-23
+- Affects: 14 signature instances across docs/briefs/005-single-source-badge-rule.md, docs/briefs/README.md, docs/reference/ARCHITECTURE.md, docs/rules/errata.md
+- Severity: F5 (formatting/attribution clarity; no truth value)
+- Description: signatures were recorded as `opencode (opencode/hy3-free)` -- the harness name occupies the name slot. Per docs/rules/process.md -> Contributor Recording Conventions, the format is `<name/model> (<origin>), <date>`; the name slot takes the MODEL name. Correct form: `hy3-free (opencode/hy3-free)`. This matters here because all workers commit under the shared machine git identity (`Cyvster`), so document signatures are the ONLY worker-attribution record in the repository.
+- Evidence: process.md signing format + examples; contrast with the same contributor's correctly-signed entries in the Project Alice repository (`hy3-free (opencode/hy3-free)`, 2026-08-23).
+- Proposed fix: hy3-free re-signs the affected lines in their own voice at next session (Rule 2 -- other entities do not edit another contributor's signatures). Instance list available via grep pattern `opencode (opencode/hy3` outside archive/. Alternatively Daniel may authorize a mechanical replacement.
+- Findings: filed as a note-for-contributor during errata duty; no dispute, purely format.
