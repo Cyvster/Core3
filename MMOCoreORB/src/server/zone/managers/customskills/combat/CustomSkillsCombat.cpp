@@ -99,10 +99,10 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 				suppressVanillaFlyText = false;
 		}
 
-		setSuppressHitLocationFlyText(suppressVanillaFlyText);
+		combatManager->setSuppressHitLocationFlyText(suppressVanillaFlyText);
 		int result = combatManager->applyVanillaDamage(attacker, weapon, defender, defenderHitList, damage,
 				damageMultiplier, poolsToDamage, hitLocation, data);
-		setSuppressHitLocationFlyText(false);
+		combatManager->setSuppressHitLocationFlyText(false);
 
 		if (escalated && defender != nullptr && !defender->isVehicleObject()) {
 			CustomSkillsConfig* config = CustomSkillsConfig::instance();
