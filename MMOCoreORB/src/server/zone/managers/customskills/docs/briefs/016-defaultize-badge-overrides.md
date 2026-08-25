@@ -1,6 +1,6 @@
 # BRIEF-016 -- Defaultize badge configuration: uniform badgeBonus everywhere; badgeOverrides become dormant placeholders
 
-- Status: UNCLAIMED
+- Status: DELIVERED by ox-alpha (opencode/x-preview-f-free), 08242026 (Lua-only change -- no compile dependency)
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Owner policy: shipped defaults must not rely on
   badgeOverrides; every modifier uses one uniform `badgeBonus` over its
@@ -20,7 +20,7 @@
    |----------|-----------:|-------:|--------------|
    | criticalChance | 500 | 12 milestones | 6000 = cap 6000 exact |
    | doubleAttackChance | 2000 (unchanged) | 6 | 12000 -> clamped 10000 = cap |
-   | tripleAttackChance | 450 | 17 | 7650 -> clamped 7500 = cap |
+   | tripleAttackChance | 500 | 17 | 8500 = cap 8500 exact |
    | quadAttackChance | 300 | 17 | 5100 -> clamped 5000 = cap |
    | armorPenetration | 1 (unchanged) | 9 | 9 -> clamped 3 = cap |
    | amazingSuccessChance | 1000 | 10 | 10000 = cap 10000 exact |
