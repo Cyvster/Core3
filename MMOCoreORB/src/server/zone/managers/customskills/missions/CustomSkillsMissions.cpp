@@ -22,7 +22,6 @@
 #include "server/zone/objects/mission/MissionObject.h"
 #include "templates/mobile/LairTemplate.h"
 
-#include "system/util/HashMap.h"
 #include <mutex>
 
 namespace {
@@ -121,8 +120,8 @@ namespace {
 		return m;
 	}
 
-	HashMap<uint64, CustomSkillsMissions::Choices*>& choicesMap() {
-		static HashMap<uint64, CustomSkillsMissions::Choices*> map;
+	VectorMap<uint64, CustomSkillsMissions::Choices*>& choicesMap() {
+		static VectorMap<uint64, CustomSkillsMissions::Choices*> map;
 		return map;
 	}
 
