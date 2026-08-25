@@ -105,6 +105,7 @@ before claim ([R6.9], BRIEF-019).
 | [`038-mission-terminal-options-port.md`](038-mission-terminal-options-port.md) | Port mission terminal direction/difficulty options from cyvster2 into mod; research -> design -> implement; updates ledger | CLAIMED |
 | [`039-integrity-audit-post008.md`](039-integrity-audit-post008.md) | Integrity audit of all post-BRIEF-008 deliveries: spec conformance, cross-feature interactions, artifacts, docs-vs-code; findings filed not self-fixed | CLAIMED |
 | [`040-discovery-capture-enforcement.md`](040-discovery-capture-enforcement.md) | R6.9 leaks: rule fires only at authoring time; add delivery-checklist + hotfix + coordinator enforcement points; backfill 4 known missed facts | CLAIMED |
+| [`041-repeatcraft-subcommand.md`](041-repeatcraft-subcommand.md) | Convert /repeatcraft to /customskills repeatcraft subcommand (TRE policy: no new top-level commands); add tool radial-menu repeat option; research alternate autocraft objects | CLAIMED |
 
 ## Notes
 
