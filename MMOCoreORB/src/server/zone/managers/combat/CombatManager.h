@@ -227,7 +227,7 @@ protected:
 
 	// BRIEF-042 item A: transient suppression of vanilla hit-location
 	// flytext while a custom-skills escalated strike renders its own.
-	bool suppressHitLocationFlyText = false;
+	mutable bool suppressHitLocationFlyText = false;
 
 	float calculateDamage(CreatureObject* attacker, WeaponObject* weapon, CreatureObject* defender, const CreatureAttackData& data) const;
 	float calculateDamage(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defender, const CreatureAttackData& data) const;
@@ -246,7 +246,9 @@ protected:
 	// BRIEF-042 item A: when a custom-skills escalated strike fires, the
 	// tiered flytext replaces vanilla's hit-location text for that one hit.
 	// CustomSkillsCombat toggles this around its applyVanillaDamage call.
-	void setSuppressHitLocationFlyText(bool val) {
+	// Setter is const-qualified (mutable flag) because applyDamage receives
+	// CombatManager as const*.
+	void setSuppressHitLocationFlyText(bool val) const {
 		suppressHitLocationFlyText = val;
 	}
 	void woundCreatureTarget(CreatureObject* defender, WeaponObject* weapon, Vector<int> poolsToWound) const;
