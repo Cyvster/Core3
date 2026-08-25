@@ -2,7 +2,6 @@
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
----
 ## Purpose
 
 The single technical reference for the Custom Skills module: architecture,
@@ -17,28 +16,19 @@ this document references them and does not restate them.
 
 **Factual corrections** go through [../rules/errata.md](../rules/errata.md).
 
----
 
----
 ## Contributors
 
-- **Nemotron 3.5 Lightning Free (AI)** -- initial creation of predecessor
-  documents (ARCHITECTURE.md, IMPLEMENTATION_GUIDE.md, MENU_SYSTEM.md)
-- ox-alpha (opencode/x-preview-f-free), 08232026 -- consolidation into a
-  single reference during documentation compression
-- hy3-free (opencode/hy3-free), 08232026 -- BRIEF-005 single-source rule for
-  badge-backed modifiers; noted `getCriticalChance` reads the config badge map
-- hy3-free (opencode/hy3-free), 08242026 -- BRIEF-014 doc removals (combat
-  spam label references)
+**Nemotron 3.5 Lightning Free (AI)** -- initial creation of predecessor documents (ARCHITECTURE.md, IMPLEMENTATION_GUIDE.md, MENU_SYSTEM.md)  
+ox-alpha (opencode/x-preview-f-free), 08232026 -- consolidation into a single reference during documentation compression  
+hy3-free (opencode/hy3-free), 08232026 -- BRIEF-005 single-source rule for badge-backed modifiers; noted `getCriticalChance` reads the config badge map  
+hy3-free (opencode/hy3-free), 08242026 -- BRIEF-014 doc removals (combat spam label references)  
 
----
 
 **Last reconciled:** 08242026 by hy3-free (opencode/hy3-free) -- BRIEF-014
 combat-spam-label doc removals.
 
----
 
----
 ## Physical Layout
 
 ```
@@ -66,9 +56,7 @@ distribution source. Runtime-required files outside it:
 `MMOCoreORB/bin/scripts/commands/customSkills.lua` (see [PROC R6.5]
 containment rule).
 
----
 
----
 ## Data Flow
 
 ```
@@ -107,9 +95,7 @@ containment rule).
              `------------------`
 ```
 
----
 
----
 ## Core Classes
 
 ### CustomSkillsModifierType.h
@@ -138,14 +124,11 @@ public:
 
 ### CustomSkillsConfig (Singleton + Logger)
 
-- **Lifecycle**: constructed once at startup -> `setDefaults()` -> `load()`
-- **Defaults**: all modifiers disabled; Critical Chance enabled (300 bp/badge,
-  15000 multiplier)
-- **load()**: parses `scripts/customskills/config.lua` via the `Lua` object
-- **API**: `isModifierEnabled()`, `getModifierCap()`, `getBadgeBonus()`,
-  `getBadgeBonuses()`
-- **Cache**: gameplay reads config values directly -- restart required on
-  config change; missing/invalid values -> safe defaults + server-log warning
+**Lifecycle**: constructed once at startup -> `setDefaults()` -> `load()`  
+**Defaults**: all modifiers disabled; Critical Chance enabled (300 bp/badge, 15000 multiplier)  
+**load()**: parses `scripts/customskills/config.lua` via the `Lua` object  
+**API**: `isModifierEnabled()`, `getModifierCap()`, `getBadgeBonus()`, `getBadgeBonuses()`  
+**Cache**: gameplay reads config values directly -- restart required on config change; missing/invalid values -> safe defaults + server-log warning  
 
 ```cpp
 // CustomSkillsConfig::load()
@@ -169,27 +152,15 @@ Generic modifier config fields: `enabled`, `badgeBonus`, `cap`, `badges[]`.
 
 ### CustomSkillsModifiers (Static API)
 
-- **Central authority** -- all modifier queries route here ([CS-3])
-- **Badge aggregation**: iterates config's badge map per modifier, checks
-  `PlayerObject::hasBadge()`
-- **Caps**: applies `config->getModifierCap(type)` if > 0 (0 = uncapped),
-  after aggregation
-- **Single source of truth ([CS-3])**: every badge-driven value -- gameplay
-  hooks AND the SUI menu -- resolves from
-  `CustomSkillsConfig::getBadgeBonuses(type)` / `getModifierTotal()`. C++ must
-  never hardcode a modifier's badge key list or per-badge rates; doing so
-  re-creates the ERR-005 (combat/menu divergence) failure.
-- **Combat helpers**: `isCriticalChanceEnabled()`, `getCriticalChance()`
-  (reads the config badge map -- same source as the menu; no hardcoded badge
-  list), `getCriticalMultiplier()`
-- **Formatting**: `formatPercent(bp)`, `colorizeCriticalText()`,
-  `formatModifierBonus(type, value)`
-- **Badge change notification**: `notifyBadgeAwarded(player)` refreshes
-  visible skill mods & run speed
+**Central authority** -- all modifier queries route here ([CS-3])  
+**Badge aggregation**: iterates config's badge map per modifier, checks `PlayerObject::hasBadge()`  
+**Caps**: applies `config->getModifierCap(type)` if > 0 (0 = uncapped), after aggregation  
+**Single source of truth ([CS-3])**: every badge-driven value -- gameplay hooks AND the SUI menu -- resolves from `CustomSkillsConfig::getBadgeBonuses(type)` / `getModifierTotal()`. C++ must never hardcode a modifier's badge key list or per-badge rates; doing so re-creates the ERR-005 (combat/menu divergence) failure.  
+**Combat helpers**: `isCriticalChanceEnabled()`, `getCriticalChance()` (reads the config badge map -- same source as the menu; no hardcoded badge list), `getCriticalMultiplier()`  
+**Formatting**: `formatPercent(bp)`, `colorizeCriticalText()`, `formatModifierBonus(type, value)`  
+**Badge change notification**: `notifyBadgeAwarded(player)` refreshes visible skill mods & run speed  
 
----
 
----
 ## Hook Inventory (H01-H16)
 
 | ID | Module Call | Modifiers | Core3 Entry Point | Status |
@@ -231,9 +202,7 @@ service does all logic ([CS-2]).
 | H13A/H13B same calculation | Client speed + server validation MUST match ([CS-8]) |
 | H14A/H14B same wearable-cap calc | Server mechanics + client-visible values must stay identical ([CS-8]) |
 
----
 
----
 ## Runtime Services
 
 Each service is a static class with focused methods -- no singleton state;
@@ -250,9 +219,7 @@ pure functions of inputs.
 | `CustomSkillsSkillMods` | `getSkillMod()`, `getVisibleSkillMod()`, `getVisibleSkillModList()` | H14A, H14B |
 | `CustomSkillsGathering` | `modifyForageQuantity()`, `modifyMilkQuantity()` | H15A, H15B |
 
----
 
----
 ## Runtime Ordering Details
 
 ### Combat Pipeline
@@ -320,12 +287,9 @@ reapplied per hop.
 Native `SkillModManager` caps WEARABLE source at +/-25; `SkillModList` has no
 character context, so:
 
-- **H14A (server)**: `getSkillMod()` -> difference between native-clamped and
-  custom-capped wearable contribution added to native total
-- **H14B (client)**: `getVisibleSkillMod()` -> same difference applied to the
-  visible entry
-- **Result**: only SEA/tape contribution raised above +25; all other source
-  caps preserved; server = client visible ([CS-8])
+**H14A (server)**: `getSkillMod()` -> difference between native-clamped and custom-capped wearable contribution added to native total  
+**H14B (client)**: `getVisibleSkillMod()` -> same difference applied to the visible entry  
+**Result**: only SEA/tape contribution raised above +25; all other source caps preserved; server = client visible ([CS-8])  
 
 ### Gathering Quantity
 
@@ -335,32 +299,15 @@ native calculation (forage roll / milk density), rounded down, never below
 native. Discrete loot (food, bait, medical components, rare items, live
 creatures) is never duplicated.
 
----
 
----
 ## SUI Menu System
 
-- **C++ owned** (`CustomSkillsMenu`, `CustomSkillsSuiCallback`) -- not a Lua
-  screenplay. Rationale: avoids Lua as a second calculation path; queries the
-  same typed API as gameplay hooks ([CS-3])
-- **Entry**: `CustomSkillsCommand` -> Lua bridge `CustomSkills:openMenu(pPlayer)`
-  -> C++ menu creation
-- **Character-scoped**: SUI page stored in the invoking character's
-  PlayerObject SUI map ([CS-7])
-- **Multi-window**: multiple `/customskills` windows supported simultaneously
-- **Bonus count helper**: `CustomSkillsMenu::countOwnedBonuses(player,
-  CustomSkillsModifierType::Type)` walks `config.lua` badge keys for a modifier
-  (via `CustomSkillsConfig::getBadgeBonuses(type)`) and counts how many the
-  player actually owns (used by `getAcquiredCount` and `addBonusItems`). Both
-  helpers are declared in `CustomSkillsMenu.h`; the enum arg is the **class**-
-  scoped `CustomSkillsModifierType::Type` (see gotcha above).
-- **Per-category modifier total**: `CustomSkillsMenu::countModifier(player,
-  const char* const* keys, int count, CustomSkillsModifierType::Type)` is the
-  per-page helper called by `getModifierTotal()` via the `MOD_LEAF` macro. It
-  iterates a category's badge `keys[]`, and for each owned badge sums the
-  matching basis-point value from `getBadgeBonuses(type)` (mirrors the gameplay
-  `CustomSkillsModifiers::getModifierTotal` pattern). Reconstructed in ERR-011
-  when its definition turned out missing from the generated `.cpp`.
+**C++ owned** (`CustomSkillsMenu`, `CustomSkillsSuiCallback`) -- not a Lua screenplay. Rationale: avoids Lua as a second calculation path; queries the same typed API as gameplay hooks ([CS-3])  
+**Entry**: `CustomSkillsCommand` -> Lua bridge `CustomSkills:openMenu(pPlayer)` -> C++ menu creation  
+**Character-scoped**: SUI page stored in the invoking character's PlayerObject SUI map ([CS-7])  
+**Multi-window**: multiple `/customskills` windows supported simultaneously  
+**Bonus count helper**: `CustomSkillsMenu::countOwnedBonuses(player, CustomSkillsModifierType::Type)` walks `config.lua` badge keys for a modifier (via `CustomSkillsConfig::getBadgeBonuses(type)`) and counts how many the player actually owns (used by `getAcquiredCount` and `addBonusItems`). Both helpers are declared in `CustomSkillsMenu.h`; the enum arg is the **class**- scoped `CustomSkillsModifierType::Type` (see gotcha above).  
+**Per-category modifier total**: `CustomSkillsMenu::countModifier(player, const char* const* keys, int count, CustomSkillsModifierType::Type)` is the per-page helper called by `getModifierTotal()` via the `MOD_LEAF` macro. It iterates a category's badge `keys[]`, and for each owned badge sums the matching basis-point value from `getBadgeBonuses(type)` (mirrors the gameplay `CustomSkillsModifiers::getModifierTotal` pattern). Reconstructed in ERR-011 when its definition turned out missing from the generated `.cpp`.  
 
 ### Main Page Layout
 
@@ -374,12 +321,9 @@ Server Config
 
 The top-level menu has three entries:
 
-- **Badges** -- browse badges by category, with per-badge option to set as
-  favorite or inspect its detail page.
-- **Bonuses** -- browse accumulated bonuses grouped by Combat, Utility, and
-  Crafting (see Modifier Hierarchy). Only non-zero totals are shown.
-- **Server Config** -- server-side toggle state, including the Rarity Naming
-  detail page (see below).
+**Badges** -- browse badges by category, with per-badge option to set as favorite or inspect its detail page.  
+**Bonuses** -- browse accumulated bonuses grouped by Combat, Utility, and Crafting (see Modifier Hierarchy). Only non-zero totals are shown.  
+**Server Config** -- server-side toggle state, including the Rarity Naming detail page (see below).  
 
 Accumulated Bonuses shows only non-zero totals from acquired badges -- never
 total-possible values. Disabled modifiers are omitted from the active summary
@@ -429,9 +373,8 @@ masteries no longer grant it -- see [ERR-005]).
 
 The **Server Config** top-level category exposes server-side state:
 
-- **Mod Options** -- when `rarityNaming` is enabled, reveals a **Rarity Naming**
-  detail page showing the configured legendary/exceptional color state.
-- **SWGEMU Options** -- other server toggles.
+**Mod Options** -- when `rarityNaming` is enabled, reveals a **Rarity Naming** detail page showing the configured legendary/exceptional color state.  
+**SWGEMU Options** -- other server toggles.  
 
 This page is display-only; it reflects `config.lua` state loaded at server
 start (see Configuration).
@@ -472,11 +415,10 @@ X  Pool Beneath Fort Tusken  (+1% Critical Chance)
 O  Lars Homestead  (+2% Critical Chance, +2 Melee Defense)
 ```
 
-- Accumulated Bonuses: recursive total from acquired descendant badges
-- Category entries show acquired descendant count: `Tatooine (2)`
-- Badge rows: `O` (green, owned) or `X` (red, unowned) prefix -- only the
-  marker colored
-- Bonus suffix `(+X% Modifier)` in module summary color; omitted if no bonus
+Accumulated Bonuses: recursive total from acquired descendant badges  
+Category entries show acquired descendant count: `Tatooine (2)`  
+Badge rows: `O` (green, owned) or `X` (red, unowned) prefix -- only the marker colored  
+Bonus suffix `(+X% Modifier)` in module summary color; omitted if no bonus  
 
 ### Aggregation Rules
 
@@ -504,11 +446,9 @@ row-selection change. Single-click navigation/right-click Back/double-click
 reliability require client-side modifications (deferred).
 
 Safety requirements:
-- Validate `pPlayer` is a player creature in every entry point; validate ghost
-  before reading character data
-- Treat cancel, missing args, negative rows, unknown actions as no-op
-- Store stable action IDs in SUI row data (never dispatch on display text);
-  explicit action table only
+Validate `pPlayer` is a player creature in every entry point; validate ghost before reading character data  
+Treat cancel, missing args, negative rows, unknown actions as no-op  
+Store stable action IDs in SUI row data (never dispatch on display text); explicit action table only  
 
 ### Color Scheme
 
@@ -519,28 +459,21 @@ Safety requirements:
 | Modifier bonus text | `customSummaryColor` (default `00FF00`) |
 | Badge names / category text | Default client text color |
 
----
 
----
 ## Adding a New Modifier (Authoritative Checklist)
 
-1. **Enum**: add to `CustomSkillsModifierType.h` (before `COUNT`)
-2. **Name**: add to `CustomSkillsModifiers::getModifierName()`
-3. **Formatting**: add to `formatModifierBonus()` (bp vs whole units)
-4. **Defaults**: add in `CustomSkillsConfig::setDefaults()`
-5. **Config loader**: add `loadModifier()` call in `CustomSkillsConfig::load()`
-6. **Service**: create a new service class or extend an existing one
-7. **Hook(s)**: add Core3 delegation per the hook inventory; update
-   `integration/core3-hooks.patch`
-8. **Badge assignments**: update `config.lua` (+ Appendix B for new
-   badges); respect master-doc exclusions (pilot/JTL, admin/event)
-9. **Menu**: add category/page in `CustomSkillsMenu` and the SUI section above
-10. **Docs** ([PROC R6.6]): CODE_REFERENCE.md Appendix A entry, MANIFEST.md,
-    INSTALLATION.md config reference if schema changed
+(1) **Enum**: add to `CustomSkillsModifierType.h` (before `COUNT`)  
+(2) **Name**: add to `CustomSkillsModifiers::getModifierName()`  
+(3) **Formatting**: add to `formatModifierBonus()` (bp vs whole units)  
+(4) **Defaults**: add in `CustomSkillsConfig::setDefaults()`  
+(5) **Config loader**: add `loadModifier()` call in `CustomSkillsConfig::load()`  
+(6) **Service**: create a new service class or extend an existing one  
+(7) **Hook(s)**: add Core3 delegation per the hook inventory; update `integration/core3-hooks.patch`  
+(8) **Badge assignments**: update `config.lua` (+ Appendix B for new badges); respect master-doc exclusions (pilot/JTL, admin/event)  
+(9) **Menu**: add category/page in `CustomSkillsMenu` and the SUI section above  
+(10) **Docs** ([PROC R6.6]): CODE_REFERENCE.md Appendix A entry, MANIFEST.md, INSTALLATION.md config reference if schema changed  
 
----
 
----
 ## Patch Management
 
 The patch exists for installing the module onto OTHER Core3 checkouts; this
@@ -562,9 +495,7 @@ generic delegation. Platform build details:
 
 No hot reload: config is cached; restart after any `config.lua` change.
 
----
 
----
 ## Testing & Verification Matrix
 
 Platform capabilities (unit-test suite, `testScreenPlays`, database
@@ -595,9 +526,7 @@ Per-modifier focused tests:
 | SEA Cap | Server calc = client visible; badge gain/loss refreshes visible |
 | Forage/Milk | Round down; never below native; discrete loot unaffected |
 
----
 
----
 ## Debugging Tips
 
 | Symptom | Check |
@@ -610,29 +539,22 @@ Per-modifier focused tests:
 | Buff not extended | Eligibility classifier (CRC allowlist); check `isEligibleBuff()` |
 
 Core3-level gotchas: [CORE3_CODE_REFERENCE.md](CORE3_CODE_REFERENCE.md).
----
 
 ##Appendix A -- Modifier Specification
 
 Complete registry of all 18 modifiers: configuration conventions, units, badge assignments, caps, and gameplay behavior. Tables document the SHIPPED DEFAULTS; a given server's config.lua is the authoritative source of its live values.
 
----
 ## Configuration Conventions
 
-- **Percentages**: Basis points (100 = 1.00%)
-- **Multipliers**: Basis points (10000 = 1.00x)
-- **Whole units**: Armor Penetration (levels), Defense Cap/SEA Cap (points)
-- **Caps**: 0 = uncapped; applied after badge aggregation
-- **Shipped defaults**: the module ships with all 18 modifiers enabled and full badge assignments. The tables below document these defaults -- they are not live values. A server owner can change anything (enabled flags, badge lists, caps, badgeBonus values); on any given server, its config.lua is the single authoritative source of live values.
-- **Uniform badgeBonus (default convention)**: each modifier uses ONE `badgeBonus` value applied uniformly to every badge in its `badges` list. The shipped defaults carry ZERO active `badgeOverrides`. To customize a single badge, an owner uncomments the inactive `badgeOverrides` placeholder block under that modifier (loaded by `CustomSkillsConfig::loadBadgeOverrides` from `CustomSkillsConfig::load()`), where each `{ "badgeKey", value }` entry REPLACES the uniform `badgeBonus` for that one badge -- it never stacks with it. A badge listed in `badges` but absent from an active `badgeOverrides` uses the modifier's `badgeBonus`.
-- **rarityNaming**: a server-config section (`enabled`, `legendaryColor`,
-  `exceptionalColor`, six-character RGB hex) that switches item naming to
-  color-only text instead of `(Exceptional)`/`(Legendary)` suffixes (see hook
-  H16 (Part I)). Configured independently of the badge modifiers.
+**Percentages**: Basis points (100 = 1.00%)  
+**Multipliers**: Basis points (10000 = 1.00x)  
+**Whole units**: Armor Penetration (levels), Defense Cap/SEA Cap (points)  
+**Caps**: 0 = uncapped; applied after badge aggregation  
+**Shipped defaults**: the module ships with all 18 modifiers enabled and full badge assignments. The tables below document these defaults -- they are not live values. A server owner can change anything (enabled flags, badge lists, caps, badgeBonus values); on any given server, its config.lua is the single authoritative source of live values.  
+**Uniform badgeBonus (default convention)**: each modifier uses ONE `badgeBonus` value applied uniformly to every badge in its `badges` list. The shipped defaults carry ZERO active `badgeOverrides`. To customize a single badge, an owner uncomments the inactive `badgeOverrides` placeholder block under that modifier (loaded by `CustomSkillsConfig::loadBadgeOverrides` from `CustomSkillsConfig::load()`), where each `{ "badgeKey", value }` entry REPLACES the uniform `badgeBonus` for that one badge -- it never stacks with it. A badge listed in `badges` but absent from an active `badgeOverrides` uses the modifier's `badgeBonus`.  
+**rarityNaming**: a server-config section (`enabled`, `legendaryColor`, `exceptionalColor`, six-character RGB hex) that switches item naming to color-only text instead of `(Exceptional)`/`(Legendary)` suffixes (see hook H16 (Part I)). Configured independently of the badge modifiers.  
 
----
 
----
 ## Offense
 
 ### Critical Chance (`CRITICAL_CHANCE`)
@@ -678,7 +600,6 @@ removed 08242026 by owner decision after BRIEF-010.
 | Outdoors masteries (5) | `outdoors_bio_engineer/creaturehandler/ranger/scout/squadleader_master` |
 | Science masteries (3) | `science_combatmedic/doctor/medic_master` |
 
----
 
 ### Critical Multiplier (`CRITICAL_MULTIPLIER`)
 
@@ -701,7 +622,6 @@ with `baseMultiplier = criticalChance.multiplier` (default 15000 = 150%);
 current bonus cap 15000 -> 300% maximum crit damage
 (Part I hook H01).
 
----
 
 ### Double Attack Chance (`DOUBLE_ATTACK_CHANCE`)
 
@@ -718,7 +638,6 @@ success upgrades the attack to 2 hits and enables the Triple roll. First
 failed stage ends the chain.
 **Implemented**: yes (BRIEF-015).
 
----
 
 ### Triple Attack Chance (`TRIPLE_ATTACK_CHANCE`)
 
@@ -734,7 +653,6 @@ failed stage ends the chain.
 upgrades to 3 hits and enables the Quad roll.
 **Implemented**: yes (BRIEF-015).
 
----
 
 ### Quad Attack Chance (`QUAD_ATTACK_CHANCE`)
 
@@ -750,7 +668,6 @@ upgrades to 3 hits and enables the Quad roll.
 upgrades to 4 hits. Highest possible tier.
 **Implemented**: yes (BRIEF-015).
 
----
 
 ### Armor Penetration (`ARMOR_PENETRATION`)
 
@@ -764,9 +681,7 @@ upgrades to 4 hits. Highest possible tier.
 
 **Behavior**: Reduces defender effective armor by 1 level per point: Heavy -> Medium -> Light -> None. Floor: None. Does not affect weapon Armor Piercing. Applied before native armor-piercing comparison.
 
----
 
----
 ## Defense & Equipment
 
 ### Defense Cap Increase (`DEFENSE_CAP_INCREASE`)
@@ -781,7 +696,6 @@ upgrades to 4 hits. Highest possible tier.
 
 **Behavior**: Raises native 125 hard cap on primary/secondary defense calculations. Does not affect SEA/tape above-cap contributions.
 
----
 
 ### Armor Degradation Reduction (`ARMOR_DEGRADE_REDUCTION`)
 
@@ -795,7 +709,6 @@ upgrades to 4 hits. Highest possible tier.
 
 **Behavior**: Native eligible armor degradation = 100% event chance. This reduces that chance. Failed roll skips condition loss entirely. Covers worn armor, PSG, NPC armor, vehicle armor.
 
----
 
 ### Weapon Degradation Reduction (`WEAPON_DEGRADE_REDUCTION`)
 
@@ -813,7 +726,6 @@ effectiveChance = nativeChance x (10000 - reduction) / 10000
 ```
 Condition loss amount unchanged on successful roll.
 
----
 
 ### SEA Cap Increase (`SEA_CAP_INCREASE`)
 
@@ -827,9 +739,7 @@ Condition loss amount unchanged on successful roll.
 
 **Behavior**: Raises wearable (attachments/tapes) contribution cap above native +25. Does not raise normal defense cap. SEA/tape bonuses retain ability to exceed normal cap.
 
----
 
----
 ## Character & Utility
 
 ### Movement Speed (`MOVEMENT_SPEED`)
@@ -844,7 +754,6 @@ Condition loss amount unchanged on successful roll.
 
 **Behavior**: Multiplies final native speed in ALL travel modes (foot, mount, vehicle). Applied once -- not added to mount then reapplied. Synchronized client (H13A) and server (H13B).
 
----
 
 ### Buff Duration (`BUFF_DURATION`)
 
@@ -857,12 +766,11 @@ Condition loss amount unchanged on successful roll.
 | **Badges (default)** | Tatooine easy (3), Yavin IV Woolamander/Blueleaf (2), Science masteries (3), Social masteries (5) = 13 total |
 
 **Behavior**: Increases initial duration of eligible buff families only:
-- **Included**: Medical, Performance, Food/Drink, Spice-up, positive Jedi/Force
-- **Excluded**: Negative buffs, spice downers, debuffs, states, traps, DoTs, cooldown/control markers, skill-item, innate, Squad Leader, concealment, gallop, vehicle buffs
+**Included**: Medical, Performance, Food/Drink, Spice-up, positive Jedi/Force  
+**Excluded**: Negative buffs, spice downers, debuffs, states, traps, DoTs, cooldown/control markers, skill-item, innate, Squad Leader, concealment, gallop, vehicle buffs  
 
 Explicit renewals (H12B) apply current bonus to new native duration. DB reload/internal reschedule preserves stored duration (no re-multiplication).
 
----
 
 ### Experience Bonus (`EXPERIENCE_MULTIPLIER`)
 
@@ -881,7 +789,6 @@ finalXP = base x species x buff x local x global x customMultiplier
 Does not affect: XP deductions, conversion costs, `applyModifiers == false` awards.
 Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x total).
 
----
 
 ### Practice Mode Experience Bonus (`PRACTICE_EXPERIENCE_BONUS`)
 
@@ -894,14 +801,12 @@ Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x tota
 | **Badges (default)** | Tatooine easy (3 x 10000), Yavin IV Woolamander/Blueleaf (2 x 10000), Social mastery (5 x 10000) = 10 total |
 
 **Behavior**: Applies when `createItem == false` (practice mode). Order:
-1. Base crafting XP
-2. Core3 native 5% practice increase
-3. Custom practice bonus (multiplies)
-4. General Experience Bonus (H07) via central award path
+(1) Base crafting XP  
+(2) Core3 native 5% practice increase  
+(3) Custom practice bonus (multiplies)  
+(4) General Experience Bonus (H07) via central award path  
 
----
 
----
 ## Crafting
 
 ### Crafting Speed (`CRAFTING_SPEED`)
@@ -915,10 +820,9 @@ Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x tota
 | **Badges (default)** | Crafting mastery (9 x 1000), Doctor mastery (1000) = 10 total |
 
 **Behavior**:
-- **Personal**: `nativeDuration / multiplier`, clamp >=1s. Uses crafter's current bonus.
-- **Factory**: Snapshots **activator's** multiplier at run start. Persists across logout/restart. Badge changes mid-run don't affect current run. Stop/restart to recapture.
+**Personal**: `nativeDuration / multiplier`, clamp >=1s. Uses crafter's current bonus.  
+**Factory**: Snapshots **activator's** multiplier at run start. Persists across logout/restart. Badge changes mid-run don't affect current run. Stop/restart to recapture.  
 
----
 
 ### Crafting Amazing Success Chance (`AMAZING_SUCCESS_CHANCE`)
 
@@ -932,7 +836,6 @@ Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x tota
 
 **Behavior**: Adds bp to native Amazing Success probability (assembly & experimentation). Does NOT multiply native chance. Same policy at both roll sites. Clamped to configured cap. Target: max-bonus character reaches >=50% final chance.
 
----
 
 ### Amazing Results (`AMAZING_RESULTS`)
 
@@ -949,14 +852,12 @@ Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x tota
 enhanced = nativeResult + ((schematicCap - nativeResult) x strength / 10000)
 ```
 Raises resource-derived ceiling only enough to retain enhanced value.
-- **Assembly**: All applicable initial attributes
-- **Experimentation**: Selected row only
-- **Non-amazing**: Fully resource-limited (unchanged)
-- 0% = native Core3 behavior; 100% = poor resources can yield perfect attributes
+**Assembly**: All applicable initial attributes  
+**Experimentation**: Selected row only  
+**Non-amazing**: Fully resource-limited (unchanged)  
+0% = native Core3 behavior; 100% = poor resources can yield perfect attributes  
 
----
 
----
 ## Gathering
 
 ### Gathering Quantity (`GATHERING_QUANTITY`)
@@ -978,9 +879,7 @@ Raises resource-derived ceiling only enough to retain enhanced value.
 Applied AFTER native calculation (forage roll / milk density adjustment). Rounded down to whole unit. Never below native.
 **Does not affect**: Discrete loot (food, bait, medical components, rare items, live creatures).
 
----
 
----
 ## Maximum Theoretical Totals (All 111 Eligible Badges)
 
 Values are the sum of each modifier's configured badge bonuses (uniform badgeBonus, no active overrides), capped at the configured cap where one applies. `config.lua` is authoritative.
@@ -1006,9 +905,7 @@ Values are the sum of each modifier's configured badge bonuses (uniform badgeBon
 | Amazing Results | bp | 1000 | 10 | 10000 (100%) |
 | Gathering Quantity | bp | 10000 | 13 | 130000 (+1300%) |
 
----
 
----
 ## Badge Pool Summary
 
 | Category | Eligible Badges |
@@ -1026,14 +923,12 @@ Values are the sum of each modifier's configured badge bonuses (uniform badgeBon
 
 Excluded: 9 Pilot/JTL, 20 admin/event badges (see `EXCLUDED_BADGES.md`)
 
----
 
 ##Appendix B -- Badge Catalog
 
 Complete badge catalog from badge_map.iff: inventory, menu organization, eligibility rules, assignments, and integration requirements.
 
 
----
 ## Badge Inventory Summary
 
 | Core3 Enum Type | Table Strings | Records | Show=1 | Show=0 |
@@ -1046,13 +941,11 @@ Complete badge catalog from badge_map.iff: inventory, menu organization, eligibi
 | `CONTENT` | `content` | 15 | 11 | 4 |
 | **Total** | | **140** | **124** | **16** |
 
-- Indices: contiguous 0-139, no duplicates
-- Columns: index, stable key, music, client category, show flag, type
-- **Always use stable keys** -- never hard-code indices (fragile across TRE changes)
+Indices: contiguous 0-139, no duplicates  
+Columns: index, stable key, music, client category, show flag, type  
+**Always use stable keys** -- never hard-code indices (fragile across TRE changes)  
 
----
 
----
 ## Exact Key Inventory
 
 ### Accumulation (12)
@@ -1072,7 +965,6 @@ Complete badge catalog from badge_map.iff: inventory, menu organization, eligibi
 | 103 | `bdg_exp_40_badges` | Exploration milestone |
 | 104 | `bdg_exp_45_badges` | Exploration milestone |
 
----
 
 ### Interest (5) -- Hero of Tatooine Progression
 
@@ -1084,7 +976,6 @@ Complete badge catalog from badge_map.iff: inventory, menu organization, eligibi
 | 10 | `poi_factoryliberation` |
 | 11 | `poi_heromark` |
 
----
 
 ### Exploration (45)
 
@@ -1145,7 +1036,6 @@ Complete badge catalog from badge_map.iff: inventory, menu organization, eligibi
 | 98 | `bdg_exp_lok_imp_outpost` |
 | 99 | `bdg_exp_lok_kimogila_skeleton` |
 
----
 
 ### Master (43)
 
@@ -1200,7 +1090,6 @@ Complete badge catalog from badge_map.iff: inventory, menu organization, eligibi
 | 137 | `pilot_neutral_corellia` |
 | 138 | `pilot_neutral_tatooine` |
 
----
 
 ### Events (20)
 
@@ -1227,7 +1116,6 @@ Complete badge catalog from badge_map.iff: inventory, menu organization, eligibi
 | 128 | `destroy_deathstar` | 0 | Death Star event |
 | 139 | `bdg_accolade_home_show` | 0 | Home show |
 
----
 
 ### Content (15)
 
@@ -1249,9 +1137,7 @@ Complete badge catalog from badge_map.iff: inventory, menu organization, eligibi
 | 119 | `bdg_corvette_reb_rescue` | Corvette: Rebel Rescue |
 | 120 | `bdg_corvette_reb_assassin` | Corvette: Rebel Assassin |
 
----
 
----
 ## Menu Organization (Player-Facing Groups)
 
 Core3's 6 internal types -> 4 menu groups:
@@ -1291,9 +1177,7 @@ Badges
     Death Star (1)          -> EXCLUDED
 ```
 
----
 
----
 ## Eligibility for Bonuses
 
 | Status | Count | Badges |
@@ -1304,9 +1188,7 @@ Badges
 
 **Total badge_map.iff**: 140 = 111 eligible + 9 pilot + 20 excluded
 
----
 
----
 ## Excluded Badge List (Must Not Grant Modifiers)
 
 ### Pilot / JTL (9) -- No bonuses until JTL available
@@ -1346,9 +1228,7 @@ event_coa3_rebel
 event_project_dead_eye_1
 ```
 
----
 
----
 ## Visibility Policy
 
 | Rule | Description |
@@ -1358,14 +1238,12 @@ event_project_dead_eye_1
 | Hidden + enabled in config | Still shown in `/customskills` modifier breakdown (so totals stay explained) |
 | Visibility != ownership | `show` flag is metadata only; does not determine if badge is owned |
 
----
 
----
 ## Badge-to-Modifier Assignments (menu grouping in Part I; gameplay assignments below)
 
 ### Milestone Badges (12) -- +12.5% Crit Multiplier, +1% Crit Chance each
-- `count_5` through `count_125` (7)
-- `bdg_exp_10/20/30/40/45_badges` (5)
+`count_5` through `count_125` (7)  
+`bdg_exp_10/20/30/40/45_badges` (5)  
 
 ### Exploration Planets (45)
 
@@ -1417,9 +1295,7 @@ event_project_dead_eye_1
 | | 3 excluded: `bdg_racing_lok/narmle/nashal` | EXCLUDED |
 | **Death Star** (1) | `destroy_deathstar` | EXCLUDED |
 
----
 
----
 ## Runtime Resolution (reference)
 
 ```cpp
@@ -1429,7 +1305,6 @@ const Badge* badge = badgeList->get(badgeKey);  // stable key -> index
 if (badge && ghost->hasBadge(badge->getIndex()))
     total += bonus;
 ```
----
 ## Client Category Mapping (Reference)
 
 | Client Category | Core3 Types Included | Records |
