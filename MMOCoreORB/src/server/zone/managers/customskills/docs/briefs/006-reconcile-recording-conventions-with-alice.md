@@ -64,9 +64,9 @@ as a loose paraphrase. Consequences:
 4. **De-duplicate** ([PROC R6.7]): replace inline format restatements with
    references to process.md -- known instance: errata.md Principles #4.
 5. **ERR-006**: append a Findings note pointing at the clarified convention
-   text; leave resolution routing unchanged (hy3-free re-signs, or Daniel
+   text; leave resolution routing unchanged (hy3-free re-signs, or Cyvster
    authorizes mechanical replacement).
-6. Any DEVIATE/OWNER-DECISION rows that Daniel must settle: collect them
+6. Any DEVIATE/OWNER-DECISION rows that Cyvster must settle: collect them
    under a single `Owner decisions requested` subsection; do not implement
    either side until answered; record answers as
    `[DIRECTIVE <MMDDYYYY>]` notes in this brief.
@@ -107,7 +107,7 @@ and after delivery):
      commits)
    - I2 long signature format: name/model + origin + date, for every
      substantive contribution
-   - I3 the human owner signs as Daniel
+   - I3 the human owner signs as Cyvster
    - I4 short format: first 3 chars of model identifier + first 3 chars of
      a distinguishing version/origin identifier; only where explicitly
      specified (compact tables, monitor displays); long format is the
@@ -127,9 +127,9 @@ and after delivery):
 |------|-------------|-------------------------|
 | I1 scope | ADOPT | process.md -> Contributor Recording Conventions intro now enumerates governed contribution types |
 | I2 long format | ADAPT | kept, with ISO date per OD-1; added explicit slot semantics: name slot = contributor model/persona identifier as used in Contributors rosters; origin slot = harness/model-id string. Closes the ERR-006 loophole |
-| I3 owner signs as Daniel | ADOPT | unchanged |
+| I3 owner signs as Cyvster | ADOPT | unchanged |
 | I4 short format | ADOPT | restored after the unrecorded drop; derivation rule + example codified in process.md; long remains default; never used in governing docs or git attribution |
-| I5 date format | OWNER-DECISION -> ANSWERED | was: keep ISO deviation pending ratification. ANSWERED 08242026: Daniel directed adoption of MMDDYYYY going forward (framework default restored); historical ISO records unchanged. See [DIRECTIVE 08242026] below |
+| I5 date format | OWNER-DECISION -> ANSWERED | was: keep ISO deviation pending ratification. ANSWERED 08242026: Cyvster directed adoption of MMDDYYYY going forward (framework default restored); historical ISO records unchanged. See [DIRECTIVE 08242026] below |
 | I6 time zone | ADOPT | UTC offsets and never-local-time duty added to process.md; Central Time already aligned |
 | I7 reference-don't-restate | ALREADY ADOPTED | enforced via PROC R6.7; sweep executed this delivery (below) |
 | I8 Contributors section rule | ADOPT | unchanged |
@@ -180,7 +180,7 @@ Applied by ox-alpha (opencode/x-preview-f-free), 08242026.
 
 ### ADDENDUM -- same-day directive extension [DIRECTIVE 08242026]
 
-After OD-1 was applied, Daniel directed a full sweep: update ALL date
+After OD-1 was applied, Cyvster directed a full sweep: update ALL date
 formats across the customskills mod to MMDDYYYY, superseding the
 "historical ISO remains as written" clause, and settle the flagged
 follow-up (proposal-folder naming templates). Scope limits per the

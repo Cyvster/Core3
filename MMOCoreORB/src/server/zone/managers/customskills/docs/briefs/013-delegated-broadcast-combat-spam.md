@@ -39,7 +39,7 @@ the verbose sub-toggles, or player chat colors. Therefore:
 - **Preferred compliant mechanism**: keep stringId-mode packets and swap
   WHICH stf key they reference when a label fires -- e.g. broadcast
   `cbt_spam:attack_hit_crit` instead of `attack_hit`. The `(CRIT)` text
-  lives in custom stf entries shipped via Daniel's TRE builder (client-
+  lives in custom stf entries shipped via the operator's TRE builder workspace (client-
   side), so the CLIENT composes the line itself: every Brief/Verbose/
   weapon/detail/color setting keeps working, because the packet path is
   unchanged. Server picks the key; client renders.

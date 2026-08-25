@@ -58,5 +58,5 @@ and delivered same session as the ERR-005 fix.
 
 ## Contributors
 
-- **Daniel** -- project owner; directed ERR-005 fix direction (a)
+- **Cyvster** -- project owner; directed ERR-005 fix direction (a)
 - hy3-free (opencode/hy3-free), 08232026 -- created and delivered

@@ -1,6 +1,6 @@
 # BRIEF-001 -- Migrate customskills-mod into the Core3 repository
 
-> Rewritten 08232026 by owner directive (Daniel): the standalone
+> Rewritten 08232026 by owner directive (Cyvster): the standalone
 > `customskills-mod` folder is dissolved; the Core3 dev tree becomes the
 > single home of the module. This replaces the former "sync package with
 > Core3" scope -- the dual-tree problem this brief once tracked disappears

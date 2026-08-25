@@ -28,7 +28,7 @@ reading only what the brief lists -- no conversation history required.
 
 ## How delegation works
 
-**For Daniel:** hand an LLM this one instruction:
+**For Cyvster:** hand an LLM this one instruction:
 
 > Read the workspace-root START-HERE.md fully, then follow the pickup protocol
 > in docs/briefs/README.md: claim the next UNCLAIMED brief and complete it.
@@ -71,6 +71,7 @@ reading only what the brief lists -- no conversation history required.
 | [`022-player-commands-reference.md`](022-player-commands-reference.md) | PLAYER_COMMANDS.md: full ~3k player-command inventory + deep-dive on ~100 argumented commands | CLAIMED |
 | [`023-hidden-config-options.md`](023-hidden-config-options.md) | Deep dive: enumerate + document semi-hidden config.lua options (PlayerManager/JTL/PCM etc.) in swgemu/CODE_REFERENCE.md | CLAIMED |
 | [`024-privacy-scrub.md`](024-privacy-scrub.md) | Remove owner real name + local drive paths from all tracked files; add standing privacy rule | CLAIMED |
+| [`025-menu-modifier-display-and-formatting.md`](025-menu-modifier-display-and-formatting.md) | Menu: show all modifiers per badge, short names (Cri/Crit Multi/Double/Triple/Quad), fix bottom-pane gap, retry column alignment | CLAIMED |
 
 ## Notes
 
@@ -115,6 +116,6 @@ BRIEF-002 index rewrite; BRIEF-003 statuses 001-003 DELIVERED, added brief 004.
 
 ## Contributors
 
-- **Daniel** -- project owner
+- **Cyvster** -- project owner
 - ox-alpha (opencode/x-preview-f-free), 08232026 -- initial queue
 - hy3-free (opencode/hy3-free), 08232026 -- BRIEF-005
