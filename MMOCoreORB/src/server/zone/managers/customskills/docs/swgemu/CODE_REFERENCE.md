@@ -682,4 +682,38 @@ builder and redeploy them together with the server binary.
 Module code reference & hooks: [../../customskills/CODE_REFERENCE.md](../../customskills/CODE_REFERENCE.md)
   
 Module install/remove: [../installation/INSTALLATION.md](../installation/INSTALLATION.md)
+
+
+## Mission System (R6.9, BRIEF-038)
+
+- MissionManager has NO virtual seams: `populateMissionList`,
+  `randomizeGenericDestroyMission`, `getRandomLairSpawn` are `private native`
+  (MissionManager.idl:103,115,150). Delegation requires the friend-hook
+  pattern (`friend class CustomSkillsMissions;` in MissionManager.h), same as
+  CombatManager.
+- Mission list request regenerates the WHOLE bag synchronously on the zone
+  executor (MissionManagerImplementation.cpp:195-228): up to 12 missions
+  (vanilla) each running calculatePlayerLevel + getRandomLairSpawn rejection
+  sampling + a position-search loop of up to 20 attempts, each with getHeight,
+  getWaterHeight, boundary check, and getInRangeActiveAreas city scan. This is
+  the dominant per-terminal-open cost -- treat any per-mission work added here
+  as multiplied by bag size.
+- Constrained mission headings (e.g. player-chosen direction) INCREASE
+  regeneration cost: position rejections cluster near map edges/cities, so
+  retry loops exhaust more often. cyvster2's direction option (radial 113,
+  ±5° wedge) made this worse, not the option SUI itself.
+- Radial IDs 112/113 on MissionTerminal are unassigned upstream; cyvster2 used
+  them for mission level/direction choice via synchronous DirectorManager Lua
+  calls in handleObjectMenuSelect (MissionTerminalImplementation.cpp:87-107).
+  C++-side dispatch is strictly cheaper and is the port pattern.
+- `Integer::valueOf("")`/`Float::valueOf("")` on empty ScreenPlayData is an
+  exception/garbage hazard: ALWAYS empty-guard ScreenPlayData string reads
+  before numeric parsing (cyvster2 bug class, hit per mission generated).
+- PlayerObject ScreenPlayData API: PlayerObject.idl:791-804
+  (set/get/deleteScreenPlayData); persistent, no IDL/schema change needed for
+  small per-player settings.
+- Vanilla destroy heading comes from `player->getWorldCoordinate(distance,
+  angleDeg)` -- reuse it for any heading override rather than re-deriving
+  compass trig by hand (cyvster2's hand-rolled angle+PI/2 was wrong twice;
+  fix commits 608116821c, db6b0b6c56).
   
