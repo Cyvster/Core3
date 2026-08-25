@@ -239,7 +239,7 @@ int CustomSkillsMenu::getModifierTotal(CreatureObject* player, Page page, Custom
 
 // BRIEF-026: curated read-only view of notable Core3 options (full verified
 // inventory: docs/customskills/CONFIG_OPTIONS.md). Secrets excluded by policy.
-void CustomSkillsMenu::appendSwgemuOptions(StringBuffer& summary) {
+void CustomSkillsMenu::addSwgemuOptionItems(SuiListBox* box) {
 	struct SwgemuOpt { const char* label; const char* key; char type; bool restart; };
 	static const SwgemuOpt opts[] = {
 		{"JTL Enabled", "Core3.JTL.JTLEnabled", 'b', true},
@@ -263,25 +263,24 @@ void CustomSkillsMenu::appendSwgemuOptions(StringBuffer& summary) {
 		{"Include Faction Pets (bounty)", "Core3.MissionManager.IncludeFactionPets", 'b', false},
 		{"Disable World Spawns", "Core3.Regions.DisableWorldSpawns", 'b', false},
 	};
-	summary << "\\#FFFF00--- SWGEMU Options ---\\#. " << endl;
 	auto cm = ConfigManager::instance();
 	for (const auto& o : opts) {
-		summary << o.label << ": ";
+		String row = String(o.label) + ": ";
 		switch (o.type) {
 		case 'b':
-			summary << (cm->getBool(o.key, false) ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED");
+			row += (cm->getBool(o.key, false) ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED");
 			break;
 		case 'i':
-			summary << cm->getInt(o.key, 0);
+			row += String::valueOf(cm->getInt(o.key, 0));
 			break;
 		default:
-			summary << "\"" << cm->getString(o.key, "") << "\"";
+			row += "\"" + cm->getString(o.key, "") + "\"";
 			break;
 		}
-		summary << "\\#.";
+		row += "\\#.";
 		if (o.restart)
-			summary << " \\#999999(restart required)\\#.";
-		summary << endl;
+			row += " \\#999999(restart required)\\#.";
+		box->addMenuItem(row);
 	}
 }
 
@@ -308,7 +307,7 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 			String rarityState = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
 			summary << rarityState << "\\#. Rarity Naming" << endl;
 		} else if (page == SWGEMU_OPTIONS) {
-			appendSwgemuOptions(summary);
+			summary << "Live server-configurable options. Values update on config hot-reload unless marked (restart required)." << endl;
 		} else {
 			String rarityState = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
 			summary << "\\#FFFF00--- Mod Options ---\\#. " << endl;
@@ -374,7 +373,7 @@ void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Pag
 	case BONUS_UTILITY: addCategoryItem(box, player, "Armor Degrade", BONUS_ARMOR_DEGRADE, false); addCategoryItem(box, player, "Weapon Degrade", BONUS_WEAPON_DEGRADE, false); addCategoryItem(box, player, "SEA Cap", BONUS_SEA_CAP, false); addCategoryItem(box, player, "Move Speed", BONUS_MOVE_SPEED, false); addCategoryItem(box, player, "Buff Dur", BONUS_BUFF_DUR, false); addCategoryItem(box, player, "XP Bonus", BONUS_EXP_BONUS, false); addCategoryItem(box, player, "Gather Quant", BONUS_GATHERING, false); break;
 	case BONUS_CRAFTING: addCategoryItem(box, player, "Practice XP", BONUS_PRACTICE_XP, false); addCategoryItem(box, player, "Craft Speed", BONUS_CRAFT_SPEED, false); addCategoryItem(box, player, "Amazing Success", BONUS_AMAZING_SUCCESS, false); addCategoryItem(box, player, "Amazing Results", BONUS_AMAZING_RESULTS, false); break;
 	case SERVER_CONFIG: addCategoryItem(box, player, "Mod Options", MOD_OPTIONS, false); addCategoryItem(box, player, "SWGEMU Options", SWGEMU_OPTIONS, false); break;
-	case SWGEMU_OPTIONS: break;
+	case SWGEMU_OPTIONS: addSwgemuOptionItems(box); break;
 	case MOD_OPTIONS: {
 		CustomSkillsConfig* config = CustomSkillsConfig::instance();
 		String status = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
