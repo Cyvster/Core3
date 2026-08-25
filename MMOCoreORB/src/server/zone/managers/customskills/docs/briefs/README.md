@@ -96,6 +96,7 @@ before claim ([R6.9], BRIEF-019).
 | [`029-review-verification-gate-from-alice.md`](029-review-verification-gate-from-alice.md) | XPP mirror-review: evaluate Alice's second-party verification gate for adoption here | CLAIMED |
 | [`030-align-process-to-alice.md`](030-align-process-to-alice.md) | XPP alignment pass 1: adopt Alice's governance gaps (verification gate, audits, errata discipline, milestones, roster); creates Alice mirror brief | DELIVERED |
 | [`032-floating-combat-text-investigation.md`](032-floating-combat-text-investigation.md) | Investigate FCT hook: ShowFlyText scale/color/content/position control without client mods; feasibility + design | CLAIMED |
+| [`033-menu-performance-research.md`](033-menu-performance-research.md) | Quantify menu-open cost (checks, config reads, SUI build) vs combat/inventory actions; 1000-concurrent burst model | CLAIMED |
 
 ## Notes
 
