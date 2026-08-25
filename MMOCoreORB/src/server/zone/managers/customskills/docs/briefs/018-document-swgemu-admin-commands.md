@@ -1,6 +1,6 @@
 # BRIEF-018 -- Document SWGEmu admin (GM) commands in a dedicated section
 
-- Status: UNCLAIMED
+- Status: CLAIMED
 - Created: 08242026 by hy3-free (opencode/hy3-free), owner directive.
   Owner is currently compiling/running the engine and wants a written admin
   command reference so server operators (not just developers) know how to
