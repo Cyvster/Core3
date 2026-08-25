@@ -353,6 +353,19 @@ collaboration; `errata.md` = correction records. Content that belongs in a
 different document is moved with pointers left behind ([R6.7] reference,
 don't duplicate). Feature design lives in feature-planning/, never here.
 
+## Vanilla file shadowing criteria ([R6.11], 08252026)
+
+When a feature requires changing most of a vanilla Core3 file, choose between
+SHADOWING (redirect the file to a mod-owned copy) and DELEGATION (small hook
+in vanilla + mod-owned logic file). Shadow ONLY when all of these hold:
+- target file is small (< ~500 lines);
+- upstream modifies it rarely (< ~2 commits/year on the SWGEmu branch);
+- the feature needs most (> ~60%) of the file's logic.
+Otherwise use delegation: keep vanilla upstream-fixable, put custom logic in
+a mod-owned file (pattern: CustomSkillsCombat / CustomSkillsMissions).
+Rationale: shadowing hot files silently orphans upstream bug fixes -- the
+failure mode that made cyvster2 unmaintainable.
+
 ## Discovery-capture enforcement ([R6.9], BRIEF-040)
 
 Two standing rules close the capture gaps that brief-time reminders miss:
