@@ -227,8 +227,8 @@ customSkillsConfig = {
 
 		seaCapIncrease = {
 			enabled = true,
-			badgeBonus = 15,
-			cap = 0,
+			badgeBonus = 20,
+			cap = 100,
 			badges = {
 				"exp_tat_tusken_pool", "exp_tat_krayt_skeleton",
 				"exp_tat_sarlacc_pit", "exp_tat_krayt_graveyard",
@@ -257,11 +257,12 @@ customSkillsConfig = {
 				"social_dancer_master", "social_entertainer_master", "social_imagedesigner_master",
 				"social_musician_master", "social_politician_master",
 			},
-			badgeOverrides = {
-				{ "social_dancer_master", 2000 }, { "social_entertainer_master", 2000 },
-				{ "social_imagedesigner_master", 2000 }, { "social_musician_master", 2000 },
-				{ "social_politician_master", 2000 },
-			},
+			-- Optional per-badge overrides. Each entry replaces badgeBonus
+			-- for that single badge: { "badge_key", basisPointValue }.
+			-- Example (uncomment and edit):
+			-- badgeOverrides = {
+			--     { "social_dancer_master", 3000 },
+			-- },
 		},
 
 		experienceMultiplier = {
@@ -325,7 +326,7 @@ customSkillsConfig = {
 
 		gatheringQuantity = {
 			enabled = true,
-			badgeBonus = 2500,
+			badgeBonus = 10000,
 			cap = 0,
 			badges = {
 				"exp_tat_escape_pod", "exp_tat_lars_homestead", "exp_tat_bens_hut",
@@ -334,13 +335,12 @@ customSkillsConfig = {
 				"outdoors_ranger_master", "outdoors_scout_master", "outdoors_squadleader_master",
 				"science_combatmedic_master", "science_doctor_master", "science_medic_master",
 			},
-			badgeOverrides = {
-				{ "outdoors_bio_engineer_master", 11500 }, { "outdoors_creaturehandler_master", 11500 },
-				{ "outdoors_ranger_master", 11500 }, { "outdoors_scout_master", 11500 },
-				{ "outdoors_squadleader_master", 11500 },
-				{ "science_combatmedic_master", 10000 }, { "science_doctor_master", 10000 },
-				{ "science_medic_master", 10000 },
-			},
+			-- Optional per-badge overrides. Each entry replaces badgeBonus
+			-- for that single badge: { "badge_key", basisPointValue }.
+			-- Example (uncomment and edit):
+			-- badgeOverrides = {
+			--     { "outdoors_bio_engineer_master", 13000 },
+			-- },
 		},
 	},
 }
