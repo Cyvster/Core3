@@ -169,7 +169,6 @@ O  Lars Homestead  (+25% Movement Speed)
 
 - **What it does**: Raises the normal 125 hard cap on primary/secondary defense calculations. Does not affect attachment/tape bonuses.
 - **Powered by**: Hero of Tatooine (5 badges), Lok dangerous (3), Dathomir (7), Yavin IV Exar Kun.
-- **Typical maximum**: +120 defense points with every badge in the set.
 
 ### SEA Cap Increase
 
@@ -198,7 +197,6 @@ O  Lars Homestead  (+25% Movement Speed)
 
 - **What it does**: Extends beneficial buffs only -- medical, entertainer, food/drink, spice-up, positive Jedi/Force buffs. Does NOT extend debuffs, DoTs, states, traps, cooldowns, innates, Squad Leader, concealment, gallop, or vehicle buffs.
 - **Powered by**: Tatooine easy (3), Yavin IV Woolamander/Blueleaf (2), Science masteries (3), Social masteries (5).
-- **Typical maximum**: +325% buff duration.
 
 ### Experience Bonus
 
@@ -232,7 +230,7 @@ O  Lars Homestead  (+25% Movement Speed)
 
 ### Gathering Quantity
 
-- **What it does**: Multiplies resource quantity from foraging (flora/shellfish/lair eggs) and milking. Every badge adds its own yield bonus before the multiply: Outdoors masteries are the heavy hitters (+77% each). Full set takes harvests to roughly 11x native. Never reduces yields, rounded down. Does not affect discrete loot (food, bait, rare items, live creatures).
+- **What it does**: Multiplies resource quantity from foraging (flora/shellfish/lair eggs) and milking. Bonuses add together before multiplying: 1 badge = 3x yield, 2 badges = 5x. Never reduces yields, rounded down. Does not affect discrete loot (food, bait, rare items, live creatures).
 - **Powered by**: Outdoors masteries (5, boosted rate), Science masteries (3), Tatooine easy (3), Yavin IV (2).
 
 ## Rarity Naming

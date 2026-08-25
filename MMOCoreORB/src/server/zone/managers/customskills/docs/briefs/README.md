@@ -60,7 +60,7 @@ reading only what the brief lists -- no conversation history required.
 | [`013-delegated-broadcast-combat-spam.md`](013-delegated-broadcast-combat-spam.md) | Delegate broadcastCombatSpam to module code; same-line labels via raw-text full lines | WITHDRAWN |
 | [`014-remove-combat-spam-labels.md`](014-remove-combat-spam-labels.md) | Remove combat spam label feature entirely from code, config, and docs (owner decision) | UNCLAIMED |
 | [`015-implement-attack-repeat-tiers.md`](015-implement-attack-repeat-tiers.md) | Implement Double/Triple/Quad attack repeat tiers in the applyDamage delegation; resolves ERR-009 | DELIVERED |
-| [`016-defaultize-badge-overrides.md`](016-defaultize-badge-overrides.md) | Uniform badgeBonus defaults everywhere; badgeOverrides become dormant placeholders; caps re-verified | DELIVERED |
+| [`016-defaultize-badge-overrides.md`](016-defaultize-badge-overrides.md) | Uniform badgeBonus defaults everywhere; badgeOverrides become dormant placeholders; caps re-verified | UNCLAIMED |
 | [`011-menu-config-single-source.md`](011-menu-config-single-source.md) | Menu/config single-source: eliminate duplicated badge assignments; resolve ERR-008 | DELIVERED |
 | [`012-code-hygiene-cleanups.md`](012-code-hygiene-cleanups.md) | Enum/table safety asserts, loader consolidation, edge-case cleanups (behavior-preserving) | DELIVERED |
 

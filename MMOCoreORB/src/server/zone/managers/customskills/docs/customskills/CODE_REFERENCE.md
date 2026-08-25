@@ -690,10 +690,10 @@ failed stage ends the chain.
 |----------|-------|
 | **Unit** | Basis points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 500 bp (5.00%) uniform -- all badges equal |
-| **Cap (default)** | 8500 (85%) |
+| **Badge bonus (default)** | 200 bp (2.00%); BH mastery overridden to 300 bp |
+| **Cap (default)** | 7500 (75%) |
 | **Combat spam label** | `(TRIPLE)` |
-| **Badges (default)** | 17 badges (12 combat mastery + 5 Hero of Tatooine), all at 500 bp = 8500 bp = cap exactly |
+| **Badges (default)** | 12 combat mastery (11 x 200 bp, BH x 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 200 bp = 17 total |
 
 **Behavior**: Rolled only after Double succeeds in the same chain; success
 upgrades to 3 hits and enables the Quad roll.
@@ -707,10 +707,10 @@ upgrades to 3 hits and enables the Quad roll.
 |----------|-------|
 | **Unit** | Basis points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 500 bp (5.00%) uniform -- all badges equal |
-| **Cap (default)** | 5100 (51%) |
+| **Badge bonus (default)** | 200 bp (2.00%); BH mastery overridden to 300 bp |
+| **Cap (default)** | 5000 (50%) |
 | **Combat spam label** | `(QUAD)` |
-| **Badges (default)** | 17 badges (12 combat mastery + 5 Hero of Tatooine), all at 500 bp = 8500 bp = cap exactly |
+| **Badges (default)** | 12 combat mastery (11 x 200 bp, BH x 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 200 bp = 17 total |
 
 **Behavior**: Rolled only after Triple succeeds in the same chain; success
 upgrades to 4 hits. Highest possible tier.
@@ -740,7 +740,7 @@ upgrades to 4 hits. Highest possible tier.
 |----------|-------|
 | **Unit** | Points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 8 points |
+| **Badge bonus (default)** | 5 points |
 | **Cap (default)** | 0 (uncapped) |
 | **Badges (default)** | 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 5, Yavin IV Exar Kun (5), Lok (3 x 5), Dathomir easy (6 x 5) = 15 total |
 
@@ -816,9 +816,9 @@ Condition loss amount unchanged on successful roll.
 |----------|-------|
 | **Unit** | Basis points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 2500 bp (25.00%) uniform -- all 13 badges equal
+| **Badge bonus (default)** | 2500 bp (25.00%); Social mastery overridden to 2000 bp |
 | **Cap (default)** | 0 (uncapped) |
-| **Badges (default)** | Tatooine easy (3), Yavin IV Woolamander/Blueleaf (2), Science mastery (3), Social mastery (5) = 13 total |
+| **Badges (default)** | Tatooine easy (3 x 2500), Yavin IV Woolamander/Blueleaf (2 x 2500), Science mastery (3 x 2500), Social mastery (5 x 2000) = 13 total |
 
 **Behavior**: Increases initial duration of eligible buff families only:
 - **Included**: Medical, Performance, Food/Drink, Spice-up, positive Jedi/Force
@@ -927,15 +927,15 @@ Raises resource-derived ceiling only enough to retain enhanced value.
 |----------|-------|
 | **Unit** | Basis points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 7700 bp (77.00%) uniform -- all 13 badges equal |
+| **Badge bonus (base, config.lua)** | 2500 bp (25.00%); Outdoors mastery overridden to 11500 bp, Science mastery to 10000 bp |
 | **Cap (default)** | 0 (uncapped) |
 | **Badges (default)** | Outdoors mastery (5 x 11500), Science mastery (3 x 10000), Tatooine easy (3 x 2500), Yavin IV Woolamander/Blueleaf (2 x 2500) = 13 total |
 
 **Behavior**: Bonuses add together, then multiply native quantity:
 ```
 0 badges: 100% (1x)
-1 badge: 177% (1.77x)
-2 badges: 254% (2.54x)
+1 badge:  300% (3x)
+2 badges: 500% (5x)
 ```
 Applied AFTER native calculation (forage roll / milk density adjustment). Rounded down to whole unit. Never below native.
 **Does not affect**: Discrete loot (food, bait, medical components, rare items, live creatures).
@@ -953,21 +953,21 @@ is authoritative.
 | Critical Chance | bp | 100 (via badgeOverrides) | 60 | 6000 (60%) |
 | Critical Multiplier | bp | 1250 | 12 | 15000 bonus (300% total) |
 | Double Attack | bp | 2000 | 6 | 10000 (100%) |
-| Triple Attack | bp | 500 | 17 | 8500 -> clamped 8500 (85%) |
-| Quad Attack | bp | 300 | 17 | 5100 -> clamped 5100 (51%) |
+| Triple Attack | bp | 200 (BH 300) | 17 | 3500 (35%) |
+| Quad Attack | bp | 200 (BH 300) | 17 | 3500 (35%) |
 | Armor Penetration | levels | 1 | 9 | 3 (eff. max 3) |
-| Defense Cap | points | 8 | 15 | 120 (uncapped) |
+| Defense Cap | points | 5 | 15 | 75 |
 | SEA Cap | points | 15 | 5 | 75 |
 | Armor Degrade Red. | bp | 1250 | 8 | 10000 (100%) |
 | Weapon Degrade Red. | bp | 1250 | 8 | 10000 (100%) |
 | Movement Speed | bp | 2500 | 4 | 10000 (100%) |
-| Buff Duration | bp | 2500 | 13 | 32500 (325%) |
+| Buff Duration | bp | 2500 (Social 2000) | 13 | 30000 (300%) |
 | Experience Bonus | multiplier bp | 10000 | 5 | 50000 (500%) |
 | Practice XP Bonus | bp | 10000 | 10 | 100000 (1000%) |
 | Crafting Speed | multiplier bp | 1000 | 10 | 10000 (100%) |
 | Amazing Success | bp | 500 | 10 | 5000 (50%) |
 | Amazing Results | bp | 1000 | 6 | 6000 (60%) |
-| Gathering Quantity | bp | 7700 | 13 | 100100 (~1000%) |
+| Gathering Quantity | bp | 2500 (Outdoors 11500, Science 10000) | 13 | 100000 (1000%) |
 
 ---
 

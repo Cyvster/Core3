@@ -27,16 +27,10 @@ customSkillsConfig = {
 		enabled = true,
 		cap = 6000,
 
-		-- Uniform bonus per assigned badge (basis points): 60 achievement
-		-- badges x 1% = 60% cap reached exactly.
-		badgeBonus = 100,
-
-		-- Optional per-badge overrides. Each entry replaces badgeBonus
-		-- for that single badge: { "badge_key", basisPointValue }.
-		-- Example (uncomment and edit):
-		-- badgeOverrides = {
-		--     { "combat_1hsword_master", 150 },
-		-- },
+		-- Fallback for any listed badge that lacks an explicit override
+		-- below. Kept at 0: every badge declares its own value via
+		-- badgeOverrides, so nothing is granted silently.
+		badgeBonus = 0,
 
 		-- Critical damage multiplier. 15000 = 150.00% damage.
 		multiplier = 15000,
@@ -78,7 +72,38 @@ customSkillsConfig = {
 			-- Science masteries (3)
 			"science_combatmedic_master", "science_doctor_master", "science_medic_master",
 		},
-},
+		badgeOverrides = {
+			-- Per-badge crit chance in basis points (100 = 1%).
+			{ "count_5", 100 }, { "count_10", 100 }, { "count_25", 100 },
+			{ "count_50", 100 }, { "count_75", 100 }, { "count_100", 100 }, { "count_125", 100 },
+			{ "bdg_exp_10_badges", 100 }, { "bdg_exp_20_badges", 100 }, { "bdg_exp_30_badges", 100 },
+			{ "bdg_exp_40_badges", 100 }, { "bdg_exp_45_badges", 100 },
+			{ "combat_1hsword_master", 100 }, { "combat_2hsword_master", 100 },
+			{ "combat_bountyhunter_master", 100 }, { "combat_brawler_master", 100 },
+			{ "combat_carbine_master", 100 }, { "combat_commando_master", 100 },
+			{ "combat_marksman_master", 100 }, { "combat_pistol_master", 100 },
+			{ "combat_polearm_master", 100 }, { "combat_rifleman_master", 100 },
+			{ "combat_smuggler_master", 100 }, { "combat_unarmed_master", 100 },
+			{ "poi_rabidbeast", 100 }, { "poi_prisonbreak", 100 }, { "poi_twoliars", 100 },
+			{ "poi_factoryliberation", 100 }, { "poi_heromark", 100 },
+			{ "warren_compassion", 100 }, { "warren_hero", 100 },
+			{ "bdg_thm_park_jabba_badge", 100 }, { "bdg_thm_park_imperial_badge", 100 },
+			{ "bdg_thm_park_rebel_badge", 100 }, { "bdg_thm_park_nym_badge", 100 },
+			{ "bdg_corvette_imp_destroy", 100 }, { "bdg_corvette_imp_rescue", 100 },
+			{ "bdg_corvette_imp_assassin", 100 }, { "bdg_corvette_neutral_destroy", 100 },
+			{ "bdg_corvette_neutral_rescue", 100 }, { "bdg_corvette_neutral_assassin", 100 },
+			{ "bdg_corvette_reb_destroy", 100 }, { "bdg_corvette_reb_rescue", 100 },
+			{ "bdg_corvette_reb_assassin", 100 },
+			{ "exp_tat_tusken_pool", 100 }, { "exp_tat_krayt_skeleton", 100 },
+			{ "exp_tat_sarlacc_pit", 100 }, { "exp_tat_krayt_graveyard", 100 },
+			{ "exp_dat_sarlacc", 100 },
+			{ "exp_tat_bens_hut", 100 }, { "exp_yav_temple_exar_kun", 100 }, { "exp_dan_jedi_temple", 100 },
+			{ "outdoors_bio_engineer_master", 100 }, { "outdoors_creaturehandler_master", 100 },
+			{ "outdoors_ranger_master", 100 }, { "outdoors_scout_master", 100 },
+			{ "outdoors_squadleader_master", 100 },
+			{ "science_combatmedic_master", 100 }, { "science_doctor_master", 100 },
+			{ "science_medic_master", 100 },
+		},
 	},
 
 	-- Generic badge-backed modifiers.
@@ -88,17 +113,6 @@ customSkillsConfig = {
 		doubleAttackChance = {
 			enabled = true,
 			badgeBonus = 2000,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-warren_compassion
-", 
-2500
- },
-			-- },
-
 			cap = 10000,
 			combatSpamLabel = "(DOUBLE)",
 			badges = {
@@ -112,17 +126,6 @@ warren_compassion
 		criticalMultiplier = {
 			enabled = true,
 			badgeBonus = 1250,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-count_5
-", 
-1500
- },
-			-- },
-
 			cap = 15000,
 			badges = {
 				"count_5", "count_10", "count_25", "count_50", "count_75", "count_100", "count_125",
@@ -132,60 +135,43 @@ count_5
 
 		tripleAttackChance = {
 			enabled = true,
-			badgeBonus = 500,
-			cap = 8500,
+			badgeBonus = 200,
+			cap = 7500,
 			combatSpamLabel = "(TRIPLE)",
 			badges = {
 				"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
 				"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
 				"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
 				"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master",
-				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark",
+				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars",
+				"poi_factoryliberation", "poi_heromark",
 			},
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "combat_1hsword_master", 700 },
-			-- },
-		},
+			badgeOverrides = {
+				{ "combat_bountyhunter_master", 300 },
+			},
 		},
 
 		quadAttackChance = {
 			enabled = true,
-			badgeBonus = 300,
-			cap = 5100,
+			badgeBonus = 200,
+			cap = 5000,
 			combatSpamLabel = "(QUAD)",
 			badges = {
 				"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
 				"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
 				"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
 				"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master",
-				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark",
+				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars",
+				"poi_factoryliberation", "poi_heromark",
 			},
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "combat_1hsword_master", 400 },
-			-- },
-		},
+			badgeOverrides = {
+				{ "combat_bountyhunter_master", 300 },
+			},
 		},
 
 		armorPenetration = {
 			enabled = true,
 			badgeBonus = 1,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-bdg_corvette_imp_destroy
-", 
-2
- },
-			-- },
-
 			cap = 3,
 			badges = {
 				"bdg_corvette_imp_destroy", "bdg_corvette_imp_rescue", "bdg_corvette_imp_assassin",
@@ -196,38 +182,25 @@ bdg_corvette_imp_destroy
 
 		defenseCapIncrease = {
 			enabled = true,
-			badgeBonus = 8,
+			badgeBonus = 5,
 			cap = 0,
 			badges = {
 				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars",
 				"poi_factoryliberation", "poi_heromark",
 				"exp_lok_volcano", "bdg_exp_lok_imp_outpost", "bdg_exp_lok_kimogila_skeleton",
 				"exp_dat_tarpit", "exp_dat_escape_pod", "exp_dat_misty_falls_1", "exp_dat_misty_falls_2",
-				"bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison", "exp_yav_temple_exar_kun",
+				"bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison",
+				"exp_yav_temple_exar_kun",
 			},
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "poi_rabidbeast", 10 },
-			-- },
-		},
+			badgeOverrides = {
+				{ "poi_rabidbeast", 10 }, { "poi_prisonbreak", 10 }, { "poi_twoliars", 10 },
+				{ "poi_factoryliberation", 10 }, { "poi_heromark", 10 },
+			},
 		},
 
 		armorDegradeReduction = {
 			enabled = true,
 			badgeBonus = 1250,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-bdg_exp_tal_creature_village
-", 
-1500
- },
-			-- },
-
 			cap = 10000,
 			badges = {
 				"bdg_exp_tal_creature_village", "bdg_exp_tal_imp_base",
@@ -240,17 +213,6 @@ bdg_exp_tal_creature_village
 		weaponDegradeReduction = {
 			enabled = true,
 			badgeBonus = 1250,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-exp_dan_jedi_temple
-", 
-1500
- },
-			-- },
-
 			cap = 10000,
 			badges = {
 				"exp_dan_jedi_temple", "exp_dan_rebel_base",
@@ -263,17 +225,6 @@ exp_dan_jedi_temple
 		seaCapIncrease = {
 			enabled = true,
 			badgeBonus = 15,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-exp_tat_tusken_pool
-", 
-20
- },
-			-- },
-
 			cap = 0,
 			badges = {
 				"exp_tat_tusken_pool", "exp_tat_krayt_skeleton",
@@ -285,17 +236,6 @@ exp_tat_tusken_pool
 		movementSpeed = {
 			enabled = true,
 			badgeBonus = 2500,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-exp_nab_gungan_sacred_place
-", 
-3000
- },
-			-- },
-
 			cap = 0,
 			badges = {
 				"exp_nab_gungan_sacred_place", "bdg_exp_nab_theed_falls_bottom",
@@ -314,28 +254,16 @@ exp_nab_gungan_sacred_place
 				"social_dancer_master", "social_entertainer_master", "social_imagedesigner_master",
 				"social_musician_master", "social_politician_master",
 			},
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "social_dancer_master", 3000 },
-			-- },
+			badgeOverrides = {
+				{ "social_dancer_master", 2000 }, { "social_entertainer_master", 2000 },
+				{ "social_imagedesigner_master", 2000 }, { "social_musician_master", 2000 },
+				{ "social_politician_master", 2000 },
+			},
 		},
 
 		experienceMultiplier = {
 			enabled = true,
 			badgeBonus = 10000,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-exp_cor_agrilat_swamp
-", 
-12000
- },
-			-- },
-
 			cap = 0,
 			badges = {
 				"exp_cor_agrilat_swamp", "bdg_exp_cor_rebel_hideout",
@@ -347,17 +275,6 @@ exp_cor_agrilat_swamp
 		practiceExperienceBonus = {
 			enabled = true,
 			badgeBonus = 10000,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-exp_tat_escape_pod
-", 
-12000
- },
-			-- },
-
 			cap = 0,
 			badges = {
 				"exp_tat_escape_pod", "exp_tat_lars_homestead", "exp_tat_bens_hut",
@@ -370,17 +287,6 @@ exp_tat_escape_pod
 		craftingSpeed = {
 			enabled = true,
 			badgeBonus = 1000,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-crafting_weaponsmith_master
-", 
-1200
- },
-			-- },
-
 			cap = 0,
 			badges = {
 				"crafting_architect_master", "crafting_armorsmith_master", "crafting_artisan_master",
@@ -393,17 +299,6 @@ crafting_weaponsmith_master
 		amazingSuccessChance = {
 			enabled = true,
 			badgeBonus = 500,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-exp_yav_temple_exar_kun
-", 
-600
- },
-			-- },
-
 			cap = 10000,
 			badges = {
 				"exp_yav_temple_exar_kun",
@@ -416,17 +311,6 @@ exp_yav_temple_exar_kun
 		amazingResults = {
 			enabled = true,
 			badgeBonus = 1000,
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "
-exp_yav_temple_exar_kun
-", 
-1200
- },
-			-- },
-
 			cap = 10000,
 			badges = {
 				"exp_yav_temple_exar_kun",
@@ -438,7 +322,7 @@ exp_yav_temple_exar_kun
 
 		gatheringQuantity = {
 			enabled = true,
-			badgeBonus = 7700,
+			badgeBonus = 2500,
 			cap = 0,
 			badges = {
 				"exp_tat_escape_pod", "exp_tat_lars_homestead", "exp_tat_bens_hut",
@@ -447,12 +331,13 @@ exp_yav_temple_exar_kun
 				"outdoors_ranger_master", "outdoors_scout_master", "outdoors_squadleader_master",
 				"science_combatmedic_master", "science_doctor_master", "science_medic_master",
 			},
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "outdoors_scout_master", 9000 },
-			-- },
+			badgeOverrides = {
+				{ "outdoors_bio_engineer_master", 11500 }, { "outdoors_creaturehandler_master", 11500 },
+				{ "outdoors_ranger_master", 11500 }, { "outdoors_scout_master", 11500 },
+				{ "outdoors_squadleader_master", 11500 },
+				{ "science_combatmedic_master", 10000 }, { "science_doctor_master", 10000 },
+				{ "science_medic_master", 10000 },
+			},
 		},
 	},
 }
