@@ -92,9 +92,9 @@ String CustomSkillsModifiers::getModifierName(CustomSkillsModifierType::Type typ
 	static const char* names[] = {
 		"Cri", "Crit Multi",
 		"Double", "Triple", "Quad",
-		"Armor Penetration", "Defense Cap", "Armor Degrade Reduction", "Weapon Degrade Reduction",
-		"SEA Cap", "Movement Speed", "Buff Duration", "Experience Bonus", "Practice Experience Bonus",
-		"Crafting Speed", "Amazing Success Chance", "Amazing Results", "Gathering Quantity"
+		"Arm Pen", "Def Cap", "Armor Degrade", "Weapon Degrade",
+		"SEA Cap", "Move Speed", "Buff Dur", "XP Bonus", "Practice XP",
+		"Craft Speed", "Amazing Success", "Amazing Results", "Gather Quant"
 	};
 	static_assert(sizeof(names) / sizeof(names[0]) == static_cast<size_t>(CustomSkillsModifierType::COUNT), "names[] out of sync with CustomSkillsModifierType enum");
 	return type >= 0 && type < CustomSkillsModifierType::COUNT ? names[type] : "Unknown Modifier";
