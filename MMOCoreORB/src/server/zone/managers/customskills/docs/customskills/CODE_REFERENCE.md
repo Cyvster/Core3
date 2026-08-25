@@ -1317,3 +1317,26 @@ if (badge && ghost->hasBadge(badge->getIndex()))
 | 5 | Event (11) | 11 shown |
 
 *Client category is separate from Core3 type enum -- used for client-side badge browser only.*
+
+## Hidden Config Options (server-configurable, undocumented keys)
+
+Full inventory of every option ConfigManager reads lives in
+[CONFIG_OPTIONS.md](CONFIG_OPTIONS.md) (BRIEF-023): 159 keys with type,
+default, consumer file:line, and read-behavior tags ([startup] vs [dyn]
+hot-reload). Highlights: the owner seed set (PlayerManager
+DisableGroupVisibility/WipeFillingOnClone/GalaxyWideGrouping/AdvancedWaypoints,
+PlayerCreationManager.MaxCharactersPerGalaxy, JTL.JTLEnabled) are all live
+reads absent from shipped config.lua.
+
+Gotchas from the inventory:
+- `PlayerManager.accountVictimList` is read WITHOUT the `Core3.` prefix
+  (PlayerManagerImplementation.cpp:6914) -- top-level table key.
+- `Core3.JTL.LaunchFromDevice` is a dead read (getter exists, no consumers).
+- ConfigManager hot-reloads [dyn] options on configVersion bump; [startup]
+  options need a restart.
+- Per-account overlay: getters invoked with an accountID resolve
+  `Core3.AccountFlags.<accountID>.<name>` first (ConfigManager.h:198-207).
+
+Adding a new entry to the menu viewer (BRIEF-026): register it in the
+SWGEMU Options registry with {label, configKey, type, group, restartFlag};
+exclude secrets per ERR-014/BRIEF-026 rules.

@@ -1,6 +1,6 @@
-# DRAFT -- Full inventory of ConfigManager-read options (feeds BRIEF-023)
+# ConfigManager Option Inventory (all server-configurable options)
 
-- Status: DRAFT (research only; nothing here has been copied into swgemu/CODE_REFERENCE.md)
+- Status: REFERENCE (BRIEF-023 delivered; verified against source 08252026)
 - Compiled: 08252026 by ox-alpha (opencode)
 - Sources swept: `src/conf/ConfigManager.h` getter definitions (note: actual path is
   `src/conf/`, not `src/server/conf/`), every `ConfigManager::instance()->get*` /
