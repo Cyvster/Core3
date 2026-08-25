@@ -12,6 +12,14 @@ public:
 
 	bool isCriticalChanceEnabled() const { return criticalChanceEnabled; }
 	int getCriticalMultiplier() const { return criticalMultiplier; }
+
+	// BRIEF-034: consolidated-strike floating combat text + chat tag knobs.
+	bool isFctEnabled() const { return fctEnabled; }
+	int getFctScaleStepBp() const { return fctScaleStepBp; }
+	int getFctCritBonusBp() const { return fctCritBonusBp; }
+	const String& getFctTierColor(int tier) const; // tier 2..4
+	const String& getFctCritColor() const { return fctCritColor; }
+	bool isChatTagEnabled() const { return chatTagEnabled; }
 	const String& getCustomSummaryColor() const { return customSummaryColor; }
 	bool isRarityNamingEnabled() const { return rarityNamingEnabled; }
 	const String& getLegendaryColor() const { return legendaryColor; }
@@ -29,6 +37,20 @@ private:
 	bool rarityNamingEnabled;
 	String legendaryColor;
 	String exceptionalColor;
+
+	// BRIEF-034: consolidated-strike FCT + chat tag state.
+	bool fctEnabled;
+	int fctScaleStepBp;   // basis points of scale added per tier above base
+	int fctCritBonusBp;   // extra basis points of scale on critical hits
+	String fctTier2Color; // hex RRGGBB for Double tier flytext
+	String fctTier3Color; // hex RRGGBB for Triple tier flytext
+	String fctTier4Color; // hex RRGGBB for Quad tier flytext
+	String fctCritColor;  // hex RRGGBB overlay color when the hit crits
+	bool chatTagEnabled;
+
+	static const int DEFAULT_FCT_SCALE_STEP_BP = 1500;
+	static const int DEFAULT_FCT_CRIT_BONUS_BP = 2500;
+
 	bool modifierEnabled[CustomSkillsModifierType::COUNT];
 	int modifierCaps[CustomSkillsModifierType::COUNT];
 	VectorMap<String, int> modifierBadgeBonuses[CustomSkillsModifierType::COUNT];

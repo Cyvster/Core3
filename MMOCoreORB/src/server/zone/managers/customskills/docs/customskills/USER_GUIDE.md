@@ -67,7 +67,8 @@ Only **acquired** badges contribute to category totals. Totals use the same math
 **Double Attack Chance** — chance for an attack to strike twice. Powered by: Warren (2), Theme Parks (4). Typical maximum: +100% (always double).
 **Triple Attack Chance** — chance for an attack to strike three times. Powered by: all 12 combat profession masteries + 5 Hero of Tatooine quest badges. Typical maximum: +85%.
 **Quad Attack Chance** — chance for an attack to strike four times. Powered by: same set as Triple Attack. Typical maximum: +51% (full 17-badge set).  
-*How repeats interact:* Quad is checked first, then Triple, then Double — only one tier triggers per hit. Repeats apply after critical damage adjustment. Armor Penetration (below) applies before the native armor comparison.
+*How tiers work:* Quad is checked first, then Triple, then Double — only one tier triggers per hit. Tiers apply after critical damage adjustment. Armor Penetration (below) applies before the native armor comparison.
+**Consolidated Strike** — Double/Triple/Quad no longer land as several separate hits: each tier delivers ONE bigger hit (x2/x3/x4 damage) with escalating flytext (bigger and brighter — yellow → orange → red, gold on crits) and an `x2`/`x3`/`x4` tag in your combat spam. Total damage is the same as the old repeat hits; armor just mitigates the single big hit instead of each small one.
 **Armor Penetration** — each point lowers the target's effective armor one level (Heavy → Medium → Light → None). Never drops below No Armor; does not change the weapon's Armor Piercing rating. Powered by: the 9 Corellian Corvette badges. Typical maximum: 3 levels.
 
 ### Defense & Equipment

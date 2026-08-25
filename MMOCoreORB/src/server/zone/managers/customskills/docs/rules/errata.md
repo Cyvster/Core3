@@ -422,6 +422,16 @@ Cyvster may resolve, reject, or apply any entry directly.
   multiplies the crit-adjusted damage before mitigation (equivalent to
   repeating the finalized hit). Label-free per the combat-spam removal
 
+- Follow-up (BRIEF-034, 08252026 by ox-alpha/opencode-x-preview-f-free):
+  ERR-009's repeat-chain delivery is SUPERSEDED. Double/Triple/Quad now
+  multiply damage by the tier ONCE and call applyVanillaDamage a single
+  time (consolidated strike); the multi-application loop and its mid-loop
+  death/incapacitation break are removed. Owner-accepted deviation: one
+  big hit mitigates differently against armor than N small hits, but
+  totals are equivalent by design. Presentation added: tiered ShowFlyText
+  (config-driven scale/colors) and an "xN" combat-spam tag line to the
+  attacker; see `consolidatedStrike` config block.
+
 ## ERR-010 -- CustomSkillsMenu.cpp fails to compile (header/.cpp desync)
 
 - Status: RESOLVED

@@ -688,9 +688,15 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Badges (default)** | Warren (2), Theme Parks (4) = 6 total |
 
 **Behavior**: Sequential upgrade chain start. Rolled first off the landed hit;
-success upgrades the attack to 2 hits and enables the Triple roll. First
+success upgrades the attack to tier 2 and enables the Triple roll. First
 failed stage ends the chain.
-**Implemented**: yes (BRIEF-015).
+**Consolidated strike (BRIEF-034)**: tiers no longer apply N hits. The tier
+multiplies the finalized damage ONCE (`damage *= repeats`) and
+`applyVanillaDamage` runs a single time — one bigger hit, same total as the
+old repeat chain by design (armor mitigates the single big hit differently;
+owner-accepted, see errata ERR-009 follow-up). Escalated strikes get tiered
+flytext + `xN` chat tag (see "Consolidated Strike Presentation").
+**Implemented**: yes (BRIEF-015; delivery reworked BRIEF-034).
 
 
 ### Triple Attack Chance (`TRIPLE_ATTACK_CHANCE`)
@@ -704,8 +710,9 @@ failed stage ends the chain.
 | **Badges (default)** | 12 combat masteries + 5 Hero of Tatooine POI = 17 total |
 
 **Behavior**: Rolled only after Double succeeds in the same chain; success
-upgrades to 3 hits and enables the Quad roll.
-**Implemented**: yes (BRIEF-015).
+upgrades to tier 3 and enables the Quad roll. Delivered as a consolidated
+strike (damage x3, single application — BRIEF-034).
+**Implemented**: yes (BRIEF-015; delivery reworked BRIEF-034).
 
 
 ### Quad Attack Chance (`QUAD_ATTACK_CHANCE`)
@@ -719,8 +726,30 @@ upgrades to 3 hits and enables the Quad roll.
 | **Badges (default)** | 12 combat masteries + 5 Hero of Tatooine POI = 17 total |
 
 **Behavior**: Rolled only after Triple succeeds in the same chain; success
-upgrades to 4 hits. Highest possible tier.
-**Implemented**: yes (BRIEF-015).
+upgrades to tier 4 (highest). Delivered as a consolidated strike
+(damage x4, single application — BRIEF-034).
+**Implemented**: yes (BRIEF-015; delivery reworked BRIEF-034).
+
+
+### Consolidated Strike Presentation (`consolidatedStrike`, BRIEF-034)
+
+| Property | Value |
+|----------|-------|
+| **Config key** | `customSkillsConfig.consolidatedStrike` |
+| **Knobs** | `fctEnabled` (bool, default true); `fctScaleStepBp` (int, 1500 = +15.00% flytext scale per tier above base; 1000 bp = 10.00%); `fctCritBonusBp` (int, 2500 = +25.00% extra on crits); `tier2Color`/`tier3Color`/`tier4Color`/`critColor` (hex RRGGBB; defaults FFFF00 yellow / FF9900 orange / FF0000 red / FFD700 gold); `chatTagEnabled` (bool, true) |
+
+**Behavior** (`CustomSkillsCombat.cpp:applyDamage`): after crit roll and the
+Double->Triple->Quad chain, damage is multiplied by the tier ONCE and applied
+via a single `applyVanillaDamage` call. When repeats > 1 or the hit critted,
+a `ShowFlyText` (packets/object/ShowFlyText.h, flags byte 5 as vanilla) is
+sent to the attacker using the vanilla hit-location stf entry
+(`combat_effects/hit_<location>`) with escalated scale
+(1.0 + (tier-1)*step + critBonus) and tier color (crit overlays gold).
+Base hits leave vanilla flytext untouched. When repeats > 1 a second
+custom-unicode `CombatSpam` line ("x2"/"x3"/"x4", colored byte 11 yellow /
+10 red) goes to the ATTACKER only; the normal damage spam is unchanged.
+Loader: CustomSkillsConfig.cpp `load()` under the `consolidatedStrike`
+table; defaults in `setDefaults()`.
 
 
 ### Armor Penetration (`ARMOR_PENETRATION`)

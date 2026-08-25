@@ -63,6 +63,60 @@ customSkillsConfig = {
 	},
 
 	-- ---------------------------------------------------------------------------
+	-- consolidatedStrike : Double/Triple/Quad presentation (BRIEF-034)
+	-- What it does       : Double/Triple/Quad hits are delivered as ONE bigger
+	--                      hit (damage x tier) instead of several repeat hits.
+	--                      These knobs control how that strike is PRESENTED:
+	--                      a scaled/colored flytext on the defender and an
+	--                      "x2"/"x3"/"x4" tag line in the attacker's combat spam.
+	-- Fields             :
+	--   fctEnabled     true = escalated flytext on tier/crit hits.
+	--                  Base hits (no tier, no crit) keep the normal vanilla
+	--                  hit-location flytext; this only fires on escalations.
+	--   fctScaleStepBp extra flytext SIZE per tier above base, in basis points.
+	--                  1000 bp = +10.00% scale per tier. 1500 = Double 1.15x,
+	--                  Triple 1.30x, Quad 1.50x. Relative multiplier, so it
+	--                  respects the client's own text-size slider.
+	--   fctCritBonusBp additional scale added when the hit is also CRITICAL.
+	--                  2500 bp = +25.00%. Stacks with fctScaleStepBp.
+	--   tier2Color     six-char RGB hex for the Double-tier flytext.
+	--   tier3Color     six-char RGB hex for the Triple-tier flytext.
+	--   tier4Color     six-char RGB hex for the Quad-tier flytext.
+	--   critColor      six-char RGB hex used INSTEAD of the tier color when
+	--                  the strike is a critical (crit overlays the tiers).
+	--   chatTagEnabled true = send a second combat-spam line to the attacker
+	--                  only, showing "x2"/"x3"/"x4" colored by tier
+	--                  (yellow/yellow/red). The normal damage spam line is
+	--                  unchanged.
+	-- Defaults         : enabled, +15.00%/tier (+25.00% crit), white->yellow->
+	--                  orange->red escalation with gold crits, chat tag on.
+	-- REAL EXAMPLE (commented out): subtler escalation, no chat tag:
+	--
+	-- consolidatedStrike = {
+	--     fctEnabled = true,
+	--     fctScaleStepBp = 1000,  -- 1000 bp = +10.00% size per tier
+	--     fctCritBonusBp = 2000,  -- 2000 bp = +20.00% size on crits
+	--     tier2Color = "FFFF88",
+	--     tier3Color = "FFAA44",
+	--     tier4Color = "FF4444",
+	--     critColor  = "FFEE00",
+	--     chatTagEnabled = false,
+	-- },
+	-- ---------------------------------------------------------------------------
+	consolidatedStrike = {
+		fctEnabled = true,
+		fctScaleStepBp = 1500,   -- 1500 bp = +15.00% flytext size per tier
+		fctCritBonusBp = 2500,   -- 2500 bp = +25.00% extra size on crits
+
+		tier2Color = "FFFF00",   -- yellow (Double)
+		tier3Color = "FF9900",   -- orange (Triple)
+		tier4Color = "FF0000",   -- red    (Quad)
+		critColor  = "FFD700",   -- gold   (critical overlay)
+
+		chatTagEnabled = true,
+	},
+
+	-- ---------------------------------------------------------------------------
 	-- criticalChance : chance for a landed attack to become a CRITICAL hit
 	-- What it does   : each acquired badge in the list below adds badgeBonus to
 	--                  the character's crit chance (in basis points). When an

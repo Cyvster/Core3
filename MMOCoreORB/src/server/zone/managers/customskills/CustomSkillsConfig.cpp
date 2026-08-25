@@ -23,6 +23,19 @@ void CustomSkillsConfig::setDefaults() {
 	rarityNamingEnabled = false;
 	legendaryColor = "FF00FF";
 	exceptionalColor = "0000FF";
+
+	// BRIEF-034 defaults: FCT on; +15.00% scale per tier (1500 bp), +25.00%
+	// extra scale on crits (2500 bp); white->yellow->orange tier escalation,
+	// gold crit overlay; chat tag on.
+	fctEnabled = true;
+	fctScaleStepBp = DEFAULT_FCT_SCALE_STEP_BP;
+	fctCritBonusBp = DEFAULT_FCT_CRIT_BONUS_BP;
+	fctTier2Color = "FFFF00"; // yellow
+	fctTier3Color = "FF9900"; // orange
+	fctTier4Color = "FF0000"; // red
+	fctCritColor  = "FFD700"; // gold
+	chatTagEnabled = true;
+
 	modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = true;
 	modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE] = 6000;
 }
@@ -33,6 +46,17 @@ bool CustomSkillsConfig::isModifierEnabled(CustomSkillsModifierType::Type type) 
 
 int CustomSkillsConfig::getModifierCap(CustomSkillsModifierType::Type type) const {
 	return type >= 0 && type < CustomSkillsModifierType::COUNT ? modifierCaps[type] : 0;
+}
+
+const String& CustomSkillsConfig::getFctTierColor(int tier) const {
+	switch (tier) {
+	case 2:
+		return fctTier2Color;
+	case 3:
+		return fctTier3Color;
+	default:
+		return fctTier4Color;
+	}
 }
 
 int CustomSkillsConfig::getBadgeBonus(CustomSkillsModifierType::Type type, const String& badgeKey) const {
@@ -186,6 +210,42 @@ void CustomSkillsConfig::load() {
 			warning("rarityNaming.exceptionalColor must be a six-character RGB hex value; using default");
 	}
 	rarity.pop();
+
+	// BRIEF-034: consolidated-strike FCT + chat tag knobs.
+	LuaObject fct = root.getObjectField("consolidatedStrike");
+	if (fct.isValidTable()) {
+		fctEnabled = fct.getBooleanField("fctEnabled", true);
+
+		int scaleStep = static_cast<int>(fct.getIntField("fctScaleStepBp", DEFAULT_FCT_SCALE_STEP_BP));
+		if (scaleStep >= 0)
+			fctScaleStepBp = scaleStep;
+		else
+			warning("consolidatedStrike.fctScaleStepBp must be non-negative; using default");
+
+		int critBonus = static_cast<int>(fct.getIntField("fctCritBonusBp", DEFAULT_FCT_CRIT_BONUS_BP));
+		if (critBonus >= 0)
+			fctCritBonusBp = critBonus;
+		else
+			warning("consolidatedStrike.fctCritBonusBp must be non-negative; using default");
+
+		struct FctColorField { const char* key; String* target; };
+		FctColorField colorFields[] = {
+			{ "tier2Color", &fctTier2Color },
+			{ "tier3Color", &fctTier3Color },
+			{ "tier4Color", &fctTier4Color },
+			{ "critColor",  &fctCritColor },
+		};
+		for (int i = 0; i < 4; ++i) {
+			String value = fct.getStringField(colorFields[i].key, "");
+			if (value.length() == 6)
+				*(colorFields[i].target) = value;
+			else
+				warning(String("consolidatedStrike.") + colorFields[i].key + " must be a six-character RGB hex value; using default");
+		}
+
+		chatTagEnabled = fct.getBooleanField("chatTagEnabled", true);
+	}
+	fct.pop();
 
 	LuaObject modifiers = root.getObjectField("modifiers");
 	if (modifiers.isValidTable()) {
