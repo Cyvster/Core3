@@ -154,7 +154,7 @@ void CustomSkillsCrafting::storeRepeatRecipe(CraftingTool* tool,
 
 	clearRepeatRecipe(tool);
 
-	cs36Put(tool, "schematicCrc", String::valueOf(draft->getClientObjectCRC()));
+	cs36Put(tool, "schematicCrc", String::valueOf(draft->getServerObjectCRC())); // server CRC = static per schematic TYPE (client CRC varies per-char enumeration)
 	// ERR-020 fix: counts/quantities come from the DRAFT schematic (static per
 	// schematic, identical every session). The session ManufactureSchematic's
 	// slots are post-fill/post-consume at snapshot time and do NOT match a
@@ -312,7 +312,7 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 	int index = -1;
 	for (int i = 0; i < session->getCurrentSchematicListSize(); ++i) {
 		DraftSchematic* draft = session->getCurrentSchematic(i);
-		if (draft != nullptr && draft->getClientObjectCRC() == crc) {
+		if (draft != nullptr && draft->getServerObjectCRC() == crc) {
 			index = i;
 			break;
 		}
