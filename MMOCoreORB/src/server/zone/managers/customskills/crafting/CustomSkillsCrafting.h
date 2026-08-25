@@ -4,9 +4,8 @@
 #include "engine/engine.h"
 #include "server/zone/objects/creature/CreatureObject.h"
 #include "server/zone/objects/manufactureschematic/craftingvalues/CraftingValues.h"
-
-class CraftingTool;
-class ManufactureSchematic;
+#include "server/zone/objects/manufactureschematic/ManufactureSchematic.h"
+#include "server/zone/objects/tangible/tool/CraftingTool.h"
 
 class CustomSkillsCrafting {
 public:
