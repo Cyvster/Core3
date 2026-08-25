@@ -90,6 +90,7 @@ One row per proposal folder, newest last.
 | [`08232026-clean-status-before-add/`](08232026-clean-status-before-add/proposal.md) | Explicit-path staging only; never `git add -A` on this tree | ADOPTED 08232026 |
 | [`08232026-coordinator-pull-before-commit/`](08232026-coordinator-pull-before-commit/proposal.md) | Sync before commit; attribute others' work | ADOPTED 08232026 |
 | [`08232026-per-worker-topology/`](08232026-per-worker-topology/proposal.md) | Per-worker clone/worktree policy (provisioning pending) | POLICY ADOPTED 08232026 |
+| [`08252026-cross-project-policy-propagation/`](08252026-cross-project-policy-propagation/proposal.md) | Cross-Project Propagation (XPP): policy implemented on one project files a mirror-review brief on the other; tailoring expected | OPEN |
 
 ---
 
