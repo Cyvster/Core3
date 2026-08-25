@@ -90,8 +90,8 @@ int CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::Type type,
 
 String CustomSkillsModifiers::getModifierName(CustomSkillsModifierType::Type type) {
 	static const char* names[] = {
-		"Critical Chance", "Critical Multiplier",
-		"Double Attack Chance", "Triple Attack Chance", "Quad Attack Chance",
+		"Cri", "Crit Multi",
+		"Double", "Triple", "Quad",
 		"Armor Penetration", "Defense Cap", "Armor Degrade Reduction", "Weapon Degrade Reduction",
 		"SEA Cap", "Movement Speed", "Buff Duration", "Experience Bonus", "Practice Experience Bonus",
 		"Crafting Speed", "Amazing Success Chance", "Amazing Results", "Gathering Quantity"
@@ -109,10 +109,7 @@ String CustomSkillsModifiers::formatModifierBonus(CustomSkillsModifierType::Type
 	else
 		valueStr = "+" + formatPercent(value);
 
-	while (valueStr.length() < 14)
-		valueStr += " ";
-
-	return valueStr + getModifierName(type);
+	return valueStr;
 }
 
 void CustomSkillsModifiers::notifyBadgeAwarded(CreatureObject* player) {

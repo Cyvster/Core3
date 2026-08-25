@@ -82,7 +82,7 @@ void CustomSkillsMenu::addBadgeItems(SuiListBox* box, CreatureObject* player, co
 		for (int type = 0; type < CustomSkillsModifierType::COUNT; ++type) {
 			int bonus = CustomSkillsModifiers::getBadgeModifier(badge->getKey(), static_cast<CustomSkillsModifierType::Type>(type));
 			if (bonus > 0)
-				badgeName += "  (" + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(static_cast<CustomSkillsModifierType::Type>(type), bonus)) + ")";
+				badgeName += " (" + CustomSkillsModifiers::getModifierName(static_cast<CustomSkillsModifierType::Type>(type)) + " " + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(static_cast<CustomSkillsModifierType::Type>(type), bonus)) + ")";
 		}
 
 		box->addMenuItem(marker + " \\#.  " + badgeName);
@@ -143,7 +143,7 @@ void CustomSkillsMenu::addCategoryItem(SuiListBox* box, CreatureObject* player, 
 		for (int type = 0; type < CustomSkillsModifierType::COUNT; ++type) {
 			int total = getModifierTotal(player, category, static_cast<CustomSkillsModifierType::Type>(type));
 			if (total > 0)
-				label += "  (" + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(static_cast<CustomSkillsModifierType::Type>(type), total)) + ")";
+				label += " (" + CustomSkillsModifiers::getModifierName(static_cast<CustomSkillsModifierType::Type>(type)) + " " + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(static_cast<CustomSkillsModifierType::Type>(type), total)) + ")";
 		}
 	}
 	box->addMenuItem(label);
@@ -166,7 +166,18 @@ void CustomSkillsMenu::addBonusItems(SuiListBox* box, CreatureObject* player, Cu
 
 		int bonus = bonuses.elementAt(i).getValue();
 		if (bonus > 0)
-			badgeName += "  (" + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(type, bonus)) + ")";
+			badgeName += " (" + CustomSkillsModifiers::getModifierName(type) + " " + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(type, bonus)) + ")";
+
+		// BRIEF-025: show every other modifier this badge grants, so a badge
+		// like Bounty Hunter displays crit/triple/quad together instead of
+		// only the current page's modifier. Other modifiers are dimmed.
+		for (int other = 0; other < CustomSkillsModifierType::COUNT; ++other) {
+			if (static_cast<CustomSkillsModifierType::Type>(other) == type)
+				continue;
+			int extra = CustomSkillsModifiers::getBadgeModifier(badge->getKey(), static_cast<CustomSkillsModifierType::Type>(other));
+			if (extra > 0)
+				badgeName += " \\#999999(" + CustomSkillsModifiers::getModifierName(static_cast<CustomSkillsModifierType::Type>(other)) + " " + CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(static_cast<CustomSkillsModifierType::Type>(other), extra)) + ")\\#.";
+		}
 		box->addMenuItem(marker + " \\#.  " + badgeName);
 	}
 }
@@ -267,7 +278,9 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 				total = CustomSkillsModifiers::getCriticalMultiplier(player);
 			else
 				total = CustomSkillsModifiers::getModifierTotal(player, type);
-			summary << CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(type, total)) << endl;
+			// BRIEF-025: single space between bonus name and value (was a wide gap).
+			summary << CustomSkillsModifiers::getModifierName(type) << " "
+			        << CustomSkillsModifiers::colorizeCriticalText(CustomSkillsModifiers::formatModifierBonus(type, total)) << endl;
 		}
 	};
 
@@ -308,7 +321,7 @@ void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Pag
 	case QUEST: addCategoryItem(box, player, "Hero of Tatooine", QUEST_HERO); addCategoryItem(box, player, "Warren", QUEST_WARREN); addCategoryItem(box, player, "Theme Parks", QUEST_THEME_PARKS); addCategoryItem(box, player, "Corellian Corvette", QUEST_CORVETTE); break;
 	case EVENT: addCategoryItem(box, player, "Cries of Alderaan", EVENT_COA); addCategoryItem(box, player, "Accolades", EVENT_ACCOLADES); addCategoryItem(box, player, "Librarian", EVENT_LIBRARIAN); addCategoryItem(box, player, "Racing", EVENT_RACING); addCategoryItem(box, player, "Death Star", EVENT_DEATH_STAR); break;
 	case BONUSES: addCategoryItem(box, player, "Combat", BONUS_COMBAT, false); addCategoryItem(box, player, "Utility", BONUS_UTILITY, false); addCategoryItem(box, player, "Crafting", BONUS_CRAFTING, false); break;
-	case BONUS_COMBAT: addCategoryItem(box, player, "Critical Chance", BONUS_CRIT_CHANCE, false); addCategoryItem(box, player, "Critical Multiplier", BONUS_CRIT_MULTI, false); addCategoryItem(box, player, "Double Attack", BONUS_DOUBLE, false); addCategoryItem(box, player, "Triple Attack", BONUS_TRIPLE, false); addCategoryItem(box, player, "Quad Attack", BONUS_QUAD, false); addCategoryItem(box, player, "Armor Penetration", BONUS_ARMOR_PEN, false); addCategoryItem(box, player, "Defense Cap", BONUS_DEF_CAP, false); break;
+	case BONUS_COMBAT: addCategoryItem(box, player, "Cri", BONUS_CRIT_CHANCE, false); addCategoryItem(box, player, "Crit Multi", BONUS_CRIT_MULTI, false); addCategoryItem(box, player, "Double", BONUS_DOUBLE, false); addCategoryItem(box, player, "Triple", BONUS_TRIPLE, false); addCategoryItem(box, player, "Quad", BONUS_QUAD, false); addCategoryItem(box, player, "Armor Penetration", BONUS_ARMOR_PEN, false); addCategoryItem(box, player, "Defense Cap", BONUS_DEF_CAP, false); break;
 	case BONUS_UTILITY: addCategoryItem(box, player, "Armor Degrade Reduction", BONUS_ARMOR_DEGRADE, false); addCategoryItem(box, player, "Weapon Degrade Reduction", BONUS_WEAPON_DEGRADE, false); addCategoryItem(box, player, "SEA Cap", BONUS_SEA_CAP, false); addCategoryItem(box, player, "Movement Speed", BONUS_MOVE_SPEED, false); addCategoryItem(box, player, "Buff Duration", BONUS_BUFF_DUR, false); addCategoryItem(box, player, "Experience Bonus", BONUS_EXP_BONUS, false); addCategoryItem(box, player, "Gathering Quantity", BONUS_GATHERING, false); break;
 	case BONUS_CRAFTING: addCategoryItem(box, player, "Practice XP", BONUS_PRACTICE_XP, false); addCategoryItem(box, player, "Crafting Speed", BONUS_CRAFT_SPEED, false); addCategoryItem(box, player, "Amazing Success", BONUS_AMAZING_SUCCESS, false); addCategoryItem(box, player, "Amazing Results", BONUS_AMAZING_RESULTS, false); break;
 	case SERVER_CONFIG: addCategoryItem(box, player, "Mod Options", MOD_OPTIONS, false); addCategoryItem(box, player, "SWGEMU Options", SWGEMU_OPTIONS, false); break;
@@ -387,7 +400,7 @@ CustomSkillsMenu::Page CustomSkillsMenu::getParent(Page page) {
 }
 
 String CustomSkillsMenu::getTitle(Page page) {
-	static const char* const titles[] = {"Custom Skills", "Custom Skills > Badges", "Badges > Milestone Badges", "Badges > Exploration", "Badges > Profession", "Badges > Quest", "Badges > Event", "Exploration > Milestone Exploration", "Exploration > Corellia", "Exploration > Dantooine", "Exploration > Dathomir", "Exploration > Endor", "Exploration > Lok", "Exploration > Naboo", "Exploration > Rori", "Exploration > Talus", "Exploration > Tatooine", "Exploration > Yavin IV", "Profession > Combat", "Profession > Crafting", "Profession > Outdoors", "Profession > Science", "Profession > Social", "Profession > Pilot", "Quest > Hero of Tatooine", "Quest > Warren", "Quest > Theme Parks", "Quest > Corellian Corvette", "Event > Cries of Alderaan", "Event > Accolades", "Event > Librarian", "Event > Racing", "Event > Death Star", "Custom Skills > Bonuses", "Bonuses > Combat", "Bonuses > Utility", "Bonuses > Crafting", "Combat > Critical Chance", "Combat > Critical Multiplier", "Combat > Double Attack", "Combat > Triple Attack", "Combat > Quad Attack", "Combat > Armor Penetration", "Combat > Defense Cap", "Utility > Armor Degrade Reduction", "Utility > Weapon Degrade Reduction", "Utility > SEA Cap", "Utility > Movement Speed", "Utility > Buff Duration", "Utility > Experience Bonus", "Utility > Gathering Quantity", "Crafting > Practice XP", "Crafting > Crafting Speed", "Crafting > Amazing Success", "Crafting > Amazing Results", "Custom Skills > Server Config", "Server Config > Mod Options", "Mod Options > Rarity Naming", "Server Config > SWGEMU Options"};
+	static const char* const titles[] = {"Custom Skills", "Custom Skills > Badges", "Badges > Milestone Badges", "Badges > Exploration", "Badges > Profession", "Badges > Quest", "Badges > Event", "Exploration > Milestone Exploration", "Exploration > Corellia", "Exploration > Dantooine", "Exploration > Dathomir", "Exploration > Endor", "Exploration > Lok", "Exploration > Naboo", "Exploration > Rori", "Exploration > Talus", "Exploration > Tatooine", "Exploration > Yavin IV", "Profession > Combat", "Profession > Crafting", "Profession > Outdoors", "Profession > Science", "Profession > Social", "Profession > Pilot", "Quest > Hero of Tatooine", "Quest > Warren", "Quest > Theme Parks", "Quest > Corellian Corvette", "Event > Cries of Alderaan", "Event > Accolades", "Event > Librarian", "Event > Racing", "Event > Death Star", "Custom Skills > Bonuses", "Bonuses > Combat", "Bonuses > Utility", "Bonuses > Crafting", "Combat > Cri", "Combat > Crit Multi", "Combat > Double", "Combat > Triple", "Combat > Quad", "Combat > Armor Penetration", "Combat > Defense Cap", "Utility > Armor Degrade Reduction", "Utility > Weapon Degrade Reduction", "Utility > SEA Cap", "Utility > Movement Speed", "Utility > Buff Duration", "Utility > Experience Bonus", "Utility > Gathering Quantity", "Crafting > Practice XP", "Crafting > Crafting Speed", "Crafting > Amazing Success", "Crafting > Amazing Results", "Custom Skills > Server Config", "Server Config > Mod Options", "Mod Options > Rarity Naming", "Server Config > SWGEMU Options"};
 	static_assert(sizeof(titles) / sizeof(titles[0]) == static_cast<size_t>(Page::SWGEMU_OPTIONS) + 1, "titles[] out of sync with Page enum");
 	int index = static_cast<int>(page);
 	if (index < 0 || index >= static_cast<int>(sizeof(titles) / sizeof(titles[0])))
