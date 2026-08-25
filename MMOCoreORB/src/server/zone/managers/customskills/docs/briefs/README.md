@@ -55,7 +55,7 @@ reading only what the brief lists -- no conversation history required.
 | [`006-reconcile-recording-conventions-with-alice.md`](006-reconcile-recording-conventions-with-alice.md) | Reconcile recording conventions with Project Alice framework (slots, short format, deviations) | DELIVERED |
 | [`007-remove-hardcoded-critical-chance-defaults.md`](007-remove-hardcoded-critical-chance-defaults.md) | Remove residual C++ critical-chance seed/defaults; restore 60% cap via 60 explicit badge overrides | DELIVERED |
 | [`008-deep-audit-module-code.md`](008-deep-audit-module-code.md) | Deep quality audit of all module-owned code; file ERR entries and produce remediation brief(s) | DELIVERED |
-| [`009-condense-doc-formatting.md`](009-condense-doc-formatting.md) | Condense all guides; enforce heading hierarchy, section delimiters, feature-section template, TOCs | UNCLAIMED |
+| [`009-condense-doc-formatting.md`](009-condense-doc-formatting.md) | Condense all guides; enforce heading hierarchy, section delimiters, feature-section template, TOCs | DELIVERED |
 | [`010-combat-spam-labels-investigation-and-fix.md`](010-combat-spam-labels-investigation-and-fix.md) | Combat spam labels: same-line append fix, enable/disable switch, menu listing; removal fallback needs owner sign-off | DELIVERED |
 | [`013-delegated-broadcast-combat-spam.md`](013-delegated-broadcast-combat-spam.md) | Delegate broadcastCombatSpam to module code; same-line labels via raw-text full lines | WITHDRAWN |
 | [`014-remove-combat-spam-labels.md`](014-remove-combat-spam-labels.md) | Remove combat spam label feature entirely from code, config, and docs (owner decision) | UNCLAIMED |
