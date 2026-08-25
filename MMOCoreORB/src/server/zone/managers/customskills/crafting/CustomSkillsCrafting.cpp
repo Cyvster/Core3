@@ -101,6 +101,8 @@ void CustomSkillsCrafting::applyAmazingResults(CreatureObject* crafter, Crafting
 #include "server/zone/ZoneServer.h"
 #include "server/zone/objects/player/PlayerObject.h"
 #include "server/zone/objects/manufactureschematic/ManufactureSchematic.h"
+#include "server/zone/objects/draftschematic/DraftSchematic.h"
+#include "templates/crafting/draftslot/DraftSlot.h"
 #include "server/zone/objects/tangible/tool/CraftingTool.h"
 #include "server/zone/objects/player/sessions/crafting/CraftingSession.h"
 #include "server/zone/objects/tangible/tool/CraftingStation.h"
@@ -153,7 +155,11 @@ void CustomSkillsCrafting::storeRepeatRecipe(CraftingTool* tool,
 	clearRepeatRecipe(tool);
 
 	cs36Put(tool, "schematicCrc", String::valueOf(draft->getClientObjectCRC()));
-	cs36Put(tool, "slotCount", String::valueOf(schematic->getSlotCount()));
+	// ERR-020 fix: counts/quantities come from the DRAFT schematic (static per
+	// schematic, identical every session). The session ManufactureSchematic's
+	// slots are post-fill/post-consume at snapshot time and do NOT match a
+	// fresh session's pristine slots.
+	cs36Put(tool, "slotCount", String::valueOf(draft->getDraftSlotCount()));
 
 	for (int i = 0; i < schematic->getSlotCount(); ++i) {
 		IngredientSlot* slot = schematic->getSlot(i);
@@ -175,6 +181,13 @@ void CustomSkillsCrafting::storeRepeatRecipe(CraftingTool* tool,
 		}
 
 		cs36Put(tool, key + "type", value);
+		if (i < draft->getDraftSlotCount()) {
+			DraftSlot* dSlot = draft->getDraftSlot(i);
+			if (dSlot != nullptr) {
+				cs36Put(tool, key + "qty", String::valueOf(dSlot->getQuantity()));
+				continue;
+			}
+		}
 		cs36Put(tool, key + "qty", String::valueOf(slot->getQuantityNeeded()));
 	}
 
@@ -277,12 +290,13 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 	CraftingStation* station =
 			playerMan != nullptr ? playerMan->getNearbyCraftingStation(player, tool->getToolType()) : nullptr;
 
-	// Cancel any active crafting session first (mirrors RequestCraftingSessionCommand).
-	Reference<CraftingSession*> oldSession =
+	// ERR-020 fix: never auto-cancel a session the player started via the tool
+	// UI -- doing so wedged the tool's state machine (owner incident 08252026).
+	Reference<CraftingSession*> activeSession =
 			player->getActiveSession(SessionFacadeType::CRAFTING).castTo<CraftingSession*>();
-	if (oldSession != nullptr) {
-		Locker slocker(oldSession);
-		oldSession->cancelSession();
+	if (activeSession != nullptr) {
+		player->sendSystemMessage("Repeat-craft: finish or cancel your current crafting session first.");
+		return QueueCommand::GENERALERROR;
 	}
 
 	ManagedReference<CraftingSession*> session = new CraftingSession(player);
@@ -322,15 +336,27 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 		return QueueCommand::GENERALERROR;
 	}
 
+	// ERR-020 fix: compare against the DRAFT schematic's static slot data.
+	// The stored values were captured from draft quantities, so compare like
+	// with like -- a fresh session's slots should equal draft quantities every
+	// time; only a genuine schematic change triggers a discard now.
+	Reference<DraftSchematic*> liveDraft = manf->getDraftSchematic();
 	int snapshotSlots = Integer::valueOf(cs36Get(tool, "slotCount"));
 	bool mismatch = false;
 
-	if (manf->getSlotCount() != snapshotSlots) {
+	if (liveDraft == nullptr || manf->getSlotCount() != snapshotSlots) {
 		mismatch = true;
 	} else {
 		for (int i = 0; i < manf->getSlotCount() && !mismatch; ++i) {
 			IngredientSlot* slot = manf->getSlot(i);
-			if (slot == nullptr || slot->getQuantityNeeded()
+			int draftQty = -1;
+			if (i < liveDraft->getDraftSlotCount()) {
+				DraftSlot* dSlot = liveDraft->getDraftSlot(i);
+				if (dSlot != nullptr)
+					draftQty = (int)dSlot->getQuantity();
+			}
+			if (slot == nullptr || slot->getQuantityNeeded() != draftQty
+					|| slot->getQuantityNeeded()
 					!= Integer::valueOf(cs36Get(tool, "slot." + String::valueOf(i) + ".qty"))) {
 				mismatch = true;
 			}
