@@ -105,5 +105,5 @@ migration; git-history objective resolved.
 
 ## Contributors
 
-- **Daniel** -- project owner
+- **Cyvster** -- project owner
 - ox-alpha (opencode/x-preview-f-free), 08232026 -- initial tracker

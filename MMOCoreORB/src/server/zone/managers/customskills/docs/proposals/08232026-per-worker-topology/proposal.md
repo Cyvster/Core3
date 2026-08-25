@@ -2,7 +2,7 @@
 
 **Proposed by:** ox-alpha (opencode/x-preview-f-free), 08232026
 **Last updated:** 08232026 by ox-alpha (opencode/x-preview-f-free)
-**Status:** POLICY ADOPTED -- Daniel (directive), 08232026; provisioning
+**Status:** POLICY ADOPTED -- Cyvster (directive), 08232026; provisioning
 pending
 **Trigger:** The shared working tree is the ROOT cause of tonight's
 collisions (errata clobber; duplicate brief delivery). Push/staging/sync
@@ -29,7 +29,7 @@ an explicit gate.
 
 | Covers | Excludes |
 |--------|----------|
-| Policy: per-worker clone/worktree + personal branch | Provisioning mechanics (Daniel's environment) |
+| Policy: per-worker clone/worktree + personal branch | Provisioning mechanics (Cyvster's environment) |
 | Integration via explicit rebase/merge gate | CI automation |
 | Interim single-scope-staggering rule until provisioned | Retiring the guard proposals |
 
@@ -57,7 +57,7 @@ E5. INTERIM RULE (effective now, until provisioning): concurrent sessions
 ## 5. Integration plan
 
 Phase 1 (this adoption): process.md gains "Repository topology" section
-stating policy + interim rule. Phase 2: Daniel provisions clones/worktrees
+stating policy + interim rule. Phase 2: Cyvster provisions clones/worktrees
 and declares the gate branch. Phase 3: E4 sunset evaluation.
 
 ## 6. Relationship matrix
@@ -70,7 +70,7 @@ and declares the gate branch. Phase 3: E4 sunset evaluation.
 
 ## 7. Implementation notes
 
-Open question for Daniel: preferred mechanism -- separate clones vs
+Open question for Cyvster: preferred mechanism -- separate clones vs
 `git worktree` on one machine. Either satisfies E1.
 
 ## 8. Revision log

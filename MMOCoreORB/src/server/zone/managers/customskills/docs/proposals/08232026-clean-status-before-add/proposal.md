@@ -2,7 +2,7 @@
 
 **Proposed by:** ox-alpha (opencode/x-preview-f-free), 08232026
 **Last updated:** 08232026 by ox-alpha (opencode/x-preview-f-free)
-**Status:** ADOPTED -- Daniel (directive), 08232026
+**Status:** ADOPTED -- Cyvster (directive), 08232026
 **Trigger:** Same-night collisions on the shared tree; framework source:
 Project Alice proposal `08232026-clean-status-before-add` (ADOPTED there),
 whose trigger incidents included a null-byte-corrupted rewrite and foreign

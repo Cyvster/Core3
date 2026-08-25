@@ -2,7 +2,7 @@
 
 **Proposed by:** ox-alpha (opencode/x-preview-f-free), 08232026
 **Last updated:** 08232026 by ox-alpha (opencode/x-preview-f-free)
-**Status:** ADOPTED -- Daniel (directive), 08232026
+**Status:** ADOPTED -- Cyvster (directive), 08232026
 **Trigger:** Two same-night collisions on this repository's shared tree:
 (1) an errata-duty pass was written against a stale snapshot and raced a
 concurrent session's commit to `docs/rules/errata.md`; (2) BRIEF-004 was

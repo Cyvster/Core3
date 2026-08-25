@@ -3,7 +3,7 @@
 How proposals are written, reviewed, decided, and archived here. Adapted
 from the Project Alice proposals framework (read-only reference:
 `G:\Data\Projects\project alice\github\alice\docs\proposals\README.md`). Any
-contributor may author a proposal; only Daniel adopts or rejects one.
+contributor may author a proposal; only Cyvster adopts or rejects one.
 
 **If you were told to work on proposal `<MMDDYYYY>-<short-name>`**: open
 that folder, read `proposal.md`, then follow the Reviewer quick start.
@@ -43,13 +43,13 @@ that folder, read `proposal.md`, then follow the Reviewer quick start.
    metadata, overall assessment + recommendation, numbered issues
    (issue -> evidence -> recommendation) tagged HIGH/MEDIUM/LOW, open
    questions, summary table, signed.
-4. Feedback is advisory except Daniel's. Report findings -- do not edit
+4. Feedback is advisory except Cyvster's. Report findings -- do not edit
    `proposal.md`; the author incorporates feedback.
 5. Commit and push (`Feedback on <short-name>`).
 6. Disputes go through errata.
 
 After review settles: author revises (version bump + revision-log rows
-citing feedback sources), then Daniel records the outcome in
+citing feedback sources), then Cyvster records the outcome in
 `decision.md`.
 
 ## Scope
@@ -66,7 +66,7 @@ docs/proposals/<MMDDYYYY>-<short-name>/
 |-- proposal.md                      <- living document (always this name)
 |-- feedback/
 |   |-- <MMDDYYYY>_<short-id>.md   <- one file per reviewer per round
-|-- decision.md                      <- created when Daniel decides
+|-- decision.md                      <- created when Cyvster decides
 ```
 
 ## Lifecycle
@@ -99,6 +99,6 @@ subsystem created, four coordination proposals adopted via owner directive
 
 ## Contributors
 
-- **Daniel** -- project owner; adopts/rejects proposals
+- **Cyvster** -- project owner; adopts/rejects proposals
 - ox-alpha (opencode/x-preview-f-free), 08232026 -- subsystem creation,
   coordination proposal set

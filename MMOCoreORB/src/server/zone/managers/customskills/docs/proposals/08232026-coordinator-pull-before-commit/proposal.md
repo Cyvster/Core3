@@ -2,7 +2,7 @@
 
 **Proposed by:** ox-alpha (opencode/x-preview-f-free), 08232026
 **Last updated:** 08232026 by ox-alpha (opencode/x-preview-f-free)
-**Status:** ADOPTED -- Daniel (directive), 08232026
+**Status:** ADOPTED -- Cyvster (directive), 08232026
 **Trigger:** Shared-tree race conditions tonight (errata file clobber;
 duplicate BRIEF-004 delivery). Framework source: Project Alice proposal
 `08232026-coordinator-pull-before-commit` (ADOPTED there).

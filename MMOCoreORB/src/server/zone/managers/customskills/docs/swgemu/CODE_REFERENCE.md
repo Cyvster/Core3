@@ -651,7 +651,7 @@ doc updates together under your traceability tag.
 ### Client data archives (TRE builder)
 
 Some module artifacts live in the server's data archives, maintained in
-Daniel's TRE builder workspace (`G:\Data\swgemu server\TRE builder\`),
+the operator's TRE builder workspace workspace (`G:\Data\swgemu server\TRE builder\`),
 outside this repository:
 
 **Datatable rows** (e.g. Challenge Tier skill trees) are appended to

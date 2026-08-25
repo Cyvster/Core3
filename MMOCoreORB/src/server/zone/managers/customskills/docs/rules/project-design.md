@@ -137,13 +137,13 @@ Current objective state lives in `docs/tracking/objectives.md` [OBJ].
   `docs/feature-planning/CHALLENGE_TIER_SKILLS.md`).
 - Skill display strings per Challenge Tier box.
 
-Changes to open areas are decided by Daniel and recorded either here (if
+Changes to open areas are decided by Cyvster and recorded either here (if
 they become design rules) or in the feature-planning document (if they
 remain feature-local decisions).
 
 ## Contributors
 
-- **Daniel** -- project owner; final authority on design decisions
+- **Cyvster** -- project owner; final authority on design decisions
 - ox-alpha (opencode/x-preview-f-free), 08232026 -- initial structure,
   consolidating principles formerly spread across ARCHITECTURE.md and
   archive/DESIGN.md

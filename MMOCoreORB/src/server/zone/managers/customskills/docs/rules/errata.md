@@ -38,7 +38,7 @@ instructions.
    |--------------------------------|-------------------------|---------------------|
    | You filed it                   | yes                     | NO                  |
    | Neither of the above           | yes                     | yes                 |
-   | Daniel                         | always                  | always              |
+   | Cyvster                        | always                  | always              |
 
 4. Resolution (OPEN entries):
    - Reproduce or confirm the issue yourself before proposing anything:
@@ -66,9 +66,9 @@ instructions.
    else verified), stop and report back -- do not invent work.
 
 Verification eligibility summary: the FILER never verifies their own entry;
-anyone else may; Daniel is exempt from both restrictions.
+anyone else may; Cyvster is exempt from both restrictions.
 
-> **Owner delegation ([DIRECTIVE 08242026]):** Daniel (project owner;
+> **Owner delegation ([DIRECTIVE 08242026]):** Cyvster (project owner;
 > "Cyvster" online) authorized sole-worker sessions to perform their own
 > verification. Verbatim: "you are the single worker. you will need to
 > perform your own verification. note that you were delegated this
@@ -108,7 +108,7 @@ guide -- are filed HERE as `ERR-NNN`.
    included but must be stamped with the date they were valid. "It seems
    wrong" is not evidence.
 3. **Two-party rule.** A correction is applied only after verification by
-   someone other than its proposer: another LLM session, or Daniel.
+   someone other than its proposer: another LLM session, or Cyvster.
 4. **Sign everything.** Per [PROC R6.8 conventions], every entry, finding,
    verification, and resolution carries the contributor signature.
 5. **Errata duty.** Any contributor who opens this document attempts at
@@ -126,7 +126,7 @@ OPEN --> AWAITING-VERIFICATION --> RESOLVED
                  |
                  v
           HUMAN-REVIEW (structural/destructive edits, or conflicting
-                        verifications; Daniel decides)
+                        verifications; Cyvster decides)
 ```
 
 - **OPEN** -- filed with evidence; unverified.
@@ -183,7 +183,7 @@ explaining what fails so the proposer can revise.
 4. Note application in your delivery/commit record:
    `Apply ERR-NNN: <short title>` per [PROC R6.8].
 
-Daniel may resolve, reject, or apply any entry directly.
+Cyvster may resolve, reject, or apply any entry directly.
 
 ## Template
 
@@ -257,7 +257,7 @@ Daniel may resolve, reject, or apply any entry directly.
 
 ## Contributors
 
-- **Daniel** -- project owner; may resolve/reject any entry directly
+- **Cyvster** -- project owner; may resolve/reject any entry directly
 - ox-alpha (opencode/x-preview-f-free), 08232026 -- initial protocol,
   generalizing archive/CODE_GUIDE_ERRATA.md Part 2 with the two-party
   lifecycle
@@ -283,7 +283,7 @@ Daniel may resolve, reject, or apply any entry directly.
 - Proposed fix (minimal, preserves [CS-4] table-driven design): change `CustomSkillsModifiers::getCriticalChance(PlayerObject*)` to aggregate from CustomSkillsConfig's loaded CRITICAL_CHANCE badge map (the same source the menu uses) instead of the static array; retire or repurpose `combatProfessionBadges` + `getBadgeCriticalChance`; keep the 10000 clamp. Alternative (b): revert `criticalChance.badges` in config.lua to the 12 combat mastery keys -- smaller diff but keeps dual bookkeeping. Direction is an owner decision; (a) recommended.
 - Findings: filed during errata duty while investigating BRIEF-004 precursor questions. The MODIFIER_REFERENCE staleness banner says "treat config.lua as authoritative" -- that guidance is itself wrong for Critical Chance until this entry resolves.
 - Verification (diagnosis only), 08232026 by hy3-free (opencode/hy3-free): confirmed against code. Combat path: `CustomSkillsCombat::applyDamage` (CustomSkillsCombat.cpp:16) called `CustomSkillsModifiers::getCriticalChance(ghost)` (CustomSkillsModifiers.cpp:40-58), which iterated ONLY the static `combatProfessionBadges` array at uniform `getCriticalChancePerCombatBadge()` and never read `modifierBadgeBonuses`/`getModifierTotal`. Menu path (CustomSkillsMenu.cpp:302) used `getModifierTotal(player, CRITICAL_CHANCE)` = config badge map. The two paths diverged, violating [CS-3].
-- Resolution: RESOLVED -- owner (Daniel) directed fix direction (a); applied 08232026 by hy3-free (opencode/hy3-free). `CustomSkillsModifiers::getCriticalChance(PlayerObject*)` now aggregates from `CustomSkillsConfig::getBadgeBonuses(CRITICAL_CHANCE)` (the same config badge map the SUI menu uses via `getModifierTotal`), applying the configured cap. Retired the hardcoded `combatProfessionBadges` static array, `isCombatProfessionBadge`, `getBadgeCriticalChance`, the 2-arg `getCriticalChance` overload, and the unused `CustomSkillsConfig::getCriticalChancePerCombatBadge()` getter. Combat and menu now share one source of truth ([CS-3]); config.lua badges are authoritative. Second-party verification by hy3-free (opencode/hy3-free), 08232026.
+- Resolution: RESOLVED -- owner (Cyvster) directed fix direction (a); applied 08232026 by hy3-free (opencode/hy3-free). `CustomSkillsModifiers::getCriticalChance(PlayerObject*)` now aggregates from `CustomSkillsConfig::getBadgeBonuses(CRITICAL_CHANCE)` (the same config badge map the SUI menu uses via `getModifierTotal`), applying the configured cap. Retired the hardcoded `combatProfessionBadges` static array, `isCombatProfessionBadge`, `getBadgeCriticalChance`, the 2-arg `getCriticalChance` overload, and the unused `CustomSkillsConfig::getCriticalChancePerCombatBadge()` getter. Combat and menu now share one source of truth ([CS-3]); config.lua badges are authoritative. Second-party verification by hy3-free (opencode/hy3-free), 08232026.
 
 
 ---
@@ -297,7 +297,7 @@ Daniel may resolve, reject, or apply any entry directly.
 - Severity: F5 (formatting/attribution clarity; no truth value)
 - Description: signatures were recorded as `opencode (opencode/hy3-free)` -- the harness name occupies the name slot. Per docs/rules/process.md -> Contributor Recording Conventions, the format is `<name/model> (<origin>), <date>`; the name slot takes the MODEL name. Correct form: `hy3-free (opencode/hy3-free)`. This matters here because all workers commit under the shared machine git identity (`Cyvster`), so document signatures are the ONLY worker-attribution record in the repository.
 - Evidence: process.md signing format + examples; contrast with the same contributor's correctly-signed entries in the Project Alice repository (`hy3-free (opencode/hy3-free)`, 08232026).
-- Proposed fix: hy3-free re-signs the affected lines in their own voice at next session (Rule 2 -- other entities do not edit another contributor's signatures). Instance list available via grep pattern `opencode (opencode/hy3` outside archive/. Alternatively Daniel may authorize a mechanical replacement.
+- Proposed fix: hy3-free re-signs the affected lines in their own voice at next session (Rule 2 -- other entities do not edit another contributor's signatures). Instance list available via grep pattern `opencode (opencode/hy3` outside archive/. Alternatively Cyvster may authorize a mechanical replacement.
 - Findings: filed as a note-for-contributor during errata duty; no dispute, purely format.`n- Resolution: RESOLVED -- hy3-free self-corrected all affected signatures before any external edit (repo-wide grep 08232026: 17 instances of correct `hy3-free (opencode/hy3-free)` form, 0 remaining wrong-form instances outside this entry's own quoted evidence and the BRIEF-006 problem statement). F5 formatting entry: closure is a mechanical grep verification recorded by the filer; any contributor may re-open with counter-evidence. -- ox-alpha (opencode/x-preview-f-free), 08232026
 - Resolution: RESOLVED -- hy3-free re-signed all affected lines in their own voice: `opencode (opencode/hy3-free)` -> `hy3-free (opencode/hy3-free)` across START-HERE.md, docs/rules/errata.md, docs/reference/ARCHITECTURE.md, docs/briefs/README.md, and docs/briefs/005-single-source-badge-rule.md. The quoted wrong-form example in the Description above is intentionally retained as evidence. Applied 08232026 by hy3-free (opencode/hy3-free); second-party verification by hy3-free (opencode/hy3-free) (non-filer of this entry).
 - Findings: BRIEF-006 (08242026) codified explicit name-slot/origin-slot
@@ -306,7 +306,7 @@ Daniel may resolve, reject, or apply any entry directly.
   takes the model/persona identifier used in Contributors rosters; the
   origin slot takes the harness/model-id string. Routing unchanged:
   re-signing remains the contributor's own action, or a mechanical
-  replacement authorized by Daniel. -- ox-alpha
+  replacement authorized by Cyvster. -- ox-alpha
   (opencode/x-preview-f-free), 08242026
 
 ---
@@ -341,7 +341,7 @@ Daniel may resolve, reject, or apply any entry directly.
   through the owner-specified 60-badge x 100 bp override set
   ([BRIEF-007]).
 - Findings: discovered 08242026 during the badge-bonus rebalancing
-  session when Daniel asked what the code does when the critical chance
+  session when Cyvster asked what the code does when the critical chance
   value is empty. Interim commit `049ef1d0d0` (badgeBonus = 0) exposed
   the hidden layer by dropping full-set players from 60% to 12% pending
   this fix. -- ox-alpha (opencode/x-preview-f-free), 08242026

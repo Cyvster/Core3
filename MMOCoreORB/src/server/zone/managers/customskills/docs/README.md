@@ -90,8 +90,8 @@ research not intended to become permanent documentation.
 
 | Type | When destroyed | Who decides |
 |------|---------------|-------------|
-| `temp/` contents | Periodic cleanup | Daniel |
-| Superseded feature-planning docs | Moved to `archive/` at feature completion | Daniel |
+| `temp/` contents | Periodic cleanup | Cyvster |
+| Superseded feature-planning docs | Moved to `archive/` at feature completion | Cyvster |
 | Errata entries | Never deleted (permanent audit trail) | Nobody |
 | Archive contents | Never deleted | Nobody |
 
