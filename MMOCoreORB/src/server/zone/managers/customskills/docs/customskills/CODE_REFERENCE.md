@@ -1514,3 +1514,39 @@ at 1500); the FIRST cliff is client-side listbox rendering around 1000-1500
 rows in one SUI page -- SuiListBoxImplementation imposes no row cap, so the
 server ships it intact and the client chokes. Keep pages lazy/paged (already
 true) with a soft cap ~250 rows/page if content grows.
+
+## Crafting Session Lifecycle (R6.9, BRIEF-035)
+
+Durable facts about inventory-tool crafting (research only; no code changed).
+
+**Objects**: one `CraftingSession`
+(`objects/player/sessions/crafting/CraftingSessionImplementation.cpp`) per
+craft, created by `requestcraftingsession` (RequestCraftingSessionCommand.h:120).
+Tool states: READY/WORKING/FINISHED (CraftingTool.idl:41-43); tool holds max
+one prototype (CraftingToolImplementation.cpp:56).
+
+**State machine** (`state` field): 1 = schematic list -> 2 = resource screen
+(`selectDraftSchematic`) -> 3/4 = assembly done w/ or w/o experimentation
+(`initialAssembly`, station + exp-rows/factory check at :841) -> 5 =
+customization done (`customization()` :1330) -> 6 final. Every transition is a
+client queue command / ObjectController packet (0x106 experiment, 0x107/0x108
+ingredient add/remove, 0x15A customization; registered ZonePacketHandler.cpp:207-210;
+stage commands NextCraftingStage/CreatePrototype/SelectDraftSchematic).
+
+**Session end is unconditional**: `createPrototype()` (:1372) awards XP,
+schedules `CreateObjectTask` (timer = complexity*2 through
+CustomSkillsCrafting::getPersonalCraftingDuration), then always calls
+`cancelSession()` (:1415). Resources are consumed at assembly and never
+recovered on success (:952; critical failure re-slots via
+`synchronizedUIListen` :959). `CreateObjectTask` transfers the prototype to
+inventory and sets tool READY, or parks it FINISHED if inventory full.
+
+**Repeat-craft implication**: sessions are strictly one-shot; "repeat" must be
+an assisted pre-fill of a fresh session (snapshot draft-schematic CRC +
+per-slot resource names + exp row/point pairs + customization data), not a
+server-side loop. Factory mass-production precedent:
+FactoryObjectImplementation::createNewObject() loops on persisted
+ManufactureSchematic + stored prototype with manufactureLimit countdown.
+Practice XP is xp*1.05 with identical resource cost -- repeats don't change
+XP-per-resource ratio but do remove inter-craft time when Crafting Speed is
+stacked (clamp >=1s), so auto-repeat should exclude practice mode.
