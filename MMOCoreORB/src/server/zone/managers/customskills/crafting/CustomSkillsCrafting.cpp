@@ -99,6 +99,7 @@ void CustomSkillsCrafting::applyAmazingResults(CreatureObject* crafter, Crafting
 #include "server/zone/objects/manufactureschematic/ingredientslots/ResourceSlot.h"
 #include "server/zone/objects/manufactureschematic/ingredientslots/ComponentSlot.h"
 #include "server/zone/managers/player/PlayerManager.h"
+#include "server/zone/objects/creature/commands/QueueCommand.h"
 #include "server/zone/managers/customskills/CustomSkillsConfig.h"
 
 static const char* CS36_PREFIX = "cs36.";
@@ -152,12 +153,12 @@ void CustomSkillsCrafting::storeRepeatRecipe(CraftingTool* tool,
 int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID) {
 	if (!CustomSkillsConfig::instance()->isRepeatEnabled()) {
 		player->sendSystemMessage("Repeat-craft is disabled on this server.");
-		return GENERALERROR;
+		return QueueCommand::GENERALERROR;
 	}
 
 	auto zoneServer = player->getZoneServer();
 	if (zoneServer == nullptr)
-		return GENERALERROR;
+		return QueueCommand::GENERALERROR;
 
 	ManagedReference<SceneObject*> target = zoneServer->getObject(targetID);
 
@@ -184,23 +185,23 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 
 	if (tool == nullptr || !tool->isASubChildOf(player)) {
 		player->sendSystemMessage("Repeat-craft: no crafting tool found.");
-		return GENERALERROR;
+		return QueueCommand::GENERALERROR;
 	}
 
 	const String crcStr = cs36Get(tool, "schematicCrc");
 	if (crcStr.isEmpty()) {
 		player->sendSystemMessage("Repeat-craft: this tool has no stored recipe. Craft something first.");
-		return GENERALERROR;
+		return QueueCommand::GENERALERROR;
 	}
 
 	if (tool->isFinished()) {
 		player->sendSystemMessage("@system_msg:crafting_tool_full");
-		return GENERALERROR;
+		return QueueCommand::GENERALERROR;
 	}
 
 	if (tool->isBusy()) {
 		player->sendSystemMessage("@system_msg:crafting_tool_creating_prototype");
-		return GENERALERROR;
+		return QueueCommand::GENERALERROR;
 	}
 
 	uint32 crc = (uint32)strtoul(crcStr.toCharArray(), nullptr, 10);
@@ -223,7 +224,7 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 
 	if (!session->initializeSession(tool, station)) {
 		player->sendSystemMessage("@ui_craft@err_no_crafting_tool");
-		return GENERALERROR;
+		return QueueCommand::GENERALERROR;
 	}
 
 	// Auto-select the snapshotted schematic by CRC within the freshly
@@ -244,7 +245,7 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 		tool->deleteLuaStringData(CS36_PREFIX + String("schematicCrc"));
 		Locker slock(session);
 		session->cancelSession();
-		return GENERALERROR;
+		return QueueCommand::GENERALERROR;
 	}
 
 	session->selectDraftSchematic(index);
@@ -252,7 +253,7 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 	// ---- Pre-fill: re-validate every slot against live inventory ----------
 	ManagedReference<ManufactureSchematic*> manf = session->getSchematic();
 	if (manf == nullptr) {
-		return GENERALERROR;
+		return QueueCommand::GENERALERROR;
 	}
 
 	int snapshotSlots = Integer::valueOf(cs36Get(tool, "slotCount"));
@@ -276,7 +277,7 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 		tool->deleteLuaStringData(CS36_PREFIX + String("schematicCrc"));
 		Locker slock(session);
 		session->cancelSession();
-		return GENERALERROR;
+		return QueueCommand::GENERALERROR;
 	}
 
 	// Session::addIngredient resolves the crafted-components satchel itself.
@@ -341,5 +342,5 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 		session->addIngredient(found, i, 0);
 	}
 
-	return SUCCESS;
+	return QueueCommand::SUCCESS;
 }
