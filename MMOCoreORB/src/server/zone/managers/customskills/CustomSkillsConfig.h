@@ -31,6 +31,13 @@ public:
 	int getBadgeBonus(CustomSkillsModifierType::Type type, const String& badgeKey) const;
 	const VectorMap<String, int>& getBadgeBonuses(CustomSkillsModifierType::Type type) const;
 
+	// BRIEF-043: mission terminal direction/difficulty option knobs.
+	bool isMissionOptionsEnabled() const { return missionOptionsEnabled; }
+	bool isMissionDirectionEnabled() const { return missionDirectionEnabled; }
+	bool isMissionDifficultyEnabled() const { return missionDifficultyEnabled; }
+	int getMissionListSize() const { return missionListSize; }
+	bool isDescriptiveMissionTitlesEnabled() const { return descriptiveTitles; }
+
 private:
 	bool criticalChanceEnabled;
 	int criticalChanceFallbackBonus;
@@ -51,6 +58,14 @@ private:
 	bool chatTagEnabled;
 
 	// BRIEF-036: repeat-craft assisted pre-fill state.
+
+	// BRIEF-043: mission terminal options state.
+	static const int DEFAULT_MISSION_LIST_SIZE = 3;
+	bool missionOptionsEnabled;
+	bool missionDirectionEnabled;
+	bool missionDifficultyEnabled;
+	int missionListSize;
+	bool descriptiveTitles;
 
 	static const int DEFAULT_FCT_SCALE_STEP_BP = 1500;
 	static const int DEFAULT_FCT_CRIT_BONUS_BP = 2500;

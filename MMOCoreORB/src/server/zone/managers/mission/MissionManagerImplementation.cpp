@@ -34,6 +34,7 @@
 #include "server/zone/managers/stringid/StringIdManager.h"
 #include "server/zone/objects/player/FactionStatus.h"
 #include "server/zone/managers/visibility/VisibilityManager.h"
+#include "server/zone/managers/customskills/missions/CustomSkillsMissions.h" // BRIEF-043 mod hooks
 #include "server/zone/objects/building/BuildingObject.h"
 #include "server/zone/managers/director/DirectorManager.h"
 
@@ -266,7 +267,10 @@ void MissionManagerImplementation::handleMissionAccept(MissionTerminal* missionT
 	}
 
 	//Limit to two missions (only one of them can be a bounty mission)
-	if (missionCount >= 2 || (hasBountyMission && mission->getTypeCRC() == MissionTypes::BOUNTY)) {
+	//BRIEF-043 (mod hook): cap is config-driven (missions.missionListSize,
+	//vanilla default 3; cyvster2 hard-coded 6).
+	int missionListSize = CustomSkillsMissions::getMissionListSize();
+	if (missionCount >= missionListSize || (hasBountyMission && mission->getTypeCRC() == MissionTypes::BOUNTY)) {
 		StringIdChatParameter stringId("mission/mission_generic", "too_many_missions");
 		player->sendSystemMessage(stringId);
 		return;
@@ -589,6 +593,10 @@ void MissionManagerImplementation::handleMissionAbort(MissionObject* mission, Cr
 void MissionManagerImplementation::populateMissionList(MissionTerminal* missionTerminal, CreatureObject* player, int counter) {
 	Locker crossLocker(missionTerminal, player);
 
+	// BRIEF-043 (mod hook): read the player's direction/difficulty choices
+	// ONCE for this whole regeneration; per-mission hooks use the cache.
+	CustomSkillsMissions::cacheChoices(player);
+
 	bool slicer = missionTerminal->isSlicer(player);
 
 	if (missionTerminal->isGeneralTerminal()) {
@@ -611,6 +619,8 @@ void MissionManagerImplementation::populateMissionList(MissionTerminal* missionT
 	if (slicer)
 		missionTerminal->removeSlicer(player);
 
+	// BRIEF-043 (mod hook): drop this request's choice cache.
+	CustomSkillsMissions::clearChoices(player->getObjectID());
 }
 
 void MissionManagerImplementation::randomizeGeneralTerminalMissions(CreatureObject* player, int counter, bool slicer) {
@@ -833,7 +843,11 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 
 	int diffDisplay = difficultyLevel < 5 ? 4 : difficultyLevel;
 
-	if (player->isGrouped()) {
+	// BRIEF-043 (mod hook): player-chosen difficulty tier replaces the
+	// group-level calculation when set (cyvster2 M01).
+	if (CustomSkillsMissions::getDifficultyOverride(player) > 0) {
+		diffDisplay = CustomSkillsMissions::getDifficultyOverride(player);
+	} else if (player->isGrouped()) {
 		bool includeFactionPets = faction != Factions::FACTIONNEUTRAL || ConfigManager::instance()->includeFactionPetsForMissionDifficulty();
 		Reference<GroupObject*> group = player->getGroup();
 
@@ -871,7 +885,10 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 
 		int distance = destroyMissionBaseDistance + destroyMissionDifficultyDistanceFactor * difficultyLevel;
 		distance += System::random(destroyMissionRandomDistance) + System::random(destroyMissionDifficultyRandomDistance * difficultyLevel);
-		startPos = player->getWorldCoordinate((float)distance, (float)System::random(360), false);
+
+		// BRIEF-043 (mod hook): chosen compass heading +/- deviation wedge,
+		// or the vanilla random heading when no direction preference is set.
+		startPos = player->getWorldCoordinate((float)distance, CustomSkillsMissions::getMissionHeading(player, (float)System::random(360)), false);
 
 		if (zone->isWithinBoundaries(startPos)) {
 			float height = zone->getHeight(startPos.getX(), startPos.getY());
@@ -947,7 +964,13 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 	else
 		missionType = "_creature";
 
-	mission->setMissionTitle("mission/mission_destroy_neutral" + messageDifficulty + missionType, "m" + String::valueOf(randTexts) + "t");
+	// BRIEF-043 (mod hook): readable "CL<n> Destroy the <mobile>" title when
+	// enabled (cyvster2 M03 titles); otherwise the vanilla title below.
+	CustomSkillsMissions::applyDescriptiveTitle(mission, diffDisplay, lairTemplateObject);
+
+	if (mission->getMissionTitle().getStringID().isEmpty())
+		mission->setMissionTitle("mission/mission_destroy_neutral" + messageDifficulty + missionType, "m" + String::valueOf(randTexts) + "t");
+
 	mission->setMissionDescription("mission/mission_destroy_neutral" +  messageDifficulty + missionType, "m" + String::valueOf(randTexts) + "d");
 
 	switch (faction) {
@@ -1876,6 +1899,11 @@ LairSpawn* MissionManagerImplementation::getRandomLairSpawn(CreatureObject* play
 	bool foundLair = false;
 	int counter = availableLairList->size();
 	int playerLevel = server->getPlayerManager()->calculatePlayerLevel(player);
+
+	// BRIEF-043 (mod hook): chosen difficulty tier replaces the player/group
+	// level in the lair difficulty window when set (cyvster2 M01 site B).
+	if (CustomSkillsMissions::getLevelOverride(player) > 0)
+		playerLevel = CustomSkillsMissions::getLevelOverride(player);
 
 	if (player->isGrouped()) {
 		bool includeFactionPets = faction != Factions::FACTIONNEUTRAL || ConfigManager::instance()->includeFactionPetsForMissionDifficulty();

@@ -117,6 +117,47 @@ customSkillsConfig = {
 	},
 
 	-- ---------------------------------------------------------------------------
+	-- missions : mission terminal direction/difficulty options (BRIEF-043)
+	-- What it does : lets players pick, from the mission terminal radial menu,
+	--                a compass DIRECTION for destroy missions and a difficulty
+	--                LEVEL RANGE tier. Choices persist per character.
+	-- Why you care : replaces cyvster2's Lua menus with pure C++ SUIs; choices
+	--                are read ONCE per mission-list refresh (no stutter).
+	-- Fields       :
+	--   missionOptionsEnabled  master switch for ALL mission options
+	--                          (radial rows + overrides). false = fully vanilla.
+	--   directionOptionEnabled show "Mission Direction" radial row + menu;
+	--                          missions spawn within +/-5 degrees of the chosen
+	--                          heading instead of a random 360-degree heading.
+	--   difficultyOptionEnabled show "Mission Difficulty" radial row + menu;
+	--                          chosen tier replaces the player/group level when
+	--                          sizing destroy-mission difficulty.
+	--   missionListSize        how many ACCEPTED missions fit in the datapad.
+	--                          3 = vanilla default. Raise it (e.g. 6) to allow
+	--                          more simultaneous missions.
+	--   descriptiveTitles      true = destroy missions get readable titles like
+	--                          "CL25 Destroy the giant sand beetle lair."
+	--                          instead of the StringId table title.
+	-- Defaults     : all enabled; list size 3 (vanilla); titles on.
+	-- REAL EXAMPLE (commented out): bigger mission bag, no direction option:
+	--
+	-- missions = {
+	--     missionOptionsEnabled = true,
+	--     directionOptionEnabled = false,
+	--     difficultyOptionEnabled = true,
+	--     missionListSize = 6,
+	--     descriptiveTitles = true,
+	-- },
+	-- ---------------------------------------------------------------------------
+	missions = {
+		missionOptionsEnabled = true,
+		directionOptionEnabled = true,
+		difficultyOptionEnabled = true,
+		missionListSize = 3,           -- vanilla cap; owner may raise (e.g. 6)
+		descriptiveTitles = true,
+	},
+
+	-- ---------------------------------------------------------------------------
 
 	-- ---------------------------------------------------------------------------
 	-- criticalChance : chance for a landed attack to become a CRITICAL hit

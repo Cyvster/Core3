@@ -39,6 +39,14 @@ void CustomSkillsConfig::setDefaults() {
 	// BRIEF-036 defaults: repeat-craft OFF until the operator opts in;
 	// practice-mode repeats allowed (matches vanilla, owner directive).
 
+	// BRIEF-043 defaults: mission options ON (owner opt-in feature set);
+	// list size 3 = vanilla datapad cap; descriptive titles on.
+	missionOptionsEnabled = true;
+	missionDirectionEnabled = true;
+	missionDifficultyEnabled = true;
+	missionListSize = DEFAULT_MISSION_LIST_SIZE;
+	descriptiveTitles = true;
+
 	modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = true;
 	modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE] = 6000;
 }
@@ -249,6 +257,23 @@ void CustomSkillsConfig::load() {
 		chatTagEnabled = fct.getBooleanField("chatTagEnabled", true);
 	}
 	fct.pop();
+
+	// BRIEF-043: mission terminal direction/difficulty options.
+	LuaObject missions = root.getObjectField("missions");
+	if (missions.isValidTable()) {
+		missionOptionsEnabled = missions.getBooleanField("missionOptionsEnabled", true);
+		missionDirectionEnabled = missions.getBooleanField("directionOptionEnabled", true);
+		missionDifficultyEnabled = missions.getBooleanField("difficultyOptionEnabled", true);
+
+		int listSize = static_cast<int>(missions.getIntField("missionListSize", DEFAULT_MISSION_LIST_SIZE));
+		if (listSize > 0)
+			missionListSize = listSize;
+		else
+			warning("missions.missionListSize must be positive; using default");
+
+		descriptiveTitles = missions.getBooleanField("descriptiveTitles", true);
+	}
+	missions.pop();
 
 
 

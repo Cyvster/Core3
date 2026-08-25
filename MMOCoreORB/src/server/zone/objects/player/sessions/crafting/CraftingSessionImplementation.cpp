@@ -1414,13 +1414,6 @@ void CraftingSessionImplementation::createPrototype(int clientCounter, bool crea
 
 		manufactureSchematic->setCompleted();
 
-		// BRIEF-036: successful craft -- store the repeat-craft recipe
-		// snapshot on the tool (overwrites any previous recipe). When
-		// repeatAllowPractice is off, practice runs do NOT refresh it.
-		if (createItem || CustomSkillsConfig::instance()->isRepeatPracticeAllowed()) {
-			CustomSkillsCrafting::storeRepeatRecipe(craftingTool.get(), manufactureSchematic, lastExpAttempt);
-		}
-
 	} else {
 		closeCraftingWindow(clientCounter, false);
 
