@@ -56,6 +56,20 @@ is warranted.
 - [ ] Findings captured into customskills/CODE_REFERENCE.md (R6.9).
 - [ ] Commit `[BRIEF-033]`, push.
 
+## Scaling thresholds (owner addendum)
+
+The report must project performance at menu-size growth thresholds --
+**500 / 1000 / 1500 menu items** (items = total rendered rows across
+pages: badges + bonuses + options entries). For each threshold give:
+- per-open build time (measured or modeled),
+- SUI packet size in KB (payload grows linearly; note any client-side
+  listbox limits that bite before server cost does),
+- 1000-concurrent-players-open projection (queued ms, zone-task impact).
+
+If a threshold crosses a practical cliff (packet cap, client render
+break, task-queue starvation), state it explicitly and identify which
+threshold triggers it.
+
 ## Constraints
 
 - No behavior changes in this brief -- research only.
