@@ -519,3 +519,24 @@ Daniel may resolve, reject, or apply any entry directly.
   upstream reference before grepping local artifacts; local grep defines what
   is *verified*, not what *exists*.
 - COMMIT: ddd2cf6de9
+
+## ERR-013 -- ADMIN_COMMANDS.md format regressions during scripted rebuild
+- STATUS: RESOLVED
+- FILED: 08252026 by hy3-free (opencode/hy3-free)
+- SYMPTOM: Two successive script passes each broke one half of the house
+  list format on swgemu/ADMIN_COMMANDS.md: pass 1 emitted delegated catalog
+  lines verbatim (no backticks -> no command highlighting); pass 2 added
+  backticks but stripped GFM trailing double-space hard breaks (lines
+  collapsed into paragraphs). A third edit briefly corrupted the file via a
+  self-referential str.replace (21 MB explosion), caught by size check and
+  reverted before commit.
+- FIX: 0d48a6534c restored hard breaks on all 134 lines inside a code-fence
+  guard; 4a870e64aa had restored backticks. Final template per line:
+  `/cmd <syntax>` in ticks + em-dash desc + **Ex:** example in ticks +
+  file:line cite, ending with two spaces.
+- LESSON: (1) When scripting markdown transforms, preserve the ENTIRE line
+  template (both backticks AND hard-break suffix) in one pass -- never split
+  formatting properties across passes. (2) Never use str.replace where the
+  replacement contains or can re-match the search string; prefer line-based,
+  idempotent edits with a post-write size sanity check.
+- COMMITS: c87b829af1, 4a870e64aa, 0d48a6534c, 65c50000f9, 6c0802808f
