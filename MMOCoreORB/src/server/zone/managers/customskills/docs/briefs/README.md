@@ -65,6 +65,7 @@ reading only what the brief lists -- no conversation history required.
 | [`012-code-hygiene-cleanups.md`](012-code-hygiene-cleanups.md) | Enum/table safety asserts, loader consolidation, edge-case cleanups (behavior-preserving) | DELIVERED |
 | [`017-verify-badge-reconfiguration.md`](017-verify-badge-reconfiguration.md) | Independent verification + completion of the badge reconfiguration; repair config corruption + doc sweep | DELIVERED |
 | [`018-document-swgemu-admin-commands.md`](018-document-swgemu-admin-commands.md) | Document SWGEmu admin (GM) commands in a dedicated `swgemu/` section: permission chain, command table, worked operator scenarios | UNCLAIMED |
+| [`019-enforce-discovery-capture.md`](019-enforce-discovery-capture.md) | Make R6.9 discovery capture a standing, unmissable procedure (checklist + gotcha convention) | DELIVERED |
 
 ## Notes
 

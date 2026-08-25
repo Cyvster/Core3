@@ -49,7 +49,13 @@ Deeper reference is indexed in [../README.md](../README.md).
    same commit set ([R6.6]); newly learned toolchain/environment facts
    land in their owning reference doc same-session ([R6.9]).
 5. Record where work landed; update trackers with reconciliation stamps.
-6. If nothing is claimable or eligible: STOP and report back -- do not
+6. **End-of-session discovery sweep (R6.9):** before committing, ask "Did this
+   session teach me anything not yet in the owning reference doc?" -- enum
+   scoping, which file owns a merge, restart-vs-reload behavior, build-host
+   quirks, gotchas that bit us. If yes, add a `GOTCHA`-style note to
+   CODE_REFERENCE / this guide / swgemu/CODE_REFERENCE (citing file:line per
+   R6.10) in the SAME commit. Findings left in chat are lost findings.
+7. If nothing is claimable or eligible: STOP and report back -- do not
    invent work ([briefs pickup protocol step 9]).
 
 ---
@@ -118,7 +124,37 @@ reference; they are worker instructions, not reference data):
 
 ---
 
-**Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
+## Build & toolchain facts (captured this session, R6.9)
+
+- **Config is pure Lua data, not a script.** `config.lua` is a single Lua
+  table (`customSkillsConfig`) -- no `ipairs`/merge loop in Lua. The merge of
+  `badges[]` + `badgeOverrides` + `badgeBonus` into the runtime map happens in
+  **C++** (`CustomSkillsConfig::load()`, `CustomSkillsConfig.cpp:114` calls
+  `lua.runFile("scripts/customskills/config.lua")`). A config edit needs a
+  **server restart** to take effect (no `/reload` picks it up).
+- **`CustomSkillsModifierType` is a class, not a namespace** (see CODE_REFERENCE
+  gotcha, ERR-010). Enumerators MUST be `CustomSkillsModifierType::X`.
+- **Build host is Linux (GCC 14 / Ninja).** SWGEmu Core3 compiles with
+  `-std=gnu++14`; GCC 14 emits `-Wstringop-overflow` warnings on engine3's
+  atomic code (auction/PlayerObject) -- those are benign warnings, not errors.
+  Windows here has no C++ toolchain, so code changes are build-verified on the
+  Linux host, not locally.
+
+---
+
+## Discovery capture is mandatory (R6.9)
+
+Every fact learned while reading code or building -- enum scoping, which file
+owns a merge, restart-vs-reload behavior, build-host quirks -- goes into its
+**owning reference doc in the SAME session** (CODE_REFERENCE for architecture,
+this guide for worker gotchas, swgemu/CODE_REFERENCE for build/test). Do NOT
+leave findings in chat history. If you learn something and the owning doc
+doesn't cover it, add a subsection (or file errata proposing a home) -- do not
+drop it.
+
+---
+
+**Last reconciled:** 08242026 by hy3-free (opencode/hy3-free) -- added Build &
 initial guide, owner-directed audience split (swgemu/customskills/LLM);
 absorbs the workspace-root START-HERE role; 08242026 badge/modifier
 integration rules moved in from BADGE_REFERENCE fold (owner directive).

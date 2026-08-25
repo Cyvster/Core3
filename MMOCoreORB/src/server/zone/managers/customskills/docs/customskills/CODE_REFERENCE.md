@@ -115,15 +115,26 @@ containment rule).
 ### CustomSkillsModifierType.h
 
 ```cpp
-enum Type {
-    CRITICAL_CHANCE, CRITICAL_MULTIPLIER,
-    DOUBLE_ATTACK_CHANCE, TRIPLE_ATTACK_CHANCE, QUAD_ATTACK_CHANCE,
-    ARMOR_PENETRATION, DEFENSE_CAP_INCREASE, ARMOR_DEGRADE_REDUCTION, WEAPON_DEGRADE_REDUCTION,
-    SEA_CAP_INCREASE, MOVEMENT_SPEED, BUFF_DURATION, EXPERIENCE_MULTIPLIER,
-    PRACTICE_EXPERIENCE_BONUS, CRAFTING_SPEED, AMAZING_SUCCESS_CHANCE,
-    AMAZING_RESULTS, GATHERING_QUANTITY, COUNT
+class CustomSkillsModifierType {
+public:
+    enum Type {
+        CRITICAL_CHANCE, CRITICAL_MULTIPLIER,
+        DOUBLE_ATTACK_CHANCE, TRIPLE_ATTACK_CHANCE, QUAD_ATTACK_CHANCE,
+        ARMOR_PENETRATION, DEFENSE_CAP_INCREASE, ARMOR_DEGRADE_REDUCTION, WEAPON_DEGRADE_REDUCTION,
+        SEA_CAP_INCREASE, MOVEMENT_SPEED, BUFF_DURATION, EXPERIENCE_MULTIPLIER,
+        PRACTICE_EXPERIENCE_BONUS, CRAFTING_SPEED, AMAZING_SUCCESS_CHANCE,
+        AMAZING_RESULTS, GATHERING_QUANTITY, COUNT
+    };
 };
 ```
+
+> **GOTCHA (verified 08242026, ERR-010):** `CustomSkillsModifierType` is a
+> **class**, NOT a namespace. Its enumerators are scoped as
+> `CustomSkillsModifierType::CRITICAL_CHANCE`, etc. `using namespace
+> CustomSkillsModifierType;` is a **compile error** -- every enumerator must be
+> written with the explicit `CustomSkillsModifierType::` prefix. The menu
+> (`CustomSkillsMenu::getAcquiredCount`, `addPageItems`) qualifies them this
+> way; do not "simplify" to a `using` directive.
 
 ### CustomSkillsConfig (Singleton + Logger)
 
@@ -337,6 +348,12 @@ creatures) is never duplicated.
 - **Character-scoped**: SUI page stored in the invoking character's
   PlayerObject SUI map ([CS-7])
 - **Multi-window**: multiple `/customskills` windows supported simultaneously
+- **Bonus count helper**: `CustomSkillsMenu::countOwnedBonuses(player,
+  CustomSkillsModifierType::Type)` walks `config.lua` badge keys for a modifier
+  (via `CustomSkillsConfig::getBadgeBonuses(type)`) and counts how many the
+  player actually owns (used by `getAcquiredCount` and `addBonusItems`). Both
+  helpers are declared in `CustomSkillsMenu.h`; the enum arg is the **class**-
+  scoped `CustomSkillsModifierType::Type` (see gotcha above).
 
 ### Main Page Layout
 
