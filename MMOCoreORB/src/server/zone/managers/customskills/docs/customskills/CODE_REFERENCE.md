@@ -693,8 +693,10 @@ failed stage ends the chain.
 **Consolidated strike (BRIEF-034)**: tiers no longer apply N hits. The tier
 multiplies the finalized damage ONCE (`damage *= repeats`) and
 `applyVanillaDamage` runs a single time — one bigger hit, same total as the
-old repeat chain by design (armor mitigates the single big hit differently;
-owner-accepted, see errata ERR-009 follow-up). Escalated strikes get tiered
+old repeat chain by design. Armor mitigation is IDENTICAL either way: every
+mitigation stage is a multiplicative percentage (force armor :2502, PSG
+:2562, standard armor :2591, NPC armor :2475), and percentages commute with
+the tier multiplier — verified CombatManager.cpp getArmorReduction chain. Escalated strikes get tiered
 flytext + `xN` chat tag (see "Consolidated Strike Presentation").
 **Implemented**: yes (BRIEF-015; delivery reworked BRIEF-034).
 

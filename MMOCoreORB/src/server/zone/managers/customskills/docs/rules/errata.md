@@ -426,9 +426,11 @@ Cyvster may resolve, reject, or apply any entry directly.
   ERR-009's repeat-chain delivery is SUPERSEDED. Double/Triple/Quad now
   multiply damage by the tier ONCE and call applyVanillaDamage a single
   time (consolidated strike); the multi-application loop and its mid-loop
-  death/incapacitation break are removed. Owner-accepted deviation: one
-  big hit mitigates differently against armor than N small hits, but
-  totals are equivalent by design. Presentation added: tiered ShowFlyText
+  death/incapacitation break are removed. Correction (owner caught it):
+  armor mitigation is IDENTICAL for one big hit vs N small hits -- every
+  mitigation stage is a multiplicative percentage (CombatManager.cpp
+  getArmorReduction chain), and percentages commute with the tier
+  multiplier, so totals match exactly; no deviation exists. Presentation added: tiered ShowFlyText
   (config-driven scale/colors) and an "xN" combat-spam tag line to the
   attacker; see `consolidatedStrike` config block.
 
