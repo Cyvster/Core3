@@ -2,9 +2,10 @@
 
 - Status: CLAIMED
 - Created: 08252026 by ox-alpha (opencode/x-preview-f-free), owner directive
-- NOTE: original brief on this topic was LOST to session disconnects before
-  anything was written down; this file recreates it from the owner's
-  description. If an older draft surfaces in a stash/branch, reconcile.
+- NOTE: the owner originally requested this topic during a disconnect window
+  in which no agent was connected -- no brief was ever created or lost; it
+  simply never got filed. Filed now per owner's re-statement. If an older
+  draft surfaces elsewhere, reconcile.
 
 ## Goal
 
