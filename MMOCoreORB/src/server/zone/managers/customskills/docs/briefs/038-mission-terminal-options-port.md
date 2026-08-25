@@ -11,6 +11,13 @@ Port the mission-terminal enhancements the owner built directly into
 cyvster2 -- notably player-facing options for mission DIRECTION and
 DIFFICULTY -- into the Custom Skills mod as proper mod architecture.
 
+## CRITICAL CONTEXT: original implementation quality
+
+The owner reports the cyvster2 mission options caused a noticeable STUTTER
+when opening the options UI. The original implementation is a SPECIFICATION
+of intended behavior only -- NOT a quality reference. The port must use best
+practices and treat performance as a first-class requirement.
+
 ## Research phase (do this first, deliver findings before code)
 
 1. Locate cyvster2's mission modifications: diff fork-base..cyvster2 for
@@ -26,9 +33,19 @@ DIFFICULTY -- into the Custom Skills mod as proper mod architecture.
      reward multipliers if part of it.
    - Player-facing UI: how the option is presented (terminal menu rows?
      a mod command? extend existing SUI?). Follow our existing SUI patterns.
-4. Write `_038_design.md` with the mapping table (cyvster2 edit -> mod
-   mechanism) and get owner sign-off BEFORE implementation if any design
-   choice is ambiguous.
+4. PERFORMANCE REQUIREMENTS (owner directive): the port must eliminate the
+   original stutter. Requirements for the design:
+   - No synchronous heavy work on terminal-open / SUI-build path.
+   - Precompute or cache what can be cached (mission templates, option
+     lists); invalidate properly rather than recompute per open.
+   - Move anything slow off the zone executor (use task callbacks).
+   - Budget: opening the options UI should cost no more than our menu pages
+     (~60-150us server-side, per BRIEF-033 methodology).
+   - Document in _038_design.md what the original did that caused the
+     stutter (file:line on cyvster2) and how the port avoids it.
+5. Write `_038_design.md` with the mapping table (cyvster2 edit -> mod
+   mechanism), the performance analysis, and get owner sign-off BEFORE
+   implementation if any design choice is ambiguous.
 
 ## Implementation phase (after research; may be split to its own brief)
 
