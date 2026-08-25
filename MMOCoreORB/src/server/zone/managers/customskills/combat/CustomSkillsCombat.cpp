@@ -86,73 +86,10 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 
 		bool escalated = repeats > 1 || critical;
 
-		// BRIEF-042 item A: when our escalation fires AND flytext is enabled,
-		// suppress vanilla's scale-1.0 pool-colored hit-location text for this
-		// hit so ours is the only one rendered at that anchor. Strictly
-		// scoped: base hits keep vanilla text exactly as before.
-		bool suppressVanillaFlyText = false;
-		if (escalated && defender != nullptr && !defender->isVehicleObject()) {
-			suppressVanillaFlyText = true; // provisional; cleared below if FCT off
-
-			auto configCheck = CustomSkillsConfig::instance();
-			if (!configCheck->isFctEnabled())
-				suppressVanillaFlyText = false;
-		}
-
-		combatManager->setSuppressHitLocationFlyText(suppressVanillaFlyText);
 		int result = combatManager->applyVanillaDamage(attacker, weapon, defender, defenderHitList, damage,
 				damageMultiplier, poolsToDamage, hitLocation, data);
-		combatManager->setSuppressHitLocationFlyText(false);
 
-		if (escalated && defender != nullptr && !defender->isVehicleObject()) {
-			CustomSkillsConfig* config = CustomSkillsConfig::instance();
-
-			// Tiered FCT escalation (BRIEF-042 item A): broadcast to the
-			// DEFENDER's observers -- everyone watching the fight sees it,
-			// matching vanilla's audience semantics (ERR-016 fix). Scale and
-			// color step up by tier so escalated hits visually dominate.
-			if (config->isFctEnabled()) {
-				float scale = 1.0f + (repeats - 1) * (config->getFctScaleStepBp() / 10000.f);
-				if (critical)
-					scale += config->getFctCritBonusBp() / 10000.f;
-
-				const String& tierColor =
-						critical ? config->getFctCritColor() : config->getFctTierColor(repeats);
-				uint8 r = 0xFF, g = 0xFF, b = 0xFF;
-				parseRgb(tierColor, r, g, b);
-
-				ShowFlyText* fly = new ShowFlyText(defender, "combat_effects",
-						hitLocationEntry(hitLocation), r, g, b, scale); // flags byte 5, as vanilla
-
-				// Broadcast from the defender so all fight observers receive
-				// the packet (defender included); attacker gets a private
-				// copy in case they are somehow not in the defender's close
-				// range set.
-				defender->broadcastMessage(fly, true);
-
-				ChatTagInfo tagInfo;
-				tagInfo.repeats = repeats;
-				tagInfo.critical = critical ? 1 : 0;
-
-				// Chat tag stays ATTACKER-ONLY per BRIEF-034 design (second
-				// spam line with the tier glyph). Deferred to next tick to
-				// avoid sending packets while holding combat locks.
-				Reference<CreatureObject*> strongAttacker = creo;
-				Core::getTaskManager()->executeTask([strongAttacker, tagInfo]() {
-					if (strongAttacker == nullptr || !strongAttacker->isPlayerCreature())
-						return;
-
-					PlayerObject* ghost = strongAttacker->getPlayerObject();
-					if (ghost == nullptr)
-						return;
-
-					byte tagColor = (tagInfo.repeats >= 4 || tagInfo.critical) ? 10 : 11; // 10=red, 11=yellow
-					String tag = "x" + String::valueOf(tagInfo.repeats);
-					CombatSpam* spam = new CombatSpam(strongAttacker.get(), UnicodeString(tag), tagColor);
-					strongAttacker->sendMessage(spam);
-				}, "CsStrikeChatTagLambda");
-			}
-		}
+		return result;
 
 		return result;
 	}
@@ -203,25 +140,7 @@ int CustomSkillsCombat::applyTanoTargetDamage(CreatureObject* attacker, WeaponOb
 
 	damage = static_cast<int>(static_cast<int64>(damage) * repeats);
 
-	// Tiered FCT on lair/TANO hits too -- same visibility treatment as the
-	// creature-defender path (suppress flag covers the creature path only,
-	// but this overload never showed hit-location text anyway).
-	if ((repeats > 1 || critical) && CustomSkillsConfig::instance()->isFctEnabled()) {
-		CustomSkillsConfig* config = CustomSkillsConfig::instance();
-
-		float scale = 1.0f + (repeats - 1) * (config->getFctScaleStepBp() / 10000.f);
-		if (critical)
-			scale += config->getFctCritBonusBp() / 10000.f;
-
-		const String& tierColor =
-				critical ? config->getFctCritColor() : config->getFctTierColor(repeats);
-		uint8 r = 0xFF, g = 0xFF, b = 0xFF;
-		parseRgb(tierColor, r, g, b);
-
-		ShowFlyText* fly = new ShowFlyText(defender, "combat_effects",
-				critical ? "critical_hit" : "hit_body", r, g, b, scale);
-		defender->broadcastMessage(fly, true);
-	}
+	// FCT reverted to vanilla (owner decision 08252026): no escalated flytext.
 
 	return damage;
 }
