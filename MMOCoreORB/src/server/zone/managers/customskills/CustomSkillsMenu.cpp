@@ -185,6 +185,28 @@ int CustomSkillsMenu::countOwnedBonuses(CreatureObject* player, CustomSkillsModi
 }
 
 
+int CustomSkillsMenu::countModifier(CreatureObject* player, const char* const* keys, int count, CustomSkillsModifierType::Type type) {
+	PlayerObject* ghost = player->getPlayerObject();
+	const BadgeList* list = BadgeList::instance();
+	CustomSkillsConfig* config = CustomSkillsConfig::instance();
+	if (ghost == nullptr || config == nullptr)
+		return 0;
+
+	const VectorMap<String, int>& bonuses = config->getBadgeBonuses(type);
+	int total = 0;
+	for (int i = 0; i < count; ++i) {
+		const String key(keys[i]);
+		const Badge* badge = list->get(keys[i]);
+		if (badge == nullptr || !ghost->hasBadge(badge->getIndex()))
+			continue;
+		for (int j = 0; j < bonuses.size(); ++j) {
+			if (bonuses.elementAt(j).getKey() == key)
+				total += bonuses.elementAt(j).getValue();
+		}
+	}
+	return total;
+}
+
 int CustomSkillsMenu::getModifierTotal(CreatureObject* player, Page page, CustomSkillsModifierType::Type type) {
 #define MOD_LEAF(pageName, data) case pageName: return CustomSkillsModifiers::applyModifierCap(type, countModifier(player, data, countOf(data), type))
 	switch (page) {

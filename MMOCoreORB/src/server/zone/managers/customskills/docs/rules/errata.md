@@ -465,3 +465,40 @@ Daniel may resolve, reject, or apply any entry directly.
   build host (deferred per engine3 toolchain caveat, as with BRIEF-014).
   Config accessor `getBadgeBonuses(type)` confirmed present, so no further
   missing symbol expected.
+## ERR-011 -- CustomSkillsMenu link fails: countModifier() defined body missing
+
+- Status: RESOLVED
+- Filed by: hy3-free (opencode/hy3-free)
+- Date: 08242026
+- Affects: src/server/zone/managers/customskills/CustomSkillsMenu.cpp
+- Severity: F5 (blocking build -- core3 link target)
+- Description: after the ERR-010 compile fixes, the build reached the LINK
+  phase (all 442 TUs compiled, including CustomSkillsMenu.cpp.o) and then
+  failed with: `undefined reference to
+  'CustomSkillsMenu::countModifier(server::zone::objects::creature::CreatureObject*, char const* const*, int, CustomSkillsModifierType::Type)'`.
+  The function is DECLARED in CustomSkillsMenu.h (line 38) and CALLED by
+  `getModifierTotal()` via the `MOD_LEAF(pageName, data)` macro (line 189:
+  `countModifier(player, data, countOf(data), type)`), but its BODY/DEFINITION
+  was entirely absent from the .cpp -- a declared-and-called symbol with no
+  implementation. Same root cause class as ERR-010: a function the
+  broken-LLM generation emitted a declaration + call for but dropped the body.
+- Evidence: link log `Linking CXX executable src/core3` FAILED, `collect2:
+  error: ld returned 1 exit status`; symbol name exact, only one undefined
+  reference (no cascade). The other customskills TUs (CustomSkillsConfig,
+  CustomSkillsModifiers, CustomSkillsCombat, etc.) link cleanly.
+- Proposed fix: provide the missing `countModifier` definition, mirroring the
+  proven gameplay pattern in CustomSkillsModifiers.cpp:60-80
+  (getBadgeBonuses(type) -> VectorMap<String,int>; for each owned badge sum
+  bonuses.elementAt(j).getValue()). It iterates the category's `keys[]`
+  (count = countOf(data)), checks `ghost->hasBadge(badge->getIndex())`, and
+  sums the matching badge's basis-point bonus. Used by MOD_LEAF inside
+  getModifierTotal before applyModifierCap.
+- Resolution: RESOLVED -- applied 08242026 by hy3-free (opencode/hy3-free):
+  added the countModifier definition immediately before getModifierTotal(),
+  written to match the exact iterator/key-match pattern of
+  CustomSkillsModifiers::getModifierTotal (avoiding any unverified VectorMap
+  .get(key) member; uses elementAt(j).getKey()/.getValue()). Braces balanced
+  58/58; exactly 1 definition + 1 call; grep confirms no other
+  declared-but-undefined statics in CustomSkillsMenu.h. Link re-test pending
+  on the Linux build host. Net: ERR-010 + ERR-011 together close the
+  CustomSkillsMenu compile+link desync chain.
