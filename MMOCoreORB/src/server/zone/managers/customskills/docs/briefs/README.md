@@ -22,7 +22,11 @@ reading only what the brief lists -- no conversation history required.
 7. Set Status DELIVERED with notes on where the work landed; push; update
    [../tracking/objectives.md](../tracking/objectives.md) if the brief maps
    to an objective.
-8. Problems or disputes go through [../rules/errata.md](../rules/errata.md)
+8. **[R6.9] discovery line (mandatory in every delivery report)**: list each
+   discovery made during the task with the reference-doc cite where it was
+   captured, or state "no discoveries". A delivery without this line is
+   incomplete and is returned by the coordinator ([BRIEF-040]).
+9. Problems or disputes go through [../rules/errata.md](../rules/errata.md)
    -- never silent edits outside your scope.
 9. If no brief is UNCLAIMED, stop and report back -- do not invent work.
 

@@ -88,11 +88,6 @@ Only **acquired** badges contribute to category totals. Totals use the same math
 **Amazing Success Chance** — adds percentage points to the natural Amazing Success roll during assembly and experimentation. Powered by: Exar Kun's Temple, Lok dangerous (3), Yavin IV Woolamander/Blueleaf (2).
 **Amazing Results** — when an Amazing Success happens, each affected attribute lands closer to schematic cap; at high bonuses even poor resources produce near-perfect results. Assembly affects all attributes; experimentation affects the selected line only. Powered by: same badges as Amazing Success Chance.
 
-### Repeat-Craft (/customskills repeatcraft)
-After a successful craft, your crafting tool remembers the recipe: the schematic, which resources went into each slot, and your experimentation point allocation. Type `/customskills repeatcraft` (targeting the tool, with its object id, or just bare), or use the **Repeat Craft** radial option on the tool itself — a fresh crafting window opens with everything auto-selected and auto-filled from your inventory (including backpacks) — you still press Assemble/Create yourself, so nothing is crafted without you.
-- Missing or short resources leave that slot empty with a message naming what's missing; fill it manually or restock.
-- If the schematic changed or is no longer known, the stored recipe is discarded with a notice — craft once to store a new one.
-- One recipe per tool; each successful craft overwrites it. Server owners can disable the whole feature (`repeatEnabled = false` is the default).
 
 ### Gathering
 **Gathering Quantity** — multiplies resource quantity from foraging (flora/shellfish/lair eggs) and milking; every badge adds its own yield bonus (+77% to +100%) before the multiply — full set reaches ~14x native yields; never reduces yields, rounded down; does not affect discrete loot (food, bait, rare items, live creatures). Powered by: Outdoors masteries (5), Science masteries (3), Tatooine easy (3), Yavin IV (2) — all uniform rate.

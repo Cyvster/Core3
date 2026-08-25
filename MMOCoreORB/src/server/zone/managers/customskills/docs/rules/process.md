@@ -353,6 +353,22 @@ collaboration; `errata.md` = correction records. Content that belongs in a
 different document is moved with pointers left behind ([R6.7] reference,
 don't duplicate). Feature design lives in feature-planning/, never here.
 
+## Discovery-capture enforcement ([R6.9], BRIEF-040)
+
+Two standing rules close the capture gaps that brief-time reminders miss:
+
+1. HOTFIX RULE: any fix that required root-cause diagnosis (compile errors
+   from scope/declaration mistakes, behavior traced through call graphs)
+   MUST append its lesson to the owning reference doc in the SAME commit.
+   The lesson, not just the fix, is the deliverable.
+2. COORDINATOR DUTY: before marking a brief DELIVERED, grep its diff for new
+   knowledge (packet fields, constants, call-graph facts, gotchas) and verify
+   each landed in a reference doc. Undocumented discoveries bounce the
+   delivery back.
+
+Every delivery report must also carry the [R6.9] discovery line (briefs
+README pickup protocol step 8).
+
 ## Integrity audit cadence (adopted from Alice, XPP 08252026)
 
 After each delivered brief batch or milestone, run a lightweight integrity

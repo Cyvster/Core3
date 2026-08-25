@@ -740,18 +740,13 @@ upgrades to tier 4 (highest). Delivered as a consolidated strike
 | **Config key** | `customSkillsConfig.consolidatedStrike` |
 | **Knobs** | `fctEnabled` (bool, default true); `fctScaleStepBp` (int, 1500 = +15.00% flytext scale per tier above base; 1000 bp = 10.00%); `fctCritBonusBp` (int, 2500 = +25.00% extra on crits); `tier2Color`/`tier3Color`/`tier4Color`/`critColor` (hex RRGGBB; defaults FFFF00 yellow / FF9900 orange / FF0000 red / FFD700 gold); `chatTagEnabled` (bool, true) |
 
-**Behavior** (`CustomSkillsCombat.cpp:applyDamage`): after crit roll and the
-Double->Triple->Quad chain, damage is multiplied by the tier ONCE and applied
-via a single `applyVanillaDamage` call. When repeats > 1 or the hit critted,
-a `ShowFlyText` (packets/object/ShowFlyText.h, flags byte 5 as vanilla) is
-sent to the attacker using the vanilla hit-location stf entry
-(`combat_effects/hit_<location>`) with escalated scale
-(1.0 + (tier-1)*step + critBonus) and tier color (crit overlays gold).
-Base hits leave vanilla flytext untouched. When repeats > 1 a second
-custom-unicode `CombatSpam` line ("x2"/"x3"/"x4", colored byte 11 yellow /
-10 red) goes to the ATTACKER only; the normal damage spam is unchanged.
-Loader: CustomSkillsConfig.cpp `load()` under the `consolidatedStrike`
-table; defaults in `setDefaults()`.
+**Behavior**: after crit roll and the Double->Triple->Quad chain, damage is
+multiplied by the tier ONCE and applied via a single `applyVanillaDamage`
+call. Presentation is VANILLA (no escalated flytext/chat tag -- removed
+08252026, owner decision after live testing; see errata ERR-016..019 and the
+consolidatedStrike config table, retained for future presentation work).
+
+
 
 
 ### Armor Penetration (`ARMOR_PENETRATION`)
@@ -1614,75 +1609,13 @@ Practice XP is xp*1.05 with identical resource cost -- repeats don't change
 XP-per-resource ratio but do remove inter-craft time when Crafting Speed is
 stacked (clamp >=1s), so auto-repeat should exclude practice mode.
 
-## Repeat-Craft Assisted Pre-Fill (BRIEF-036)
+## Repeat-Craft (REMOVED)
 
-Builds on the BRIEF-035 lifecycle findings above: sessions are one-shot
-(`createPrototype` -> `cancelSession`), so "repeat" is an assisted pre-fill of
-a FRESH session -- never a server-side loop and never an auto-created item.
-
-**Command** (BRIEF-042 subcommand conversion): `/customskills repeatcraft
-[toolObjectID]` -- parsed in `CustomSkillsCommand::doQueueCommand`, routed to
-`CustomSkillsCrafting::doRepeatCraft`. With no argument, the current target is
-used; bare invocation falls back to the first inventory tool holding a recipe.
-The standalone `/repeatcraft` command was REMOVED (RepeatCraftCommand.h
-deleted; CommandConfigManager.cpp + CommandConfigManager3.cpp registrations and
-bin/scripts/commands/repeatCraft.lua removed).
-
-**Radial entry point**: crafting tools with a stored snapshot show a server
-"Repeat Craft" radial (SERVER_MENU1) in
-`CraftingToolImplementation::fillObjectMenuResponse` (gated on
-`customSkills.repeatEnabled`), handled in `handleObjectMenuSelect`.
-
-**Snapshot ("RepeatRecipe") storage choice**: stored ON THE CRAFTING TOOL via
-TangibleObject's existing persistent `luaStringData` VectorMap<string,string>
-(TangibleObject.idl:49, `setLuaStringData`/`getLuaStringData`/`deleteLuaStringData`)
-under `cs36.*` keys -- ZERO IDL changes, no new object, survives server restart,
-one recipe per tool, overwritten each successful craft. Keys:
-`schematicCrc` (draft schematic client CRC), `slotCount`,
-`slot.<i>.type` (resource spawn name, or template string + "#" + serial for
-component slots), `slot.<i>.qty`, `exp` (experimentation "row points ..." string).
-Written by `CustomSkillsCrafting::storeRepeatRecipe` from the success branch of
-`CraftingSessionImplementation::createPrototype` (~:1408; gated by
-`repeatAllowPractice` when the craft was practice). The session records its last
-experimentation allocation in the transient `lastExpAttempt` field.
-
-**Pre-fill flow** (`CustomSkillsCrafting::doRepeatCraft`):
-1. Resolve tool + snapshot; reject FINISHED/BUSY tools with vanilla messages.
-2. Cancel any active CRAFTING session (mirrors RequestCraftingSessionCommand),
-   create a NEW CraftingSession, `initializeSession(tool, nearbyStation)`.
-3. Re-resolve the snapshotted schematic by client CRC inside the freshly
-   filtered `currentSchematicList` (new IDL accessors
-   `getCurrentSchematicListSize`/`getCurrentSchematic`). Missing => discard
-   snapshot + notice + cancelSession.
-4. `selectDraftSchematic(index)`, then validate slot count/quantities against
-   the snapshot; mismatch => discard snapshot + notice.
-5. Auto-fill each empty slot from the player's containers via
-   `session->addIngredient` (resource slots match exact spawn name; component
-   slots match template + serial). BRIEF-042 hardening (ERR-017): the search
-   RECURSES into nested containers inside inventory (backpacks, satchels;
-   depth-limited 4 levels) and sums availability across ALL matching stacks
-   BEFORE consuming anything -- if total < needed, nothing is drained and a
-   shortfall system message names the resource and both quantities.
-   After filling, if the stored `exp` allocation exists, a reminder message
-   surfaces it (ERR-018).
-6. STOPS at state 2 (resource screen): the normal crafting window stays open
-   pre-filled; the player assembles/experiments/customizes/creates as usual.
-   The prototype is NEVER created automatically.
-
-**Window flow note (same-window requirement)**: the repeat starts a fresh
-session while the old one is already closed (vanilla always closes it after
-createPrototype), so from the player's view the crafting window re-opens
-pre-filled at the resource screen rather than staying pixel-identical on
-screen; the stock client has no server-side way to keep one window instance
-alive across sessions. This is the closest achievable to "craft, hit repeat" --
-no tool/inventory hopping is involved.
-
-**Config** (`customSkillsConfig.repeatCraft`, loaded in CustomSkillsConfig.cpp):
-`repeatEnabled` bool DEFAULT FALSE (whole feature off until operator opts in);
-`repeatAllowPractice` bool DEFAULT TRUE (practice crafts refresh the recipe;
-matches vanilla per owner directive). NO rate caps, NO anti-farming knobs --
-owner decision.
-
+Feature removed 08252026 by owner decision: client constraints (one-shot
+sessions, per-char client CRC enumeration, client-side last-craft memory)
+made a robust implementation impossible without client modification.
+Vanilla already re-opens the tool on the last-crafted schematic. History:
+BRIEF-036/041/042 + ERR-020/021.
 ## CombatManager Integration Surface (BRIEF-042, R6.9)
 
 Core3 files touched by the mod's combat features -- keep this list current
