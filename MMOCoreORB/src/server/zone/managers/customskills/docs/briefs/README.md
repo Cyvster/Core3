@@ -64,6 +64,7 @@ reading only what the brief lists -- no conversation history required.
 | [`011-menu-config-single-source.md`](011-menu-config-single-source.md) | Menu/config single-source: eliminate duplicated badge assignments; resolve ERR-008 | DELIVERED |
 | [`012-code-hygiene-cleanups.md`](012-code-hygiene-cleanups.md) | Enum/table safety asserts, loader consolidation, edge-case cleanups (behavior-preserving) | DELIVERED |
 | [`017-verify-badge-reconfiguration.md`](017-verify-badge-reconfiguration.md) | Independent verification + completion of the badge reconfiguration; repair config corruption + doc sweep | DELIVERED |
+| [`018-document-swgemu-admin-commands.md`](018-document-swgemu-admin-commands.md) | Document SWGEmu admin (GM) commands in a dedicated `swgemu/` section: permission chain, command table, worked operator scenarios | UNCLAIMED |
 
 ## Notes
 
