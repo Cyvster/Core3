@@ -6,15 +6,15 @@ Every admin command requires BOTH on the executing character: (1) **God mode** (
 > **Module note:** Custom Skills adds **no** admin commands. `/customskills` is a normal ability-backed command. Below are **stock SWGEmu** commands used to set up the badges/skills the module reads from `config.lua`.
 
 ## Commands
-`/grantbadge <badgeID>` (target) — grant one badge by **numeric ID** (not the `config.lua` string key). Forms: `-area [range]` (1–192m, def 64), `-multiple <start> <end>`. Src `GrantBadgeCommand.h:26-160`.
-`/revokebadge <badgeID>` (target) — remove one badge. Src `RevokeBadgeCommand.h:25`.
-`/requestBadges` (target) — list badges the target holds; use to verify grants.
-`/grantskill <skillName>` (target) — grant a skill box (dot-path, e.g. `combat_1a`).
-`/revokeskill <skillName>` (target) — remove a skill box.
-`/editstats <targetName> <param>` — edit a stat. Arg shape `EditStatsCommand.h:47-48` (`getStringToken`×2); confirm exact `<param>` via `/editstats -help`.
-`/maxstats` (target) — set stats to racial max.
-`/setgodmode <targetName> <param>` — toggle/set god mode. Arg shape `SetGodModeCommand.h:47-48`; confirm `<param>` in-game.
-`/server <subcommand> [args]` — server control. Src `ServerCommand.h:55-62`; run with no args to list subcommands.
+`/grantbadge <badgeID>` (target) — grant one badge by **numeric ID** (not the `config.lua` string key). Forms: `-area [range]` (1–192m, def 64), `-multiple <start> <end>`. Src `GrantBadgeCommand.h:26-160`.  
+`/revokebadge <badgeID>` (target) — remove one badge. Src `RevokeBadgeCommand.h:25`.  
+`/requestBadges` (target) — list badges the target holds; use to verify grants.  
+`/grantskill <skillName>` (target) — grant a skill box (dot-path, e.g. `combat_1a`).  
+`/revokeskill <skillName>` (target) — remove a skill box.  
+`/editstats <targetName> <param>` — edit a stat. Arg shape `EditStatsCommand.h:47-48` (`getStringToken`×2); confirm exact `<param>` via `/editstats -help`.  
+`/maxstats` (target) — set stats to racial max.  
+`/setgodmode <targetName> <param>` — toggle/set god mode. Arg shape `SetGodModeCommand.h:47-48`; confirm `<param>` in-game.  
+`/server <subcommand> [args]` — server control. Src `ServerCommand.h:55-62`; run with no args to list subcommands.  
 `/reload <target>` — reload a subsystem/script. **Does NOT reload `config.lua`** — module caches config at startup; edit `config.lua` + **restart** to change a badge bonus/cap.
 
 ## Worked scenarios
