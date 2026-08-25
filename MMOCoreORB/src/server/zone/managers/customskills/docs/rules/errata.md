@@ -435,9 +435,12 @@ Daniel may resolve, reject, or apply any entry directly.
   2. Two switch blocks in `getAcquiredCount()` and `addPageItems()` use the
      modifier enum UNQUALIFIED (`CRITICAL_CHANCE`, `DOUBLE_ATTACK_CHANCE`,
      `AMAZING_RESULTS`, etc.) while the rest of the file correctly qualifies
-     them as `CustomSkillsModifierType::CRITICAL_CHANCE`. The enum lives in
-     `CustomSkillsModifierType.h`; unqualified lookup fails in the enclosing
-     scope.
+     them as `CustomSkillsModifierType::CRITICAL_CHANCE`. Root cause:
+     `CustomSkillsModifierType` is a **class** with a nested `enum Type`
+     (`CustomSkillsModifierType.h:4-27`) -- NOT a namespace -- so
+     `using namespace CustomSkillsModifierType;` is illegal and qualified
+     `CustomSkillsModifierType::XXX` lookup was the only valid form. The
+     bare constants therefore fail in the enclosing scope.
   3. The new code path calls `CustomSkillsConfig::getBadgeBonuses(type)`
      (verified present in CustomSkillsConfig.h/.cpp), so no further missing
      symbol beyond 1-2.
@@ -450,13 +453,15 @@ Daniel may resolve, reject, or apply any entry directly.
   the break is local to this file's desync, not the broader branch.
 - Proposed fix: (a) declare the two functions in CustomSkillsMenu.h
   (addBonusItems(SuiListBox*, CreatureObject*, CustomSkillsModifierType::Type);
-  countOwnedBonuses(CreatureObject*, CustomSkillsModifierType::Type)); (b) add
-  `using namespace CustomSkillsModifierType;` at the top of the two switch
-  functions so the bare enum constants resolve. Applied as ERR-010 fix.
+  countOwnedBonuses(CreatureObject*, CustomSkillsModifierType::Type)); (b) qualify
+  every bare enum constant in the two switch blocks as
+  `CustomSkillsModifierType::XXX` (the `using namespace` form is illegal because
+  the type is a class, not a namespace). Applied as ERR-010 fix.
 - Resolution: RESOLVED -- applied 08242026 by hy3-free (opencode/hy3-free):
-  added both declarations to CustomSkillsMenu.h and `using namespace
-  CustomSkillsModifierType;` to `getAcquiredCount()` and `addPageItems()`.
-  Brace balance and unqualified-name grep verified locally; compile re-test
-  pending on the Linux build host (deferred per engine3 toolchain caveat, as
-  with BRIEF-014). Config accessor `getBadgeBonuses(type)` confirmed present,
-  so no further missing symbol expected.
+  added both declarations to CustomSkillsMenu.h and qualified all 18 enumerators
+  in `getAcquiredCount()` and `addPageItems()` (removed the illegal `using
+  namespace CustomSkillsModifierType;`). Grep confirms 0 unqualified enum
+  references remain; brace balance 55/55. Compile re-test pending on the Linux
+  build host (deferred per engine3 toolchain caveat, as with BRIEF-014).
+  Config accessor `getBadgeBonuses(type)` confirmed present, so no further
+  missing symbol expected.
