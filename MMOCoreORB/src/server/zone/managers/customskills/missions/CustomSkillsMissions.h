@@ -90,8 +90,10 @@ public:
 	static void showDirectionMenu(server::zone::objects::creature::CreatureObject* player);
 	static void showDifficultyMenu(server::zone::objects::creature::CreatureObject* player);
 
-private:
+public:
 	class Choices;
+
+private:
 
 	// Internal: cached-or-lazy read of both choices. Never throws on empty
 	// ScreenPlayData (cyvster2 defect 1 fixed here).

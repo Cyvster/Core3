@@ -22,6 +22,7 @@
 #include "server/zone/objects/mission/MissionObject.h"
 #include "templates/mobile/LairTemplate.h"
 
+#include "system/util/HashMap.h"
 #include <mutex>
 
 namespace {
