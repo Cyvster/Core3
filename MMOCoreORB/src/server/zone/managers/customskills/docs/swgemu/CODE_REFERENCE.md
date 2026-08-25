@@ -2,7 +2,6 @@
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
----
 ## Purpose
 
 Reference for navigating and understanding the SWGEmu Core3 codebase: layout,
@@ -13,18 +12,13 @@ patterns, key systems, and module integration points. Part II of this document c
 historical correction log for its predecessor lives at
 [../archive/CODE_GUIDE_ERRATA.md](../archive/CODE_GUIDE_ERRATA.md).
 
----
 
----
 ## Contributors
 
-- **Nemotron 3.5 Lightning Free (AI)** -- initial creation (as SWGEMU_CODE_GUIDE.md)
-- ox-alpha (opencode/x-preview-f-free), 08232026 -- split into code
-  reference + user guide pair; errata routing updated
+**Nemotron 3.5 Lightning Free (AI)** -- initial creation (as SWGEMU_CODE_GUIDE.md)  
+ox-alpha (opencode/x-preview-f-free), 08232026 -- split into code reference + user guide pair; errata routing updated  
 
----
 
----
 ## Codebase Layout
 
 ```
@@ -58,9 +52,7 @@ Core3/
 submodule directory is empty until initialized; include paths like
 `engine/lua/Lua.h` resolve only when it is checked out.
 
----
 
----
 ## Key Patterns & Conventions
 
 ### 1. Singleton Managers
@@ -85,9 +77,9 @@ ManagedReference<CreatureObject*> creature = player->getTarget();
 ```
 
 Rules:
-- Never store raw pointers to game objects long-term
-- `ManagedReference` handles addRef/release automatically
-- Use `_this.getReferenceUnsafeStaticCast()` in object methods for self-reference
+Never store raw pointers to game objects long-term  
+`ManagedReference` handles addRef/release automatically  
+Use `_this.getReferenceUnsafeStaticCast()` in object methods for self-reference  
 
 ### 3. Locking Pattern (Locker)
 
@@ -141,9 +133,7 @@ VectorMap<String, int> map;
 map.put("key", 123); map.contains("key"); map.get("key"); map.remove("key");
 ```
 
----
 
----
 ## Core Systems Reference
 
 ### Combat System
@@ -157,28 +147,17 @@ map.put("key", 123); map.contains("key"); map.get("key"); map.remove("key");
 
 **Combat flow (applyDamage entry point)**:
 
-1. **Hit/defense calculation** -- `getDefenderDefenseModifier()` computes
-   defender defense skill (includes weapon-mediated mods from
-   `defenderDefenseModifiers` / `defenderSecondaryDefenseModifiers`).
-2. **Armor reduction** -- per-pool inside damage application:
-   `getArmorReduction()` called for health/action/mind separately. Includes
-   toughness (pre-armor), armor/PSG/Force armor, food mitigation
-   (`mitigate_damage`), state defenses.
-3. **Damage application** -- final damage applied to pools.
+(1) **Hit/defense calculation** -- `getDefenderDefenseModifier()` computes defender defense skill (includes weapon-mediated mods from `defenderDefenseModifiers` / `defenderSecondaryDefenseModifiers`).  
+(2) **Armor reduction** -- per-pool inside damage application: `getArmorReduction()` called for health/action/mind separately. Includes toughness (pre-armor), armor/PSG/Force armor, food mitigation (`mitigate_damage`), state defenses.  
+(3) **Damage application** -- final damage applied to pools.  
 
 **Mitigation layers** (application order; all percentage-based):
 
-1. **Toughness** -- `<weapon>_toughness` variants + `jedi_toughness`:
-   multiplicative pre-armor reduction, silent. Weapon-mediated; force damage
-   mitigated only by `jedi_toughness`; lightsaber-type bypasses it; DoT ticks
-   skip toughness.
-2. **Armor / PSG / Force armor & shield** -- `getArmorReduction()` (per pool).
-3. **Food mitigation** -- `mitigate_damage`: post-armor % per pool, hard cap
-   100. Only mitigation that emits chat spam.
-4. **State defenses** -- `knockdown_defense`, `dizzy_defense`, `stun_defense`,
-   `blind_defense`, `intimidate_defense`, `posture_change_down/up_defense` --
-   not hardcoded in C++; command scripts declare defender modifier lists and
-   resist rolls sum `getSkillMod()` values generically.
+(1) **Toughness** -- `<weapon>_toughness` variants + `jedi_toughness`: multiplicative pre-armor reduction, silent. Weapon-mediated; force damage mitigated only by `jedi_toughness`; lightsaber-type bypasses it; DoT ticks skip toughness.  
+(2) **Armor / PSG / Force armor & shield** -- `getArmorReduction()` (per pool).  
+(3) **Food mitigation** -- `mitigate_damage`: post-armor % per pool, hard cap  
+(100) Only mitigation that emits chat spam.  
+(4) **State defenses** -- `knockdown_defense`, `dizzy_defense`, `stun_defense`, `blind_defense`, `intimidate_defense`, `posture_change_down/up_defense` -- not hardcoded in C++; command scripts declare defender modifier lists and resist rolls sum `getSkillMod()` values generically.  
 
 ### Player System
 
@@ -204,12 +183,9 @@ globalExpMultiplier x customSkills (bp / 10000)` -> `(int)` cast ->
 `addExperience()`.
 
 Cap enforcement:
-- Clamp-on-award with partial grant; reaching a cap never blocks later awards.
-- Cap value = highest `xpCap` among owned skill boxes (`skills.iff` column 14),
-  else the type's `xp_limits.iff` default, else literal `2000`.
-  `prestige_*` types forced uncapped.
-- Lowering a cap pulls existing XP down on next login/skill change; raising
-  one never grants retroactive XP.
+Clamp-on-award with partial grant; reaching a cap never blocks later awards.  
+Cap value = highest `xpCap` among owned skill boxes (`skills.iff` column 14), else the type's `xp_limits.iff` default, else literal `2000`. `prestige_*` types forced uncapped.  
+Lowering a cap pulls existing XP down on next login/skill change; raising one never grants retroactive XP.  
 
 Overflow safety (XP is signed int32 end-to-end): a float product above ~2^31
 makes the `(int)` cast UB (typically yields `INT_MIN`, i.e. a *negative*
@@ -277,18 +253,9 @@ PERMANENT/BONUS families).
 
 **Consumption patterns** (critical when granting mods from skills/trees/items):
 
-- **Generic readers** work from any source: primary defenses, `dodge_attack`
-  (adds *above* the defense hard cap), state defenses, accuracy/damage mods,
-  toughness, `mitigate_damage`, utility/profession mods (`burst_run`,
-  `slope_move`, `mask_scent`, `camouflage`, `surveying`, `trapping`,
-  `creature_harvesting`, `tame_bonus`, healing-effectiveness mods).
-- **Buff-only readers** see nothing from SKILLBOX grants (they scan active
-  buffs): `xp_increase`, `craft_bonus`, `experiment_bonus`, `heal_recovery`,
-  `incap_recovery`, `reduce_spice_downtime`.
-- **Weapon-mediated reads** only count while the equipped weapon's template
-  lists the mod: primary/secondary defenses and toughness via
-  `defenderDefenseModifiers` / `defenderSecondaryDefenseModifiers` /
-  `defenderToughnessModifiers`; flat damage bonuses via `damageModifiers`.
+**Generic readers** work from any source: primary defenses, `dodge_attack` (adds *above* the defense hard cap), state defenses, accuracy/damage mods, toughness, `mitigate_damage`, utility/profession mods (`burst_run`, `slope_move`, `mask_scent`, `camouflage`, `surveying`, `trapping`, `creature_harvesting`, `tame_bonus`, healing-effectiveness mods).  
+**Buff-only readers** see nothing from SKILLBOX grants (they scan active buffs): `xp_increase`, `craft_bonus`, `experiment_bonus`, `heal_recovery`, `incap_recovery`, `reduce_spice_downtime`.  
+**Weapon-mediated reads** only count while the equipped weapon's template lists the mod: primary/secondary defenses and toughness via `defenderDefenseModifiers` / `defenderSecondaryDefenseModifiers` / `defenderToughnessModifiers`; flat damage bonuses via `damageModifiers`.  
 
 ### Scripting (Lua)
 
@@ -327,9 +294,7 @@ menu creation or callbacks.
 Common inserts: `insertFloat()`, `insertInt()`, `insertLong()`,
 `insertAscii()`.
 
----
 
----
 ## Custom Skills Integration Points
 
 ### Hook Pattern
@@ -359,9 +324,7 @@ MMOCoreORB/src/server/zone/managers/customskills/
 |---- gathering/  movement/  progression/  skillmods/
 ```
 
----
 
----
 ## Code Navigation Tips
 
 ```bash
@@ -378,9 +341,7 @@ grep -r "getSkillMod\|addSkillMod\|WEARABLE" MMOCoreORB/src/server/zone/objects/
 grep -r "applyDamage\|getArmorReduction\|getArmorPiercing" MMOCoreORB/src/server/zone/managers/combat/
 ```
 
----
 
----
 ## Common Gotchas
 
 | Issue | Solution | Source/Context |
@@ -402,17 +363,14 @@ grep -r "applyDamage\|getArmorReduction\|getArmorPiercing" MMOCoreORB/src/server
 Append new gotchas with reproduced evidence; factual corrections go through
 [../rules/errata.md](../rules/errata.md).
 
----
 
----
 ## Related Documentation
 
-- Module code reference (hooks, services, menu): [../../customskills/CODE_REFERENCE.md](../../customskills/CODE_REFERENCE.md)
-- Module modifier/badge specifications: [../../customskills/CODE_REFERENCE.md](../../customskills/CODE_REFERENCE.md) Appendices A-B
-- Player-facing emulator guide: [USER_GUIDE.md](USER_GUIDE.md)
+Module code reference (hooks, services, menu): [../../customskills/CODE_REFERENCE.md](../../customskills/CODE_REFERENCE.md)  
+Module modifier/badge specifications: [../../customskills/CODE_REFERENCE.md](../../customskills/CODE_REFERENCE.md) Appendices A-B  
+Player-facing emulator guide: [USER_GUIDE.md](USER_GUIDE.md)  
 
 
----
 ## Access-Restricted In-game Commands (Admin/GM)
 
 How privileged slash commands work in Core3, verified against source.
@@ -430,13 +388,8 @@ ordinary entries flagged as requiring admin (examples on disk:
 When a queued command is flagged `requiresAdmin()`, execution requires
 BOTH conditions, checked against the player's PlayerObject ("ghost"):
 
-1. **God mode**: `ghost->hasGodMode()` must be true. God mode is an
-   account-level privilege -- accounts carry an admin level (see
-   `SWGRealmsAPI.cpp`, account `admin_level`) which the server maps to
-   the god-mode flag.
-2. **Ability**: `ghost->hasAbility(<command name>)` must ALSO be true --
-   god mode alone is not sufficient; the character must hold the command
-   ability like any other skill-granted ability.
+(1) **God mode**: `ghost->hasGodMode()` must be true. God mode is an account-level privilege -- accounts carry an admin level (see `SWGRealmsAPI.cpp`, account `admin_level`) which the server maps to the god-mode flag.  
+(2) **Ability**: `ghost->hasAbility(<command name>)` must ALSO be true -- god mode alone is not sufficient; the character must hold the command ability like any other skill-granted ability.  
 
 Failure of either check logs an `adminLog` warning ("<name> attempted to
 use the '/<cmd>' command without permissions"), sends
@@ -444,11 +397,8 @@ use the '/<cmd>' command without permissions"), sends
 
 ### Auditing
 
-- Every successful admin command invocation passes through
-  `logAdminCommand(...)` -- admin actions are recorded server-side.
-- Setting config option `Core3.CommandConfigManager.DumpAdminCommands`
-  to true makes CommandConfigManager dump the full admin command list at
-  startup (useful for inventorying what is restricted).
+Every successful admin command invocation passes through `logAdminCommand(...)` -- admin actions are recorded server-side.  
+Setting config option `Core3.CommandConfigManager.DumpAdminCommands` to true makes CommandConfigManager dump the full admin command list at startup (useful for inventorying what is restricted).  
 
 ### For module developers
 
@@ -462,11 +412,9 @@ and will be admin-audited automatically.
 > (badge/skill/stat/server) is `ADMIN_COMMANDS.md` in this directory. It lists
 > real command syntax and worked grant/revoke/audit scenarios.
 
----
 
 # Part II -- Building, Running, Testing
 
----
 ## Repository Layout (operational view)
 
 ```
@@ -477,28 +425,23 @@ Core3/
 `---- wsl2/                # WSL2 setup notes
 ```
 
----
 
----
 ## System Requirements
 
 Per root `README.md` (Debian 12 baseline) and `MMOCoreORB/CMakeLists.txt:31-49`:
 
-- C++14 compiler: Clang >= 16 / GCC >= 5.4 / MSVC >= 2017, 64-bit only
-- CMake >= 3.18; Ninja recommended (docker path uses Ninja + ccache)
-- **Java runtime** -- required by the IDL compiler (`idlc`) at configure/build time
-- **MariaDB/MySQL** -- client library to link AND a reachable server to boot anything
-- BerkeleyDB 5.3 (engine3 object persistence), OpenSSL, zlib, pthreads,
-  Lua **5.3 exact**, Boost(thread); optional jemalloc, cpprestsdk
+C++14 compiler: Clang >= 16 / GCC >= 5.4 / MSVC >= 2017, 64-bit only  
+CMake >= 3.18; Ninja recommended (docker path uses Ninja + ccache)  
+**Java runtime** -- required by the IDL compiler (`idlc`) at configure/build time  
+**MariaDB/MySQL** -- client library to link AND a reachable server to boot anything  
+BerkeleyDB 5.3 (engine3 object persistence), OpenSSL, zlib, pthreads, Lua **5.3 exact**, Boost(thread); optional jemalloc, cpprestsdk  
 
 The docker image (`docker/Dockerfile`, Debian bookworm) installs all of the
 above including mariadb-server inside the container, plus ccache, valgrind,
 gcovr. Prefer the docker path on Windows (see `docker/build.sh`,
 `docker/run.sh`; WSL2 notes in `wsl2/`).
 
----
 
----
 ## Building
 
 ```bash
@@ -531,9 +474,7 @@ Build heft: ~744 `.cpp` + ~2,500 `.h` under `MMOCoreORB/src`, plus IDL
 codegen and vendored googletest. Expect a long, load-heavy compile; the
 in-tree docker build script gates on system load average for this reason.
 
----
 
----
 ## Database Setup (required)
 
 **Every execution mode that boots anything requires a reachable MariaDB**
@@ -543,17 +484,12 @@ unconditionally before any component toggles are evaluated, and even the
 unit-test harness initializes the MySQL client library
 (`src/tests/TestCore.h:26`).
 
-1. Install/start MariaDB; create database and user.
-2. Import schemas from `MMOCoreORB/sql/`: `swgemu.sql` (required),
-   `datatables.sql`, and optionally `mantis.sql`.
-3. Configure connection in `MMOCoreORB/bin/conf/config.lua`
-   (`DBHost`, `DBPort=3306`, `DBName`, `DBUser`, `DBPass`, `DBSecret`;
-   Mantis settings nearby).
-4. Startup queries the `galaxy` table; ensure it is populated.
+(1) Install/start MariaDB; create database and user.  
+(2) Import schemas from `MMOCoreORB/sql/`: `swgemu.sql` (required), `datatables.sql`, and optionally `mantis.sql`.  
+(3) Configure connection in `MMOCoreORB/bin/conf/config.lua` (`DBHost`, `DBPort=3306`, `DBName`, `DBUser`, `DBPass`, `DBSecret`; Mantis settings nearby).  
+(4) Startup queries the `galaxy` table; ensure it is populated.  
 
----
 
----
 ## Running
 
 Entry point flags (`MMOCoreORB/src/main.cpp`):
@@ -576,27 +512,17 @@ e.g. AI movement/aggro tests (ServerCore.cpp:375-379).
 Working directory matters: run from `MMOCoreORB/bin/` so relative script
 paths resolve (CTest sets this as its working directory).
 
----
 
----
 ## Testing Capabilities
 
 ### What exists
 
 **Unit tests: GoogleTest 1.13, vendored and compiled into the server binary.**
 
-- Framework: `utils/googletest-release-1.13.0/` (with GoogleMock)
-- Wiring: `COMPILE_TESTS=ON` -> `add_subdirectory(utils/googletest-release-1.13.0)`
-  + `enable_testing()` (`CMakeLists.txt:220-234`); test sources globbed from
-  `src/tests/*.cpp|h` into the `core3` executable (`src/CMakeLists.txt:69-86`);
-  registered as `add_test(core3 ... runUnitTests)` with working dir
-  `bin/` (`src/CMakeLists.txt:193-197`)
-- Run via `ctest -R core3` (from build dir) or directly `./core3 runUnitTests`
-- Scale: ~264 TEST/TEST_F cases across 16 suites. Highlights:
-  `StringTest.cpp` (178 cases), `LuaMobileTest.cpp` (parses real mobiles/loot
-  through live managers), `ConfigManagerTest.cpp`, `CreatureObjectTest.cpp`,
-  `ZoneTest.cpp`, `AreaShapeTests.cpp`, deadlock-detection base classes, and
-  mock infrastructure (`MockBehavior.h`) for AI behavior trees
+Framework: `utils/googletest-release-1.13.0/` (with GoogleMock)  
+Wiring: `COMPILE_TESTS=ON` -> `add_subdirectory(utils/googletest-release-1.13.0)` + `enable_testing()` (`CMakeLists.txt:220-234`); test sources globbed from `src/tests/*.cpp|h` into the `core3` executable (`src/CMakeLists.txt:69-86`); registered as `add_test(core3 ... runUnitTests)` with working dir `bin/` (`src/CMakeLists.txt:193-197`)  
+Run via `ctest -R core3` (from build dir) or directly `./core3 runUnitTests`  
+Scale: ~264 TEST/TEST_F cases across 16 suites. Highlights: `StringTest.cpp` (178 cases), `LuaMobileTest.cpp` (parses real mobiles/loot through live managers), `ConfigManagerTest.cpp`, `CreatureObjectTest.cpp`, `ZoneTest.cpp`, `AreaShapeTests.cpp`, deadlock-detection base classes, and mock infrastructure (`MockBehavior.h`) for AI behavior trees  
 
 **Lua validation:** no lint tooling (no luacheck config anywhere). The
 available checks are the C++-driven ones: `testScreenPlays` mode,
@@ -610,14 +536,9 @@ local and manual-triggered.
 
 ### Constraints (be honest about these)
 
-1. **No DB-less mode.** Unit tests link and initialize MySQL; several suites
-   construct real managers/databases. A MariaDB endpoint is effectively
-   required for meaningful runs.
-2. **Compile cost.** Any test change recompiles part of the `core3` binary --
-   minutes, not seconds.
-3. **Engine-coupled tests.** Most gameplay logic takes `CreatureObject*` /
-   `PlayerObject*` and engine singletons; unit-testing it requires the
-   running-object infrastructure, not plain instantiation.
+(1) **No DB-less mode.** Unit tests link and initialize MySQL; several suites construct real managers/databases. A MariaDB endpoint is effectively required for meaningful runs.  
+(2) **Compile cost.** Any test change recompiles part of the `core3` binary -- minutes, not seconds.  
+(3) **Engine-coupled tests.** Most gameplay logic takes `CreatureObject*` / `PlayerObject*` and engine singletons; unit-testing it requires the running-object infrastructure, not plain instantiation.  
 
 ### Comparison with Project Alice-style testing
 
@@ -634,20 +555,13 @@ here. What does port:
 
 ### Recommended cadence for this module
 
-1. **Every session:** clean configure + build of `core3` (compile gate).
-2. **After any Lua/script change:** `./core3 testScreenPlays`.
-3. **Before delivery, when environment allows:** `ctest -R core3` with
-   MariaDB up; treat failures as ERR-worthy regressions.
-4. **Behavioral claims:** verify per the focused-test matrix in
-   [ARCHITECTURE.md](ARCHITECTURE.md) against a live server.
-5. **Future option:** add GoogleTest files under `src/tests/` for
-   engine-independent module logic (pure bp math, formatting, classifier
-   tables) following existing suite patterns; register nothing extra -- the
-   glob picks them up.
+(1) **Every session:** clean configure + build of `core3` (compile gate).  
+(2) **After any Lua/script change:** `./core3 testScreenPlays`.  
+(3) **Before delivery, when environment allows:** `ctest -R core3` with MariaDB up; treat failures as ERR-worthy regressions.  
+(4) **Behavioral claims:** verify per the focused-test matrix in [ARCHITECTURE.md](ARCHITECTURE.md) against a live server.  
+(5) **Future option:** add GoogleTest files under `src/tests/` for engine-independent module logic (pure bp math, formatting, classifier tables) following existing suite patterns; register nothing extra -- the glob picks them up.  
 
----
 
----
 ## Deploying Module Changes
 
 The module is part of this repository -- no patch application or mirroring
@@ -674,21 +588,13 @@ Some module artifacts live in the server's data archives, maintained in
 Daniel's TRE builder workspace (`G:\Data\swgemu server\TRE builder\`),
 outside this repository:
 
-- **Datatable rows** (e.g. Challenge Tier skill trees) are appended to
-  `datatables\skill\skills.csv`. Its NAME column holds internal keys only;
-  display strings never go there.
-- **Display strings** ship as compiled STF sources under `string\en\`.
-  Precedent: `exp_n.stf` carries the `challenge_tier` XP label. Skill-box
-  display names belong in a `skill_n.stf` source (to be added when the
-  Challenge Tier trees deploy; decision record:
-  [../feature-planning/CHALLENGE_TIER_SKILLS.md](../feature-planning/CHALLENGE_TIER_SKILLS.md)).
+**Datatable rows** (e.g. Challenge Tier skill trees) are appended to `datatables\skill\skills.csv`. Its NAME column holds internal keys only; display strings never go there.  
+**Display strings** ship as compiled STF sources under `string\en\`. Precedent: `exp_n.stf` carries the `challenge_tier` XP label. Skill-box display names belong in a `skill_n.stf` source (to be added when the Challenge Tier trees deploy; decision record: [../feature-planning/CHALLENGE_TIER_SKILLS.md](../feature-planning/CHALLENGE_TIER_SKILLS.md)).  
 
 After editing either side, rebuild the affected archive(s) with the TRE
 builder and redeploy them together with the server binary.
 
----
 
----
 ## Troubleshooting
 
 | Symptom | Likely cause | Fix |
@@ -702,10 +608,8 @@ builder and redeploy them together with the server binary.
 | Scripts not loading at boot | Wrong working directory | Run from `MMOCoreORB/bin/` |
 | Engine includes unresolved | engine3 submodule not initialized | `git submodule update --init` |
 
----
 
----
 ## Related Documentation
 
-- Module code reference & hooks: [../../customskills/CODE_REFERENCE.md](../../customskills/CODE_REFERENCE.md)
-- Module install/remove: [../installation/INSTALLATION.md](../installation/INSTALLATION.md)
+Module code reference & hooks: [../../customskills/CODE_REFERENCE.md](../../customskills/CODE_REFERENCE.md)  
+Module install/remove: [../installation/INSTALLATION.md](../installation/INSTALLATION.md)  
