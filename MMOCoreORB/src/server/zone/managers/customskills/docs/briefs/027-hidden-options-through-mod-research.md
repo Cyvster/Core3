@@ -42,7 +42,7 @@ these into the Custom Skills mod:
 4. **Safety**: any keys that must NOT be exposed (secrets rule per ERR-014 /
    BRIEF-026 exclusions) or that destabilize when toggled at runtime?
 5. **Deliverable shape**: proposed mod config file layout (grouped, fully
-   notated per Daniel's documentation standards: what it does, default,
+   notated per the owner's documentation standards: what it does, default,
    possible values, restart-vs-dynamic note), and whether toggling requires
    server restart per option.
 

@@ -261,7 +261,7 @@ is never a valid name-slot value: `opencode (opencode/hy3-free)` is wrong;
 `hy3-free (opencode/hy3-free)` is correct [ERR-006].
 
 Example: `ox-alpha (opencode/x-preview-f-free), 08232026`
-The human owner signs as `Daniel`.
+The human owner signs as `Cyvster`.
 
 Add yourself to a document's **Contributors** section the first time you
 contribute to it. Historical attributions (e.g. earlier model sessions) are
@@ -292,7 +292,7 @@ directory are never reformatted by this project's policy.
 
 ### Time zone
 
-Dates are recorded in Central Time (US & Canada) -- Daniel's local time
+Dates are recorded in Central Time (US & Canada) -- Cyvster's local time
 zone: UTC-6 during standard time (CST), UTC-5 during daylight saving time
 (CDT). Contributors in other time zones convert their local time to
 Central Time before recording anything in this project (documents, commit
