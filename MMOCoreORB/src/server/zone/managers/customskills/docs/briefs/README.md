@@ -98,7 +98,7 @@ before claim ([R6.9], BRIEF-019).
 | [`032-floating-combat-text-investigation.md`](032-floating-combat-text-investigation.md) | Investigate FCT hook: ShowFlyText scale/color/content/position control without client mods; feasibility + design | CLAIMED |
 | [`033-menu-performance-research.md`](033-menu-performance-research.md) | Quantify menu-open cost (checks, config reads, SUI build) vs combat/inventory actions; 1000-concurrent burst model | CLAIMED |
 | [`034-consolidated-strike-fct.md`](034-consolidated-strike-fct.md) | Double/Triple/Quad become damage multipliers (single strike) + tiered FCT: scale+color escalate per tier/crit, config-driven | CLAIMED |
-| [`035-crafting-tool-repeat-research.md`](035-crafting-tool-repeat-research.md) | Viability: repeat-craft option for inventory crafting tool (session lifecycle, snapshot reuse, client constraints); recreates brief lost to disconnects | CLAIMED |
+| [`035-crafting-tool-repeat-research.md`](035-crafting-tool-repeat-research.md) | Viability: repeat-craft option for inventory crafting tool (session lifecycle, snapshot reuse, client constraints); recreates brief lost to disconnects | DELIVERED (PARTIAL: assisted pre-fill viable; server-side loop not) |
 
 ## Notes
 
