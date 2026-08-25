@@ -69,6 +69,7 @@ reading only what the brief lists -- no conversation history required.
 | [`020-apply-dense-format-reference-docs.md`](020-apply-dense-format-reference-docs.md) | Apply approved dense doc format (tight blocks, stacked no-bullet lines) to reference/lookup docs only | DELIVERED |
 | [`021-verify-admin-commands-vs-codebase.md`](021-verify-admin-commands-vs-codebase.md) | Cross-verify PDF-derived admin commands against Core3 command classes; cite file:line or mark not-on-build | DELIVERED |
 | [`022-player-commands-reference.md`](022-player-commands-reference.md) | PLAYER_COMMANDS.md: full ~3k player-command inventory + deep-dive on ~100 argumented commands | CLAIMED |
+| [`023-hidden-config-options.md`](023-hidden-config-options.md) | Deep dive: enumerate + document semi-hidden config.lua options (PlayerManager/JTL/PCM etc.) in swgemu/CODE_REFERENCE.md | CLAIMED |
 
 ## Notes
 
