@@ -1660,3 +1660,26 @@ Never forward-declare IDL-generated classes (ManufactureSchematic,
 CraftingTool, ...) in the global namespace in mod headers: IDL headers
 declare them inside server::zone::objects::* namespaces; both visible in one
 TU yields ambiguous-type build errors. Include the real header instead.
+## Mission Terminal Options (BRIEF-043)
+
+`CustomSkillsMissions` (customskills/missions/) implements per-player mission
+direction and difficulty choices, ported from cyvster2 with performance and
+safety fixes. Delegation-only: MissionManagerImplementation.cpp carries five
+1-7 line `// BRIEF-043 (mod hook)` sites; all logic is mod-side.
+
+Hooks: choice cache around populateMissionList (cacheChoices/clearChoices --
+choices read ONCE per list, never per-mission: the cyvster2 stutter fix);
+difficulty display override; lair-spawn playerLevel override; heading wedge
+(+/-5 deg) fed to vanilla getWorldCoordinate for destroy placement;
+mission-list cap from config; descriptive "CL<n> Destroy the <mobile>" titles.
+
+Persistence: ScreenPlayData keys `mission_level_choice/levelChoice` and
+`mission_direction_choice/directionChoice` -- identical to cyvster2 so
+returning players keep their settings. Unset values are guarded (cyvster2
+crashed on empty strings here).
+
+UI: two pure-C++ SuiListBoxes from terminal radials 112/113 ("Mission
+Direction" / "Mission Difficulty"); no Lua screenplays in the path.
+Config: `customSkillsConfig.missions` table (missionOptionsEnabled,
+directionOptionEnabled, difficultyOptionEnabled, missionListSize default 3,
+descriptiveTitles default true).

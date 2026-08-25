@@ -131,3 +131,12 @@ hy3-free (opencode/hy3-free), 08242026 — BRIEF-014 doc removals (combat spam l
 ## SWGEMU Options page
 
 Menu path Server Config > SWGEMU Options shows a read-only list of notable Core3 server options with live values (green ENABLED / red DISABLED for bools); entries marked "(restart required)" only change after a server restart. Full inventory: customskills/CONFIG_OPTIONS.md.
+
+## Mission Terminal Options
+
+Right-click a mission terminal to set your personal **Mission Direction**
+(which way from the city your destroy missions spawn) and **Mission
+Difficulty** (ten tiers, from very easy up to Hardest). Choices are saved per
+character and apply to new missions you pull from any general or faction
+mission terminal. Set either back to "vanilla" to return to normal random
+missions.

@@ -39,7 +39,7 @@ Complexity MODERATE. Quality SMELLY: Lua SUI flow itself is fine and cheap, but
 the C++ side calls DirectorManager Lua instance synchronously inside radial-menu
 select on the zone executor (MissionTerminalImplementation.cpp:87-107); the
 levelChoice read uses `Integer::valueOf("")` with no empty-string guard --
-first use before any choice crashes/parses to 0 silently. Status TODO.
+first use before any choice crashes/parses to 0 silently. Status IN-MOD (BRIEF-043, 08252026).
 M02 Mission direction choice | FEATURE | mission | Player picks compass
 direction (N/NE/E/SE/S/SW/W/NW or Reset) from terminal radial 113; persisted as
 `mission_direction_choice/directionChoice`; destroy-mission start position is
@@ -58,7 +58,7 @@ then opening the terminal triggers full mission-bag regeneration (24+ missions
 generated per request, see M05) including lair-spawn scans and zone boundary
 checks per mission -- synchronous, on the zone executor, per terminal open.
 BRIEF-038 should treat regeneration cost, not menu construction, as the
-performance suspect. Status TODO.
+performance suspect. Status IN-MOD (BRIEF-043, 08252026).
 M03 Mission bag expansion + custom titles | FEATURE | mission | Mission bag
 raised 12->24 general (MissionManagerImplementation.cpp:206), factional recon
 bonus 6->24 (214), destroy/deliver split points moved 6/12 -> 24/30 general
@@ -67,7 +67,7 @@ titles: `"CL<displayLevel>  Destroy the <first-mobile-name> camp/lair."`
 built from first entry of lair mobiles map, replacing StringId table titles
 (~950-970 block). Complexity TRIVIAL-MODERATE. Quality SMELLY: title built per
 mission per terminal open with `replaceAll("_", " ")` string alloc; fine, but
-the 24-slot bag doubles generation work per open. Status TODO (pairs with
+the 24-slot bag doubles generation work per open. Status TODO (pairs with UPDATE 08252026: descriptive-titles half now IN-MOD via BRIEF-043; bag expansion still deferred.
 M01/M02 as the terminal UX package).
 M04 Bounty reward x100 + city bonus stacking | TWEAK | mission |
 `mission->setRewardCredits(reward * cityBonus * 100)` hard-coded in

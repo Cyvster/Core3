@@ -10,6 +10,7 @@
 #include "server/zone/packets/object/ObjectMenuResponse.h"
 #include "server/zone/objects/region/CityRegion.h"
 #include "server/zone/managers/city/CityManager.h"
+#include "server/zone/managers/customskills/missions/CustomSkillsMissions.h"
 #include "server/zone/managers/city/CityRemoveAmenityTask.h"
 #include "server/zone/objects/player/sessions/SlicingSession.h"
 
@@ -27,6 +28,14 @@ void MissionTerminalImplementation::fillObjectMenuResponse(ObjectMenuResponse* m
 		menuResponse->addRadialMenuItemToRadialID(73, 75, 3, "@city/city:east"); // East
 		menuResponse->addRadialMenuItemToRadialID(73, 76, 3, "@city/city:south"); // South
 		menuResponse->addRadialMenuItemToRadialID(73, 77, 3, "@city/city:west"); // West
+	}
+
+	// BRIEF-043 (mod hook): mission direction/difficulty options.
+	if (CustomSkillsMissions::isEnabled()) {
+		if (CustomSkillsMissions::isDirectionOptionEnabled())
+			menuResponse->addRadialMenuItem(112, 3, "Mission Direction");
+		if (CustomSkillsMissions::isDifficultyOptionEnabled())
+			menuResponse->addRadialMenuItem(113, 3, "Mission Difficulty");
 	}
 }
 
@@ -77,6 +86,19 @@ int MissionTerminalImplementation::handleObjectMenuSelect(CreatureObject* player
 		CityManager* cityManager = getZoneServer()->getCityManager();
 		cityManager->alignAmenity(city, player, _this.getReferenceUnsafeStaticCast(), selectedID - 74);
 
+		return 0;
+	}
+
+	// BRIEF-043 (mod hook): option menus.
+	if (selectedID == 112 && CustomSkillsMissions::isEnabled()
+			&& CustomSkillsMissions::isDirectionOptionEnabled()) {
+		CustomSkillsMissions::showDirectionMenu(player);
+		return 0;
+	}
+
+	if (selectedID == 113 && CustomSkillsMissions::isEnabled()
+			&& CustomSkillsMissions::isDifficultyOptionEnabled()) {
+		CustomSkillsMissions::showDifficultyMenu(player);
 		return 0;
 	}
 
