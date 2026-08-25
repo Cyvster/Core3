@@ -38,8 +38,6 @@ void CustomSkillsConfig::setDefaults() {
 
 	// BRIEF-036 defaults: repeat-craft OFF until the operator opts in;
 	// practice-mode repeats allowed (matches vanilla, owner directive).
-	repeatEnabled = false;
-	repeatAllowPractice = true;
 
 	modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = true;
 	modifierCaps[CustomSkillsModifierType::CRITICAL_CHANCE] = 6000;
@@ -252,13 +250,7 @@ void CustomSkillsConfig::load() {
 	}
 	fct.pop();
 
-	// BRIEF-036: repeat-craft assisted pre-fill knobs.
-	LuaObject repeatCraft = root.getObjectField("repeatCraft");
-	if (repeatCraft.isValidTable()) {
-		repeatEnabled = repeatCraft.getBooleanField("repeatEnabled", false);
-		repeatAllowPractice = repeatCraft.getBooleanField("repeatAllowPractice", true);
-	}
-	repeatCraft.pop();
+
 
 	LuaObject modifiers = root.getObjectField("modifiers");
 	if (modifiers.isValidTable()) {

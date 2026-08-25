@@ -38,6 +38,21 @@ weapon type, so no special replication is needed. Document in USER_GUIDE:
 tier hits on lairs work with all weapon types; state effects (stun/blind)
 remain creature-only per vanilla.
 
+### A.2 Follow-up (owner directives, live-test round 2)
+
+- REMOVE the chat-window xN tag lines entirely (extra chat clutter).
+  Delete the ChatTagInfo task block; chatTagEnabled knob becomes obsolete
+  (remove from config + docs, or repurpose only if a future use appears).
+- Replace the escalated hit-location stf text with TIER TEXT via a small
+  custom string table: server sends `customskills/fct` + entry `x2`/`x3`/
+  `x4` (crit: `crit`). Ship `bin/`-distributed `customskills_fct.stf`
+  mapping those entries to "x2"/"x3"/"x4"/"CRIT!" with install
+  instructions (players drop into client stringfiles dir; no TRE rebuild;
+  players without the file see no status text -- graceful).
+- Escalated size/color escalation applies to this tier text as already
+  implemented. Location text stays suppressed on escalated hits.
+- Owner declined: investigation of damage-number byte-width display.
+
 ## B. Lair / TANO-defender support (owner live-test: no double/crit vs lairs)
 
 Lair/TANO defenders take `applyDamage(TangibleObject* attacker ...)` via
