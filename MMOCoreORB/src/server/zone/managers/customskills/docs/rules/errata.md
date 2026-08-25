@@ -592,3 +592,78 @@ Cyvster may resolve, reject, or apply any entry directly.
   "the coordinator-process framework" without operator-identifying detail.
   Execute together with BRIEF-024's sweep; fold findings into the BRIEF-024
   delivery report.
+
+## ERR-016 -- Consolidated-strike flytext goes to attacker only (BRIEF-039 F-01)
+- STATUS: OPEN
+- FILED: 08252026 by ox-alpha (opencode/x-preview-f-free), BRIEF-039 audit
+- SEVERITY: DEFECT
+- SYMPTOM: BRIEF-034 tiered ShowFlyText is sent with `creo->sendMessage(fly)`
+  where creo is the ATTACKER; only the attacker ever sees the escalated
+  flytext. Brief 034 item 5: "broadcast to attacker + defenders-of-record
+  same as vanilla hit flytext". Vanilla audience: defender's observers via
+  showHitLocationFlyText (CombatManager.cpp ~1614-1616).
+- EVIDENCE: combat/CustomSkillsCombat.cpp:105-106 (fly) and :119-122 (chat
+  tag, correctly attacker-only per design); briefs/
+  034-consolidated-strike-fct.md lines 56-58. Cite line numbers valid
+  08252026 @ 201f797421.
+- FIX: broadcast flytext to defender (mirror showHitLocationFlyText's
+  audience); keep chat tag attacker-only. Proposed as remediation cluster
+  "presentation fixes" in docs/audits/integrity/08252026/findings.md.
+- NOTE: filed by the BRIEF-034 delivery worker's harness identity but a
+  different session/task than the delivery; eligibility per quick-start
+  table row 2.
+
+## ERR-017 -- Repeat-craft pre-fill blind to nested containers; partial stacks drained silently (BRIEF-039 F-02+F-03)
+- STATUS: OPEN
+- FILED: 08252026 by ox-alpha (opencode/x-preview-f-free), BRIEF-039 audit
+- SEVERITY: DEFECT (two related behavior gaps in one code path)
+- SYMPTOM 1: doRepeatCraft scans ONLY the top-level inventory container for
+  matching resource containers / components; resources inside backpacks,
+  other containers, or the crafting-components satchel are never found,
+  while vanilla crafting accepts them (`isASubChildOf(crafter)` semantics,
+  CraftingSessionImplementation.cpp:601-605).
+- SYMPTOM 2: a container holding LESS than the required quantity passes the
+  `getQuantity() > 0` guard and ResourceSlot::add drains it completely,
+  leaving the slot unfilled with no "which resource is short" message --
+  brief 036 item 3 requires naming the shortfall.
+- EVIDENCE: crafting/CustomSkillsCrafting.cpp inventory loops (~:262-272
+  resource, ~:288-303 component); quantity guard :270; drain behavior
+  ingredientslots/ResourceSlot.h:62-80. Valid 08252026 @ 201f797421.
+- FIX: deep traversal of player sub-containers (or reuse slot-side parent
+  search); require quantity >= remaining need before consuming, else leave
+  slot empty + report short amount. Clustered into proposed repeat-craft
+  hardening brief (findings.md).
+
+## ERR-018 -- Repeat snapshot captures experiment string never used; customization dropped (BRIEF-039 F-04)
+- STATUS: OPEN
+- FILED: 08252026 by ox-alpha (opencode/x-preview-f-free), BRIEF-039 audit
+- SEVERITY: DEFECT (spec item undelivered both directions)
+- SYMPTOM: cs36.exp is written on every successful craft
+  (CraftingSessionImplementation.cpp:1097-1099 accumulate lastExpAttempt;
+  CustomSkillsCrafting.cpp storeRepeatRecipe persists it) but doRepeatCraft
+  NEVER reads it -- experimentation allocations are not re-applied. The
+  customization string is not captured at all. Brief 036 item 6:
+  "auto-apply snapshot allocations".
+- RISK: low (player experiments manually anyway since flow stops at state 2),
+  but stored dead data misleads operators reading cs36.* docs.
+- EVIDENCE: repo sweep shows zero reads of the "exp" key outside its write;
+  no customization key exists. Valid 08252026 @ 201f797421.
+- FIX: either wire exp into post-select pre-fill or stop capturing it and
+  amend CODE_REFERENCE.md:1635. Clustered into the repeat-craft hardening
+  brief (with orphaned-key cleanup on discard paths, findings.md F-06).
+
+## ERR-019 -- USER_GUIDE stale lines contradict delivered mechanics + hot reload (BRIEF-039 F-07+F-08)
+- STATUS: OPEN
+- FILED: 08252026 by ox-alpha (opencode/x-preview-f-free), BRIEF-039 audit
+- SEVERITY: DOC-MISMATCH
+- SYMPTOM: (1) USER_GUIDE.md:109 says Double/Triple/Quad are "not yet
+  implemented server-side ([ERR-009])" while the same document line 71
+  documents the delivered consolidated strike. (2) USER_GUIDE.md:115 says
+  config changes require a server restart -- false for [dyn] keys once
+  conf/mod-overrides.lua loads (ConfigManager.cpp:49-60; cached-getter
+  auto-reload ConfigManager.h:180-195).
+- FIX: two-line doc correction; can ride any commit. Also delete the dead
+  "--- SWGEMU Options --- / No options configured yet." text in the
+  SERVER_CONFIG menu branch (CustomSkillsMenu.cpp ~:314-317, findings.md
+  F-05).
+
