@@ -88,11 +88,11 @@ before claim ([R6.9], BRIEF-019).
 | [`021-verify-admin-commands-vs-codebase.md`](021-verify-admin-commands-vs-codebase.md) | Cross-verify PDF-derived admin commands against Core3 command classes; cite file:line or mark not-on-build | DELIVERED |
 | [`022-player-commands-reference.md`](022-player-commands-reference.md) | PLAYER_COMMANDS.md: full ~3k player-command inventory + deep-dive on ~100 argumented commands | CLAIMED |
 | [`023-hidden-config-options.md`](023-hidden-config-options.md) | Deep dive: enumerate + document semi-hidden config.lua options (PlayerManager/JTL/PCM etc.) in swgemu/CODE_REFERENCE.md | CLAIMED |
-| [`024-privacy-scrub.md`](024-privacy-scrub.md) | Remove owner real name + local drive paths from all tracked files; add standing privacy rule | CLAIMED |
-| [`025-menu-modifier-display-and-formatting.md`](025-menu-modifier-display-and-formatting.md) | Menu: show all modifiers per badge, short names (Cri/Crit Multi/Double/Triple/Quad), fix bottom-pane gap, retry column alignment | CLAIMED |
+| [`024-privacy-scrub.md`](024-privacy-scrub.md) | Remove owner real name + local drive paths from all tracked files; add standing privacy rule | DELIVERED |
+| [`025-menu-modifier-display-and-formatting.md`](025-menu-modifier-display-and-formatting.md) | Menu: show all modifiers per badge, short names (Cri/Crit Multi/Double/Triple/Quad), fix bottom-pane gap, retry column alignment | DELIVERED |
 | [`026-swemu-options-viewer.md`](026-swemu-options-viewer.md) | Populate SWGEMU Options menu category: grouped live server-config viewer (no secrets), standardized registry format | CLAIMED |
 | [`027-hidden-options-through-mod-research.md`](027-hidden-options-through-mod-research.md) | Research: route hidden swgemu options through mod via prefilled Lua file (mechanism, precedence, timing, safety) | CLAIMED |
-| [`028-document-lifecycle-archives-adoption.md`](028-document-lifecycle-archives-adoption.md) | Adopt Alice-style bounded ledgers + permanent archives (tombstones, verbatim moves, reconciliation-time trigger) | CLAIMED |
+| [`028-document-lifecycle-archives-adoption.md`](028-document-lifecycle-archives-adoption.md) | Adopt Alice-style bounded ledgers + permanent archives (tombstones, verbatim moves, reconciliation-time trigger) | DELIVERED (rules L1-L6 in process.md; errata convention conformed) |
 | [`029-review-verification-gate-from-alice.md`](029-review-verification-gate-from-alice.md) | XPP mirror-review: evaluate Alice's second-party verification gate for adoption here | CLAIMED |
 | [`030-align-process-to-alice.md`](030-align-process-to-alice.md) | XPP alignment pass 1: adopt Alice's governance gaps (verification gate, audits, errata discipline, milestones, roster); creates Alice mirror brief | DELIVERED |
 
