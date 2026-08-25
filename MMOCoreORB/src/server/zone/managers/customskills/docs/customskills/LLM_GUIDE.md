@@ -91,6 +91,16 @@ same document -> Client data archives.
   your own delivery before committing.
 - Pushing is part of committing: an unpushed commit does not exist for
   coordination purposes ([PROC R6.5/P1]).
+- **Broken-LLM generation drops function bodies (not just declarations).**
+  When reconciling generated C++, treat a declared-and-called symbol with no
+  definition as a first-class defect. ERR-010 showed missing *declarations*
+  (`addBonusItems`, `countOwnedBonuses`); ERR-011 showed a
+  *declared-and-called-but-bodyless* function (`countModifier`) that compiled
+  but failed at **link** with `undefined reference`. After any generated-code
+  change, grep the header for every `static` declaration and confirm a
+  matching `ClassName::symbol(` definition exists in the `.cpp` before
+  declaring a build done. A single missing body surfaces only at link time,
+  after all TUs compile.
 
 ---
 ## Badge & modifier integration rules

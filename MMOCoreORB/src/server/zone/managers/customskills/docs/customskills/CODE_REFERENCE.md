@@ -354,6 +354,13 @@ creatures) is never duplicated.
   player actually owns (used by `getAcquiredCount` and `addBonusItems`). Both
   helpers are declared in `CustomSkillsMenu.h`; the enum arg is the **class**-
   scoped `CustomSkillsModifierType::Type` (see gotcha above).
+- **Per-category modifier total**: `CustomSkillsMenu::countModifier(player,
+  const char* const* keys, int count, CustomSkillsModifierType::Type)` is the
+  per-page helper called by `getModifierTotal()` via the `MOD_LEAF` macro. It
+  iterates a category's badge `keys[]`, and for each owned badge sums the
+  matching basis-point value from `getBadgeBonuses(type)` (mirrors the gameplay
+  `CustomSkillsModifiers::getModifierTotal` pattern). Reconstructed in ERR-011
+  when its definition turned out missing from the generated `.cpp`.
 
 ### Main Page Layout
 
