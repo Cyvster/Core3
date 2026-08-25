@@ -149,7 +149,9 @@ Reusable patterns for us:
   remove the *time* cost between crafts though: with Crafting Speed stacked,
   timer -> min 1s (getPersonalCraftingDuration clamps >=1s), so an unattended
   full-auto repeat loop becomes an AFK XP printer. Mitigations: disallow
-  practice mode in repeats, or cap repeats/session, or require the assisted
+  practice mode in repeats (owner directive: server operator config option,
+  defaulting to allowed -- AFK farming is already possible via macros and is
+  NOT being blocked), or cap repeats/session, or require the assisted
   pre-fill (player present pressing buttons) rather than full auto.
 - **Crafting Speed interplay**: `startCreationTasks` (:1418-1450) applies our
   multiplier before scheduling; repeats inherit it automatically. Full-auto
