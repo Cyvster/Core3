@@ -190,27 +190,27 @@ Every admin command requires BOTH on the executing character: (1) **God mode** (
 ## Argument sources — where to find valid values
 Many placeholders above need specific server-side values. Authoritative sources on this build:
 
-**<quest> / <questName> (activateQuest, deactivateQuest, completeQuest, clearCompletedQuest, listActiveQuests)** — quest names are arbitrary strings the server CRC-hashes (`CompleteQuestCommand.h:65`); they only resolve if a screenplay registered them. Find real quest keys in `bin/scripts/screenplays/` (grep `createQuest` / `setScreenPlayState`; per-planet trees under `screenplays/quests/<planet>/`, village quests in `screenplays/village/`, theme parks in `screenplays/themepark/`). The client journal displays whatever name hashes match its TRE quest list.
+`<quest>` / `<questName>` (`activateQuest`, `deactivateQuest`, `completeQuest`, `clearCompletedQuest`, `listActiveQuests`) — quest names are arbitrary strings the server CRC-hashes (`CompleteQuestCommand.h:65`); they only resolve if a screenplay registered them. Find real quest keys in `bin/scripts/screenplays/` (grep `createQuest` / `setScreenPlayState`; per-planet trees under `screenplays/quests/<planet>/`, village quests in `screenplays/village/`, theme parks in `screenplays/themepark/`). The client journal displays whatever name hashes match its TRE quest list.
 
-**<badge> (grantBadge/revokeBadge)** — numeric IDs loaded from `datatables/badge/badge_map.iff` inside your TRE files (`BadgeList.cpp:46`). List IDs at runtime via Lua `getBadgeListByType` (DirectorManager) or `/requestBadges` on a test character. NOTE: these are NOT the `config.lua` badge string keys; map key→ID via BadgeList before granting.
+`<badge>` (`grantBadge/revokeBadge`) — numeric IDs loaded from `datatables/badge/badge_map.iff` inside your TRE files (`BadgeList.cpp:46`). List IDs at runtime via Lua `getBadgeListByType` (DirectorManager) or `/requestBadges` on a test character. NOTE: these are NOT the `config.lua` badge string keys; map key→ID via BadgeList before granting.
 
-**<skillName> (grantSkill/revokeSkill)** — dot-path skill box names, e.g. `combat_1a`, `crafting_artisan_novice`. Full catalog: `bin/scripts/skills/serverobjects.lua` (+ language/staff subdirs); runtime resolution via SkillManager::awardSkill (`SkillManager.cpp:326`) auto-awards prerequisites.
+`<skillName>` (`grantSkill/revokeSkill`) — dot-path skill box names, e.g. `combat_1a`, `crafting_artisan_novice`. Full catalog: `bin/scripts/skills/serverobjects.lua` (+ language/staff subdirs); runtime resolution via SkillManager::awardSkill (`SkillManager.cpp:326`) auto-awards prerequisites.
 
-**<experienceType> (setExperience)** — XP type strings matching the character's experience list keys (e.g. `combat_missions_easy`, `crafting_*`, `jedi_general`). Enumerated from `xp_types.iff` in TREs; inspect a live character's types with Lua `getExperienceList`.
+`<experienceType>` (`setExperience`) — XP type strings matching the character's experience list keys (e.g. `combat_missions_easy`, `crafting_*`, `jedi_general`). Enumerated from `xp_types.iff` in TREs; inspect a live character's types with Lua `getExperienceList`.
 
-**<faction> (setFaction/setFactionStanding)** — faction tags from `bin/scripts/managers/faction_manager.lua`: rebel, imperial, hutt, jabba, borvo, valarian, nym, corsec, nightsister, mtn_clan, sif, naboo_security_force, narmle, and more (loaded by FactionManager::loadData, `FactionManager.cpp:20`). Ranks come from `datatables/faction/rank.iff`.
+`<faction>` (`setFaction/setFactionStanding`) — faction tags from `bin/scripts/managers/faction_manager.lua`: rebel, imperial, hutt, jabba, borvo, valarian, nym, corsec, nightsister, mtn_clan, sif, naboo_security_force, narmle, and more (loaded by FactionManager::loadData, `FactionManager.cpp:20`). Ranks come from `datatables/faction/rank.iff`.
 
-**<state> (setPlayerState)** — state names resolved through CreatureState's table built from `datatable state.iff` in TREs (`CreatureState.h:77`): typical values include poisoned, diseased, stunned, blinded, intimidated, frozen, immobilized.
+`<state>` (`setPlayerState`) — state names resolved through CreatureState's table built from `datatable state.iff` in TREs (`CreatureState.h:77`): typical values include poisoned, diseased, stunned, blinded, intimidated, frozen, immobilized.
 
-**<planet> (teleport/cityInfo/createCreature)** — zone names from `ZonesEnabled` in `bin/conf/config.lua:93+`: corellia, dantooine, dathomir, dungeon1, endor, lok, naboo, rori, talus, tatooine, tutorial, yavin4 (+ space zones under SpaceZonesEnabled).
+`<planet>` (`teleport/cityInfo/createCreature`) — zone names from `ZonesEnabled` in `bin/conf/config.lua:93+`: corellia, dantooine, dathomir, dungeon1, endor, lok, naboo, rori, talus, tatooine, tutorial, yavin4 (+ space zones under SpaceZonesEnabled).
 
-**<template> paths (createCreature/object createitem/createSpawningElement spawn)** — server object template paths like `object/mobile/shared_darth_vader.iff`. Browse catalogs in `bin/scripts/mobile/` (creature spawns) and `bin/scripts/object/` (tangibles/structures). Client-side `.sat` appearance files depend on your TRE set.
+`<template>` paths (`createCreature/object createitem/createSpawningElement spawn`) — server object template paths like `object/mobile/shared_darth_vader.iff`. Browse catalogs in `bin/scripts/mobile/` (creature spawns) and `bin/scripts/object/` (tangibles/structures). Client-side `.sat` appearance files depend on your TRE set.
 
-**<lootGroup> (object createloot)** — loot group names defined in `bin/scripts/loot/` and mobile template `lootGroups` entries.
+`<lootGroup>` (`object createloot`) — loot group names defined in `bin/scripts/loot/` and mobile template `lootGroups` entries.
 
-**<milestone> (clearVeteranReward/getVeteranRewardTimeCs)** — veteran reward milestone integers from `features.lua` / player_manager config in `bin/conf/` + `datatables/veteran_reward*.iff` in TREs.
+`<milestone>` (`clearVeteranReward/getVeteranRewardTimeCs`) — veteran reward milestone integers from `features.lua` / player_manager config in `bin/conf/` + `datatables/veteran_reward*.iff` in TREs.
 
-**<objectid>/<oid>** — 64-bit object IDs; discover via `/getPlayerId`, `/findObject`, or the `objects`/`sceneobjects` DB tables (`/database sceneobjects <id>` reads raw rows).
+`<objectid>` /<oid> — 64-bit object IDs; discover via `/getPlayerId`, `/findObject`, or the `objects`/`sceneobjects` DB tables (`/database sceneobjects <id>` reads raw rows).
 
 ## Module note
 Custom Skills adds **no** admin commands. `/customskills` is a normal ability-backed command. The badge/skill commands above (`/grantBadge`, `/grantSkill`, ...) are what operators use to set up what the module reads from `config.lua`. Badge IDs are **numeric**, not `config.lua` keys — map via `BadgeList` or `/requestBadges`.
