@@ -502,3 +502,20 @@ Daniel may resolve, reject, or apply any entry directly.
   declared-but-undefined statics in CustomSkillsMenu.h. Link re-test pending
   on the Linux build host. Net: ERR-010 + ERR-011 together close the
   CustomSkillsMenu compile+link desync chain.
+
+## ERR-012 -- BRIEF-018 initial delivery incomplete (10 of ~63 commands)
+- STATUS: RESOLVED
+- FILED: 08252026 by hy3-free (opencode/hy3-free)
+- SYMPTOM: Initial ADMIN_COMMANDS.md documented only 10 commands found via
+  `bin/scripts/commands/*.lua` grep; owner-supplied Commands V2 reference
+  documents ~63. Owner rejected the delivery.
+- ROOT CAUSE: Source-selection error -- grounding solely on the module repo's
+  command scripts captures only commands with dedicated .lua wrappers on this
+  codebase, not the full stock SWGEmu admin surface.
+- FIX: Rebuilt swgemu/ADMIN_COMMANDS.md from the owner PDF (Commands V2 -
+  Posted.pdf), retaining the 5 disk-verified commands with their file:line
+  cites and flagging PDF-derived entries for C++ cross-verification per R6.10.
+- LESSON: For "document system X" briefs, ask for or locate the AUTHORITATIVE
+  upstream reference before grepping local artifacts; local grep defines what
+  is *verified*, not what *exists*.
+- COMMIT: ddd2cf6de9
