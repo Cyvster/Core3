@@ -57,3 +57,99 @@
 - ERR-009 (Double/Triple/Quad implementation-vs-removal) -- separate
   owner decision in progress; this brief does not touch their config
   entries or menu rows beyond the spam-label lines named above.
+
+---
+
+## Execution addendum -- 08242026 by ox-alpha (opencode/x-preview-f-free): precise removal map
+
+Verified inventory at time of writing. Execute top to bottom; every item
+is a deletion or simplification, no new functionality.
+
+### 1. Module C++
+
+**`combat/CustomSkillsCombat.cpp`** -- inside `applyDamage`, delete the
+entire label block from the crit branch (keep the crit chance roll and
+the `damage` multiplier lines above it):
+
+```cpp
+			CustomSkillsConfig* config = CustomSkillsConfig::instance();
+			if (config->isCombatSpamLabelsEnabled()) {
+				const String& label = config->getCriticalCombatSpamLabel();
+				if (!label.isEmpty())
+					creo->sendCustomCombatSpam(UnicodeString(label), 11);
+			}
+```
+
+**`CustomSkillsConfig.h`** -- remove:
+- `bool combatSpamLabelsEnabled;` member + `isCombatSpamLabelsEnabled()` getter
+- `int criticalChanceFallbackBonus` stays; remove
+  `String criticalCombatSpamLabel;` member and
+  `getCriticalCombatSpamLabel()` getter
+- `String modifierCombatSpamLabels[...]` array member and
+  `getModifierCombatSpamLabel()` declaration
+
+**`CustomSkillsConfig.cpp`** -- remove:
+- `setDefaults()`: `modifierCombatSpamLabels[i] = "";`,
+  `criticalCombatSpamLabel = "(CRIT)";`
+- `loadModifier()`: the
+  `modifierCombatSpamLabels[type] = modifier.getStringField("combatSpamLabel", ...)` line
+- `load()`: the critical-section spamLabel read block
+  (`String spamLabel = ...` through the isEmpty check)
+- `getModifierCombatSpamLabel()` implementation
+
+**`CustomSkillsMenu.cpp`** -- remove:
+- `countEnabledOptions()`: the
+  `if (config->isCombatSpamLabelsEnabled()) ++count;` line
+- SERVER_CONFIG prompt: the `String spamState = ...` line and the
+  `summary << spamState << "\\#. Combat Spam Labels" << endl;` line
+- MOD_OPTIONS page items: the
+  `box->addMenuItem("Combat Spam Labels " + spamState + "\\#.");` line
+
+### 2. SWGEmu patch files (minimal-touch additions being rolled back)
+
+**`CreatureObject.idl`**: delete the
+`public native void sendCustomCombatSpam(final unicode customString, byte color);`
+declaration (module-added; nothing else uses it).
+**`CreatureObjectImplementation.cpp`**: delete the
+`sendCustomCombatSpam` native implementation body.
+Regenerate `integration/core3-hooks.patch` afterwards so both files
+drop out of it.
+
+### 3. config.lua
+
+- Root field: `combatSpamLabelsEnabled = true,` (+ its explanatory
+  comment lines)
+- Per-modifier: all four `combatSpamLabel = "(...)"` lines
+  (criticalChance, doubleAttackChance, tripleAttackChance,
+  quadAttackChance)
+
+### 4. Documentation
+
+- `docs/installation/INSTALLATION.md`: remove the
+  `combatSpamLabelsEnabled = true` root-settings example lines, the
+  `combatSpamLabel = "(CRIT)",` example line, the four per-modifier
+  one-liner examples that include `combatSpamLabel = "(DOUBLE)/(TRIPLE)/(QUAD)"`,
+  and the verification-step clause "With combatSpamLabelsEnabled = true,
+  crits emit a separate (CRIT) combat message".
+- `docs/customskills/USER_GUIDE.md`: delete the four
+  `- **Combat spam**: ...` bullet lines (Crit/Double/Triple/Quad cards).
+- `docs/customskills/CODE_REFERENCE.md`: remove Appendix A property rows
+  `| **Combat spam label** | (DOUBLE) |` / `(TRIPLE)` / `(QUAD)`, the
+  API mention `getModifierCombatSpamLabel()`, the
+  "`combatSpamLabel` (repeat-damage only)." fragment, and the
+  "| Combat spam labels | Native colors untouched |" row.
+- LEAVE UNTOUCHED (historical records): docs/archive/*, delivered briefs
+  008/010/013/015 content, errata.md entries.
+- CHALLENGE_TIER_SKILLS.md mention of mitigate_damage combat-spam chat
+  line describes NATIVE engine behavior for an excluded mod -- leave.
+
+### 5. Verification
+
+1. Repo-wide grep returns zero for: `combatSpamLabel`,
+   `CombatSpamLabel`, `sendCustomCombatSpam`, `combatSpamLabelsEnabled`
+   -- excluding archive/, delivered briefs 010/013/015 text, and this
+   brief's own instructions.
+2. Brace balance intact in every touched .cpp/.h (count { vs }).
+3. Compile deferred to Docker build environment (engine3 submodule
+   caveat) -- document in delivery note.
+4. Commit tagged `[BRIEF-014]`, pushed ([PROC R6.5]).
