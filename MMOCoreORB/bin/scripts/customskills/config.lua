@@ -135,8 +135,8 @@ customSkillsConfig = {
 
 		tripleAttackChance = {
 			enabled = true,
-			badgeBonus = 200,
-			cap = 7500,
+			badgeBonus = 500,
+			cap = 8500,
 			combatSpamLabel = "(TRIPLE)",
 			badges = {
 				"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
@@ -146,15 +146,18 @@ customSkillsConfig = {
 				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars",
 				"poi_factoryliberation", "poi_heromark",
 			},
-			badgeOverrides = {
-				{ "combat_bountyhunter_master", 300 },
-			},
+			-- Optional per-badge overrides. Each entry replaces badgeBonus
+			-- for that single badge: { "badge_key", basisPointValue }.
+			-- Example (uncomment and edit):
+			-- badgeOverrides = {
+			--     { "combat_1hsword_master", 700 },
+			-- },
 		},
 
 		quadAttackChance = {
 			enabled = true,
-			badgeBonus = 200,
-			cap = 5000,
+			badgeBonus = 300,
+			cap = 5100,
 			combatSpamLabel = "(QUAD)",
 			badges = {
 				"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
@@ -164,9 +167,12 @@ customSkillsConfig = {
 				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars",
 				"poi_factoryliberation", "poi_heromark",
 			},
-			badgeOverrides = {
-				{ "combat_bountyhunter_master", 300 },
-			},
+			-- Optional per-badge overrides. Each entry replaces badgeBonus
+			-- for that single badge: { "badge_key", basisPointValue }.
+			-- Example (uncomment and edit):
+			-- badgeOverrides = {
+			--     { "combat_1hsword_master", 700 },
+			-- },
 		},
 
 		armorPenetration = {
@@ -182,22 +188,19 @@ customSkillsConfig = {
 
 		defenseCapIncrease = {
 			enabled = true,
-			badgeBonus = 5,
-			cap = 0,
+			badgeBonus = 20,
+			cap = 100,
 			badges = {
 				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars",
 				"poi_factoryliberation", "poi_heromark",
-				"exp_lok_volcano", "bdg_exp_lok_imp_outpost", "bdg_exp_lok_kimogila_skeleton",
-				"exp_dat_tarpit", "exp_dat_escape_pod", "exp_dat_misty_falls_1", "exp_dat_misty_falls_2",
-				"bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison",
-				"exp_yav_temple_exar_kun",
 			},
-			badgeOverrides = {
-				{ "poi_rabidbeast", 10 }, { "poi_prisonbreak", 10 }, { "poi_twoliars", 10 },
-				{ "poi_factoryliberation", 10 }, { "poi_heromark", 10 },
-			},
+			-- Optional per-badge overrides. Each entry replaces badgeBonus
+			-- for that single badge: { "badge_key", basisPointValue }.
+			-- Example (uncomment and edit):
+			-- badgeOverrides = {
+			--     { "poi_rabidbeast", 30 },
+			-- },
 		},
-
 		armorDegradeReduction = {
 			enabled = true,
 			badgeBonus = 1250,
