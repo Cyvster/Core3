@@ -540,3 +540,39 @@ Daniel may resolve, reject, or apply any entry directly.
   replacement contains or can re-match the search string; prefer line-based,
   idempotent edits with a post-write size sanity check.
 - COMMITS: c87b829af1, 4a870e64aa, 0d48a6534c, 65c50000f9, 6c0802808f
+
+## ERR-014 -- Live documents expose owner real name + local filesystem paths
+- STATUS: OPEN (resolution tracked via BRIEF-024)
+- FILED: 08252026 by hy3-free (opencode/hy3-free), owner-reported privacy
+  violation.
+- SYMPTOM: ~49 occurrences of the owner's real name across the docs tree
+  (errata.md, briefs, proposals, process.md, project-design.md, LLM_GUIDE,
+  tracking, swgemu/CODE_REFERENCE) plus local absolute paths (owner's Windows
+  drive layout) in swgemu/CODE_REFERENCE. The repo is public; the owner is
+  known online only as Cyvster. No standing convention forbids this class of
+  exposure.
+- ROOT CAUSE: No privacy rule existed in process.md; contributors (human and
+  LLM) transcribed conversational context (names, local paths) into tracked
+  files unchecked.
+- FIX: BRIEF-024 -- scrub all tracked files (name -> Cyvster / "the owner";
+  paths -> repo-relative or generic), add standing privacy rule to
+  process.md, add pre-push grep check to LLM_GUIDE session protocol.
+  Upstream third-party content (SOE credit tables in sql/) is NOT touched.
+- NOTE: git history retains old occurrences; history rewrite is a separate
+  owner-approved decision, documented in the BRIEF-024 delivery report.
+
+## ERR-015 -- Project Alice provenance may import identifying context
+- STATUS: OPEN
+- FILED: 08252026 by hy3-free (opencode/hy3-free)
+- SYMPTOM: rules/process.md cites the "Project Alice framework" as its
+  provenance and adapts several conventions from it. Alice's own materials
+  and any mirrored content have not been audited for real names, local paths,
+  or machine details that could flow into this repo's public docs through
+  continued adaptation.
+- RISK: Same exposure class as ERR-014 via a second channel (external
+  framework references).
+- FIX: Audit every Project Alice reference/adaptation in tracked files;
+  sanitize identifying context; where provenance must stay generic, cite
+  "the coordinator-process framework" without operator-identifying detail.
+  Execute together with BRIEF-024's sweep; fold findings into the BRIEF-024
+  delivery report.
