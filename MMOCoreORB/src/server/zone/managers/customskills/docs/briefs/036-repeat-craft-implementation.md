@@ -27,22 +27,27 @@ leaving the normal client window open for the player to confirm.
    any missing/insufficient resource leaves that slot empty and reports
    which resource is short (@system message); craft proceeds only if all
    slots fill or player fills manually.
-4. **Practice-mode exclusion = SERVER OPERATOR OPTION (owner directive)**:
-   config knob `repeatAllowPractice` bool DEFAULT FALSE. When false, a
-   repeat of a practice-mode craft is refused with a clear message; when
-   true, practice repeats are permitted (operator accepts farming risk).
-   The knob must be documented in config comments with the farming-risk
-   explanation spelled out.
-5. Additional knobs: `repeatEnabled` bool default false (whole feature off
-   by default until operator opts in); `repeatMaxPerSession` int default
-   0 (=unlimited; positive caps consecutive repeats before requiring a
-   fresh manual craft).
+4. **Practice-mode handling -- plain operator option (owner directive)**:
+   config knob `repeatAllowPractice` bool DEFAULT TRUE (matches vanilla,
+   where players can already practice-craft repeatedly). No anti-farming
+   intent or messaging.
+5. `repeatEnabled` bool default false (whole feature off until operator opts in).
 6. Experiment/customization: auto-apply snapshot allocations; if schematic
    changed or slots mismatch, discard snapshot with a notice.
-7. Anti-abuse stance (owner directive): NO farming countermeasures. AFK
+6. WINDOW FLOW (owner requirement): the player STAYS IN THE SAME crafting
+   window. Repeat must not bounce through tool/inventory windows: after the
+   prototype is created, /repeatcraft (or a UI button if wireable) starts
+   the next session pre-filled in-place -- craft, hit repeat, wait, hit
+   repeat. No window hopping.
+7. No rate cap (owner decision): dropped repeatMaxPerSession -- its only
+   purpose was anti-farming pacing. Vanilla handles interruption cleanly
+   (cancelSession at CraftingSessionImplementation.cpp:186 on every exit
+   path; ingredients returned) and the snapshot lives outside session
+   state, so closing the tool mid-craft never corrupts it. Stale snapshots
+   (schematic/slot mismatch) are discarded with a notice.
+8. Anti-abuse stance (owner directive): NO farming countermeasures. AFK
    crafting via macros already exists; repeat does not create a new class
-   of abuse, just removes tedium. Do not add rate-limits beyond
-   repeatMaxPerSession.
+   of abuse, just removes tedium.
 
 ## Deliverables
 
