@@ -20,7 +20,7 @@
 #include "server/zone/objects/player/sui/listbox/SuiListBox.h"
 #include "server/zone/objects/player/sui/SuiCallback.h"
 #include "server/zone/objects/mission/MissionObject.h"
-#include "server/templates/mobile/LairTemplate.h"
+#include "templates/mobile/LairTemplate.h"
 
 #include <mutex>
 
