@@ -94,7 +94,7 @@ before claim ([R6.9], BRIEF-019).
 | [`027-hidden-options-through-mod-research.md`](027-hidden-options-through-mod-research.md) | Research: route hidden swgemu options through mod via prefilled Lua file (mechanism, precedence, timing, safety) | CLAIMED |
 | [`028-document-lifecycle-archives-adoption.md`](028-document-lifecycle-archives-adoption.md) | Adopt Alice-style bounded ledgers + permanent archives (tombstones, verbatim moves, reconciliation-time trigger) | CLAIMED |
 | [`029-review-verification-gate-from-alice.md`](029-review-verification-gate-from-alice.md) | XPP mirror-review: evaluate Alice's second-party verification gate for adoption here | CLAIMED |
-| [`030-align-process-to-alice.md`](030-align-process-to-alice.md) | XPP alignment pass 1: adopt Alice's governance gaps (verification gate, audits, errata discipline, milestones, roster); creates Alice mirror brief | CLAIMED |
+| [`030-align-process-to-alice.md`](030-align-process-to-alice.md) | XPP alignment pass 1: adopt Alice's governance gaps (verification gate, audits, errata discipline, milestones, roster); creates Alice mirror brief | DELIVERED |
 
 ## Notes
 
