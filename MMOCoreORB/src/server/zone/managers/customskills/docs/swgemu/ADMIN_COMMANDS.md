@@ -2,16 +2,23 @@
 *Audience: server operators / GMs.* What-to-type reference for **stock SWGEmu admin commands**, rebuilt from *Commands V2 - Posted* (owner-provided authoritative reference). Permission background: `CODE_REFERENCE.md` → Gating chain (god-mode + ability double gate).
 
 ## Client prerequisite — user.cfg (required)
-Admin commands are **blocked client-side** until enabled: without this, the client refuses to send them and returns "no such command" even with server god mode active. In the **client's** SWG game folder, create/edit `user.cfg`:
+Admin commands are **blocked client-side** until enabled: without this, the client refuses to send them and returns "no such command" even with server god mode active. In the **client's** SWG game folder, create/edit `user.cfg`. Working reference (operator-provided, verified in use):
 ```
+[SwgClient]
+allowMultipleInstances=true
+
 [ClientGame]
 0fd345d9 = true
+
 [ClientUserInterface]
-debugExamine=1
-allowTargetAnything=1
-drawNetworkIds=1
+debugExamine=0
+
+[ClientGraphics]
+useSafeRenderer=0
+rasterMajor=7
+constrainMouseCursorToWindow=false
 ```
-`[ClientGame] 0fd345d9 = true` is the required unlock (the TRE files gate features on it). The `[ClientUserInterface]` keys are optional quality-of-life for admins (examine debugging, target anything, network id overlay). Gotchas: if `user.cfg` doesn't exist, copy `swgemu.cfg` and replace contents; ensure `swgemu.cfg` contains `.include "user.cfg"` (often missing/commented); fully restart the client after edits.
+`[ClientGame] 0fd345d9 = true` is the required unlock (the TRE files gate features on it); everything else in this file is optional preference. Commonly added admin QoL keys under `[ClientUserInterface]`: `debugExamine=1`, `allowTargetAnything=1`, `drawNetworkIds=1`. Gotchas: if `user.cfg` doesn't exist, copy `swgemu.cfg` and replace contents; ensure `swgemu.cfg` contains `.include "user.cfg"` (often missing/commented); fully restart the client after edits.
 
 ## Permission model
 Every admin command requires BOTH on the executing character: (1) **God mode** (`ghost->hasGodMode()`) — account-level admin privilege; (2) **Command ability** (`ghost->hasAbility("/cmd")`) — character must hold the ability like any skill. Either fails → `@error_message:insufficient_permissions` + `adminLog` warning. All successful calls logged via `logAdminCommand(...)`. Boot inventory of restricted commands: set `Core3.CommandConfigManager.DumpAdminCommands = true`. Syntax: `<required>`, `[optional]`.
