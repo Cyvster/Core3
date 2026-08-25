@@ -72,6 +72,7 @@ reading only what the brief lists -- no conversation history required.
 | [`023-hidden-config-options.md`](023-hidden-config-options.md) | Deep dive: enumerate + document semi-hidden config.lua options (PlayerManager/JTL/PCM etc.) in swgemu/CODE_REFERENCE.md | CLAIMED |
 | [`024-privacy-scrub.md`](024-privacy-scrub.md) | Remove owner real name + local drive paths from all tracked files; add standing privacy rule | CLAIMED |
 | [`025-menu-modifier-display-and-formatting.md`](025-menu-modifier-display-and-formatting.md) | Menu: show all modifiers per badge, short names (Cri/Crit Multi/Double/Triple/Quad), fix bottom-pane gap, retry column alignment | CLAIMED |
+| [`026-swemu-options-viewer.md`](026-swemu-options-viewer.md) | Populate SWGEMU Options menu category: grouped live server-config viewer (no secrets), standardized registry format | CLAIMED |
 
 ## Notes
 
