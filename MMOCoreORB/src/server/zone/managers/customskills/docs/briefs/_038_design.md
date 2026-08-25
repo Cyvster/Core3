@@ -220,7 +220,7 @@ choices survive the migration transparently.
   untouched by this brief; flagged as follow-up candidate, not silently mixed
   in.
 
-## 5. Open questions for owner sign-off
+## 5. RESOLVED — see Owner Decisions above
 
 1. **Radial shape**: two flat rows (112/113, cyvster2 parity) or one
    "Mission Options" submenu containing both?
@@ -237,3 +237,22 @@ choices survive the migration transparently.
    option menus?
 6. Confirm ScreenPlayData key reuse (old cyvster2 characters keep their
    settings) is desired rather than a clean-slate namespace.
+
+OWNER DECISIONS (08252026, supersedes open questions):
+
+1. Radial shape: TWO flat rows on terminal radial (cyvster2 parity) --
+   direction and difficulty each get their own row.
+2. Terminal scope: GENERAL + FACTION mission terminals both get options.
+3. Tiers: keep cyvster2's ten-tier list verbatim; standard across private
+   servers; do not renumber or trim.
+4. Ride-alongs now IN SCOPE:
+   - Mission list size: new config knob `missionListSize` (int, default 3 =
+     vanilla; owner sets higher). Replaces cyvster2 commit 751549356e hard-code.
+   - Descriptive titles: "CL<diffDisplay> Destroy the <mobileName>"
+     (cyvster2 MissionManagerImplementation.cpp:971 pattern) folded into
+     tier implementation -- uses the same difficulty value.
+5. Bounty x100: NOT in scope for this brief (separate tweak, tracked in
+   MIGRATION_LEDGER).
+6. Bag expansion 12->24: deferred -- evaluate after missions core lands.
+7. ScreenPlayData keys: reuse cyvster2 keys so returning players keep settings.
+
