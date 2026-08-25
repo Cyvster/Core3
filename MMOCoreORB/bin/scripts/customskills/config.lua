@@ -120,7 +120,7 @@ customSkillsConfig = {
 	-- repeatCraft : repeat-craft assisted pre-fill (BRIEF-036)
 	-- What it does : after a successful craft, the tool remembers the recipe
 	--                (schematic, resources used, experimentation points). The
-	--                player can then type /repeatcraft to open a NEW crafting
+	--                player can then type /customskills repeatcraft to open a NEW crafting
 	--                window with everything auto-selected and auto-filled from
 	--                live inventory. The normal crafting screen opens so the
 	--                player still confirms assembly themselves -- the item is
@@ -130,7 +130,7 @@ customSkillsConfig = {
 	--                schematic that changed shape or is no longer known
 	--                discards the stored recipe with a notice.
 	-- Fields       :
-	--   repeatEnabled      true = /repeatcraft works; false = command reports
+	--   repeatEnabled      true = /customskills repeatcraft works; false = command reports
 	--                      disabled. Default false: the whole feature stays
 	--                      off until the operator opts in.
 	--   repeatAllowPractice true = practice-mode crafts also store/refresh the

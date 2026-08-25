@@ -1610,7 +1610,7 @@ int CombatManager::applyVanillaDamage(TangibleObject* attacker, WeaponObject* we
 	int totalDamage = (int)(healthDamage + actionDamage + mindDamage);
 	defender->notifyObservers(ObserverEventType::DAMAGERECEIVED, attacker, totalDamage);
 
-	if (attacker->isPlayerCreature()) {
+	if (attacker->isPlayerCreature() && !suppressHitLocationFlyText) { // BRIEF-042: skip when escalated strike renders its own text
 		showHitLocationFlyText(attacker->asCreatureObject(), defender, hitLocation);
 	}
 
@@ -1677,6 +1677,11 @@ int CombatManager::applyDamage(CreatureObject* attacker, WeaponObject* weapon, T
 			defender->addUnmitigatedDamage(damage);
 		}
 	}
+
+	// BRIEF-042 item B: lairs / TANO defenders take this path -- roll
+	// custom-skills crit + repeat tiers here (previously bypassed).
+	damage = CustomSkillsCombat::applyTanoTargetDamage(attacker, weapon, defender, defenderHitList, damage,
+			poolsToDamage);
 
 	defender->inflictDamage(attacker, 0, damage, true, xpType, true, true);
 

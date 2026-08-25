@@ -224,6 +224,11 @@ protected:
 
 	int doTargetCombatAction(TangibleObject* attacker, WeaponObject* weapon, TangibleObject* tano, SortedVector<DefenderHitList*>* targetDefenders, const CreatureAttackData& data) const;
 	int tanoTargetCombatAction(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defenderObject, DefenderHitList* hitList, const CreatureAttackData& data) const;
+	int getArmorReduction(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defender, DefenderHitList* hitList, float damage, int hitLocation, const CreatureAttackData& data) const;
+
+	// BRIEF-042 item A: transient suppression of vanilla hit-location
+	// flytext while a custom-skills escalated strike renders its own.
+	bool suppressHitLocationFlyText = false;
 
 	float calculateDamage(CreatureObject* attacker, WeaponObject* weapon, CreatureObject* defender, const CreatureAttackData& data) const;
 	float calculateDamage(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defender, const CreatureAttackData& data) const;
@@ -238,6 +243,13 @@ protected:
 	int applyDamage(CreatureObject* attacker, WeaponObject* weapon, TangibleObject* defender, DefenderHitList* defenderHitList, int poolsToDamage, const CreatureAttackData& data) const;
 	int applyDamage(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defender, DefenderHitList* defenderHitList, int damage, float damageMultiplier, int poolsToDamage, uint8& hitLocation, const CreatureAttackData& data) const;
 	int applyVanillaDamage(TangibleObject* attacker, WeaponObject* weapon, CreatureObject* defender, DefenderHitList* defenderHitList, int damage, float damageMultiplier, int poolsToDamage, uint8& hitLocation, const CreatureAttackData& data) const;
+
+	// BRIEF-042 item A: when a custom-skills escalated strike fires, the
+	// tiered flytext replaces vanilla's hit-location text for that one hit.
+	// CustomSkillsCombat toggles this around its applyVanillaDamage call.
+	void setSuppressHitLocationFlyText(bool val) {
+		suppressHitLocationFlyText = val;
+	}
 	void woundCreatureTarget(CreatureObject* defender, WeaponObject* weapon, Vector<int> poolsToWound) const;
 
 	void applyDots(CreatureObject* attacker, CreatureObject* defender, const CreatureAttackData& data, int appliedDamage, int unmitDamage, int poolsToDamage) const;

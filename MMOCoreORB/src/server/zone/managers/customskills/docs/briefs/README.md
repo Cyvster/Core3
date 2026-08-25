@@ -106,6 +106,7 @@ before claim ([R6.9], BRIEF-019).
 | [`039-integrity-audit-post008.md`](039-integrity-audit-post008.md) | Integrity audit: 0 CRITICAL / 4 DEFECT / 3 SMELL / 2 DOC-MISMATCH; ERR-016..019 filed (flytext broadcast scope, backpack-blind prefill, exp snapshot dead-write) | DELIVERED |
 | [`040-discovery-capture-enforcement.md`](040-discovery-capture-enforcement.md) | R6.9 leaks: rule fires only at authoring time; add delivery-checklist + hotfix + coordinator enforcement points; backfill 4 known missed facts | CLAIMED |
 | [`041-repeatcraft-subcommand.md`](041-repeatcraft-subcommand.md) | Convert /repeatcraft to /customskills repeatcraft subcommand (TRE policy: no new top-level commands); add tool radial-menu repeat option; research alternate autocraft objects | CLAIMED |
+| [`042-remediation-fct-repeatcraft.md`](042-remediation-fct-repeatcraft.md) | Remediation: FCT visibility (suppress vanilla on escalation, broadcast), lair/TANO tier support, repeat-craft hardening (ERR-017..019), subcommand+radial | DELIVERED |
 
 ## Notes
 

@@ -88,8 +88,8 @@ Only **acquired** badges contribute to category totals. Totals use the same math
 **Amazing Success Chance** — adds percentage points to the natural Amazing Success roll during assembly and experimentation. Powered by: Exar Kun's Temple, Lok dangerous (3), Yavin IV Woolamander/Blueleaf (2).
 **Amazing Results** — when an Amazing Success happens, each affected attribute lands closer to schematic cap; at high bonuses even poor resources produce near-perfect results. Assembly affects all attributes; experimentation affects the selected line only. Powered by: same badges as Amazing Success Chance.
 
-### Repeat-Craft (/repeatcraft)
-After a successful craft, your crafting tool remembers the recipe: the schematic, which resources went into each slot, and your experimentation point allocation. Type `/repeatcraft` (targeting the tool, or just bare) and a fresh crafting window opens with everything auto-selected and auto-filled from your inventory — you still press Assemble/Create yourself, so nothing is crafted without you.
+### Repeat-Craft (/customskills repeatcraft)
+After a successful craft, your crafting tool remembers the recipe: the schematic, which resources went into each slot, and your experimentation point allocation. Type `/customskills repeatcraft` (targeting the tool, with its object id, or just bare), or use the **Repeat Craft** radial option on the tool itself — a fresh crafting window opens with everything auto-selected and auto-filled from your inventory (including backpacks) — you still press Assemble/Create yourself, so nothing is crafted without you.
 - Missing or short resources leave that slot empty with a message naming what's missing; fill it manually or restock.
 - If the schematic changed or is no longer known, the stored recipe is discarded with a notice — craft once to store a new one.
 - One recipe per tool; each successful craft overwrites it. Server owners can disable the whole feature (`repeatEnabled = false` is the default).
@@ -106,10 +106,10 @@ Replaces "(Exceptional)"/"(Legendary)" suffixes on crafted item names with color
 
 ## Important Notes
 **Pilot/JTL badges** — grant no bonuses while Jump to Lightspeed is unavailable.  
-**Double/Triple/Quad Attack** — listed in menu and config; the repeat-tier proc is not yet implemented server-side ([ERR-009](../rules/errata.md)).  
+**Double/Triple/Quad Attack** — implemented as the consolidated strike: an escalated hit multiplies the landed damage once with tiered flytext; works against creatures AND lairs/structures.  
 **Hidden badges** (`show = 0`) — still visible in `/customskills` if they contribute to your totals (so totals stay explained).  
 **Disabled features** — show in menu as inactive but don't affect gameplay.  
-**Config changes** — require server restart; values you see in `/customskills` always match what the server is actually using.
+**Config changes** — `[dyn]` mod-override keys hot-reload without a restart (values in `/customskills` always match what the server is actually using); other keys need a restart.
 
 ## Quick Reference: Badge -- Bonus Assignments
 *Complete catalog with exact badge keys lives in [CODE_REFERENCE.md](CODE_REFERENCE.md) → Appendix B (developer-facing).*

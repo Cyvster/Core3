@@ -13,6 +13,8 @@
 #include "server/zone/objects/manufactureschematic/craftingvalues/CraftingValues.h"
 #include "server/zone/packets/scene/AttributeListMessage.h"
 #include "server/zone/objects/player/sessions/crafting/CraftingSession.h"
+#include "server/zone/managers/customskills/crafting/CustomSkillsCrafting.h"
+#include "server/zone/managers/customskills/CustomSkillsConfig.h"
 
 void CraftingToolImplementation::loadTemplateData(SharedObjectTemplate* templateData) {
 	TangibleObjectImplementation::loadTemplateData(templateData);
@@ -50,6 +52,13 @@ void CraftingToolImplementation::fillObjectMenuResponse(ObjectMenuResponse* menu
 
 	if (isFinished()) {
 		menuResponse->addRadialMenuItem(RadialOptions::SERVER_ITEM_OPTIONS, 3, "@ui_radial:craft_hopper_output");
+	}
+
+	// BRIEF-042 item D: "Repeat Craft" radial when this tool holds a stored
+	// repeat-craft snapshot. Routes to CustomSkillsCrafting::doRepeatCraft.
+	if (player != nullptr && CustomSkillsConfig::instance()->isRepeatEnabled()
+			&& !getLuaStringData("cs36.schematicCrc").isEmpty()) {
+		menuResponse->addRadialMenuItem(RadialOptions::SERVER_MENU1, 3, "Repeat Craft");
 	}
 }
 
@@ -98,6 +107,12 @@ int CraftingToolImplementation::handleObjectMenuSelect(CreatureObject* player, b
 			player->sendSystemMessage("@system_msg:prototype_not_transferred");
 		}
 
+		return 1;
+	}
+
+	// BRIEF-042 item D: Repeat Craft radial -> assisted pre-fill session.
+	if (selectedID == RadialOptions::SERVER_MENU1) {
+		CustomSkillsCrafting::doRepeatCraft(player, getObjectID());
 		return 1;
 	}
 

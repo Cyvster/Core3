@@ -1620,10 +1620,18 @@ Builds on the BRIEF-035 lifecycle findings above: sessions are one-shot
 (`createPrototype` -> `cancelSession`), so "repeat" is an assisted pre-fill of
 a FRESH session -- never a server-side loop and never an auto-created item.
 
-**Command**: `/repeatcraft` (`RepeatCraftCommand.h`, registered in
-CommandConfigManager.cpp `registerSpecialCommands` + CommandConfigManager3.cpp,
-scripted in `bin/scripts/commands/repeatCraft.lua`). Target a crafting tool or
-run bare (first inventory tool holding a recipe). Requires the feature enabled.
+**Command** (BRIEF-042 subcommand conversion): `/customskills repeatcraft
+[toolObjectID]` -- parsed in `CustomSkillsCommand::doQueueCommand`, routed to
+`CustomSkillsCrafting::doRepeatCraft`. With no argument, the current target is
+used; bare invocation falls back to the first inventory tool holding a recipe.
+The standalone `/repeatcraft` command was REMOVED (RepeatCraftCommand.h
+deleted; CommandConfigManager.cpp + CommandConfigManager3.cpp registrations and
+bin/scripts/commands/repeatCraft.lua removed).
+
+**Radial entry point**: crafting tools with a stored snapshot show a server
+"Repeat Craft" radial (SERVER_MENU1) in
+`CraftingToolImplementation::fillObjectMenuResponse` (gated on
+`customSkills.repeatEnabled`), handled in `handleObjectMenuSelect`.
 
 **Snapshot ("RepeatRecipe") storage choice**: stored ON THE CRAFTING TOOL via
 TangibleObject's existing persistent `luaStringData` VectorMap<string,string>
@@ -1648,10 +1656,15 @@ experimentation allocation in the transient `lastExpAttempt` field.
    snapshot + notice + cancelSession.
 4. `selectDraftSchematic(index)`, then validate slot count/quantities against
    the snapshot; mismatch => discard snapshot + notice.
-5. Auto-fill each empty slot from live inventory via `session->addIngredient`
-   (resource slots match exact spawn name; component slots match template +
-   serial). Any missing/insufficient resource leaves that slot EMPTY with a
-   system message naming the resource.
+5. Auto-fill each empty slot from the player's containers via
+   `session->addIngredient` (resource slots match exact spawn name; component
+   slots match template + serial). BRIEF-042 hardening (ERR-017): the search
+   RECURSES into nested containers inside inventory (backpacks, satchels;
+   depth-limited 4 levels) and sums availability across ALL matching stacks
+   BEFORE consuming anything -- if total < needed, nothing is drained and a
+   shortfall system message names the resource and both quantities.
+   After filling, if the stored `exp` allocation exists, a reminder message
+   surfaces it (ERR-018).
 6. STOPS at state 2 (resource screen): the normal crafting window stays open
    pre-filled; the player assembles/experiments/customizes/creates as usual.
    The prototype is NEVER created automatically.

@@ -21,6 +21,7 @@ public:
 	// BRIEF-036: repeat-craft assisted pre-fill.
 	static void storeRepeatRecipe(CraftingTool* tool, ManufactureSchematic* schematic,
 		const String& expAttempt);
+	static void clearRepeatRecipe(CraftingTool* tool);
 	static int doRepeatCraft(CreatureObject* player, uint64 targetID);
 
 private:

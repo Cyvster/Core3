@@ -312,8 +312,9 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 			String rarityState = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
 			summary << "\\#FFFF00--- Mod Options ---\\#. " << endl;
 			summary << rarityState << "\\#. Rarity Naming" << endl;
-			summary << "\\#FFFF00--- SWGEMU Options ---\\#. " << endl;
-			summary << "No options configured yet." << endl;
+			// BRIEF-042: dead "--- SWGEMU Options --- / No options configured
+			// yet." filler removed (audit F-05); the working SWGEMU_OPTIONS
+			// page renders live values.
 		}
 		return summary.toString();
 	}

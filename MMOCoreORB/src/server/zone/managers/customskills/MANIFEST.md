@@ -17,7 +17,6 @@ as history.
 Paths relative to `MMOCoreORB/`:
 
 - `src/server/zone/managers/customskills/CustomSkillsCommand.h`
-- `src/server/zone/managers/customskills/RepeatCraftCommand.h`
 - `src/server/zone/managers/customskills/CustomSkillsMenu.h`
 - `src/server/zone/managers/customskills/CustomSkillsMenu.cpp`
 - `src/server/zone/managers/customskills/CustomSkillsSuiCallback.h`
@@ -45,7 +44,6 @@ Paths relative to `MMOCoreORB/`:
 - `src/server/zone/managers/customskills/skillmods/CustomSkillsSkillMods.h`
 - `src/server/zone/managers/customskills/skillmods/CustomSkillsSkillMods.cpp`
 - `bin/scripts/commands/customSkills.lua`
-- `bin/scripts/commands/repeatCraft.lua`
 - `bin/scripts/customskills/config.lua`
 
 ## Existing Core3 integration points

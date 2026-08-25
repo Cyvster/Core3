@@ -1,6 +1,6 @@
 # Brief 042 -- Remediation pass: FCT visibility, repeat-craft hardening, subcommand + radial
 
-- Status: CLAIMED
+- Status: DELIVERED (08252026 by ox-alpha opencode/x-preview-f-free)
 - Created: 08252026 by ox-alpha (opencode/x-preview-f-free)
 - Consolidates: ERR-016..019 remediation (BRIEF-039 findings) + owner
   live-test feedback + BRIEF-041 subcommand/radial conversion.
@@ -81,3 +81,27 @@ VERIFY: brace balance zero on all touched files; grep no real names/paths;
 commit `[BRIEF-042]`, push origin cyvster3.
 Final response: per-item disposition list, files touched, any item deferred
 with reason.
+
+## Delivery note (08252026 by ox-alpha opencode/x-preview-f-free)
+
+All items delivered. Core3 (non-mod) files touched and why:
+- `CombatManager.h/.cpp` -- item A: `suppressHitLocationFlyText` transient flag
+  guarding the vanilla `showHitLocationFlyText` call; item B:
+  `CreatureObject*-attacker / TangibleObject*-defender applyDamage` overload
+  now delegates tier rolls to
+  `CustomSkillsCombat::applyTanoTargetDamage` before inflictDamage.
+- `CraftingToolImplementation.cpp` -- item D: server radial SERVER_MENU1
+  "Repeat Craft" (fill + select), routed to doRepeatCraft.
+- `CommandConfigManager.cpp/.cpp3` + `bin/scripts/commands/{commands.lua,
+  repeatCraft.lua}` + `RepeatCraftCommand.h` (deleted) -- item D subcommand
+  conversion; `/repeatcraft` no longer exists standalone.
+
+Lair call graph finding: player-vs-lair hits go through
+creoTargetCombatAction-family -> the OTHER applyDamage overload
+(CreatureObject* attacker, TangibleObject* defender, ~:1630) which had NO hook;
+the TangibleObject*-attacker path (:1417) was only used for TANO-vs-creature.
+Tier logic is now wired into the :1630 overload via delegation.
+
+Deferred (documented in ERR-018 resolution): full server-side auto-apply of
+the experiment allocation (would desync client-driven experiment() state);
+customization capture (values chosen post-assembly, outside snapshot point).

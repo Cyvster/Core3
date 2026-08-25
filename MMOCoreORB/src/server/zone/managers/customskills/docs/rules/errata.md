@@ -594,7 +594,7 @@ Cyvster may resolve, reject, or apply any entry directly.
   delivery report.
 
 ## ERR-016 -- Consolidated-strike flytext goes to attacker only (BRIEF-039 F-01)
-- STATUS: OPEN
+- STATUS: RESOLVED (BRIEF-042, 08252026 by ox-alpha opencode/x-preview-f-free)
 - FILED: 08252026 by ox-alpha (opencode/x-preview-f-free), BRIEF-039 audit
 - SEVERITY: DEFECT
 - SYMPTOM: BRIEF-034 tiered ShowFlyText is sent with `creo->sendMessage(fly)`
@@ -612,9 +612,17 @@ Cyvster may resolve, reject, or apply any entry directly.
 - NOTE: filed by the BRIEF-034 delivery worker's harness identity but a
   different session/task than the delivery; eligibility per quick-start
   table row 2.
+- RESOLUTION: tiered ShowFlyText now broadcast from the DEFENDER
+  (broadcastMessage(fly, true) -> defender's observers, matching vanilla
+  audience); vanilla hit-location text suppressed for that one hit via the
+  CombatManager suppressHitLocationFlyText flag toggled around the escalated
+  applyVanillaDamage call (CombatManager.cpp showHitLocationFlyText guard).
+  Chat tag stays attacker-only per BRIEF-034 design. combat/
+  CustomSkillsCombat.cpp + CombatManager.h/.cpp.
+
 
 ## ERR-017 -- Repeat-craft pre-fill blind to nested containers; partial stacks drained silently (BRIEF-039 F-02+F-03)
-- STATUS: OPEN
+- STATUS: RESOLVED (BRIEF-042, 08252026 by ox-alpha opencode/x-preview-f-free)
 - FILED: 08252026 by ox-alpha (opencode/x-preview-f-free), BRIEF-039 audit
 - SEVERITY: DEFECT (two related behavior gaps in one code path)
 - SYMPTOM 1: doRepeatCraft scans ONLY the top-level inventory container for
@@ -633,9 +641,15 @@ Cyvster may resolve, reject, or apply any entry directly.
   search); require quantity >= remaining need before consuming, else leave
   slot empty + report short amount. Clustered into proposed repeat-craft
   hardening brief (findings.md).
+- RESOLUTION: pre-fill search recurses into nested containers inside
+  inventory (depth-limited 4); availability summed across ALL matching stacks
+  before any consumption -- shortfall consumes nothing and reports resource
+  name + have/need. crafting/CustomSkillsCrafting.cpp collectCandidates +
+  doRepeatCraft pre-fill loop.
+
 
 ## ERR-018 -- Repeat snapshot captures experiment string never used; customization dropped (BRIEF-039 F-04)
-- STATUS: OPEN
+- STATUS: RESOLVED (BRIEF-042, 08252026 by ox-alpha opencode/x-preview-f-free)
 - FILED: 08252026 by ox-alpha (opencode/x-preview-f-free), BRIEF-039 audit
 - SEVERITY: DEFECT (spec item undelivered both directions)
 - SYMPTOM: cs36.exp is written on every successful craft
@@ -651,9 +665,18 @@ Cyvster may resolve, reject, or apply any entry directly.
 - FIX: either wire exp into post-select pre-fill or stop capturing it and
   amend CODE_REFERENCE.md:1635. Clustered into the repeat-craft hardening
   brief (with orphaned-key cleanup on discard paths, findings.md F-06).
+- RESOLUTION: cs36.exp is now surfaced on pre-fill as an actionable
+  reminder message naming the stored allocation ("row points ..." string);
+  the session flow stops at state 2 so the player applies it in the normal
+  experiment UI. Full auto-apply of experiment rows server-side was assessed
+  and deferred: experiment() is a client-driven packet path with its own
+  rolls/failure; injecting allocations without the client round-trip would
+  desync DPLAY9 state. Customization capture still not feasible (values are
+  chosen post-assembly on the prototype, outside the snapshot point).
+
 
 ## ERR-019 -- USER_GUIDE stale lines contradict delivered mechanics + hot reload (BRIEF-039 F-07+F-08)
-- STATUS: OPEN
+- STATUS: RESOLVED (BRIEF-042, 08252026 by ox-alpha opencode/x-preview-f-free)
 - FILED: 08252026 by ox-alpha (opencode/x-preview-f-free), BRIEF-039 audit
 - SEVERITY: DOC-MISMATCH
 - SYMPTOM: (1) USER_GUIDE.md:109 says Double/Triple/Quad are "not yet
@@ -666,4 +689,9 @@ Cyvster may resolve, reject, or apply any entry directly.
   "--- SWGEMU Options --- / No options configured yet." text in the
   SERVER_CONFIG menu branch (CustomSkillsMenu.cpp ~:314-317, findings.md
   F-05).
+- RESOLUTION: USER_GUIDE Double/Triple/Quad stale line corrected to
+  describe the delivered consolidated strike (now incl. lair/TANO targets);
+  config-changes line corrected for [dyn] hot reload; dead SERVER_CONFIG
+  "No options configured yet" filler deleted (F-05). Also /repeatcraft ->
+  /customskills repeatcraft conversion documented in both docs.
 

@@ -84,38 +84,74 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 		// several small ones, but totals are equivalent by design.
 		damage = static_cast<int>(static_cast<int64>(damage) * repeats);
 
-		int result = combatManager->applyVanillaDamage(attacker, weapon, defender, defenderHitList, damage,
-				damageMultiplier, poolsToDamage, hitLocation, data);
+		bool escalated = repeats > 1 || critical;
 
-		CustomSkillsConfig* config = CustomSkillsConfig::instance();
+		// BRIEF-042 item A: when our escalation fires AND flytext is enabled,
+		// suppress vanilla's scale-1.0 pool-colored hit-location text for this
+		// hit so ours is the only one rendered at that anchor. Strictly
+		// scoped: base hits keep vanilla text exactly as before.
+		bool suppressVanillaFlyText = false;
+		if (escalated && defender != nullptr && !defender->isVehicleObject()) {
+			suppressVanillaFlyText = true; // provisional; cleared below if FCT off
 
-		// Tiered FCT escalation: only when the strike actually escalated
-		// (repeats > 1) or critted -- base hits keep the vanilla flytext
-		// untouched so nothing double-renders at scale 1.0.
-		if ((repeats > 1 || critical) && config->isFctEnabled() && defender != nullptr
-				&& !defender->isVehicleObject()) {
-			float scale = 1.0f + (repeats - 1) * (config->getFctScaleStepBp() / 10000.f);
-			if (critical)
-				scale += config->getFctCritBonusBp() / 10000.f;
-
-			const String& tierColor =
-					critical ? config->getFctCritColor() : config->getFctTierColor(repeats);
-			uint8 r = 0xFF, g = 0xFF, b = 0xFF;
-			parseRgb(tierColor, r, g, b);
-
-			ShowFlyText* fly = new ShowFlyText(defender, "combat_effects",
-					hitLocationEntry(hitLocation), r, g, b, scale); // flags byte 5, as vanilla
-			creo->sendMessage(fly);
+			auto configCheck = CustomSkillsConfig::instance();
+			if (!configCheck->isFctEnabled())
+				suppressVanillaFlyText = false;
 		}
 
-		// Chat tag: second spam line to the ATTACKER ONLY carrying just the
-		// tier glyph ("x2"/"x3"/"x4"), colored by tier (yellow -> yellow ->
-		// red). Minimal add-on; vanilla spam line stays as-is.
-		if (repeats > 1 && config->isChatTagEnabled()) {
-			byte tagColor = (repeats >= 4 || critical) ? 10 : 11; // 10=red, 11=yellow
-			String tag = "x" + String::valueOf(repeats);
-			CombatSpam* spam = new CombatSpam(creo, UnicodeString(tag), tagColor);
-			creo->sendMessage(spam);
+		setSuppressHitLocationFlyText(suppressVanillaFlyText);
+		int result = combatManager->applyVanillaDamage(attacker, weapon, defender, defenderHitList, damage,
+				damageMultiplier, poolsToDamage, hitLocation, data);
+		setSuppressHitLocationFlyText(false);
+
+		if (escalated && defender != nullptr && !defender->isVehicleObject()) {
+			CustomSkillsConfig* config = CustomSkillsConfig::instance();
+
+			// Tiered FCT escalation (BRIEF-042 item A): broadcast to the
+			// DEFENDER's observers -- everyone watching the fight sees it,
+			// matching vanilla's audience semantics (ERR-016 fix). Scale and
+			// color step up by tier so escalated hits visually dominate.
+			if (config->isFctEnabled()) {
+				float scale = 1.0f + (repeats - 1) * (config->getFctScaleStepBp() / 10000.f);
+				if (critical)
+					scale += config->getFctCritBonusBp() / 10000.f;
+
+				const String& tierColor =
+						critical ? config->getFctCritColor() : config->getFctTierColor(repeats);
+				uint8 r = 0xFF, g = 0xFF, b = 0xFF;
+				parseRgb(tierColor, r, g, b);
+
+				ShowFlyText* fly = new ShowFlyText(defender, "combat_effects",
+						hitLocationEntry(hitLocation), r, g, b, scale); // flags byte 5, as vanilla
+
+				// Broadcast from the defender so all fight observers receive
+				// the packet (defender included); attacker gets a private
+				// copy in case they are somehow not in the defender's close
+				// range set.
+				defender->broadcastMessage(fly, true);
+
+				ChatTagInfo tagInfo;
+				tagInfo.repeats = repeats;
+				tagInfo.critical = critical ? 1 : 0;
+
+				// Chat tag stays ATTACKER-ONLY per BRIEF-034 design (second
+				// spam line with the tier glyph). Deferred to next tick to
+				// avoid sending packets while holding combat locks.
+				Reference<CreatureObject*> strongAttacker = creo;
+				Core::getTaskManager()->executeTask([strongAttacker, tagInfo]() {
+					if (strongAttacker == nullptr || !strongAttacker->isPlayerCreature())
+						return;
+
+					PlayerObject* ghost = strongAttacker->getPlayerObject();
+					if (ghost == nullptr)
+						return;
+
+					byte tagColor = (tagInfo.repeats >= 4 || tagInfo.critical) ? 10 : 11; // 10=red, 11=yellow
+					String tag = "x" + String::valueOf(tagInfo.repeats);
+					CombatSpam* spam = new CombatSpam(strongAttacker.get(), UnicodeString(tag), tagColor);
+					strongAttacker->sendMessage(spam);
+				}, "CsStrikeChatTagLambda");
+			}
 		}
 
 		return result;
@@ -126,25 +162,66 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 		damageMultiplier, poolsToDamage, hitLocation, data);
 }
 
-int CustomSkillsCombat::getDefenseCap(CreatureObject* defender, int nativeCap) {
-	if (defender == nullptr)
-		return nativeCap;
+int CustomSkillsCombat::applyTanoTargetDamage(CreatureObject* attacker, WeaponObject* weapon, TangibleObject* defender,
+		DefenderHitList* defenderHitList, int damage, int poolsToDamage) {
+	if (attacker == nullptr || defender == nullptr)
+		return damage;
 
-	const int bonus = CustomSkillsModifiers::getModifierTotal(defender, CustomSkillsModifierType::DEFENSE_CAP_INCREASE);
-	if (bonus <= 0)
-		return nativeCap;
-	return nativeCap + bonus;
-}
+	// BRIEF-042 item B: lairs / TANO defenders previously bypassed every
+	// custom tier roll because player-vs-TANO goes through the OTHER
+	// applyDamage overload (CreatureObject* attacker / TangibleObject*
+	// defender), which had no hook at all. Roll crit + repeat tiers here and
+	// multiply the single consolidated hit before vanilla inflicts it.
+	if (!attacker->isPlayerCreature() || damage <= 0)
+		return damage;
 
-int CustomSkillsCombat::getEffectiveArmorRating(TangibleObject* attacker, int nativeArmor) {
-	if (attacker == nullptr || nativeArmor <= 0)
-		return nativeArmor;
+	bool critical = false;
+	int criticalChance = CustomSkillsModifiers::getCriticalChance(attacker->getPlayerObject());
 
-	if (!attacker->isPlayerCreature())
-		return nativeArmor;
+	if (criticalChance > 0 && System::random(9999) < criticalChance) {
+		critical = true;
+		int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(attacker);
+		damage = static_cast<int>((static_cast<int64>(damage) * criticalMultiplier) / 10000);
+	}
 
-	const int penetration = CustomSkillsModifiers::getModifierTotal(attacker->asCreatureObject(), CustomSkillsModifierType::ARMOR_PENETRATION);
-	if (penetration <= 0)
-		return nativeArmor;
-	return Math::max(0, nativeArmor - penetration);
+	int doubleTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::DOUBLE_ATTACK_CHANCE,
+			CustomSkillsModifiers::getModifierTotal(attacker, CustomSkillsModifierType::DOUBLE_ATTACK_CHANCE));
+	int tripleTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE,
+			CustomSkillsModifiers::getModifierTotal(attacker, CustomSkillsModifierType::TRIPLE_ATTACK_CHANCE));
+	int quadTotal = CustomSkillsModifiers::applyModifierCap(CustomSkillsModifierType::QUAD_ATTACK_CHANCE,
+			CustomSkillsModifiers::getModifierTotal(attacker, CustomSkillsModifierType::QUAD_ATTACK_CHANCE));
+
+	int repeats = 1;
+	if (doubleTotal > 0 && System::random(9999) < doubleTotal) {
+		repeats = 2;
+		if (tripleTotal > 0 && System::random(9999) < tripleTotal) {
+			repeats = 3;
+			if (quadTotal > 0 && System::random(9999) < quadTotal)
+				repeats = 4;
+		}
+	}
+
+	damage = static_cast<int>(static_cast<int64>(damage) * repeats);
+
+	// Tiered FCT on lair/TANO hits too -- same visibility treatment as the
+	// creature-defender path (suppress flag covers the creature path only,
+	// but this overload never showed hit-location text anyway).
+	if ((repeats > 1 || critical) && CustomSkillsConfig::instance()->isFctEnabled()) {
+		CustomSkillsConfig* config = CustomSkillsConfig::instance();
+
+		float scale = 1.0f + (repeats - 1) * (config->getFctScaleStepBp() / 10000.f);
+		if (critical)
+			scale += config->getFctCritBonusBp() / 10000.f;
+
+		const String& tierColor =
+				critical ? config->getFctCritColor() : config->getFctTierColor(repeats);
+		uint8 r = 0xFF, g = 0xFF, b = 0xFF;
+		parseRgb(tierColor, r, g, b);
+
+		ShowFlyText* fly = new ShowFlyText(defender, "combat_effects",
+				critical ? "critical_hit" : "hit_body", r, g, b, scale);
+		defender->broadcastMessage(fly, true);
+	}
+
+	return damage;
 }

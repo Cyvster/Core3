@@ -48,7 +48,7 @@ bool CustomSkillsCrafting::shouldPromoteAmazingFailure(CreatureObject* crafter, 
 	// percentage-point increase into its conditional probability so the final
 	// chance is nativeChance + configured bonus, not a multiplier.
 	const int conditionalChance = static_cast<int>((static_cast<int64>(finalChance - nativeChance) * 10000) /
-		(10000 - nativeChance));
+			(10000 - nativeChance));
 	return System::random(9999) < conditionalChance;
 }
 
@@ -75,7 +75,8 @@ void CustomSkillsCrafting::applyAmazingResults(CreatureObject* crafter, Crafting
 }
 
 // =============================================================================
-// BRIEF-036: repeat-craft assisted pre-fill
+// BRIEF-036: repeat-craft assisted pre-fill (hardened per BRIEF-042 / ERR-017,
+// ERR-018)
 //
 // Snapshot format (stored on the CraftingTool via TangibleObject's persistent
 // luaStringData map -- zero IDL changes, survives restarts; see CODE_REFERENCE):
@@ -84,7 +85,17 @@ void CustomSkillsCrafting::applyAmazingResults(CreatureObject* crafter, Crafting
 //   cs36.slot.<i>.type -> resource spawn name (resource slots) or template
 //                         name + "#" + serial (component slots)
 //   cs36.slot.<i>.qty  -> quantity required by that slot
-//   cs36.exp           -> experiment "row points row points ..." string
+//   cs36.exp           -> experiment "row points row points ..." string,
+//                           re-applied by the player via the experiment UI --
+//                           surfaced to them as a reminder message on pre-fill
+//
+// BRIEF-042 hardening notes:
+//  * Resource/component scans RECURSE into containers inside inventory
+//    (backpacks, satchels) depth-limited -- matches vanilla's
+//    isASubChildOf(crafter) acceptance semantics.
+//  * Partial stacks: total availability across ALL matching stacks is summed
+//    before anything is consumed; if it cannot fill the slot, nothing is
+//    drained and a shortfall message naming the resource is sent.
 // =============================================================================
 
 #include "server/zone/ZoneServer.h"
@@ -103,6 +114,7 @@ void CustomSkillsCrafting::applyAmazingResults(CreatureObject* crafter, Crafting
 #include "server/zone/managers/customskills/CustomSkillsConfig.h"
 
 static const char* CS36_PREFIX = "cs36.";
+static const int CS36_MAX_CONTAINER_DEPTH = 4;
 
 static void cs36Put(TangibleObject* tool, const String& key, const String& value) {
 	tool->setLuaStringData(CS36_PREFIX + key, value);
@@ -110,6 +122,23 @@ static void cs36Put(TangibleObject* tool, const String& key, const String& value
 
 static String cs36Get(TangibleObject* tool, const String& key) {
 	return tool->getLuaStringData(CS36_PREFIX + key);
+}
+
+// BRIEF-042 (ERR-017): discard the FULL cs36.* key family on this tool so
+// stale higher-indexed slot keys from a previous recipe can't linger.
+void CustomSkillsCrafting::clearRepeatRecipe(CraftingTool* tool) {
+	if (tool == nullptr)
+		return;
+
+	tool->deleteLuaStringData(CS36_PREFIX + String("schematicCrc"));
+	tool->deleteLuaStringData(CS36_PREFIX + String("slotCount"));
+	tool->deleteLuaStringData(CS36_PREFIX + String("exp"));
+
+	for (int i = 0; i < 32; ++i) { // snapshot write loop caps at 32 slots
+		String key = CS36_PREFIX + String("slot.") + String::valueOf(i) + ".";
+		tool->deleteLuaStringData(key + "type");
+		tool->deleteLuaStringData(key + "qty");
+	}
 }
 
 void CustomSkillsCrafting::storeRepeatRecipe(CraftingTool* tool,
@@ -120,6 +149,8 @@ void CustomSkillsCrafting::storeRepeatRecipe(CraftingTool* tool,
 	Reference<DraftSchematic*> draft = schematic->getDraftSchematic();
 	if (draft == nullptr)
 		return;
+
+	clearRepeatRecipe(tool);
 
 	cs36Put(tool, "schematicCrc", String::valueOf(draft->getClientObjectCRC()));
 	cs36Put(tool, "slotCount", String::valueOf(schematic->getSlotCount()));
@@ -149,6 +180,41 @@ void CustomSkillsCrafting::storeRepeatRecipe(CraftingTool* tool,
 
 	cs36Put(tool, "exp", expAttempt);
 }
+
+namespace {
+// Recursive candidate collection under `root` (depth-limited). Appends:
+//  resource containers matching spawnName, or
+//  tangible components matching template (+serial when non-empty).
+void collectCandidates(SceneObject* root, bool wantResource, const String& spawnOrTemplate,
+		const String& serial, Vector<ManagedReference<TangibleObject*> >& out, int depth) {
+	if (root == nullptr || depth > CS36_MAX_CONTAINER_DEPTH)
+		return;
+
+	for (int i = 0; i < root->getContainerObjectsSize(); ++i) {
+		auto obj = root->getContainerObject(i);
+		if (obj == nullptr)
+			continue;
+
+		if (wantResource && obj->isResourceContainer()) {
+			auto rc = cast<ResourceContainer*>(obj.get());
+			if (rc != nullptr && rc->getSpawnName() == spawnOrTemplate)
+				out.add(rc);
+		} else if (!wantResource && obj->isTangibleObject() && !obj->isResourceContainer()
+				&& !obj->isContainerObject()) {
+			if (obj->getObjectTemplate()->getFullTemplateString() != spawnOrTemplate)
+				continue;
+			auto tanoObj = cast<TangibleObject*>(obj.get());
+			if (!serial.isEmpty() && tanoObj->getSerialNumber() != serial)
+				continue;
+			out.add(tanoObj);
+		} else if (obj->isContainerObject() && !obj->isCraftingTool()
+				&& !obj->isCraftingStation()) {
+			// Recurse into backpacks/satchels/etc.
+			collectCandidates(obj.get(), wantResource, spawnOrTemplate, serial, out, depth + 1);
+		}
+	}
+}
+} // namespace
 
 int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID) {
 	if (!CustomSkillsConfig::instance()->isRepeatEnabled()) {
@@ -209,11 +275,11 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 	// Resolve a nearby crafting station for this tool type, as vanilla does.
 	auto playerMan = zoneServer->getPlayerManager();
 	CraftingStation* station =
-		playerMan != nullptr ? playerMan->getNearbyCraftingStation(player, tool->getToolType()) : nullptr;
+			playerMan != nullptr ? playerMan->getNearbyCraftingStation(player, tool->getToolType()) : nullptr;
 
 	// Cancel any active crafting session first (mirrors RequestCraftingSessionCommand).
 	Reference<CraftingSession*> oldSession =
-		player->getActiveSession(SessionFacadeType::CRAFTING).castTo<CraftingSession*>();
+			player->getActiveSession(SessionFacadeType::CRAFTING).castTo<CraftingSession*>();
 	if (oldSession != nullptr) {
 		Locker slocker(oldSession);
 		oldSession->cancelSession();
@@ -242,7 +308,7 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 		// Schematic no longer known / wrong tool tabs / complexity mismatch:
 		// discard the stale snapshot with notice (brief requirement).
 		player->sendSystemMessage("Repeat-craft: schematic no longer available -- stored recipe discarded.");
-		tool->deleteLuaStringData(CS36_PREFIX + String("schematicCrc"));
+		clearRepeatRecipe(tool);
 		Locker slock(session);
 		session->cancelSession();
 		return QueueCommand::GENERALERROR;
@@ -274,13 +340,15 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 	if (mismatch) {
 		// Schematic changed shape since the snapshot: discard with notice.
 		player->sendSystemMessage("Repeat-craft: recipe no longer matches this schematic -- stored recipe discarded.");
-		tool->deleteLuaStringData(CS36_PREFIX + String("schematicCrc"));
+		clearRepeatRecipe(tool);
 		Locker slock(session);
 		session->cancelSession();
 		return QueueCommand::GENERALERROR;
 	}
 
 	// Session::addIngredient resolves the crafted-components satchel itself.
+
+	auto inventory = player->getSlottedObject("inventory");
 
 	for (int i = 0; i < manf->getSlotCount(); ++i) {
 		IngredientSlot* slot = manf->getSlot(i);
@@ -291,55 +359,69 @@ int CustomSkillsCrafting::doRepeatCraft(CreatureObject* player, uint64 targetID)
 		if (wantType.isEmpty())
 			continue; // leave empty; player fills manually
 
-		ManagedReference<TangibleObject*> found = nullptr;
+		int qtyNeeded = Integer::valueOf(cs36Get(tool, "slot." + String::valueOf(i) + ".qty"));
+
+		Vector<ManagedReference<TangibleObject*> > candidates;
 
 		if (slot->isResourceSlot()) {
-			// Find matching resource containers on the player.
-			auto inventory = player->getSlottedObject("inventory");
-			if (inventory != nullptr) {
-				for (int j = 0; j < inventory->getContainerObjectsSize() && found == nullptr; ++j) {
-					auto obj = inventory->getContainerObject(j);
-					if (obj == nullptr || !obj->isResourceContainer())
-						continue;
-					auto rc = cast<ResourceContainer*>(obj.get());
-					if (rc != nullptr && rc->getSpawnName() == wantType && rc->getQuantity() > 0) {
-						found = rc;
-					}
-				}
-			}
+			// BRIEF-042 (ERR-017): recurse into containers inside inventory.
+			collectCandidates(inventory, true, wantType, "", candidates, 0);
 		} else {
-			// Component slot: match server template + serial.
 			String serial = "";
 			int hashPos = wantType.lastIndexOf("#");
 			if (hashPos != -1) {
 				serial = wantType.subString(hashPos + 1);
 				wantType = wantType.subString(0, hashPos);
 			}
-			auto inventory = player->getSlottedObject("inventory");
-			if (inventory != nullptr) {
-				for (int j = 0; j < inventory->getContainerObjectsSize() && found == nullptr; ++j) {
-					auto obj = inventory->getContainerObject(j);
-					if (obj == nullptr || !obj->isTangibleObject())
-						continue;
-					if (obj->getObjectTemplate()->getFullTemplateString() != wantType)
-						continue;
-					auto tanoObj = cast<TangibleObject*>(obj.get());
-					if (!serial.isEmpty() && tanoObj->getSerialNumber() != serial)
-						continue;
-					found = tanoObj;
-				}
-			}
+			collectCandidates(inventory, false, wantType, serial, candidates, 0);
 		}
 
-		if (found == nullptr) {
-			// Missing / insufficient resource: leave the slot EMPTY and say
-			// which resource is short (brief requirement).
-			player->sendSystemMessage("Repeat-craft: missing or insufficient resource, slot left empty: " + wantType);
+		// Sum total availability across all stacks BEFORE consuming anything
+		// (BRIEF-042, ERR-017 symptom 2): no more silent partial drains.
+		int available = 0;
+		for (int j = 0; j < candidates.size(); ++j) {
+			TangibleObject* cand = candidates.get(j).get();
+
+			if (slot->isResourceSlot())
+				available += cast<ResourceContainer*>(cand)->getQuantity();
+			else
+				available += cand->getUseCount() > 0 ? cand->getUseCount() : 1;
+		}
+
+		if (available < qtyNeeded) {
+			// Missing / insufficient: consume NOTHING and say which resource
+			// is short and by how much (brief requirement).
+			player->sendSystemMessage("Repeat-craft: insufficient "
+					+ (slot->isResourceSlot() ? String("resource ") : String("component "))
+					+ wantType + " -- have " + String::valueOf(available)
+					+ ", need " + String::valueOf(qtyNeeded)
+					+ "; slot left empty for manual fill.");
 			continue;
 		}
 
-		Locker ingLock(found, player);
-		session->addIngredient(found, i, 0);
+		// Fill greedily across stacks until the slot reports full.
+		for (int j = 0; j < candidates.size() && !slot->isFull(); ++j) {
+			TangibleObject* found = candidates.get(j).get();
+			Locker ingLock(found, player);
+			session->addIngredient(found, i, 0);
+		}
+
+		if (!slot->isFull()) {
+			// Slot accepted less than expected despite the availability check
+			// (e.g. mixed-spawn rejection): report honestly rather than
+			// pretending it filled.
+			player->sendSystemMessage("Repeat-craft: could not fully fill slot "
+					+ String::valueOf(i) + " (" + wantType + "); fill manually.");
+		}
+	}
+
+	// BRIEF-042 (ERR-018): honor the stored experimentation allocation. The
+	// session flow stops at state 2 (resources) so the player still presses
+	// Assemble themselves; surface the allocation as an actionable reminder
+	// instead of silently dropping the stored string.
+	const String expAttempt = cs36Get(tool, "exp");
+	if (!expAttempt.isEmpty()) {
+		player->sendSystemMessage("Repeat-craft: stored experimentation allocation: " + expAttempt);
 	}
 
 	return QueueCommand::SUCCESS;

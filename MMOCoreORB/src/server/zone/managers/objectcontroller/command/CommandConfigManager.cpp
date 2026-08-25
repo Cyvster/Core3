@@ -349,12 +349,8 @@ void CommandConfigManager::registerSpecialCommands(CommandList* sCommands) {
 	if (customSkills == nullptr)
 		error("Could not create command /customskills");
 
-	// BRIEF-036: repeat-craft assisted pre-fill (also absent from the client
-	// command tables, so registered here alongside /customskills).
-	QueueCommand* repeatCraft = createCommand(String("repeatcraft").toLowerCase());
-
-	if (repeatCraft == nullptr)
-		error("Could not create command /repeatcraft");
+	// BRIEF-042: the standalone /repeatcraft command was folded into
+	// /customskills repeatcraft -- no separate registration anymore.
 
 	// Fri Oct  7 17:09:26 PDT 2011 - Karl Bunch <karlbunch@karlbunch.com>
 	// Turns out this isn't in the base datatables/command/command_tables_shared.iff file
