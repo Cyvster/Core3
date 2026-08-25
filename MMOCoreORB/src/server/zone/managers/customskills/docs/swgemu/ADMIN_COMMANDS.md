@@ -1,8 +1,23 @@
 # SWGEmu Admin (GM) Commands — Operator Reference
 *Audience: server operators / GMs.* What-to-type reference for **stock SWGEmu admin commands**, rebuilt from *Commands V2 - Posted* (owner-provided authoritative reference). Permission background: `CODE_REFERENCE.md` → Gating chain (god-mode + ability double gate).
 
+## Client prerequisite — user.cfg (required)
+Admin commands are **blocked client-side** until enabled: without this, the client refuses to send them and returns "no such command" even with server god mode active. In the **client's** SWG game folder, create/edit `user.cfg`:
+```
+[ClientGame]
+0fd345d9 = true
+[ClientUserInterface]
+debugExamine=1
+allowTargetAnything=1
+drawNetworkIds=1
+```
+`[ClientGame] 0fd345d9 = true` is the required unlock (the TRE files gate features on it). The `[ClientUserInterface]` keys are optional quality-of-life for admins (examine debugging, target anything, network id overlay). Gotchas: if `user.cfg` doesn't exist, copy `swgemu.cfg` and replace contents; ensure `swgemu.cfg` contains `.include "user.cfg"` (often missing/commented); fully restart the client after edits.
+
 ## Permission model
 Every admin command requires BOTH on the executing character: (1) **God mode** (`ghost->hasGodMode()`) — account-level admin privilege; (2) **Command ability** (`ghost->hasAbility("/cmd")`) — character must hold the ability like any skill. Either fails → `@error_message:insufficient_permissions` + `adminLog` warning. All successful calls logged via `logAdminCommand(...)`. Boot inventory of restricted commands: set `Core3.CommandConfigManager.DumpAdminCommands = true`. Syntax: `<required>`, `[optional]`.
+
+### Admin levels (/setGodMode values)
+15 Administrator · 14 Developer · 13 Quality Assurance (QA) · 12 Community Support Rep (CSR) · 11 Event Coordinator (EC) · 10 EC Intern · 9 Community Support Intern · 8 CT · 7 CC · 6 Tester · 1 Intern · 0 non-privileged player (default). Server side, an account's `admin_level` (DB) or `adminGodToAll=1` in `localOptions.cfg [GameServer]` governs login god access; `/setGodMode <level|on|off>` then sets the character's level in-game (`Account.idl:24`; `CommandConfigManager.h:112` defines GODLEVEL=72 internally).
 
 ## Account Control
 `/setGodMode <name> <admin level | on | off>` — sets the character's admin level (staff levels).  
