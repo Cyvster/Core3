@@ -95,6 +95,7 @@ before claim ([R6.9], BRIEF-019).
 | [`028-document-lifecycle-archives-adoption.md`](028-document-lifecycle-archives-adoption.md) | Adopt Alice-style bounded ledgers + permanent archives (tombstones, verbatim moves, reconciliation-time trigger) | DELIVERED (rules L1-L6 in process.md; errata convention conformed) |
 | [`029-review-verification-gate-from-alice.md`](029-review-verification-gate-from-alice.md) | XPP mirror-review: evaluate Alice's second-party verification gate for adoption here | CLAIMED |
 | [`030-align-process-to-alice.md`](030-align-process-to-alice.md) | XPP alignment pass 1: adopt Alice's governance gaps (verification gate, audits, errata discipline, milestones, roster); creates Alice mirror brief | DELIVERED |
+| [`032-floating-combat-text-investigation.md`](032-floating-combat-text-investigation.md) | Investigate FCT hook: ShowFlyText scale/color/content/position control without client mods; feasibility + design | CLAIMED |
 
 ## Notes
 

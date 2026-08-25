@@ -37,6 +37,7 @@ private:
 	static int getModifierTotal(CreatureObject* player, Page page, CustomSkillsModifierType::Type type);
 	static int countModifier(CreatureObject* player, const char* const* keys, int count, CustomSkillsModifierType::Type type);
 	static String getPromptText(CreatureObject* player, Page page);
+	static void appendSwgemuOptions(StringBuffer& summary);
 	static String getTitle(Page page);
 	static int countEnabledOptions();
 };

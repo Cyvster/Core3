@@ -125,3 +125,7 @@ This guide describes intended player-facing rules. **Server configuration always
 ox-alpha (opencode/x-preview-f-free), 08242026 — feature-section restructure; modifier/badge reference folded in per owner directive.  
 hy3-free (opencode/hy3-free), 08242026 — BRIEF-014 doc removals (combat spam label references); BRIEF-020 dense-format pass.
 *Last reconciled 08242026 by hy3-free (opencode/hy3-free) — BRIEF-020.*
+
+## SWGEMU Options page
+
+Menu path Server Config > SWGEMU Options shows a read-only list of notable Core3 server options with live values (green ENABLED / red DISABLED for bools); entries marked "(restart required)" only change after a server restart. Full inventory: customskills/CONFIG_OPTIONS.md.

@@ -1318,6 +1318,18 @@ if (badge && ghost->hasBadge(badge->getIndex()))
 
 *Client category is separate from Core3 type enum -- used for client-side badge browser only.*
 
+## SWGEMU Options Viewer (BRIEF-026)
+
+`CustomSkillsMenu::appendSwgemuOptions` (CustomSkillsMenu.cpp) renders a
+curated read-only list of ~20 notable Core3 options on the
+Server Config > SWGEMU Options page. Registry is a static `SwgemuOpt[]`
+table in that function: `{label, configKey, type('b'/'i'/'s'), restart}`.
+To add an option: append a row (defaults come from CONFIG_OPTIONS.md);
+secrets/credentials are excluded by policy -- never add DBPass, DBSecret,
+APIToken, or similar. Bools render green ENABLED / red DISABLED; rows with
+restart=true show a gray "(restart required)" suffix. Values are read live
+via ConfigManager::instance() getters, so [dyn] options reflect hot-reloads.
+
 ## Hidden Config Options (server-configurable, undocumented keys)
 
 Full inventory of every option ConfigManager reads lives in

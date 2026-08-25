@@ -1,4 +1,5 @@
 #include "CustomSkillsMenu.h"
+#include "conf/ConfigManager.h"
 #include "CustomSkillsSuiCallback.h"
 #include "CustomSkillsModifiers.h"
 #include "CustomSkillsConfig.h"
@@ -236,6 +237,54 @@ int CustomSkillsMenu::getModifierTotal(CreatureObject* player, Page page, Custom
 #undef MOD_LEAF
 }
 
+// BRIEF-026: curated read-only view of notable Core3 options (full verified
+// inventory: docs/customskills/CONFIG_OPTIONS.md). Secrets excluded by policy.
+void CustomSkillsMenu::appendSwgemuOptions(StringBuffer& summary) {
+	struct SwgemuOpt { const char* label; const char* key; char type; bool restart; };
+	static const SwgemuOpt opts[] = {
+		{"JTL Enabled", "Core3.JTL.JTLEnabled", 'b', true},
+		{"Covert/Overt System", "Core3.GCWManager.useCovertOvertSystem", 'b', false},
+		{"Galaxy-Wide Grouping", "Core3.PlayerManager.GalaxyWideGrouping", 'b', false},
+		{"Advanced Waypoints", "Core3.PlayerManager.AdvancedWaypoints", 'b', false},
+		{"Disable Group Visibility", "Core3.PlayerManager.DisableGroupVisibility", 'b', false},
+		{"Wipe Filling On Clone", "Core3.PlayerManager.WipeFillingOnClone", 'b', true},
+		{"Max Characters Per Galaxy", "Core3.PlayerCreationManager.MaxCharactersPerGalaxy", 'i', true},
+		{"Enable Tutorial", "Core3.PlayerCreationManager.EnableTutorial", 'b', true},
+		{"Character Builder Enabled", "Core3.CharacterBuilderEnabled", 'b', true},
+		{"PvP Mode", "Core3.PvpMode", 'b', false},
+		{"Valid Client Version", "Core3.PlayerManager.ValidClientVersion", 's', false},
+		{"Struct Maintenance Bank Payments", "Core3.StructureMaintenanceTask.AllowBankPayments", 'b', false},
+		{"Enhanced Furniture Rotate", "Core3.StructureManager.EnhancedFurnitureRotate", 'b', false},
+		{"Always Safe Logout", "Core3.PlayerObject.AlwaysSafeLogout", 'b', false},
+		{"Link Dead Delay (sec)", "Core3.PlayerObject.LinkDeadDelay", 'i', false},
+		{"Same-Account Tips Are Free", "Core3.SameAccountTipsAreFree", 'b', false},
+		{"Anonymous Bounty Terminals", "Core3.MissionManager.AnonymousBountyTerminals", 'b', false},
+		{"Max Bounties Per Jedi", "Core3.MissionManager.MaxBountiesPerJedi", 'i', false},
+		{"Include Faction Pets (bounty)", "Core3.MissionManager.IncludeFactionPets", 'b', false},
+		{"Disable World Spawns", "Core3.Regions.DisableWorldSpawns", 'b', false},
+	};
+	summary << "\\#FFFF00--- SWGEMU Options ---\\#. " << endl;
+	auto cm = ConfigManager::instance();
+	for (const auto& o : opts) {
+		summary << o.label << ": ";
+		switch (o.type) {
+		case 'b':
+			summary << (cm->getBool(o.key, false) ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED");
+			break;
+		case 'i':
+			summary << cm->getInt(o.key, 0);
+			break;
+		default:
+			summary << "\"" << cm->getString(o.key, "") << "\"";
+			break;
+		}
+		summary << "\\#.";
+		if (o.restart)
+			summary << " \\#999999(restart required)\\#.";
+		summary << endl;
+	}
+}
+
 String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 	StringBuffer summary;
 
@@ -259,7 +308,7 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 			String rarityState = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
 			summary << rarityState << "\\#. Rarity Naming" << endl;
 		} else if (page == SWGEMU_OPTIONS) {
-			summary << "No options configured yet." << endl;
+			appendSwgemuOptions(summary);
 		} else {
 			String rarityState = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
 			summary << "\\#FFFF00--- Mod Options ---\\#. " << endl;
