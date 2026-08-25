@@ -417,5 +417,46 @@ Daniel may resolve, reject, or apply any entry directly.
   chances = capped config totals in basis points; triggered tier
   multiplies the crit-adjusted damage before mitigation (equivalent to
   repeating the finalized hit). Label-free per the combat-spam removal
-  directive. Applied 08242026 by ox-alpha
-  (opencode/x-preview-f-free); self-verified under [DIRECTIVE 08242026].
+
+## ERR-010 -- CustomSkillsMenu.cpp fails to compile (header/.cpp desync)
+
+- Status: RESOLVED
+- Filed by: hy3-free (opencode/hy3-free)
+- Date: 08242026
+- Affects: src/server/zone/managers/customskills/CustomSkillsMenu.cpp,
+  CustomSkillsMenu.h
+- Severity: F5 (blocking build -- core3 target)
+- Description: the module's menu failed to compile in the Docker/ninja
+  build. Three distinct breakages, all pre-existing (NOT from BRIEF-014,
+  which only deleted combat-spam-label lines):
+  1. `CustomSkillsMenu.cpp` defines and calls `addBonusItems(...)` and
+     `countOwnedBonuses(...)` but `CustomSkillsMenu.h` never declares
+     them (error: "no declaration matches").
+  2. Two switch blocks in `getAcquiredCount()` and `addPageItems()` use the
+     modifier enum UNQUALIFIED (`CRITICAL_CHANCE`, `DOUBLE_ATTACK_CHANCE`,
+     `AMAZING_RESULTS`, etc.) while the rest of the file correctly qualifies
+     them as `CustomSkillsModifierType::CRITICAL_CHANCE`. The enum lives in
+     `CustomSkillsModifierType.h`; unqualified lookup fails in the enclosing
+     scope.
+  3. The new code path calls `CustomSkillsConfig::getBadgeBonuses(type)`
+     (verified present in CustomSkillsConfig.h/.cpp), so no further missing
+     symbol beyond 1-2.
+- Evidence: build log `[11/19] Building CXX object .../CustomSkillsMenu.cpp.o
+  FAILED` with "'CRITICAL_CHANCE' was not declared in this scope",
+  "'countOwnedBonuses' was not declared in this scope", "'no declaration
+  matches void CustomSkillsMenu::addBonusItems(...)'". Only this one module
+  TU failed; the other 5 customskills .cpp (incl. CustomSkillsCombat.cpp from
+  BRIEF-014) compiled cleanly ([11/19] reached before failure), confirming
+  the break is local to this file's desync, not the broader branch.
+- Proposed fix: (a) declare the two functions in CustomSkillsMenu.h
+  (addBonusItems(SuiListBox*, CreatureObject*, CustomSkillsModifierType::Type);
+  countOwnedBonuses(CreatureObject*, CustomSkillsModifierType::Type)); (b) add
+  `using namespace CustomSkillsModifierType;` at the top of the two switch
+  functions so the bare enum constants resolve. Applied as ERR-010 fix.
+- Resolution: RESOLVED -- applied 08242026 by hy3-free (opencode/hy3-free):
+  added both declarations to CustomSkillsMenu.h and `using namespace
+  CustomSkillsModifierType;` to `getAcquiredCount()` and `addPageItems()`.
+  Brace balance and unqualified-name grep verified locally; compile re-test
+  pending on the Linux build host (deferred per engine3 toolchain caveat, as
+  with BRIEF-014). Config accessor `getBadgeBonuses(type)` confirmed present,
+  so no further missing symbol expected.

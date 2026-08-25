@@ -111,6 +111,7 @@ int CustomSkillsMenu::countEnabledOptions() {
 }
 
 int CustomSkillsMenu::getAcquiredCount(CreatureObject* player, Page page) {
+	using namespace CustomSkillsModifierType;
 #define COUNT_LEAF(pageName, data) case pageName: return countAcquired(player, data, countOf(data))
 	switch (page) {
 	case BADGES: return getAcquiredCount(player, MILESTONES) + getAcquiredCount(player, EXPLORATION) + getAcquiredCount(player, PROFESSION) + getAcquiredCount(player, QUEST) + getAcquiredCount(player, EVENT);
@@ -277,6 +278,7 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 }
 
 void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Page page) {
+	using namespace CustomSkillsModifierType;
 #define LEAF(pageName, data) case pageName: addBadgeItems(box, player, data, countOf(data)); break
 	switch (page) {
 	case MAIN: addCategoryItem(box, player, "Badges", BADGES, false); addCategoryItem(box, player, "Bonuses", BONUSES, false); addCategoryItem(box, player, "Server Config", SERVER_CONFIG, false); break;

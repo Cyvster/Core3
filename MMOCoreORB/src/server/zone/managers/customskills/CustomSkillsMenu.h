@@ -29,9 +29,11 @@ public:
 private:
 	static void addPageItems(SuiListBox* box, CreatureObject* player, Page page);
 	static void addBadgeItems(SuiListBox* box, CreatureObject* player, const char* const* keys, int count);
+	static void addBonusItems(SuiListBox* box, CreatureObject* player, CustomSkillsModifierType::Type type);
 	static void addCategoryItem(SuiListBox* box, CreatureObject* player, const String& name, Page category, bool showBonuses = true);
 	static int getAcquiredCount(CreatureObject* player, Page page);
 	static int countAcquired(CreatureObject* player, const char* const* keys, int count);
+	static int countOwnedBonuses(CreatureObject* player, CustomSkillsModifierType::Type type);
 	static int getModifierTotal(CreatureObject* player, Page page, CustomSkillsModifierType::Type type);
 	static int countModifier(CreatureObject* player, const char* const* keys, int count, CustomSkillsModifierType::Type type);
 	static String getPromptText(CreatureObject* player, Page page);
