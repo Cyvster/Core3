@@ -103,6 +103,8 @@ before claim ([R6.9], BRIEF-019).
 | [`036-repeat-craft-implementation.md`](036-repeat-craft-implementation.md) | Repeat-craft: /repeatcraft + tool-snapshot pre-fill (luaStringData cs36.*, zero IDL changes); repeatEnabled default OFF | DELIVERED |
 | [`037-cyvster2-modification-inventory.md`](037-cyvster2-modification-inventory.md) | Archaeology: 610 commits -> ~48 net mods (12 FEATURE/28 TWEAK/3 FIX/5 DEAD); MIGRATION_LEDGER.md live: 4 IN-MOD, 30 TODO, 14+ WONT-PORT | DELIVERED |
 | [`038-mission-terminal-options-port.md`](038-mission-terminal-options-port.md) | Port mission terminal direction/difficulty options from cyvster2 into mod; research -> design -> implement; updates ledger | CLAIMED |
+| [`039-integrity-audit-post008.md`](039-integrity-audit-post008.md) | Integrity audit of all post-BRIEF-008 deliveries: spec conformance, cross-feature interactions, artifacts, docs-vs-code; findings filed not self-fixed | CLAIMED |
+| [`040-discovery-capture-enforcement.md`](040-discovery-capture-enforcement.md) | R6.9 leaks: rule fires only at authoring time; add delivery-checklist + hotfix + coordinator enforcement points; backfill 4 known missed facts | CLAIMED |
 
 ## Notes
 
