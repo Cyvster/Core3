@@ -1,6 +1,6 @@
 # BRIEF-016 -- Defaultize badge configuration: uniform badgeBonus everywhere; badgeOverrides become dormant placeholders
 
-- Status: UNCLAIMED
+- Status: DELIVERED
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Owner policy: shipped defaults must not rely on
   badgeOverrides; every modifier uses one uniform `badgeBonus` over its
@@ -92,3 +92,36 @@
 - Changing any cap value.
 - Adding badges beyond what the recalibration requires (list sizes stay
   as-is unless a ceiling proves unreachable with uniform values).
+
+---
+
+## Closure Report (verification of already-shipped state)
+
+- Executor: hy3-free (opencode/x-preview-f-free), 08242026. This brief's
+  substance was implemented during the badge-reconfiguration work verified
+  under BRIEF-017; this session re-verified every acceptance criterion
+  against the live config and closes the brief formally. No config changes
+  were required.
+- Acceptance verification (fresh math against config.lua [PROC R6.10]):
+  - Zero active `badgeOverrides`: grep returns 0. Placeholder blocks:
+    18/18 modifiers carry the commented template.
+  - Capped-modifier reachability (badgeBonus x badges vs cap):
+    criticalChance 100x60=6000 CAP EXACT; criticalMultiplier 1250x12=15000
+    EXACT; tripleAttack 500x17=8500 EXACT; quadAttack 300x17=5100 EXACT;
+    armorPenetration 1x9=9 clamped to 3; defenseCap 20x5=100 EXACT;
+    armorDegrade 1250x8=10000 EXACT; weaponDegrade 1250x8=10000 EXACT;
+    seaCap 20x5=100 EXACT; doubleAttack 2000x6=12000 clamped to 10000;
+    amazingSuccessChance 500x10=5000 (50%, cap headroom INTENTIONAL per
+    BRIEF-017 spec row 16); amazingResults 1000x10=10000 EXACT.
+  - Uncapped modifiers uniform: movementSpeed 2500x4, buffDuration
+    2500x13 (=325%), experienceMultiplier 10000x5, practiceXP 10000x10,
+    craftingSpeed 1000x10, gatheringQuantity 10000x13 (=+1300%).
+- Known shifts documented in CODE_REFERENCE Appendix A + USER_GUIDE
+  (Buff Duration 325%, Defense Cap 100 pts, SEA Cap 100 pts) -- confirmed
+  present during the BRIEF-014/BRIEF-017 doc sweeps.
+- Loader code unchanged (setUniformBadgeBonus/loadBadgeOverrides mechanism
+  already supports the layout).
+- Docs consistent with config as of the BRIEF-017 sweep; no stale numbers.
+- No new commit required for config (state shipped in earlier tagged
+  commits); this closure rides the tracker-update commit. Compile
+  unaffected (Lua/docs only); restart-to-apply reminder stands.
