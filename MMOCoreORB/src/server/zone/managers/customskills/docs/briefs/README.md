@@ -66,7 +66,7 @@ reading only what the brief lists -- no conversation history required.
 | [`017-verify-badge-reconfiguration.md`](017-verify-badge-reconfiguration.md) | Independent verification + completion of the badge reconfiguration; repair config corruption + doc sweep | DELIVERED |
 | [`018-document-swgemu-admin-commands.md`](018-document-swgemu-admin-commands.md) | Document SWGEmu admin (GM) commands in a dedicated `swgemu/` section: permission chain, command table, worked operator scenarios | DELIVERED |
 | [`019-enforce-discovery-capture.md`](019-enforce-discovery-capture.md) | Make R6.9 discovery capture a standing, unmissable procedure (checklist + gotcha convention) | DELIVERED |
-| [`020-apply-dense-format-reference-docs.md`](020-apply-dense-format-reference-docs.md) | Apply approved dense doc format (tight blocks, stacked no-bullet lines) to reference/lookup docs only | CLAIMED |
+| [`020-apply-dense-format-reference-docs.md`](020-apply-dense-format-reference-docs.md) | Apply approved dense doc format (tight blocks, stacked no-bullet lines) to reference/lookup docs only | DELIVERED |
 
 ## Notes
 

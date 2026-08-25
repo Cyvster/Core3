@@ -1,6 +1,6 @@
 # BRIEF-020 -- Apply approved dense doc format to reference/lookup docs
 
-- Status: CLAIMED
+- Status: DELIVERED
 - Created: 08242026 by hy3-free (opencode/hy3-free), owner directive: "update
   all documents with similar formatting" -- scoped by owner to reference/
   lookup docs only (this message).
@@ -71,3 +71,45 @@ margins/line-height are accepted as unchangeable from the .md source.
   specific construct.
 - Do NOT over-flatten narrative explanations into unreadable walls; the goal is
   density + searchability, not destruction of readability.
+
+---
+
+## Delivery Report
+
+- Executor: hy3-free (opencode/hy3-free)
+- Date: 08242026
+- House style (from ADMIN_COMMANDS.md end state, 203b42fa71) applied to all 5
+  reference/lookup targets.
+
+### Per-doc commits
+| Doc | Commit | Lines (before→after) |
+|-----|--------|----------------------|
+| `customskills/USER_GUIDE.md` | b2cc5621b4 | 301 → ~95 |
+| `customskills/LLM_GUIDE.md` | 4185ff87ca | 175 → ~95 |
+| `customskills/CODE_REFERENCE.md` | 76037dfbc4 | 1445 → 1319 |
+| `swgemu/CODE_REFERENCE.md` | 7c16091082 | 712 → 616 |
+| (ADMIN_COMMANDS.md baseline) | 203b42fa71 | already done (test doc) |
+
+### Transformation applied
+- Removed all `---` horizontal rules (0 remain in any target).
+- Converted markdown unordered (`-`/`*`) and ordered (`N.`) lists to stacked
+  single lines separated by GFM trailing-space hard line breaks (no bullet
+  glyph), matching the approved format.
+- Code-fence content (incl. combat-pipeline pseudocode in
+  customskills/CODE_REFERENCE.md) left intact -- those bullets/numbers are
+  literal text, not markdown rendering.
+- Tables converted to stacked lines where density improved.
+- All technical content + file:line citations preserved (verified via grep of
+  key tokens: CustomSkillsModifierType, getBadgeBonuses, GrantBadgeCommand,
+  ObjectControllerImplementation, DumpAdminCommands, Appendix A/B, H01-H16).
+
+### Acceptance criteria
+- [x] All 5 target docs reformatted to house style.
+- [x] No `---` rules remain in targets.
+- [x] No `-`/`*` bullet glyphs in list-like content of targets (only inside
+      code fences, which is correct).
+- [x] All technical content + file:line citations preserved.
+- [x] Each doc committed separately and pushed to origin/cyvster3.
+- [x] Brief marked DELIVERED with per-doc commit list.
+
+Signed: hy3-free (opencode/hy3-free), 08242026
