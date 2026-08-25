@@ -378,7 +378,7 @@ Total                              +12.00%
 Milestone: 5 Badges                +1.00%
 Milestone: 10 Badges               +1.00%
 Milestone: 25 Badges               +1.00%
-... (12 milestone exploration badges @ 100bp via badgeOverrides)
+... (12 milestone exploration badges @ 100bp uniform)
 ```
 
 Total + source rows come from `CustomSkillsModifiers` (same as gameplay).
@@ -583,14 +583,8 @@ Complete registry of all 18 modifiers: configuration conventions, units, badge a
 - **Multipliers**: Basis points (10000 = 1.00x)
 - **Whole units**: Armor Penetration (levels), Defense Cap/SEA Cap (points)
 - **Caps**: 0 = uncapped; applied after badge aggregation
-- **Shipped defaults**: the module ships with all 18 modifiers enabled and full badge assignments. The tables below document these defaults -- they are not live values. A server owner can change anything (enabled flags, badge lists, caps, overrides); on any given server, its config.lua is the single authoritative source of live values.
-- **badgeOverrides**: a table of `{ "badgeKey", value }` pairs (on
-  `criticalChance` directly, or under each `modifiers.<name>`) that override the
-  default `badgeBonus` for the named badges only. Loaded by
-  `CustomSkillsConfig::loadBadgeOverrides` (called from
-  `CustomSkillsConfig::load()`), applied AFTER the `badges` list populates
-  `modifierBadgeBonuses`. A badge listed in `badges` but not overridden uses
-  the modifier's `badgeBonus`.
+- **Shipped defaults**: the module ships with all 18 modifiers enabled and full badge assignments. The tables below document these defaults -- they are not live values. A server owner can change anything (enabled flags, badge lists, caps, badgeBonus values); on any given server, its config.lua is the single authoritative source of live values.
+- **Uniform badgeBonus (default convention)**: each modifier uses ONE `badgeBonus` value applied uniformly to every badge in its `badges` list. The shipped defaults carry ZERO active `badgeOverrides`. To customize a single badge, an owner uncomments the inactive `badgeOverrides` placeholder block under that modifier (loaded by `CustomSkillsConfig::loadBadgeOverrides` from `CustomSkillsConfig::load()`), where each `{ "badgeKey", value }` entry REPLACES the uniform `badgeBonus` for that one badge -- it never stacks with it. A badge listed in `badges` but absent from an active `badgeOverrides` uses the modifier's `badgeBonus`.
 - **rarityNaming**: a server-config section (`enabled`, `legendaryColor`,
   `exceptionalColor`, six-character RGB hex) that switches item naming to
   color-only text instead of `(Exceptional)`/`(Legendary)` suffixes (see hook
@@ -624,7 +618,7 @@ mastery badges at 300 bp via `DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE`
 is now the only source of badge values, and an empty/missing config yields
 zero bonuses rather than silent defaults.
 
-**Badges** (all 100 bp each, via explicit `badgeOverrides`; full set =
+**Badges** (all 60 at a uniform 100 bp each via `badgeBonus`; full set =
 6000 bp = cap):
 
 | Group | Keys |
@@ -690,10 +684,10 @@ failed stage ends the chain.
 |----------|-------|
 | **Unit** | Basis points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 200 bp (2.00%); BH mastery overridden to 300 bp |
-| **Cap (default)** | 7500 (75%) |
+| **Badge bonus (default)** | 500 bp (5.00%) uniform |
+| **Cap (default)** | 8500 (85%) |
 | **Combat spam label** | `(TRIPLE)` |
-| **Badges (default)** | 12 combat mastery (11 x 200 bp, BH x 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 200 bp = 17 total |
+| **Badges (default)** | 12 combat masteries + 5 Hero of Tatooine POI = 17 total |
 
 **Behavior**: Rolled only after Double succeeds in the same chain; success
 upgrades to 3 hits and enables the Quad roll.
@@ -707,10 +701,10 @@ upgrades to 3 hits and enables the Quad roll.
 |----------|-------|
 | **Unit** | Basis points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 200 bp (2.00%); BH mastery overridden to 300 bp |
-| **Cap (default)** | 5000 (50%) |
+| **Badge bonus (default)** | 300 bp (3.00%) uniform |
+| **Cap (default)** | 5100 (51%) |
 | **Combat spam label** | `(QUAD)` |
-| **Badges (default)** | 12 combat mastery (11 x 200 bp, BH x 300 bp via badgeOverride), 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 200 bp = 17 total |
+| **Badges (default)** | 12 combat masteries + 5 Hero of Tatooine POI = 17 total |
 
 **Behavior**: Rolled only after Triple succeeds in the same chain; success
 upgrades to 4 hits. Highest possible tier.
@@ -740,9 +734,9 @@ upgrades to 4 hits. Highest possible tier.
 |----------|-------|
 | **Unit** | Points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 5 points |
-| **Cap (default)** | 0 (uncapped) |
-| **Badges (default)** | Hero of Tatooine only: 5 POI badges x 20 points = 100 total |
+| **Badge bonus (default)** | 20 points |
+| **Cap (default)** | 100 points |
+| **Badges (default)** | Hero of Tatooine only: 5 POI badges x 20 points = 100 total (cap exact) |
 
 **Behavior**: Raises native 125 hard cap on primary/secondary defense calculations. Does not affect SEA/tape above-cap contributions.
 
@@ -786,9 +780,9 @@ Condition loss amount unchanged on successful roll.
 |----------|-------|
 | **Unit** | Points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 15 points |
-| **Cap (default)** | 0 (uncapped) |
-| **Badges (default)** | Tatooine dangerous (4 x 15), Dathomir Sarlacc (15) = 5 total |
+| **Badge bonus (default)** | 20 points |
+| **Cap (default)** | 100 points |
+| **Badges (default)** | Tatooine dangerous (4 x 20), Dathomir Sarlacc (20) = 5 total (cap exact) |
 
 **Behavior**: Raises wearable (attachments/tapes) contribution cap above native +25. Does not raise normal defense cap. SEA/tape bonuses retain ability to exceed normal cap.
 
@@ -816,9 +810,9 @@ Condition loss amount unchanged on successful roll.
 |----------|-------|
 | **Unit** | Basis points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 2500 bp (25.00%); Social mastery overridden to 2000 bp |
+| **Badge bonus (default)** | 2500 bp (25.00%) uniform |
 | **Cap (default)** | 0 (uncapped) |
-| **Badges (default)** | Tatooine easy (3 x 2500), Yavin IV Woolamander/Blueleaf (2 x 2500), Science mastery (3 x 2500), Social mastery (5 x 2000) = 13 total |
+| **Badges (default)** | Tatooine easy (3), Yavin IV Woolamander/Blueleaf (2), Science masteries (3), Social masteries (5) = 13 total |
 
 **Behavior**: Increases initial duration of eligible buff families only:
 - **Included**: Medical, Performance, Food/Drink, Spice-up, positive Jedi/Force
@@ -927,9 +921,9 @@ Raises resource-derived ceiling only enough to retain enhanced value.
 |----------|-------|
 | **Unit** | Basis points |
 | **Default** | `true` |
-| **Badge bonus (base, config.lua)** | 2500 bp (25.00%); Outdoors mastery overridden to 11500 bp, Science mastery to 10000 bp |
+| **Badge bonus (default)** | 10000 bp (100.00%) uniform |
 | **Cap (default)** | 0 (uncapped) |
-| **Badges (default)** | Outdoors mastery (5 x 11500), Science mastery (3 x 10000), Tatooine easy (3 x 2500), Yavin IV Woolamander/Blueleaf (2 x 2500) = 13 total |
+| **Badges (default)** | Outdoors masteries (5), Science masteries (3), Tatooine easy (3), Yavin IV Woolamander/Blueleaf (2) = 13 total |
 
 **Behavior**: Bonuses add together, then multiply native quantity:
 ```
@@ -944,9 +938,7 @@ Applied AFTER native calculation (forage roll / milk density adjustment). Rounde
 
 ## Maximum Theoretical Totals (All 111 Eligible Badges)
 
-Values are the sum of each modifier's configured badge bonuses (including
-badgeOverrides), capped at the configured cap where one applies. `config.lua`
-is authoritative.
+Values are the sum of each modifier's configured badge bonuses (uniform badgeBonus, no active overrides), capped at the configured cap where one applies. `config.lua` is authoritative.
 
 | Modifier | Unit | Per-Badge (config) | Max Badges | Max Total (capped) |
 |----------|------|--------------------|------------|--------------------|
@@ -961,12 +953,12 @@ is authoritative.
 | Armor Degrade Red. | bp | 1250 | 8 | 10000 (100%) |
 | Weapon Degrade Red. | bp | 1250 | 8 | 10000 (100%) |
 | Movement Speed | bp | 2500 | 4 | 10000 (100%) |
-| Buff Duration | bp | 2500 (Social 2000) | 13 | 30000 (300%) |
+| Buff Duration | bp | 2500 | 13 | 32500 (325%) |
 | Experience Bonus | multiplier bp | 10000 | 5 | 50000 (500%) |
 | Practice XP Bonus | bp | 10000 | 10 | 100000 (1000%) |
 | Crafting Speed | multiplier bp | 1000 | 10 | 10000 (100%) |
 | Amazing Success | bp | 500 | 10 | 5000 (50%) |
-| Amazing Results | bp | 1000 | 6 | 6000 (60%) |
+| Amazing Results | bp | 1000 | 10 | 10000 (100%) |
 | Gathering Quantity | bp | 10000 | 13 | 130000 (+1300%) |
 
 ---

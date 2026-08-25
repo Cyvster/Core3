@@ -1,6 +1,6 @@
 # BRIEF-017 -- Independent verification and completion of the badge reconfiguration
 
-- Status: UNCLAIMED
+- Status: DELIVERED
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. The executor of the prior badge work committed technical
   errors mid-stream (partial script writes, formatting damage, a lost
@@ -106,3 +106,72 @@ All paths relative to Core3 root; config =
 - Changing any value, cap, badge assignment, or tier mechanic.
 - ERR-009 follow-ups beyond what BRIEF-015 already delivered.
 - SWGEmu core files.
+
+---
+
+## Verification Report (independent execution)
+
+- Executor: hy3-free (opencode/hy3-free), 08242026
+- Scope note: the previous (broken) executor had left UNCOMMITTED working-copy
+  edits to `CODE_REFERENCE.md` and `USER_GUIDE.md` (value updates carried over
+  from the owner's final walkthrough rulings) plus corruption in `config.lua`.
+  This session finished that work: completed the doc sweep, repaired the
+  corruption, and committed everything under `[BRIEF-017]`.
+
+### A. config.lua corruption found and fixed (byte-level, not value changes)
+
+Three real tab-byte corruptions (the rest of the suspected `\t` entries were
+JSON display artifacts -- the badge keys were actually clean):
+
+| Line | Before | After | Effect if unfixed |
+|------|--------|-------|-------------------|
+| 8 | `customSummaryColor = "0<TAB>0FF00"` | `"00FF00"` | broken color string |
+| 196 (seaCapIncrease) | `cap = 10<TAB>0` | `cap = 100` | Lua parse error (stray token) |
+| 221 (buffDuration) | `cap = <TAB>0` | `cap = 0` | malformed numeric literal |
+
+No badge KEY contained a tab. `bdg_exp_2_badges` (suspected digit typo) does
+NOT exist -- line 103 already reads `bdg_exp_20_badges`. Cleared as
+false-positive.
+
+Structural checks (all pass, verified via grep/[PROC R6.10]):
+- `grep -cP '^\s*badgeOverrides\s*='` => 0 active overrides (correct).
+- All 18 modifiers carry an inactive commented placeholder block (18
+  `Placeholder:` lines present).
+- No duplicate badge key within any single modifier's `badges` list.
+
+### B. Doc consistency sweep ([PROC R6.10])
+
+The prior uncommitted edits had correctly updated Triple (500 bp / cap 8500),
+Quad (300 bp / cap 5100), Buff Duration (325%), Gathering Quantity (1300%),
+Amazing Results (10-badge set) in Appendix A and the USER_GUIDE quick
+reference. This session repaired what they left broken/incomplete:
+
+1. **Malformed markdown table headers** -- the prior run had doubled the pipes
+   on 5 table headers (`|| Property | Value ||`). Restored to `| Property |
+   Value |`. (5 in CODE_REFERENCE Appendix A, 1 in USER_GUIDE.)
+2. **Stale `badgeOverrides` prose** -- replaced the "shipped defaults may
+   include overrides" + `badgeOverrides` convention block (Appendix A
+   Configuration Conventions) with the uniform `badgeBonus` + inactive
+   placeholder convention mandated by BRIEF-016. Removed residual "via explicit
+   badgeOverrides" / "via badgeOverride" phrasings in the Critical Chance and
+   SUI menu detail sections.
+3. **Two values left stale against config.lua** (verified against
+   `config.lua` [PROC R6.10]):
+   - Defense Cap Increase: was 5 pts / cap 0 -> now **20 pts / cap 100**
+     (matches `defenseCapIncrease.badgeBonus = 20, cap = 100`).
+   - SEA Cap Increase: was 15 pts / cap 0 -> now **20 pts / cap 100**
+     (matches `seaCapIncrease.badgeBonus = 20, cap = 100`).
+     Max-totals row already read 100 pts for both; the per-modifier rows now
+     agree.
+
+All 18 rows in Appendix A now match config.lua; no document claims
+override-dependent defaults.
+
+### C. Acceptance criteria
+
+- [x] All 18 rows match config.lua; grep proves zero active overrides, zero
+      duplicate keys.
+- [x] Placeholder blocks present for all 18 modifiers.
+- [x] Docs consistent with config (no stale numbers).
+- [x] Single commit tagged `[BRIEF-017]`, pushed.
+- [x] Compile unaffected; restart reminder noted.

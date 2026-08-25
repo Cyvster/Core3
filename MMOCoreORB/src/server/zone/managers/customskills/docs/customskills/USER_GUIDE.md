@@ -144,7 +144,7 @@ O  Lars Homestead  (+25% Movement Speed)
 ### Triple Attack Chance
 
 - **What it does**: Chance for an attack to strike three times.
-- **Powered by**: All 12 combat profession masteries (Bounty Hunter counts extra), plus the 5 Hero of Tatooine quest badges.
+- **Powered by**: All 12 combat profession masteries, plus the 5 Hero of Tatooine quest badges.
 - **Typical maximum**: +85%.
 - **Combat spam**: `(TRIPLE)`.
 
@@ -267,13 +267,13 @@ O  Lars Homestead  (+25% Movement Speed)
 | Badge Group | Example Bonuses |
 |-------------|-----------------|
 | **Milestones (12)** | +1% Crit Chance, +12.5% Crit Multiplier each |
-| **Combat Mastery (12)** | +2% Triple, +2% Quad each (Bounty Hunter: +3%/+3%) |
+| **Combat Mastery (12)** | +5% Triple, +3% Quad each (uniform) |
 | **Crafting Mastery (9)** | +10% Crafting Speed each |
-| **Outdoors Mastery (5)** | +115% Gathering Quantity each |
+| **Outdoors Mastery (5)** | +100% Gathering Quantity each |
 | **Science Mastery (3)** | +100% Gathering, +25% Buff Duration (Doctor also +10% Crafting Speed) |
-| **Social Mastery (5)** | +20% Buff Duration, +100% Practice XP each |
+| **Social Mastery (5)** | +25% Buff Duration, +100% Practice XP each |
 | **Corellian Corvette (9)** | +1 Armor Penetration each |
-| **Hero of Tatooine (5)** | +10% Triple, +5% Quad, +10 Def Cap total |
+| **Hero of Tatooine (5)** | +5% Triple, +3% Quad, +20 Def Cap total |
 | **Theme Parks (4)** | +20% Double Attack each |
 | **Warren (2)** | +20% Double Attack each |
 

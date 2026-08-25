@@ -28,9 +28,9 @@ customSkillsConfig = {
 		cap = 6000,
 
 		-- Fallback for any listed badge that lacks an explicit override
-		-- below. Kept at 0: every badge declares its own value via
+		-- below. Kept at 0: every badge declares its enough value via
 		-- badgeOverrides, so nothing is granted silently.
-		badgeBonus = 0,
+		badgeBonus = 100,
 
 		-- Critical damage multiplier. 15000 = 150.00% damage.
 		multiplier = 15000,
@@ -62,8 +62,7 @@ customSkillsConfig = {
 			"bdg_corvette_neutral_destroy", "bdg_corvette_neutral_rescue", "bdg_corvette_neutral_assassin",
 			"bdg_corvette_reb_destroy", "bdg_corvette_reb_rescue", "bdg_corvette_reb_assassin",
 			-- Exploration: dangerous sites (5)
-			"exp_tat_tusken_pool", "exp_tat_krayt_skeleton", "exp_tat_sarlacc_pit",
-			"exp_tat_krayt_graveyard", "exp_dat_sarlacc",
+			"exp_tat_tusken_pool", "exp_tat_krayt_skeleton", "exp_tat_sarlacc_pit", "exp_tat_krayt_graveyard", "exp_dat_sarlacc",
 			-- Exploration: Jedi sites (3)
 			"exp_tat_bens_hut", "exp_yav_temple_exar_kun", "exp_dan_jedi_temple",
 			-- Outdoors masteries (5)
@@ -72,38 +71,8 @@ customSkillsConfig = {
 			-- Science masteries (3)
 			"science_combatmedic_master", "science_doctor_master", "science_medic_master",
 		},
-		badgeOverrides = {
-			-- Per-badge crit chance in basis points (100 = 1%).
-			{ "count_5", 100 }, { "count_10", 100 }, { "count_25", 100 },
-			{ "count_50", 100 }, { "count_75", 100 }, { "count_100", 100 }, { "count_125", 100 },
-			{ "bdg_exp_10_badges", 100 }, { "bdg_exp_20_badges", 100 }, { "bdg_exp_30_badges", 100 },
-			{ "bdg_exp_40_badges", 100 }, { "bdg_exp_45_badges", 100 },
-			{ "combat_1hsword_master", 100 }, { "combat_2hsword_master", 100 },
-			{ "combat_bountyhunter_master", 100 }, { "combat_brawler_master", 100 },
-			{ "combat_carbine_master", 100 }, { "combat_commando_master", 100 },
-			{ "combat_marksman_master", 100 }, { "combat_pistol_master", 100 },
-			{ "combat_polearm_master", 100 }, { "combat_rifleman_master", 100 },
-			{ "combat_smuggler_master", 100 }, { "combat_unarmed_master", 100 },
-			{ "poi_rabidbeast", 100 }, { "poi_prisonbreak", 100 }, { "poi_twoliars", 100 },
-			{ "poi_factoryliberation", 100 }, { "poi_heromark", 100 },
-			{ "warren_compassion", 100 }, { "warren_hero", 100 },
-			{ "bdg_thm_park_jabba_badge", 100 }, { "bdg_thm_park_imperial_badge", 100 },
-			{ "bdg_thm_park_rebel_badge", 100 }, { "bdg_thm_park_nym_badge", 100 },
-			{ "bdg_corvette_imp_destroy", 100 }, { "bdg_corvette_imp_rescue", 100 },
-			{ "bdg_corvette_imp_assassin", 100 }, { "bdg_corvette_neutral_destroy", 100 },
-			{ "bdg_corvette_neutral_rescue", 100 }, { "bdg_corvette_neutral_assassin", 100 },
-			{ "bdg_corvette_reb_destroy", 100 }, { "bdg_corvette_reb_rescue", 100 },
-			{ "bdg_corvette_reb_assassin", 100 },
-			{ "exp_tat_tusken_pool", 100 }, { "exp_tat_krayt_skeleton", 100 },
-			{ "exp_tat_sarlacc_pit", 100 }, { "exp_tat_krayt_graveyard", 100 },
-			{ "exp_dat_sarlacc", 100 },
-			{ "exp_tat_bens_hut", 100 }, { "exp_yav_temple_exar_kun", 100 }, { "exp_dan_jedi_temple", 100 },
-			{ "outdoors_bio_engineer_master", 100 }, { "outdoors_creaturehandler_master", 100 },
-			{ "outdoors_ranger_master", 100 }, { "outdoors_scout_master", 100 },
-			{ "outdoors_squadleader_master", 100 },
-			{ "science_combatmedic_master", 100 }, { "science_doctor_master", 100 },
-			{ "science_medic_master", 100 },
-		},
+		-- Placeholder: { "badge_key", basisPointValue }
+		-- Example: { "count_5", 100 }
 	},
 
 	-- Generic badge-backed modifiers.
@@ -120,6 +89,8 @@ customSkillsConfig = {
 				"bdg_thm_park_jabba_badge", "bdg_thm_park_imperial_badge",
 				"bdg_thm_park_rebel_badge", "bdg_thm_park_nym_badge",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "warren_compassion", 2000 }
 		},
 
 		-- 12 milestone badges: +12.5% Crit Multiplier each (150% bonus on top of 150% base = 300% max).
@@ -131,6 +102,8 @@ customSkillsConfig = {
 				"count_5", "count_10", "count_25", "count_50", "count_75", "count_100", "count_125",
 				"bdg_exp_10_badges", "bdg_exp_20_badges", "bdg_exp_30_badges", "bdg_exp_40_badges", "bdg_exp_45_badges",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "count_5", 1250 }
 		},
 
 		tripleAttackChance = {
@@ -143,15 +116,10 @@ customSkillsConfig = {
 				"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
 				"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
 				"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master",
-				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars",
-				"poi_factoryliberation", "poi_heromark",
+				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark",
 			},
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "combat_1hsword_master", 700 },
-			-- },
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "combat_1hsword_master", 500 }
 		},
 
 		quadAttackChance = {
@@ -164,15 +132,10 @@ customSkillsConfig = {
 				"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
 				"combat_marksman_master", "combat_pistol_master", "combat_polearm_master",
 				"combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master",
-				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars",
-				"poi_factoryliberation", "poi_heromark",
+				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark",
 			},
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "combat_1hsword_master", 700 },
-			-- },
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "combat_1hsword_master", 300 }
 		},
 
 		armorPenetration = {
@@ -184,6 +147,8 @@ customSkillsConfig = {
 				"bdg_corvette_neutral_destroy", "bdg_corvette_neutral_rescue", "bdg_corvette_neutral_assassin",
 				"bdg_corvette_reb_destroy", "bdg_corvette_reb_rescue", "bdg_corvette_reb_assassin",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "bdg_corvette_imp_destroy", 1 }
 		},
 
 		defenseCapIncrease = {
@@ -191,16 +156,12 @@ customSkillsConfig = {
 			badgeBonus = 20,
 			cap = 100,
 			badges = {
-				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars",
-				"poi_factoryliberation", "poi_heromark",
+				"poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark",
 			},
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "poi_rabidbeast", 30 },
-			-- },
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "poi_rabidbeast", 20 }
 		},
+
 		armorDegradeReduction = {
 			enabled = true,
 			badgeBonus = 1250,
@@ -211,6 +172,8 @@ customSkillsConfig = {
 				"bdg_exp_ror_kobala_spice_mine", "bdg_exp_ror_rebel_outpost",
 				"bdg_exp_ror_imp_camp", "bdg_exp_ror_imp_hyperdrive_fac",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "bdg_exp_tal_creature_village", 1250 }
 		},
 
 		weaponDegradeReduction = {
@@ -223,6 +186,8 @@ customSkillsConfig = {
 				"bdg_exp_end_ewok_tree_village", "bdg_exp_end_ewok_lake_village",
 				"bdg_exp_end_dulok_village", "bdg_exp_end_imp_outpost",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "exp_dan_jedi_temple", 1250 }
 		},
 
 		seaCapIncrease = {
@@ -234,6 +199,8 @@ customSkillsConfig = {
 				"exp_tat_sarlacc_pit", "exp_tat_krayt_graveyard",
 				"exp_dat_sarlacc",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "exp_tat_tusken_pool", 20 }
 		},
 
 		movementSpeed = {
@@ -244,6 +211,8 @@ customSkillsConfig = {
 				"exp_nab_gungan_sacred_place", "bdg_exp_nab_theed_falls_bottom",
 				"bdg_exp_nab_deeja_falls_top", "bdg_exp_nab_amidalas_sandy_beach",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "exp_nab_gungan_sacred_place", 2500 }
 		},
 
 		buffDuration = {
@@ -257,12 +226,8 @@ customSkillsConfig = {
 				"social_dancer_master", "social_entertainer_master", "social_imagedesigner_master",
 				"social_musician_master", "social_politician_master",
 			},
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "social_dancer_master", 3000 },
-			-- },
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "exp_tat_escape_pod", 2500 }
 		},
 
 		experienceMultiplier = {
@@ -274,6 +239,8 @@ customSkillsConfig = {
 				"bdg_exp_cor_rogue_corsec_base", "bdg_exp_cor_tyrena_theater",
 				"bdg_exp_cor_bela_vistal_fountain",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "exp_cor_agrilat_swamp", 10000 }
 		},
 
 		practiceExperienceBonus = {
@@ -286,6 +253,8 @@ customSkillsConfig = {
 				"social_dancer_master", "social_entertainer_master", "social_imagedesigner_master",
 				"social_musician_master", "social_politician_master",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "exp_tat_escape_pod", 10000 }
 		},
 
 		craftingSpeed = {
@@ -298,6 +267,8 @@ customSkillsConfig = {
 				"crafting_shipwright", "crafting_tailor_master", "crafting_weaponsmith_master",
 				"science_doctor_master",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "crafting_architect_master", 1000 }
 		},
 
 		amazingSuccessChance = {
@@ -310,6 +281,8 @@ customSkillsConfig = {
 				"exp_dat_tarpit", "exp_dat_escape_pod", "exp_dat_misty_falls_1", "exp_dat_misty_falls_2",
 				"bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "exp_yav_temple_exar_kun", 500 }
 		},
 
 		amazingResults = {
@@ -322,6 +295,8 @@ customSkillsConfig = {
 				"exp_dat_tarpit", "exp_dat_escape_pod", "exp_dat_misty_falls_1", "exp_dat_misty_falls_2",
 				"bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison",
 			},
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "exp_yav_temple_exar_kun", 1000 }
 		},
 
 		gatheringQuantity = {
@@ -335,12 +310,8 @@ customSkillsConfig = {
 				"outdoors_ranger_master", "outdoors_scout_master", "outdoors_squadleader_master",
 				"science_combatmedic_master", "science_doctor_master", "science_medic_master",
 			},
-			-- Optional per-badge overrides. Each entry replaces badgeBonus
-			-- for that single badge: { "badge_key", basisPointValue }.
-			-- Example (uncomment and edit):
-			-- badgeOverrides = {
-			--     { "outdoors_bio_engineer_master", 13000 },
-			-- },
+			-- Placeholder: { "badge_key", basisPointValue }
+			-- Example: { "exp_tat_escape_pod", 10000 }
 		},
 	},
 }
