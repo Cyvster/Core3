@@ -75,30 +75,31 @@ before claim ([R6.9], BRIEF-019).
 | [`008-deep-audit-module-code.md`](008-deep-audit-module-code.md) | Deep quality audit of all module-owned code; file ERR entries and produce remediation brief(s) | DELIVERED |
 | [`009-condense-doc-formatting.md`](009-condense-doc-formatting.md) | Condense all guides; enforce heading hierarchy, section delimiters, feature-section template, TOCs | DELIVERED |
 | [`010-combat-spam-labels-investigation-and-fix.md`](010-combat-spam-labels-investigation-and-fix.md) | Combat spam labels: same-line append fix, enable/disable switch, menu listing; removal fallback needs owner sign-off | DELIVERED |
+| [`011-menu-config-single-source.md`](011-menu-config-single-source.md) | Menu/config single-source: eliminate duplicated badge assignments; resolve ERR-008 | DELIVERED |
+| [`012-code-hygiene-cleanups.md`](012-code-hygiene-cleanups.md) | Enum/table safety asserts, loader consolidation, edge-case cleanups (behavior-preserving) | DELIVERED |
 | [`013-delegated-broadcast-combat-spam.md`](013-delegated-broadcast-combat-spam.md) | Delegate broadcastCombatSpam to module code; same-line labels via raw-text full lines | WITHDRAWN |
 | [`014-remove-combat-spam-labels.md`](014-remove-combat-spam-labels.md) | Remove combat spam label feature entirely from code, config, and docs (owner decision) | DELIVERED |
 | [`015-implement-attack-repeat-tiers.md`](015-implement-attack-repeat-tiers.md) | Implement Double/Triple/Quad attack repeat tiers in the applyDamage delegation; resolves ERR-009 | DELIVERED |
 | [`016-defaultize-badge-overrides.md`](016-defaultize-badge-overrides.md) | Uniform badgeBonus defaults everywhere; badgeOverrides become dormant placeholders; caps re-verified | DELIVERED |
-| [`011-menu-config-single-source.md`](011-menu-config-single-source.md) | Menu/config single-source: eliminate duplicated badge assignments; resolve ERR-008 | DELIVERED |
-| [`012-code-hygiene-cleanups.md`](012-code-hygiene-cleanups.md) | Enum/table safety asserts, loader consolidation, edge-case cleanups (behavior-preserving) | DELIVERED |
 | [`017-verify-badge-reconfiguration.md`](017-verify-badge-reconfiguration.md) | Independent verification + completion of the badge reconfiguration; repair config corruption + doc sweep | DELIVERED |
 | [`018-document-swgemu-admin-commands.md`](018-document-swgemu-admin-commands.md) | Document SWGEmu admin (GM) commands in a dedicated `swgemu/` section: permission chain, command table, worked operator scenarios | DELIVERED |
 | [`019-enforce-discovery-capture.md`](019-enforce-discovery-capture.md) | Make R6.9 discovery capture a standing, unmissable procedure (checklist + gotcha convention) | DELIVERED |
 | [`020-apply-dense-format-reference-docs.md`](020-apply-dense-format-reference-docs.md) | Apply approved dense doc format (tight blocks, stacked no-bullet lines) to reference/lookup docs only | DELIVERED |
 | [`021-verify-admin-commands-vs-codebase.md`](021-verify-admin-commands-vs-codebase.md) | Cross-verify PDF-derived admin commands against Core3 command classes; cite file:line or mark not-on-build | DELIVERED |
 | [`022-player-commands-reference.md`](022-player-commands-reference.md) | PLAYER_COMMANDS.md: 283-command grouped inventory + 66 verified deep-dives (39.6KB) | DELIVERED |
-| [`023-hidden-config-options.md`](023-hidden-config-options.md) | Deep dive: enumerate + document semi-hidden config.lua options (PlayerManager/JTL/PCM etc.) in swgemu/CODE_REFERENCE.md | CLAIMED |
+| [`023-hidden-config-options.md`](023-hidden-config-options.md) | CONFIG_OPTIONS.md: full verified inventory of ConfigManager-read options; integrated into CODE_REFERENCE | DELIVERED |
 | [`024-privacy-scrub.md`](024-privacy-scrub.md) | Remove owner real name + local drive paths from all tracked files; add standing privacy rule | DELIVERED |
 | [`025-menu-modifier-display-and-formatting.md`](025-menu-modifier-display-and-formatting.md) | Menu: show all modifiers per badge, short names (Cri/Crit Multi/Double/Triple/Quad), fix bottom-pane gap, retry column alignment | DELIVERED |
-| [`026-swemu-options-viewer.md`](026-swemu-options-viewer.md) | Populate SWGEMU Options menu category: grouped live server-config viewer (no secrets), standardized registry format | CLAIMED |
-| [`027-hidden-options-through-mod-research.md`](027-hidden-options-through-mod-research.md) | Research: route hidden swgemu options through mod via prefilled Lua file (mechanism, precedence, timing, safety) | CLAIMED |
+| [`026-swemu-options-viewer.md`](026-swemu-options-viewer.md) | Populate SWGEMU Options menu category: curated live server-config viewer (no secrets) -- implemented as BRIEF-031 | DELIVERED |
+| [`027-hidden-options-through-mod-research.md`](027-hidden-options-through-mod-research.md) | Research: route hidden options through mod overlay (verdict: FEASIBLE-WITH-CAVEATS); impl in progress | DELIVERED (research) |
 | [`028-document-lifecycle-archives-adoption.md`](028-document-lifecycle-archives-adoption.md) | Adopt Alice-style bounded ledgers + permanent archives (tombstones, verbatim moves, reconciliation-time trigger) | DELIVERED (rules L1-L6 in process.md; errata convention conformed) |
-| [`029-review-verification-gate-from-alice.md`](029-review-verification-gate-from-alice.md) | XPP mirror-review: evaluate Alice's second-party verification gate for adoption here | CLAIMED |
+| [`029-review-verification-gate-from-alice.md`](029-review-verification-gate-from-alice.md) | XPP mirror-review: verification gate evaluation -- folded into BRIEF-030 gap 1 (ADOPTED) | DELIVERED (folded into 030) |
 | [`030-align-process-to-alice.md`](030-align-process-to-alice.md) | XPP alignment pass 1: adopt Alice's governance gaps (verification gate, audits, errata discipline, milestones, roster); creates Alice mirror brief | DELIVERED |
-| [`032-floating-combat-text-investigation.md`](032-floating-combat-text-investigation.md) | Investigate FCT hook: ShowFlyText scale/color/content/position control without client mods; feasibility + design | CLAIMED |
-| [`033-menu-performance-research.md`](033-menu-performance-research.md) | Quantify menu-open cost (checks, config reads, SUI build) vs combat/inventory actions; 1000-concurrent burst model | CLAIMED |
+| [`031-swemu-options-viewer-implementation.md`](031-swemu-options-viewer-implementation.md) | BRIEF-026 impl: static curated registry (~20 options, secrets excluded), live ConfigManager reads, restart flags | DELIVERED |
+| [`032-floating-combat-text-investigation.md`](032-floating-combat-text-investigation.md) | FCT hook investigation: scale YES / color YES / content PARTIAL / position+effects NO (client-mod territory) | DELIVERED (research) |
+| [`033-menu-performance-research.md`](033-menu-performance-research.md) | Menu performance: ~60-150us/open, 1000-burst ~100-150ms NEGLIGIBLE; client SUI cliff at ~1000-1500 rows/page | DELIVERED (research) |
 | [`034-consolidated-strike-fct.md`](034-consolidated-strike-fct.md) | Double/Triple/Quad become damage multipliers (single strike) + tiered FCT: scale+color escalate per tier/crit, config-driven | DELIVERED |
-| [`035-crafting-tool-repeat-research.md`](035-crafting-tool-repeat-research.md) | Viability: repeat-craft option for inventory crafting tool (session lifecycle, snapshot reuse, client constraints); recreates brief lost to disconnects | DELIVERED (PARTIAL: assisted pre-fill viable; server-side loop not) |
+| [`035-crafting-tool-repeat-research.md`](035-crafting-tool-repeat-research.md) | Viability: repeat-craft option for inventory crafting tool (session lifecycle, snapshot reuse, client constraints); request predated any filing (no agent connected); re-filed from owner restatement | DELIVERED (PARTIAL: assisted pre-fill viable; server-side loop not) |
 | [`036-repeat-craft-implementation.md`](036-repeat-craft-implementation.md) | Repeat-craft: snapshot + /repeatcommand pre-fill; practice handling = operator option (no anti-farming stance) | CLAIMED |
 
 ## Notes
@@ -119,31 +120,9 @@ before claim ([R6.9], BRIEF-019).
 
 ---
 
-**Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
-BRIEF-008 DELIVERED (full module audit; AUDIT-1 filed as ERR-008 OPEN,
-AUDIT-2 routed to BRIEF-010, remainder split into BRIEF-011 (menu fix) + BRIEF-012 (hygiene), both UNCLAIMED).
-Prior: 08242026 -- BRIEF-009 added (doc condensation + formatting standard: single H1,
-rule-delimited H2 sections, feature template, TOCs, >=40% line-count
-reduction target) and BRIEF-010 added (combat spam labels:
-investigate same-line append defect, add enable/disable switch +
-Server Config listing; removal only on owner sign-off). Prior:
-08242026 -- BRIEF-007 DELIVERED (C++ seed/constant removed; 60-badge x 100bp
-override set reaches the 60% cap exactly; ERR-007 filed RESOLVED
-self-verified under [DIRECTIVE 08242026]; compile check deferred to
-Docker build env). Prior:
-08242026 -- BRIEF-006 DELIVERED (recording conventions reconciled with Project Alice;
-slot semantics + short format codified in process.md; OD-1 answered same
-day via [DIRECTIVE 08242026]: dates switch to MMDDYYYY going forward).
-Prior: 08232026 by hy3-free (opencode/hy3-free) --
-BRIEF-004 DELIVERED (MODIFIER_REFERENCE refreshed against config.lua;
-rarityNaming + badgeOverrides documented in INSTALLATION; ARCHITECTURE SUI
-menu categories corrected). Prior: hy3-free (opencode/hy3-free), 08232026 --
-BRIEF-005 added and DELIVERED (single-source rule for badge-backed modifiers,
-spawned from ERR-005); ox-alpha (opencode/x-preview-f-free), 08232026 --
-BRIEF-002 index rewrite; BRIEF-003 statuses 001-003 DELIVERED, added brief 004.
-
-## Contributors
-
-- **Cyvster** -- project owner
-- ox-alpha (opencode/x-preview-f-free), 08232026 -- initial queue
-- hy3-free (opencode/hy3-free), 08232026 -- BRIEF-005
+**Last reconciled:** 08252026 by ox-alpha (opencode/x-preview-f-free) --
+index brought current: 023/026/027/032/033/035 DELIVERED (research batch),
+034 consolidated strike DELIVERED, 029 folded into 030, missing 031 row
+added, numeric order restored. In flight: 027 impl (config overlay hook),
+036 repeat-craft implementation.
+Prior: 08242026 -- BRIEF-008 reconciliation (see git history for earlier entries).
