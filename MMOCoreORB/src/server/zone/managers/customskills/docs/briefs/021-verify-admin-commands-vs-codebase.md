@@ -1,6 +1,7 @@
 # BRIEF-021 -- Deep-dive admin command reference from code inspection
 
-- Status: CLAIMED
+- Status: DELIVERED (ADMIN_COMMANDS.md portion; PLAYER_COMMANDS.md deferred —
+  see delivery report)
 - Created: 08252026 by hy3-free (opencode/hy3-free); scope revised same day
   per owner direction.
 - Priority: ERRATA > BRIEFS > anything else. No live errata blocking.
@@ -75,3 +76,54 @@ Produce a complete, code-verified admin command reference:
 - [ ] ADMIN_COMMANDS.md rebuilt; delivery report lists divergences from PDF.
 - [ ] Registration-path discoveries backfilled to swgemu/CODE_REFERENCE.md.
 - [ ] Committed + pushed; brief marked DELIVERED.
+
+---
+
+## Delivery Report
+
+- Executor: hy3-free (opencode/hy3-free)
+- Date: 08252026
+- Commit: c87b829af1 (ADMIN_COMMANDS.md rebuild)
+
+### What was done
+1. **Authoritative inventory extracted from code**: `command_command_table`
+   in `sql/datatables.sql` — every row with `characterAbility='admin'` = the
+   admin-gated set. Result: **133 admin commands** (vs 63 in the PDF; vs 10 in
+   the first BRIEF-018 attempt).
+2. **Every command parsed from its C++ class**
+   (`src/server/zone/objects/creature/commands/<Name>Command.h`): exact token
+   parsing order, flags (-event/-imperial/-rebel/-area/-force), subcommand
+   dispatchers (/object, /createNPC, /script, /createSpawningElement),
+   defaults, and clamps. Delegated bulk extraction to opencode
+   (x-preview-f-free); orchestrator independently spot-checked 5 entries
+   against source incl. SetSpeedCommand.h's built-in SYNTAX string (R6.10).
+3. **Stubs documented as stubs**: ~15 commands are no-op placeholders on this
+   build (/objvar, /npc, /manufacture, /remote, ...). Documented with
+   "[no args] -- no-op placeholder" so operators know before typing them.
+4. **Doc rebuilt** in house format: user.cfg client prerequisite (operator-
+   verified config + 0fd345d9 unlock), permission model, admin level table,
+   13 category sections, module note, worked scenarios, evidence-based
+   verification section.
+5. **Gating discoveries backfilled to swgemu/CODE_REFERENCE.md** (commit
+   78dc5149fc): partition key, table source, god-mode mapping chain,
+   GODLEVEL=72.
+
+### PDF-vs-code divergences (code wins)
+- PDF documents ~30 commands that do not exist as admin-gated on this build
+  (e.g. /requestBadges, /reload, /maxStats variants differ, /setPlayerState).
+- Code has ~70 admin commands absent from the PDF (/forceCommand family,
+  spawner controls, /planetwarp, /gmCreateClassResource, quest bitmask
+  commands...).
+- Arg shapes frequently differ from PDF (e.g. /addBannedPlayer takes duration
+  int + reason tokens per AddBannedPlayerCommand.h:41, not "player name +
+  reason").
+
+### Deferred
+- **PLAYER_COMMANDS.md** (~3,036 player commands extracted to _player_cmds.txt):
+  a separate large pass. Recommend filing BRIEF-022 rather than inflating this
+  delivery.
+- Working artifacts left in repo root: `_admin_cmds.txt`, `_player_cmds.txt`,
+  `_admin_syntax_draft.txt`, `_pdf_commands_raw.txt` (uncommitted; delete or
+  commit as data at owner discretion).
+
+Signed: hy3-free (opencode/hy3-free), 08252026
