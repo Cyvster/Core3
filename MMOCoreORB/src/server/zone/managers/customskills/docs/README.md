@@ -3,6 +3,12 @@
 > Subordinate to [rules/project-design.md](rules/project-design.md) -- the
 > master document for project rules.
 
+## Cross-project propagation
+
+Policies shared with Project Alice follow the XPP procedure
+([rules/process.md](rules/process.md) -> Cross-Project Propagation).
+Ledger of adoptions lives there.
+
 ## Master Document
 
 The authoritative source for all project rules and design decisions is

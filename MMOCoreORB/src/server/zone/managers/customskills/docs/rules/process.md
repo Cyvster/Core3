@@ -318,6 +318,32 @@ path patterns; a hit blocks the push until scrubbed ([ERR-014]).
 
 ---
 
+## Cross-Project Propagation (XPP) -- adopted 08252026
+
+Proposal 08252026-cross-project-policy-propagation (ADOPTED by owner
+directive same day). Custom Skills and Project Alice share governance;
+a policy implemented on one project MUST file a mirror-review brief on the
+other in the SAME session as its implementation.
+
+- Mirror brief: "Review + adopt: <policy> (from <origin project>)", linking
+  the origin commit/file; outcome ADOPT / ADAPT / DECLINE recorded in the
+  delivery report. Tailoring to the receiving project is expected; DECLINE
+  must state why.
+- Filed UNCLAIMED unless the coordinator executes it immediately.
+- Propagation ledger (name, origin, outcome, date) lives in docs/README.md.
+- Scope: process rules, documentation standards, quality gates,
+  privacy/security practices, workflow procedures -- not project-specific
+  technical work.
+
+### XPP ledger
+
+| Policy | Origin | Outcome | Date |
+|--------|--------|---------|------|
+| Discovery capture mandate (R6.9) | customskills BRIEF-019 | ADOPTED on Alice (briefs README authoring rules) | 08252026 |
+| Bounded ledgers + archives (L1-L6) | Alice brief 041 | ADOPTED here (BRIEF-028) | 08252026 |
+| Privacy rule (handle-only, no local paths, pre-push grep) | customskills ERR-014 | ADAPTED on Alice (scrub done 08252026; llm-guide grep check pending) | 08252026 |
+| Second-party verification gate | Alice | REVIEW PENDING -> see briefs index mirror-review | 08252026 |
+
 ## Formatting requirements for governing documents
 
 - Heading levels: `##` major sections, `###` subsections.
