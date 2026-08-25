@@ -1424,6 +1424,29 @@ Adding a new entry to the menu viewer (BRIEF-026): register it in the
 SWGEMU Options registry with {label, configKey, type, group, restartFlag};
 exclude secrets per ERR-014/BRIEF-026 rules.
 
+## Config Overlay Mechanism (research, BRIEF-027)
+
+ConfigManager::loadConfigData() (src/conf/ConfigManager.cpp:23-93) loads
+exactly TWO lua files into ONE shared lua_State: conf/config.lua
+(hard-required, :33) then optional conf/config-local.lua (:38-47, loaded only
+if present). No third/include file exists in stock code. Merge rule is
+LAST-ASSIGNMENT-WINS: both chunks mutate the same global `Core3` table before
+a single parse pass (`clearConfigData()` at :55 wipes the map;
+parseConfigData("Core3") at :60 flattens it to dotted keys). Every key replace
+bumps configVersion (updateItem, :640), which auto-refreshes all cached
+getters (ConfigManager.h:278-355 pattern). Hot-reload re-runs loadConfigData()
+in full -- ServerCore::processConfig() at ServerCore.cpp:1128-1131 -- so any
+additional file loaded there re-applies on every reload too. A mod overlay
+file therefore needs only a `File::setReadOnly()` + `lua.runFile()` block
+mirroring :38-47; Lua screenplays CANNOT set ConfigManager keys at runtime
+(DirectorManager registers read mirrors only: isJtlEnabled()
+DirectorManager.cpp:5107-5108, isCovertOvertSystem() :5016 -- no setter
+binding). The mod's own CustomSkillsConfig::load() uses a private throwaway
+Lua state (CustomSkillsConfig.cpp:110-127) and cannot reach the config state.
+Recommended precedence for a mod-managed conf/mod-overrides.lua: ship fully
+commented out (sparse override = operator values always win); mod-forced lines
+loaded last would otherwise beat config-local by last-write-wins.
+
 ## Floating Combat Text (ShowFlyText)
 Packet: packets/object/ShowFlyText.h -- ObjectControllerMessage 0x1B/0x1BD;
 payload = long targetID, ascii stf FILE, int spacer, ascii stf ENTRY, float
