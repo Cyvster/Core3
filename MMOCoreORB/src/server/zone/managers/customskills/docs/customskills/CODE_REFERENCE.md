@@ -1683,6 +1683,28 @@ no tool/inventory hopping is involved.
 matches vanilla per owner directive). NO rate caps, NO anti-farming knobs --
 owner decision.
 
+## CombatManager Integration Surface (BRIEF-042, R6.9)
+
+Core3 files touched by the mod's combat features -- keep this list current
+when the surface changes:
+
+`CombatManager.h/.cpp`: transient member `suppressHitLocationFlyText`
+(CombatManager.h:231, setter :251). CustomSkillsCombat sets it around an
+escalated strike's applyVanillaDamage call; showHitLocationFlyText (:1613)
+skips rendering when set, so the escalated flytext is the ONLY hit-location
+text for that hit. Base hits unaffected (flag false -> vanilla renders).
+
+New delegation: `CustomSkillsCombat::applyTanoTargetDamage` handles
+player-vs-TangibleObject (lairs, turrets) via the applyDamage(CreatureObject*
+attacker, TangibleObject* defender...) overload at CombatManager.cpp:1630 --
+previously that path had NO mod hook, which is why Double/Triple/Quad and
+crits did not work vs lairs. Crit + tier chain + consolidated multiplier +
+tiered FCT all live there now.
+
+Escalated flytext broadcasts to the defender's observers
+(`defender->broadcastMessage`) matching vanilla's audience; chat tag remains
+attacker-only by design.
+
 ## Mod Integration Gotchas (R6.9, 08252026 live-test + build lessons)
 
 CombatManager has TWO applyDamage overloads: player-vs-CreatureObject
