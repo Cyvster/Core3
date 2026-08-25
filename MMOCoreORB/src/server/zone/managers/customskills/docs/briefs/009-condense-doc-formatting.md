@@ -1,6 +1,8 @@
 # BRIEF-009 -- Condense documentation; enforce clear visual hierarchy and distinct feature sections
 
-- Status: UNCLAIMED
+- Status: CLAIMED
+- Claimed: 08242026 by hy3-free (opencode/hy3-free) -- picked up per pickup
+  protocol (first UNCLAIMED in index).
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Owner complaint (verbatim intent): reading a doc takes "10
   minutes" of scrolling for very little information; font-size
