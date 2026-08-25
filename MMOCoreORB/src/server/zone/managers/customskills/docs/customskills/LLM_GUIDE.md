@@ -2,7 +2,7 @@
 Audience: LARGE LANGUAGE MODEL SESSIONS working on this repository -- and nobody else. Human players read `USER_GUIDE.md`; developers read `CODE_REFERENCE.md`; server administrators read `../installation/INSTALLATION.md`. If you are an LLM asked to do any work here, this document is your entry point.
 
 ## Identity and voice
-You are one contributor among many concurrent LLM sessions plus the human owner (Daniel). One entity, one voice: edit only within your claimed scope ([PROC R2]), never sign or complete content for another, and route disagreements through errata instead of editing over them ([PROC R7]). All workers commit under the shared machine identity, so document signatures are the ONLY attribution record -- sign everything per [rules/process.md](../rules/process.md) → Contributor Recording Conventions.
+You are one contributor among many concurrent LLM sessions plus the human owner (Cyvster). One entity, one voice: edit only within your claimed scope ([PROC R2]), never sign or complete content for another, and route disagreements through errata instead of editing over them ([PROC R7]). All workers commit under the shared machine identity, so document signatures are the ONLY attribution record -- sign everything per [rules/process.md](../rules/process.md) → Contributor Recording Conventions.
 
 ## Required reading order
 1. [rules/project-design.md](../rules/project-design.md) -- master document; principles [CS-N]. Several intentional design choices look like bugs if unread (basis points, native fallback, parity).
@@ -19,7 +19,8 @@ Deeper reference is indexed in [../README.md](../README.md).
 4. Deliver completely: behavior changes carry their documentation in the same commit set ([R6.6]); newly learned toolchain/environment facts land in their owning reference doc same-session ([R6.9]).
 5. Record where work landed; update trackers with reconciliation stamps.
 6. **End-of-session discovery sweep (R6.9):** before committing, ask "Did this session teach me anything not yet in the owning reference doc?" -- enum scoping, which file owns a merge, restart-vs-reload behavior, build-host quirks, gotchas that bit us. If yes, add a `GOTCHA`-style note to CODE_REFERENCE / this guide / swgemu/CODE_REFERENCE (citing file:line per R6.10) in the SAME commit. Findings left in chat are lost findings.
-7. If nothing is claimable or eligible: STOP and report back -- do not invent work ([briefs pickup protocol step 9]).
+7. **Pre-push privacy check (ERR-014):** grep your diff for the owner's real name (must be `Cyvster`) and local absolute path patterns (`[A-Z]:[\\/]`). Any hit blocks the push until scrubbed -- privacy rule in [rules/process.md](../rules/process.md).
+8. If nothing is claimable or eligible: STOP and report back -- do not invent work ([briefs pickup protocol step 9]).
 
 ## Code tour (15 minutes)
 Start inside the module dir (`MMOCoreORB/src/server/zone/managers/customskills/`):

@@ -19,7 +19,7 @@
 > 08232026 BRIEF-002: single-tree rewrite (R6.5/R6.6, containment rule,
 > release conventions) after the package mirror was dissolved
 
-The written process for any work on this repository, whether by Daniel, a
+The written process for any work on this repository, whether by Cyvster, a
 single LLM session, or multiple coordinated entities. Adopted 08232026,
 adapted from the Project Alice process framework. Originally written for a
 two-tree layout (Core3 dev tree + package mirror); rewritten 08232026 for
@@ -300,6 +300,24 @@ messages, telemetry, monitor output); never record your own local time.
 
 ---
 
+## Privacy (owner directive 08252026, ERR-014)
+
+The repository is public. In every tracked file:
+
+- The owner is referenced as **Cyvster** (or "the owner") -- never by real
+  name.
+- No local filesystem paths (`X:\...`, `C:\Users\...`, home directories)
+  or machine-specific details; use repo-relative paths or generic
+  descriptions ("the TRE builder workspace outside this repository").
+- No account names, emails, or credentials beyond what git already records.
+
+Applies to docs, briefs, proposals, code comments, and config examples.
+Upstream third-party content (e.g. SOE credit tables in `sql/`) is exempt.
+Pre-push check: grep the diff for the owner's real name and `[A-Z]:[\\/]`
+path patterns; a hit blocks the push until scrubbed ([ERR-014]).
+
+---
+
 ## Formatting requirements for governing documents
 
 - Heading levels: `##` major sections, `###` subsections.
@@ -312,6 +330,6 @@ messages, telemetry, monitor output); never record your own local time.
 
 ## Contributors
 
-- **Daniel** -- project owner
+- **Cyvster** -- project owner
 - ox-alpha (opencode/x-preview-f-free), 08232026 -- initial draft,
   adapted from Project Alice docs/rules/process.md framework
