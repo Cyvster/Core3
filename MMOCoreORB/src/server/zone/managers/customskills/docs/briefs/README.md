@@ -100,7 +100,7 @@ before claim ([R6.9], BRIEF-019).
 | [`033-menu-performance-research.md`](033-menu-performance-research.md) | Menu performance: ~60-150us/open, 1000-burst ~100-150ms NEGLIGIBLE; client SUI cliff at ~1000-1500 rows/page | DELIVERED (research) |
 | [`034-consolidated-strike-fct.md`](034-consolidated-strike-fct.md) | Double/Triple/Quad become damage multipliers (single strike) + tiered FCT: scale+color escalate per tier/crit, config-driven | DELIVERED |
 | [`035-crafting-tool-repeat-research.md`](035-crafting-tool-repeat-research.md) | Viability: repeat-craft option for inventory crafting tool (session lifecycle, snapshot reuse, client constraints); request predated any filing (no agent connected); re-filed from owner restatement | DELIVERED (PARTIAL: assisted pre-fill viable; server-side loop not) |
-| [`036-repeat-craft-implementation.md`](036-repeat-craft-implementation.md) | Repeat-craft: snapshot + /repeatcommand pre-fill; practice handling = operator option (no anti-farming stance) | DELIVERED (08252026) |
+| [`036-repeat-craft-implementation.md`](036-repeat-craft-implementation.md) | Repeat-craft: /repeatcraft + tool-snapshot pre-fill (luaStringData cs36.*, zero IDL changes); repeatEnabled default OFF | DELIVERED |
 | [`037-cyvster2-modification-inventory.md`](037-cyvster2-modification-inventory.md) | Archaeology: 610 commits -> ~48 net mods (12 FEATURE/28 TWEAK/3 FIX/5 DEAD); MIGRATION_LEDGER.md live: 4 IN-MOD, 30 TODO, 14+ WONT-PORT | DELIVERED |
 | [`038-mission-terminal-options-port.md`](038-mission-terminal-options-port.md) | Port mission terminal direction/difficulty options from cyvster2 into mod; research -> design -> implement; updates ledger | CLAIMED |
 
