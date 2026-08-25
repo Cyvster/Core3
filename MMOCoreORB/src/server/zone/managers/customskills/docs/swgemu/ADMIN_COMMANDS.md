@@ -18,9 +18,9 @@ Every admin command requires BOTH on the executing character: (1) **God mode** (
 `/reload <target>` — reload a subsystem/script. **Does NOT reload `config.lua`** — module caches config at startup; edit `config.lua` + **restart** to change a badge bonus/cap.
 
 ## Worked scenarios
-- **Grant a full badge set:** find numeric IDs for the crit-chance badges in `config.lua` → target player → `/grantbadge -multiple <startID> <endID>` → verify with `/requestBadges`, then open `/customskills` in-game (Bonuses page shows owned count + basis-point total, capped at `cap`).
-- **Undo a grant:** `/revokebadge <badgeID>` → re-verify `/requestBadges`.
-- **Audit:** every grant/revoke is in `adminLog`. A "did nothing" grant ⇒ check adminLog for `insufficient_permissions` (missing god mode or ability; see Gating chain).
+**Grant a full badge set:** find numeric IDs for the crit-chance badges in `config.lua` → target player → `/grantbadge -multiple <startID> <endID>` → verify with `/requestBadges`, then open `/customskills` in-game (Bonuses page shows owned count + basis-point total, capped at `cap`).  
+**Undo a grant:** `/revokebadge <badgeID>` → re-verify `/requestBadges`.  
+**Audit:** every grant/revoke is in `adminLog`. A "did nothing" grant ⇒ check adminLog for `insufficient_permissions` (missing god mode or ability; see Gating chain).
 
 ## Verification (R6.10)
 Names verified on disk (`bin/scripts/commands/<file>.lua`): grantbadge, revokebadge, requestbadges, grantskill, revokeskill, editstats, maxstats, setgodmode, server, reload. `/grantbadge`+`/revokebadge` args from C++ classes; `/editstats`,`/setgodmode`,`/server` arg shapes from token parsing (exact `<param>` via in-game `-help`). Gating/audit/`DumpAdminCommands` from `swgemu/CODE_REFERENCE.md`.
