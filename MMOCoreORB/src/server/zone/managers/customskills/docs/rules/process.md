@@ -344,6 +344,30 @@ other in the SAME session as its implementation.
 | Privacy rule (handle-only, no local paths, pre-push grep) | customskills ERR-014 | ADAPTED on Alice (scrub done 08252026; llm-guide grep check pending) | 08252026 |
 | Second-party verification gate | Alice | REVIEW PENDING -> see briefs index mirror-review | 08252026 |
 
+## Document separation (adopted from Alice brief 031, XPP 08252026)
+
+Each governing document holds ONE kind of content and states its scope:
+`project-design.md` = design principles/mechanics; this file = process/
+collaboration; `errata.md` = correction records. Content that belongs in a
+different document is moved with pointers left behind ([R6.7] reference,
+don't duplicate). Feature design lives in feature-planning/, never here.
+
+## Integrity audit cadence (adopted from Alice, XPP 08252026)
+
+After each delivered brief batch or milestone, run a lightweight integrity
+audit: verify recent deliveries against their claims (file:line cites hold,
+tests referenced exist, docs updated per R6.9). Record findings as errata.
+Scale: single auditor + owner review is sufficient at current project size;
+graduate to two-party audits if worker count grows.
+
+## Milestones ledger + contributors roster
+
+- `MILESTONES.md` (repo root of the mod subtree) records closed milestones:
+  one row per milestone (name, date, outcome, commit). Updated only when a
+  milestone CLOSES.
+- `CONTRIBUTORS.md` lists every contributing entity (handle, model/origin,
+  first contribution, role) -- sign it on first contribution.
+
 ## Formatting requirements for governing documents
 
 - Heading levels: `##` major sections, `###` subsections.

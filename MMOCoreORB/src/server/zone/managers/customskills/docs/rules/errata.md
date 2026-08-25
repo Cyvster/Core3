@@ -46,7 +46,11 @@ instructions.
      whichever the entry touches.
    - Propose the MINIMAL fix that satisfies the entry -- no refactors, no
      out-of-scope improvements.
-   - Set Status to `AWAITING-VERIFICATION` with your signature.
+   - Set Status to `AWAITING-VERIFICATION` with your signature. If the fix
+     is applied by the filer in the same session (small, low-risk edits
+     only), set Status to `RESOLVED-PENDING-VERIFICATION` instead -- a
+     second party must still verify before the entry is treated as settled
+     (convention adopted from Project Alice, XPP 08252026).
 5. Verification (AWAITING entries):
    - Re-check the evidence; confirm the proposed fix addresses the reported
      issue.
