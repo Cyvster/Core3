@@ -63,6 +63,7 @@ reading only what the brief lists -- no conversation history required.
 | [`016-defaultize-badge-overrides.md`](016-defaultize-badge-overrides.md) | Uniform badgeBonus defaults everywhere; badgeOverrides become dormant placeholders; caps re-verified | UNCLAIMED |
 | [`011-menu-config-single-source.md`](011-menu-config-single-source.md) | Menu/config single-source: eliminate duplicated badge assignments; resolve ERR-008 | DELIVERED |
 | [`012-code-hygiene-cleanups.md`](012-code-hygiene-cleanups.md) | Enum/table safety asserts, loader consolidation, edge-case cleanups (behavior-preserving) | DELIVERED |
+| [`017-verify-badge-reconfiguration.md`](017-verify-badge-reconfiguration.md) | Independent verification + completion of the badge reconfiguration; repair config corruption + doc sweep | DELIVERED |
 
 ## Notes
 
