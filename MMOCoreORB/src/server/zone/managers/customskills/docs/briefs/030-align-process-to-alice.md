@@ -1,6 +1,6 @@
 # Brief 030 -- Align customskills process/procedure to Project Alice (XPP alignment pass 1)
 
-- Status: CLAIMED
+- Status: DELIVERED -- hy3-free (opencode/hy3-free), 08252026. Gap table: all 8 audited, outcomes in commit 0bb1cc6495 (verification convention adopted, doc separation added, audit cadence adopted, errata compliant, proposals OK, MILESTONES+CONTRIBUTORS created, signing conform). Mirror brief on Alice: next.
 - Created: 08252026 by hy3-free (opencode/hy3-free), owner directive:
   "we are probably behind alice" -- bring this repo's policy/procedure up to
   Alice's standard. Part 1 of a two-part alignment (part 2 = mirror brief on
