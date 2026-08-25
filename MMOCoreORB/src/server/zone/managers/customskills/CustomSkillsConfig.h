@@ -20,6 +20,10 @@ public:
 	const String& getFctTierColor(int tier) const; // tier 2..4
 	const String& getFctCritColor() const { return fctCritColor; }
 	bool isChatTagEnabled() const { return chatTagEnabled; }
+
+	// BRIEF-036: repeat-craft assisted pre-fill knobs.
+	bool isRepeatEnabled() const { return repeatEnabled; }
+	bool isRepeatPracticeAllowed() const { return repeatAllowPractice; }
 	const String& getCustomSummaryColor() const { return customSummaryColor; }
 	bool isRarityNamingEnabled() const { return rarityNamingEnabled; }
 	const String& getLegendaryColor() const { return legendaryColor; }
@@ -47,6 +51,10 @@ private:
 	String fctTier4Color; // hex RRGGBB for Quad tier flytext
 	String fctCritColor;  // hex RRGGBB overlay color when the hit crits
 	bool chatTagEnabled;
+
+	// BRIEF-036: repeat-craft assisted pre-fill state.
+	bool repeatEnabled;       // master switch, default false (opt-in)
+	bool repeatAllowPractice; // practice-mode repeats allowed, default true
 
 	static const int DEFAULT_FCT_SCALE_STEP_BP = 1500;
 	static const int DEFAULT_FCT_CRIT_BONUS_BP = 2500;

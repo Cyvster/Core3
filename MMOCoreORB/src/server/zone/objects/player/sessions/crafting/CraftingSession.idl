@@ -53,6 +53,9 @@ class CraftingSession extends Facade {
 	
 	@dereferenced
 	protected transient VectorMap<string, Reference<CustomizationVariable> > variables;
+
+	// BRIEF-036: last experiment "row points ..." string, snapshotted for repeat-craft.
+	protected transient string lastExpAttempt;
 	
 	public CraftingSession(CreatureObject creature) {
 		Logger.setLoggingName("CraftingSession");
@@ -214,7 +217,20 @@ class CraftingSession extends Facade {
 	public int getState() {
 		return state;
 	}
-	
+
+	// BRIEF-036: repeat-craft needs to resolve a snapshotted schematic CRC
+	// against the freshly filtered list of this new session.
+	@read
+	public int getCurrentSchematicListSize() {
+		return currentSchematicList.size();
+	}
+
+	@local
+	@dirty
+	public DraftSchematic getCurrentSchematic(int i) {
+		return currentSchematicList.get(i);
+	}
+
 	private native void addSkillMods();
 
 	private native void addWeaponDots();

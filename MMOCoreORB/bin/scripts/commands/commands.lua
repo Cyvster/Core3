@@ -148,6 +148,7 @@ RunSlashCommandsFile("curePoison.lua")
 RunSlashCommandsFile("customizeDroid.lua")
 RunSlashCommandsFile("customizeVehicle.lua")
 RunSlashCommandsFile("customSkills.lua")
+RunSlashCommandsFile("repeatCraft.lua") -- BRIEF-036 repeat-craft assisted pre-fill
 RunSlashCommandsFile("database.lua")
 RunSlashCommandsFile("dazzle.lua")
 RunSlashCommandsFile("deactivateQuest.lua")

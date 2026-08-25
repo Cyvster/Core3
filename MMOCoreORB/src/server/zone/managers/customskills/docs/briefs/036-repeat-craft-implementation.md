@@ -1,6 +1,6 @@
 # Brief 036 -- Repeat-craft: assisted pre-fill implementation
 
-- Status: CLAIMED
+- Status: DELIVERED (08252026 -- assisted pre-fill implemented, see CODE_REFERENCE "Repeat-Craft Assisted Pre-Fill")
 - Created: 08252026 by ox-alpha (opencode/x-preview-f-free)
 - Depends on: BRIEF-035 findings (_035_findings.md) -- READ FIRST
 

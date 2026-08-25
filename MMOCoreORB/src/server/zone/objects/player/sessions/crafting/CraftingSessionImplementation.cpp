@@ -8,6 +8,7 @@
 #include "server/zone/objects/scene/variables/StringId.h"
 #include "server/zone/objects/player/sessions/crafting/CraftingSession.h"
 #include "server/zone/managers/customskills/crafting/CustomSkillsCrafting.h"
+#include "server/zone/managers/customskills/CustomSkillsConfig.h"
 #include "server/zone/managers/player/PlayerManager.h"
 #include "server/zone/objects/creature/CreatureObject.h"
 #include "server/zone/objects/player/PlayerObject.h"
@@ -1042,6 +1043,8 @@ void CraftingSessionImplementation::experiment(int rowsAttempted, const String& 
 
 	StringTokenizer tokenizer(expAttempt);
 
+	lastExpAttempt = ""; // BRIEF-036: remember the allocation for repeat-craft
+
 	int rowEffected, pointsAttempted, failure;
 	int lowestExpSuccess = 0;
 
@@ -1089,6 +1092,11 @@ void CraftingSessionImplementation::experiment(int rowsAttempted, const String& 
 		}
 
 		experimentationPointsUsed += pointsAttempted;
+
+		// BRIEF-036: accumulate the allocation string for repeat-craft.
+		if (lastExpAttempt.length() > 0)
+			lastExpAttempt = lastExpAttempt + " ";
+		lastExpAttempt = lastExpAttempt + String::valueOf(rowEffected) + " " + String::valueOf(pointsAttempted);
 
 		// Each line gets it's own rolls
 		// Calcualte a new failure rate for each line of experimentation
@@ -1405,6 +1413,13 @@ void CraftingSessionImplementation::createPrototype(int clientCounter, bool crea
 		playerManager->awardExperience(crafter, xpType, xp, true);
 
 		manufactureSchematic->setCompleted();
+
+		// BRIEF-036: successful craft -- store the repeat-craft recipe
+		// snapshot on the tool (overwrites any previous recipe). When
+		// repeatAllowPractice is off, practice runs do NOT refresh it.
+		if (createItem || CustomSkillsConfig::instance()->isRepeatPracticeAllowed()) {
+			CustomSkillsCrafting::storeRepeatRecipe(craftingTool.get(), manufactureSchematic, lastExpAttempt);
+		}
 
 	} else {
 		closeCraftingWindow(clientCounter, false);

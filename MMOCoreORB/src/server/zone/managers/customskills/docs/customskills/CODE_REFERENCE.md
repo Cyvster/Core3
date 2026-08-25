@@ -1613,3 +1613,59 @@ ManufactureSchematic + stored prototype with manufactureLimit countdown.
 Practice XP is xp*1.05 with identical resource cost -- repeats don't change
 XP-per-resource ratio but do remove inter-craft time when Crafting Speed is
 stacked (clamp >=1s), so auto-repeat should exclude practice mode.
+
+## Repeat-Craft Assisted Pre-Fill (BRIEF-036)
+
+Builds on the BRIEF-035 lifecycle findings above: sessions are one-shot
+(`createPrototype` -> `cancelSession`), so "repeat" is an assisted pre-fill of
+a FRESH session -- never a server-side loop and never an auto-created item.
+
+**Command**: `/repeatcraft` (`RepeatCraftCommand.h`, registered in
+CommandConfigManager.cpp `registerSpecialCommands` + CommandConfigManager3.cpp,
+scripted in `bin/scripts/commands/repeatCraft.lua`). Target a crafting tool or
+run bare (first inventory tool holding a recipe). Requires the feature enabled.
+
+**Snapshot ("RepeatRecipe") storage choice**: stored ON THE CRAFTING TOOL via
+TangibleObject's existing persistent `luaStringData` VectorMap<string,string>
+(TangibleObject.idl:49, `setLuaStringData`/`getLuaStringData`/`deleteLuaStringData`)
+under `cs36.*` keys -- ZERO IDL changes, no new object, survives server restart,
+one recipe per tool, overwritten each successful craft. Keys:
+`schematicCrc` (draft schematic client CRC), `slotCount`,
+`slot.<i>.type` (resource spawn name, or template string + "#" + serial for
+component slots), `slot.<i>.qty`, `exp` (experimentation "row points ..." string).
+Written by `CustomSkillsCrafting::storeRepeatRecipe` from the success branch of
+`CraftingSessionImplementation::createPrototype` (~:1408; gated by
+`repeatAllowPractice` when the craft was practice). The session records its last
+experimentation allocation in the transient `lastExpAttempt` field.
+
+**Pre-fill flow** (`CustomSkillsCrafting::doRepeatCraft`):
+1. Resolve tool + snapshot; reject FINISHED/BUSY tools with vanilla messages.
+2. Cancel any active CRAFTING session (mirrors RequestCraftingSessionCommand),
+   create a NEW CraftingSession, `initializeSession(tool, nearbyStation)`.
+3. Re-resolve the snapshotted schematic by client CRC inside the freshly
+   filtered `currentSchematicList` (new IDL accessors
+   `getCurrentSchematicListSize`/`getCurrentSchematic`). Missing => discard
+   snapshot + notice + cancelSession.
+4. `selectDraftSchematic(index)`, then validate slot count/quantities against
+   the snapshot; mismatch => discard snapshot + notice.
+5. Auto-fill each empty slot from live inventory via `session->addIngredient`
+   (resource slots match exact spawn name; component slots match template +
+   serial). Any missing/insufficient resource leaves that slot EMPTY with a
+   system message naming the resource.
+6. STOPS at state 2 (resource screen): the normal crafting window stays open
+   pre-filled; the player assembles/experiments/customizes/creates as usual.
+   The prototype is NEVER created automatically.
+
+**Window flow note (same-window requirement)**: the repeat starts a fresh
+session while the old one is already closed (vanilla always closes it after
+createPrototype), so from the player's view the crafting window re-opens
+pre-filled at the resource screen rather than staying pixel-identical on
+screen; the stock client has no server-side way to keep one window instance
+alive across sessions. This is the closest achievable to "craft, hit repeat" --
+no tool/inventory hopping is involved.
+
+**Config** (`customSkillsConfig.repeatCraft`, loaded in CustomSkillsConfig.cpp):
+`repeatEnabled` bool DEFAULT FALSE (whole feature off until operator opts in);
+`repeatAllowPractice` bool DEFAULT TRUE (practice crafts refresh the recipe;
+matches vanilla per owner directive). NO rate caps, NO anti-farming knobs --
+owner decision.

@@ -117,6 +117,38 @@ customSkillsConfig = {
 	},
 
 	-- ---------------------------------------------------------------------------
+	-- repeatCraft : repeat-craft assisted pre-fill (BRIEF-036)
+	-- What it does : after a successful craft, the tool remembers the recipe
+	--                (schematic, resources used, experimentation points). The
+	--                player can then type /repeatcraft to open a NEW crafting
+	--                window with everything auto-selected and auto-filled from
+	--                live inventory. The normal crafting screen opens so the
+	--                player still confirms assembly themselves -- the item is
+	--                never created automatically.
+	-- Re-validation : any resource that is missing or short leaves its slot
+	--                EMPTY with a system message naming the resource; a
+	--                schematic that changed shape or is no longer known
+	--                discards the stored recipe with a notice.
+	-- Fields       :
+	--   repeatEnabled      true = /repeatcraft works; false = command reports
+	--                      disabled. Default false: the whole feature stays
+	--                      off until the operator opts in.
+	--   repeatAllowPractice true = practice-mode crafts also store/refresh the
+	--                      repeat recipe (matches vanilla, where players can
+	--                      already practice-craft repeatedly). false = only
+	--                      real (item-producing) crafts update the recipe.
+	-- Defaults     : repeatEnabled = false, repeatAllowPractice = true.
+	-- NOTE         : intentionally NO rate cap and NO anti-farming knobs --
+	--                owner directive. AFK crafting via macros already exists;
+	--                repeat only removes clicking, it does not change XP per
+	--                resource.
+	-- ---------------------------------------------------------------------------
+	repeatCraft = {
+		repeatEnabled = false,
+		repeatAllowPractice = true,
+	},
+
+	-- ---------------------------------------------------------------------------
 	-- criticalChance : chance for a landed attack to become a CRITICAL hit
 	-- What it does   : each acquired badge in the list below adds badgeBonus to
 	--                  the character's crit chance (in basis points). When an
