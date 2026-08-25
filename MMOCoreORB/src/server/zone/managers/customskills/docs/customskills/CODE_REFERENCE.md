@@ -2,6 +2,7 @@
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
+---
 ## Purpose
 
 The single technical reference for the Custom Skills module: architecture,
@@ -18,6 +19,7 @@ this document references them and does not restate them.
 
 ---
 
+---
 ## Contributors
 
 - **Nemotron 3.5 Lightning Free (AI)** -- initial creation of predecessor
@@ -29,6 +31,7 @@ this document references them and does not restate them.
 
 ---
 
+---
 ## Physical Layout
 
 ```
@@ -58,6 +61,7 @@ containment rule).
 
 ---
 
+---
 ## Data Flow
 
 ```
@@ -98,6 +102,7 @@ containment rule).
 
 ---
 
+---
 ## Core Classes
 
 ### CustomSkillsModifierType.h
@@ -167,6 +172,7 @@ Generic modifier config fields: `enabled`, `badgeBonus`, `cap`, `badges[]`,
 
 ---
 
+---
 ## Hook Inventory (H01-H16)
 
 | ID | Module Call | Modifiers | Core3 Entry Point | Status |
@@ -210,6 +216,7 @@ service does all logic ([CS-2]).
 
 ---
 
+---
 ## Runtime Services
 
 Each service is a static class with focused methods -- no singleton state;
@@ -228,6 +235,7 @@ pure functions of inputs.
 
 ---
 
+---
 ## Runtime Ordering Details
 
 ### Combat Pipeline
@@ -312,6 +320,7 @@ creatures) is never duplicated.
 
 ---
 
+---
 ## SUI Menu System
 
 - **C++ owned** (`CustomSkillsMenu`, `CustomSkillsSuiCallback`) -- not a Lua
@@ -486,6 +495,7 @@ Development labels `(CRIT)/(DOUBLE)/(TRIPLE)/(QUAD)` are temporary
 
 ---
 
+---
 ## Adding a New Modifier (Authoritative Checklist)
 
 1. **Enum**: add to `CustomSkillsModifierType.h` (before `COUNT`)
@@ -504,6 +514,7 @@ Development labels `(CRIT)/(DOUBLE)/(TRIPLE)/(QUAD)` are temporary
 
 ---
 
+---
 ## Patch Management
 
 The patch exists for installing the module onto OTHER Core3 checkouts; this
@@ -527,6 +538,7 @@ No hot reload: config is cached; restart after any `config.lua` change.
 
 ---
 
+---
 ## Testing & Verification Matrix
 
 Platform capabilities (unit-test suite, `testScreenPlays`, database
@@ -559,6 +571,7 @@ Per-modifier focused tests:
 
 ---
 
+---
 ## Debugging Tips
 
 | Symptom | Check |
@@ -573,10 +586,11 @@ Per-modifier focused tests:
 Core3-level gotchas: [CORE3_CODE_REFERENCE.md](CORE3_CODE_REFERENCE.md).
 ---
 
-# Appendix A -- Modifier Specification
+##Appendix A -- Modifier Specification
 
 Complete registry of all 18 modifiers: configuration conventions, units, badge assignments, caps, and gameplay behavior. Tables document the SHIPPED DEFAULTS; a given server's config.lua is the authoritative source of its live values.
 
+---
 ## Configuration Conventions
 
 - **Percentages**: Basis points (100 = 1.00%)
@@ -592,6 +606,7 @@ Complete registry of all 18 modifiers: configuration conventions, units, badge a
 
 ---
 
+---
 ## Offense
 
 ### Critical Chance (`CRITICAL_CHANCE`)
@@ -726,6 +741,7 @@ upgrades to 4 hits. Highest possible tier.
 
 ---
 
+---
 ## Defense & Equipment
 
 ### Defense Cap Increase (`DEFENSE_CAP_INCREASE`)
@@ -788,6 +804,7 @@ Condition loss amount unchanged on successful roll.
 
 ---
 
+---
 ## Character & Utility
 
 ### Movement Speed (`MOVEMENT_SPEED`)
@@ -859,6 +876,7 @@ Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x tota
 
 ---
 
+---
 ## Crafting
 
 ### Crafting Speed (`CRAFTING_SPEED`)
@@ -913,6 +931,7 @@ Raises resource-derived ceiling only enough to retain enhanced value.
 
 ---
 
+---
 ## Gathering
 
 ### Gathering Quantity (`GATHERING_QUANTITY`)
@@ -936,6 +955,7 @@ Applied AFTER native calculation (forage roll / milk density adjustment). Rounde
 
 ---
 
+---
 ## Maximum Theoretical Totals (All 111 Eligible Badges)
 
 Values are the sum of each modifier's configured badge bonuses (uniform badgeBonus, no active overrides), capped at the configured cap where one applies. `config.lua` is authoritative.
@@ -963,6 +983,7 @@ Values are the sum of each modifier's configured badge bonuses (uniform badgeBon
 
 ---
 
+---
 ## Badge Pool Summary
 
 | Category | Eligible Badges |
@@ -982,11 +1003,12 @@ Excluded: 9 Pilot/JTL, 20 admin/event badges (see `EXCLUDED_BADGES.md`)
 
 ---
 
-# Appendix B -- Badge Catalog
+##Appendix B -- Badge Catalog
 
 Complete badge catalog from badge_map.iff: inventory, menu organization, eligibility rules, assignments, and integration requirements.
 
 
+---
 ## Badge Inventory Summary
 
 | Core3 Enum Type | Table Strings | Records | Show=1 | Show=0 |
@@ -1005,6 +1027,7 @@ Complete badge catalog from badge_map.iff: inventory, menu organization, eligibi
 
 ---
 
+---
 ## Exact Key Inventory
 
 ### Accumulation (12)
@@ -1203,6 +1226,7 @@ Complete badge catalog from badge_map.iff: inventory, menu organization, eligibi
 
 ---
 
+---
 ## Menu Organization (Player-Facing Groups)
 
 Core3's 6 internal types -> 4 menu groups:
@@ -1244,6 +1268,7 @@ Badges
 
 ---
 
+---
 ## Eligibility for Bonuses
 
 | Status | Count | Badges |
@@ -1256,6 +1281,7 @@ Badges
 
 ---
 
+---
 ## Excluded Badge List (Must Not Grant Modifiers)
 
 ### Pilot / JTL (9) -- No bonuses until JTL available
@@ -1297,6 +1323,7 @@ event_project_dead_eye_1
 
 ---
 
+---
 ## Visibility Policy
 
 | Rule | Description |
@@ -1308,6 +1335,7 @@ event_project_dead_eye_1
 
 ---
 
+---
 ## Badge-to-Modifier Assignments (menu grouping in Part I; gameplay assignments below)
 
 ### Milestone Badges (12) -- +12.5% Crit Multiplier, +1% Crit Chance each
@@ -1366,6 +1394,7 @@ event_project_dead_eye_1
 
 ---
 
+---
 ## Runtime Resolution (reference)
 
 ```cpp
@@ -1375,6 +1404,7 @@ const Badge* badge = badgeList->get(badgeKey);  // stable key -> index
 if (badge && ghost->hasBadge(badge->getIndex()))
     total += bonus;
 ```
+---
 ## Client Category Mapping (Reference)
 
 | Client Category | Core3 Types Included | Records |

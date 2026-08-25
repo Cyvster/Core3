@@ -2,6 +2,7 @@
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
+---
 ## Purpose
 
 Reference for navigating and understanding the SWGEmu Core3 codebase: layout,
@@ -14,6 +15,7 @@ historical correction log for its predecessor lives at
 
 ---
 
+---
 ## Contributors
 
 - **Nemotron 3.5 Lightning Free (AI)** -- initial creation (as SWGEMU_CODE_GUIDE.md)
@@ -22,6 +24,7 @@ historical correction log for its predecessor lives at
 
 ---
 
+---
 ## Codebase Layout
 
 ```
@@ -57,6 +60,7 @@ submodule directory is empty until initialized; include paths like
 
 ---
 
+---
 ## Key Patterns & Conventions
 
 ### 1. Singleton Managers
@@ -139,6 +143,7 @@ map.put("key", 123); map.contains("key"); map.get("key"); map.remove("key");
 
 ---
 
+---
 ## Core Systems Reference
 
 ### Combat System
@@ -324,6 +329,7 @@ Common inserts: `insertFloat()`, `insertInt()`, `insertLong()`,
 
 ---
 
+---
 ## Custom Skills Integration Points
 
 ### Hook Pattern
@@ -355,6 +361,7 @@ MMOCoreORB/src/server/zone/managers/customskills/
 
 ---
 
+---
 ## Code Navigation Tips
 
 ```bash
@@ -373,6 +380,7 @@ grep -r "applyDamage\|getArmorReduction\|getArmorPiercing" MMOCoreORB/src/server
 
 ---
 
+---
 ## Common Gotchas
 
 | Issue | Solution | Source/Context |
@@ -396,6 +404,7 @@ Append new gotchas with reproduced evidence; factual corrections go through
 
 ---
 
+---
 ## Related Documentation
 
 - Module code reference (hooks, services, menu): [../../customskills/CODE_REFERENCE.md](../../customskills/CODE_REFERENCE.md)
@@ -403,6 +412,7 @@ Append new gotchas with reproduced evidence; factual corrections go through
 - Player-facing emulator guide: [USER_GUIDE.md](USER_GUIDE.md)
 
 
+---
 ## Access-Restricted In-game Commands (Admin/GM)
 
 How privileged slash commands work in Core3, verified against source.
@@ -452,6 +462,7 @@ and will be admin-audited automatically.
 
 # Part II -- Building, Running, Testing
 
+---
 ## Repository Layout (operational view)
 
 ```
@@ -464,6 +475,7 @@ Core3/
 
 ---
 
+---
 ## System Requirements
 
 Per root `README.md` (Debian 12 baseline) and `MMOCoreORB/CMakeLists.txt:31-49`:
@@ -482,6 +494,7 @@ gcovr. Prefer the docker path on Windows (see `docker/build.sh`,
 
 ---
 
+---
 ## Building
 
 ```bash
@@ -516,6 +529,7 @@ in-tree docker build script gates on system load average for this reason.
 
 ---
 
+---
 ## Database Setup (required)
 
 **Every execution mode that boots anything requires a reachable MariaDB**
@@ -535,6 +549,7 @@ unit-test harness initializes the MySQL client library
 
 ---
 
+---
 ## Running
 
 Entry point flags (`MMOCoreORB/src/main.cpp`):
@@ -559,6 +574,7 @@ paths resolve (CTest sets this as its working directory).
 
 ---
 
+---
 ## Testing Capabilities
 
 ### What exists
@@ -627,6 +643,7 @@ here. What does port:
 
 ---
 
+---
 ## Deploying Module Changes
 
 The module is part of this repository -- no patch application or mirroring
@@ -667,6 +684,7 @@ builder and redeploy them together with the server binary.
 
 ---
 
+---
 ## Troubleshooting
 
 | Symptom | Likely cause | Fix |
@@ -682,6 +700,7 @@ builder and redeploy them together with the server binary.
 
 ---
 
+---
 ## Related Documentation
 
 - Module code reference & hooks: [../../customskills/CODE_REFERENCE.md](../../customskills/CODE_REFERENCE.md)

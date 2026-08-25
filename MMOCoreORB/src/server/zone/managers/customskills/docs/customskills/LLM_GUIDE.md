@@ -6,6 +6,7 @@ and nobody else. Human players read `USER_GUIDE.md`; developers read
 `../installation/INSTALLATION.md`. If you are an LLM asked to do any
 work here, this document is your entry point.
 
+---
 ## Identity and voice
 
 You are one contributor among many concurrent LLM sessions plus the
@@ -17,6 +18,7 @@ document signatures are the ONLY attribution record -- sign everything
 per [rules/process.md](../rules/process.md) -> Contributor Recording
 Conventions.
 
+---
 ## Required reading order
 
 1. [rules/project-design.md](../rules/project-design.md) -- master
@@ -33,6 +35,7 @@ Conventions.
 
 Deeper reference is indexed in [../README.md](../README.md).
 
+---
 ## Session protocol
 
 1. Read the OPEN entries in errata FIRST; attempt the oldest eligible
@@ -49,6 +52,7 @@ Deeper reference is indexed in [../README.md](../README.md).
 6. If nothing is claimable or eligible: STOP and report back -- do not
    invent work ([briefs pickup protocol step 9]).
 
+---
 ## Code tour (15 minutes)
 
 Start inside the module dir
@@ -67,6 +71,7 @@ read one to understand the pattern. Build/run/test procedures:
 (Part II). Server data-archive mechanics (TRE builder, stringfiles):
 same document -> Client data archives.
 
+---
 ## Common failure modes (learned the hard way)
 
 - Restating formats/rules instead of referencing their authority
@@ -81,6 +86,7 @@ same document -> Client data archives.
 - Pushing is part of committing: an unpushed commit does not exist for
   coordination purposes ([PROC R6.5/P1]).
 
+---
 ## Badge & modifier integration rules
 
 When working on badge assignments or modifier configuration
@@ -117,6 +123,7 @@ initial guide, owner-directed audience split (swgemu/customskills/LLM);
 absorbs the workspace-root START-HERE role; 08242026 badge/modifier
 integration rules moved in from BADGE_REFERENCE fold (owner directive).
 
+---
 ## Contributors
 
 - ox-alpha (opencode/x-preview-f-free), 08242026 -- initial guide

@@ -2,6 +2,7 @@
 
 > Subordinate to [../rules/project-design.md](../rules/project-design.md) -- the master document for project rules.
 
+---
 ## What Is Custom Skills?
 
 Custom Skills is a server-side addon that grants your character bonuses based on the badges you've earned. Bonuses apply to combat, crafting, gathering, movement, buffs, and experience.
@@ -11,6 +12,7 @@ Custom Skills is a server-side addon that grants your character bonuses based on
 /customskills
 ```
 
+---
 ## Contributors
 
 - **Nemotron 3.5 Lightning Free (AI)** -- Initial creation
@@ -18,6 +20,7 @@ Custom Skills is a server-side addon that grants your character bonuses based on
   restructure; modifier/badge reference material folded in per owner
   directive
 
+---
 ## Key Concepts
 
 | Concept | Description |
@@ -27,6 +30,7 @@ Custom Skills is a server-side addon that grants your character bonuses based on
 | **Server-controlled** | The server owner decides which bonuses are enabled, which badges grant them, and how large each bonus is |
 | **Authoritative source** | Values shown by `/customskills` are the true values for your character on this server |
 
+---
 ## Features (server-owner toggles)
 
 Every feature below is individually enable/disable-able by the server
@@ -41,6 +45,7 @@ which badges power it, and how big it can get on a default setup.
 
 ---
 
+---
 ## Understanding the Menu
 
 ### Main Page
@@ -74,6 +79,7 @@ Badge names and bonus text use normal color; only the marker is colored.
 
 ---
 
+---
 ## Badge Categories
 
 ```
@@ -117,8 +123,9 @@ O  Lars Homestead  (+25% Movement Speed)
 
 ---
 
-# Feature Sections
+##Feature Sections
 
+---
 ## Offense
 
 ### Critical Chance
@@ -163,6 +170,7 @@ O  Lars Homestead  (+25% Movement Speed)
 - **Powered by**: The 9 Corellian Corvette badges.
 - **Typical maximum**: 3 levels.
 
+---
 ## Defense & Equipment
 
 ### Defense Cap Increase
@@ -188,6 +196,7 @@ O  Lars Homestead  (+25% Movement Speed)
 - **What it does**: Reduces weapon degradation event chance multiplicatively. Condition loss amount per event is unchanged.
 - **Powered by**: Dantooine exploration (4) and Endor exploration (4).
 
+---
 ## Character & Utility
 
 ### Movement Speed
@@ -213,6 +222,7 @@ O  Lars Homestead  (+25% Movement Speed)
 - **What it does**: Boosts XP from practicing crafts (the no-item mode). Applies after the native 5% practice bonus, before general Experience multipliers.
 - **Powered by**: Tatooine easy (3), Yavin IV (2), Social masteries (5).
 
+---
 ## Crafting
 
 ### Crafting Speed
@@ -230,6 +240,7 @@ O  Lars Homestead  (+25% Movement Speed)
 - **What it does**: When an Amazing Success actually happens, each affected attribute lands closer to the schematic cap -- at high bonuses even poor resources can produce near-perfect results. Assembly affects all attributes; experimentation affects the selected line only.
 - **Powered by**: Same badges as Amazing Success Chance.
 
+---
 ## Gathering
 
 ### Gathering Quantity
@@ -237,6 +248,7 @@ O  Lars Homestead  (+25% Movement Speed)
 - **What it does**: Multiplies resource quantity from foraging (flora/shellfish/lair eggs) and milking. Every badge adds its own yield bonus (+77% to +100%) before the multiply -- full set reaches roughly 14x native yields. Never reduces yields, rounded down. Does not affect discrete loot (food, bait, rare items, live creatures).
 - **Powered by**: Outdoors masteries (5), Science masteries (3), Tatooine easy (3), Yavin IV (2) -- all at uniform rate.
 
+---
 ## Rarity Naming
 
 - **What it does**: Instead of appending "(Exceptional)"/"(Legendary)" to crafted item names, item names display in color (blue/purple by default). Also fixes quest turn-ins that match items by exact name -- suffixes break those matches.
@@ -244,6 +256,7 @@ O  Lars Homestead  (+25% Movement Speed)
 
 ---
 
+---
 ## Percentage vs Multiplier
 
 | Format | Meaning |
@@ -251,6 +264,7 @@ O  Lars Homestead  (+25% Movement Speed)
 | `+3% Critical Chance` | Adds 3 percentage points to the chance |
 | `5x Experience` | Multiplies the applicable value. Missing/disabled = `1x` (no change) |
 
+---
 ## Important Notes
 
 - **Pilot/JTL badges**: Grant no bonuses while Jump to Lightspeed is unavailable
@@ -259,6 +273,7 @@ O  Lars Homestead  (+25% Movement Speed)
 - **Disabled features**: Show in menu as inactive but don't affect gameplay
 - **Config changes**: Require server restart. Values you see in `/customskills` always match what the server is actually using
 
+---
 ## Quick Reference: Badge -- Bonus Assignments
 
 *Complete catalog with exact badge keys lives in
@@ -277,6 +292,7 @@ O  Lars Homestead  (+25% Movement Speed)
 | **Theme Parks (4)** | +20% Double Attack each |
 | **Warren (2)** | +20% Double Attack each |
 
+---
 ## Reading Updates
 
 This guide describes intended player-facing rules. **Server configuration always takes precedence**. When a configured value differs from examples here, trust what `/customskills` shows on your server.

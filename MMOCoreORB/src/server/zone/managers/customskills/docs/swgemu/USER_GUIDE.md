@@ -9,6 +9,7 @@ module has its own guides under `docs/customskills/`.
 > Maintained inside the Custom Skills repository because that project
 > develops against Core3; content here is deliberately generic to SWGEmu.
 
+---
 ## What SWGEmu Is
 
 SWGEmu is an open-source recreation of the Star Wars Galaxies (SWG) game
@@ -23,6 +24,7 @@ Two pieces are involved:
 | Game client | The original SWG game software | Your own legally obtained installation |
 | Server | Core3 emulator server | Downloaded and run by yourself, or hosted by a community |
 
+---
 ## Getting Connected
 
 ### Information you need
@@ -67,6 +69,7 @@ next-generation realm launches; check swgemu.com for current status.
 [NEEDS INPUT: exact Finalizer login hostname/port if this guide should
 carry literal values rather than relying on the launcher.]
 
+---
 ## First Steps In Game
 
 1. Create your character -- species and profession choice matter less than
@@ -77,6 +80,7 @@ carry literal values rather than relying on the launcher.]
 4. Find the server's custom features early if it has any -- ask in chat
    or read the server's own documentation.
 
+---
 ## In-game Commands
 
 Commands are typed into chat with a leading `/`. Every player's available
@@ -128,6 +132,7 @@ practical orientation, not an exhaustive list.
 - `/find` and waypoint tools navigate you around planets; the planetary
   map marks key locations.
 
+---
 ## Where Server Customs Fit
 
 Anything unusual on your server -- custom menus like `/customskills`,
