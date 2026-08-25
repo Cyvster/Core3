@@ -103,7 +103,6 @@ criticalChance = {
     badgeBonus = 0,          -- no blanket fallback; every badge declares
                              -- its own value via badgeOverrides
     multiplier = 15000,      -- 150.00% critical damage
-    combatSpamLabel = "(CRIT)",
     badges = {
         -- 60 achievement badges (milestones, combat/crafting/outdoors/
         -- science masteries, quest lines, dangerous + Jedi exploration)
@@ -124,13 +123,12 @@ Each modifier table accepts:
 - `cap` -- maximum total (0 = uncapped)
 - `badges` -- list of badge keys (from `BadgeList`)
 - `badgeOverrides` -- optional `{ "badgeKey", value }` pairs overriding `badgeBonus` per badge
-- `combatSpamLabel` -- optional, for repeat-damage tiers only
 
 ```lua
 modifiers = {
-    doubleAttackChance  = { enabled = true, badgeBonus = 2000, cap = 10000, combatSpamLabel = "(DOUBLE)", badges = { "warren_compassion", "warren_hero", "bdg_thm_park_jabba_badge", "bdg_thm_park_imperial_badge", "bdg_thm_park_rebel_badge", "bdg_thm_park_nym_badge" } },
-    tripleAttackChance  = { enabled = true, badgeBonus = 200, cap = 7500, combatSpamLabel = "(TRIPLE)", badges = { "combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master", "combat_brawler_master", "combat_carbine_master", "combat_commando_master", "combat_marksman_master", "combat_pistol_master", "combat_polearm_master", "combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master", "poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark" }, badgeOverrides = { { "combat_bountyhunter_master", 300 } } },
-    quadAttackChance    = { enabled = true, badgeBonus = 200, cap = 5000, combatSpamLabel = "(QUAD)", badges = { "combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master", "combat_brawler_master", "combat_carbine_master", "combat_commando_master", "combat_marksman_master", "combat_pistol_master", "combat_polearm_master", "combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master", "poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark" }, badgeOverrides = { { "combat_bountyhunter_master", 300 } } },
+    doubleAttackChance  = { enabled = true, badgeBonus = 2000, cap = 10000, badges = { "warren_compassion", "warren_hero", "bdg_thm_park_jabba_badge", "bdg_thm_park_imperial_badge", "bdg_thm_park_rebel_badge", "bdg_thm_park_nym_badge" } },
+    tripleAttackChance  = { enabled = true, badgeBonus = 200, cap = 7500, badges = { "combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master", "combat_brawler_master", "combat_carbine_master", "combat_commando_master", "combat_marksman_master", "combat_pistol_master", "combat_polearm_master", "combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master", "poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark" }, badgeOverrides = { { "combat_bountyhunter_master", 300 } } },
+    quadAttackChance    = { enabled = true, badgeBonus = 200, cap = 5000, badges = { "combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master", "combat_brawler_master", "combat_carbine_master", "combat_commando_master", "combat_marksman_master", "combat_pistol_master", "combat_polearm_master", "combat_rifleman_master", "combat_smuggler_master", "combat_unarmed_master", "poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark" }, badgeOverrides = { { "combat_bountyhunter_master", 300 } } },
     armorPenetration    = { enabled = true, badgeBonus = 1, cap = 3, badges = { "bdg_corvette_imp_destroy", "bdg_corvette_imp_rescue", "bdg_corvette_imp_assassin", "bdg_corvette_neutral_destroy", "bdg_corvette_neutral_rescue", "bdg_corvette_neutral_assassin", "bdg_corvette_reb_destroy", "bdg_corvette_reb_rescue", "bdg_corvette_reb_assassin" } },
     defenseCapIncrease  = { enabled = true, badgeBonus = 5, cap = 0, badges = { "poi_rabidbeast", "poi_prisonbreak", "poi_twoliars", "poi_factoryliberation", "poi_heromark", "exp_lok_volcano", "bdg_exp_lok_imp_outpost", "bdg_exp_lok_kimogila_skeleton", "exp_dat_tarpit", "exp_dat_escape_pod", "exp_dat_misty_falls_1", "exp_dat_misty_falls_2", "bdg_exp_dat_crashed_ship", "bdg_exp_dat_imp_prison", "exp_yav_temple_exar_kun" }, badgeOverrides = { { "poi_rabidbeast", 10 }, { "poi_prisonbreak", 10 }, { "poi_twoliars", 10 }, { "poi_factoryliberation", 10 }, { "poi_heromark", 10 } } },
     armorDegradeReduction = { enabled = true, badgeBonus = 1250, cap = 10000, badges = { "bdg_exp_tal_creature_village", "bdg_exp_tal_imp_base", "bdg_exp_tal_imp_vs_reb_battle", "bdg_exp_tal_aqualish_cave", "bdg_exp_ror_kobala_spice_mine", "bdg_exp_ror_rebel_outpost", "bdg_exp_ror_imp_camp", "bdg_exp_ror_imp_hyperdrive_fac" } },
@@ -175,7 +173,7 @@ break the match.
 ```lua
 modifiers = {
     doubleAttackChance  = { enabled = true, badgeBonus = 2000, cap = 10000,
-                            combatSpamLabel = "(DOUBLE)", badges = {
+                            badges = {
                                 "warren_compassion", "warren_hero",
                                 "bdg_thm_park_jabba_badge", "bdg_thm_park_imperial_badge",
                                 "bdg_thm_park_rebel_badge", "bdg_thm_park_nym_badge"
@@ -191,8 +189,6 @@ Restart Core3 after editing.
 
 ```lua
 customSummaryColor = "00FF00"       -- RGB hex for menu modifier text color
-combatSpamLabelsEnabled = true      -- show (CRIT)-style labels after
-                                    -- qualifying hits (own line each)
 ```
 
 **Important**: Configuration is cached for combat performance. **Restart Core3 after any change**. Missing/invalid values use safe defaults and log warnings.
@@ -215,7 +211,7 @@ combatSpamLabelsEnabled = true      -- show (CRIT)-style labels after
 1. **Startup**: No errors loading `customSkills.lua` or `CustomSkillsCommand`
 2. **Command**: `/customskills` opens menu on a normal player character
 3. **Navigation**: Open every category, use Back/Cancel, reopen repeatedly, test 2+ characters simultaneously
-4. **Critical Chance**: Each of the 60 assigned badges (via `badgeOverrides`) shows +1.00%; full set reaches the +60.00% cap. With `combatSpamLabelsEnabled = true`, crits emit a separate `(CRIT)` combat message
+4. **Critical Chance**: Each of the 60 assigned badges (via `badgeOverrides`) shows +1.00%; full set reaches the +60.00% cap
 5. **Combat test**: Critical attacks deal 150% of pre-armor damage
 6. **Before enabling new modifier**: Run focused tests from `docs/customskills/CODE_REFERENCE.md`
 

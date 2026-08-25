@@ -1237,16 +1237,6 @@ class CreatureObject extends TangibleObject {
 	public native void sendStateCombatSpam(final string fileName, final string stringName, byte color, int damage = 0, boolean broadcast = true);
 
 	/**
-	 * Sends custom CombatSpam strings to players
-	 * @pre { }
-	 * @post { CombatSpam is sent to clients }
-	 * @param customString The string to send to combat spam window.
-	 * @param color The color of the combat spam text. 0 = white, 10 = red, 11 = yellow
-	 */
-	@dirty
-	public native void sendCustomCombatSpam(final unicode customString, byte color);
-
-	/**
 	 * Sends a ExecuteConsoleCommand to the client
 	 * @param command example "/attack"
 	 */

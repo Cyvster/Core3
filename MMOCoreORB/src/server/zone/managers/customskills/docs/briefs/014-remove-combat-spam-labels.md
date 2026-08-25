@@ -1,6 +1,6 @@
 # BRIEF-014 -- Remove the combat spam label feature from code and documentation
 
-- Status: UNCLAIMED
+- Status: DELIVERED
 - Created: 08242026 by ox-alpha (opencode/x-preview-f-free), owner
   directive. Supersedes BRIEF-010/013 enhancement plans: same-line labels
   are not achievable without breaking player client settings (BRIEF-010
@@ -153,3 +153,41 @@ drop out of it.
 3. Compile deferred to Docker build environment (engine3 submodule
    caveat) -- document in delivery note.
 4. Commit tagged `[BRIEF-014]`, pushed ([PROC R6.5]).
+
+---
+
+## Delivery Report
+
+- Executor: hy3-free (opencode/x-preview-f-free), 08242026. C++/config
+  removals executed via OpenCode CLI delegation (ox-alpha free model) with
+  independent verification; docs sweep delegated the same way.
+- Module C++: label emission block removed from
+  `combat/CustomSkillsCombat.cpp::applyDamage` (incl. orphaned-brace repair
+  after an interrupted first pass); all members/getters/load lines for
+  `combatSpamLabelsEnabled`, `criticalCombatSpamLabel`,
+  `modifierCombatSpamLabels[]` removed from `CustomSkillsConfig.h/.cpp`;
+  menu rows + countEnabledOptions reference removed from
+  `CustomSkillsMenu.cpp`.
+- SWGEmu patch files: `sendCustomCombatSpam` declaration removed from
+  `CreatureObject.idl`; native implementation body removed from
+  `CreatureObjectImplementation.cpp`. Patch regeneration NOT required:
+  grep of `integration/core3-hooks.patch` shows it never contained a
+  `sendCustomCombatSpam` hunk or a `CreatureObject.idl` entry (the
+  module-added method predated patch capture; MANIFEST integration list
+  unchanged).
+- config.lua: root `combatSpamLabelsEnabled` (+ comments) and all four
+  per-modifier `combatSpamLabel` entries removed. Verified with Lua 5.1:
+  `assert(loadfile(...))` parses clean.
+- Docs: CODE_REFERENCE.md (Appendix A spam-label property rows,
+  getModifierCombatSpamLabel mention, generic-fields fragment, color-scheme
+  row, dev-labels sentence, signed History note, stamp + Contributors),
+  USER_GUIDE.md (four Combat spam bullets, stamp + Contributors),
+  INSTALLATION.md (root-settings examples, per-modifier one-liners,
+  verification clause). Zero `combatSpam` matches remain in all three.
+- Acceptance verified [PROC R6.10]: repo-wide grep for
+  `combatSpamLabel|CombatSpamLabel|sendCustomCombatSpam|combatSpamLabelsEnabled`
+  returns ZERO hits outside archive/, delivered briefs 008/010/013/015,
+  errata records, and this brief. Brace balance confirmed on every touched
+  .cpp/.h. Compile DEFERRED to Docker build environment (engine3 submodule
+  caveat) per brief; deletions only, no new code paths.
+- Commit tagged `[BRIEF-014]`, pushed ([PROC R6.5]).

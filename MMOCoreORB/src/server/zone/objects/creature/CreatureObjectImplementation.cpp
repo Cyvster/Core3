@@ -3373,13 +3373,6 @@ void CreatureObjectImplementation::sendStateCombatSpam(const String& fileName, c
 	}
 }
 
-void CreatureObjectImplementation::sendCustomCombatSpam(const UnicodeString& customString, byte color) {
-	if (!this->isPlayerCreature())
-			return;
-	CombatSpam* spam = new CombatSpam(asCreatureObject(), customString, color);
-	sendMessage(spam);
-}
-
 String CreatureObjectImplementation::getFirstName() const {
 	UnicodeString fullName = getCustomObjectName();
 

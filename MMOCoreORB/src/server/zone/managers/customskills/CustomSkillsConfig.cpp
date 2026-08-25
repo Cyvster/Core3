@@ -12,7 +12,6 @@ void CustomSkillsConfig::setDefaults() {
 		modifierEnabled[i] = false;
 		modifierCaps[i] = 0;
 		modifierBadgeBonuses[i].setAllowOverwriteInsertPlan();
-		modifierCombatSpamLabels[i] = "";
 	}
 
 	criticalChanceEnabled = true;
@@ -21,8 +20,6 @@ void CustomSkillsConfig::setDefaults() {
 	criticalChanceFallbackBonus = 0;
 	criticalMultiplier = DEFAULT_CRITICAL_MULTIPLIER;
 	customSummaryColor = "00FF00";
-	criticalCombatSpamLabel = "(CRIT)";
-	combatSpamLabelsEnabled = true;
 	rarityNamingEnabled = false;
 	legendaryColor = "FF00FF";
 	exceptionalColor = "0000FF";
@@ -48,10 +45,6 @@ const VectorMap<String, int>& CustomSkillsConfig::getBadgeBonuses(CustomSkillsMo
 	return modifierBadgeBonuses[type];
 }
 
-const String& CustomSkillsConfig::getModifierCombatSpamLabel(CustomSkillsModifierType::Type type) const {
-	return modifierCombatSpamLabels[type];
-}
-
 void CustomSkillsConfig::setUniformBadgeBonus(CustomSkillsModifierType::Type type, int value) {
 	VectorMap<String, int>& bonuses = modifierBadgeBonuses[type];
 	for (int i = 0; i < bonuses.size(); ++i) {
@@ -75,7 +68,6 @@ void CustomSkillsConfig::loadModifier(LuaObject& modifiers, const String& name,
 	int badgeBonus = static_cast<int>(modifier.getIntField("badgeBonus", defaultBadgeBonus));
 	if (badgeBonus < 0)
 		badgeBonus = 0;
-	modifierCombatSpamLabels[type] = modifier.getStringField("combatSpamLabel", modifierCombatSpamLabels[type].toCharArray());
 
 	LuaObject badges = modifier.getObjectField("badges");
 	if (badges.isValidTable()) {
@@ -136,8 +128,6 @@ void CustomSkillsConfig::load() {
 	else
 		warning("customSummaryColor must be a six-character RGB hex value; using default");
 
-	combatSpamLabelsEnabled = root.getBooleanField("combatSpamLabelsEnabled", true);
-
 	LuaObject critical = root.getObjectField("criticalChance");
 	if (critical.isValidTable()) {
 		criticalChanceEnabled = critical.getBooleanField("enabled", true);
@@ -174,10 +164,6 @@ void CustomSkillsConfig::load() {
 			criticalMultiplier = multiplier;
 		else
 			warning("criticalChance.multiplier must be at least 10000; using default");
-
-		String spamLabel = critical.getStringField("combatSpamLabel", "(CRIT)");
-		if (!spamLabel.isEmpty())
-			criticalCombatSpamLabel = spamLabel;
 	} else {
 		warning("customSkillsConfig.criticalChance is missing or invalid; using defaults");
 	}

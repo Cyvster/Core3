@@ -19,6 +19,13 @@ Custom Skills is a server-side addon that grants your character bonuses based on
 - ox-alpha (opencode/x-preview-f-free), 08242026 -- feature-section
   restructure; modifier/badge reference material folded in per owner
   directive
+- hy3-free (opencode/hy3-free), 08242026 -- BRIEF-014 doc removals (combat
+  spam label references)
+
+---
+
+**Last reconciled:** 08242026 by hy3-free (opencode/hy3-free) -- BRIEF-014
+combat-spam-label doc removals.
 
 ---
 ## Key Concepts
@@ -133,7 +140,6 @@ O  Lars Homestead  (+25% Movement Speed)
 - **What it does**: Gives landed attacks a chance to become critical hits, dealing bonus damage.
 - **Powered by**: 60 achievement badges across the whole game -- all badge-count milestones (7 accumulation + 5 exploration), all 12 combat profession masteries, Hero of Tatooine (5), Warren (2), Theme Parks (4), Corellian Corvette (9), dangerous exploration sites (5), Jedi sites (3), Outdoors masteries (5), and Science masteries (3).
 - **Typical maximum**: +60% critical chance with the full set.
-- **Combat spam**: `(CRIT)` appears when it triggers (on its own combat message line; server owner can turn labels off).
 
 ### Critical Multiplier
 
@@ -146,21 +152,18 @@ O  Lars Homestead  (+25% Movement Speed)
 - **What it does**: Chance for an attack to strike twice.
 - **Powered by**: Warren (2 badges), Theme Parks (4 badges).
 - **Typical maximum**: +100% chance (always double).
-- **Combat spam**: `(DOUBLE)`.
 
 ### Triple Attack Chance
 
 - **What it does**: Chance for an attack to strike three times.
 - **Powered by**: All 12 combat profession masteries, plus the 5 Hero of Tatooine quest badges.
 - **Typical maximum**: +85%.
-- **Combat spam**: `(TRIPLE)`.
 
 ### Quad Attack Chance
 
 - **What it does**: Chance for an attack to strike four times.
 - **Powered by**: Same set as Triple Attack.
 - **Typical maximum**: +51% (with the full 17-badge set).
-- **Combat spam**: `(QUAD)`.
 
 **How repeats interact**: Quad is checked first, then Triple, then Double -- only one tier triggers per hit. Repeats apply after critical damage adjustment. Armor Penetration (below) applies before the native armor comparison.
 

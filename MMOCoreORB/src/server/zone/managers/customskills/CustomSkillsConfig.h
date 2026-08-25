@@ -13,8 +13,6 @@ public:
 	bool isCriticalChanceEnabled() const { return criticalChanceEnabled; }
 	int getCriticalMultiplier() const { return criticalMultiplier; }
 	const String& getCustomSummaryColor() const { return customSummaryColor; }
-	bool isCombatSpamLabelsEnabled() const { return combatSpamLabelsEnabled; }
-	const String& getCriticalCombatSpamLabel() const { return criticalCombatSpamLabel; }
 	bool isRarityNamingEnabled() const { return rarityNamingEnabled; }
 	const String& getLegendaryColor() const { return legendaryColor; }
 	const String& getExceptionalColor() const { return exceptionalColor; }
@@ -22,22 +20,18 @@ public:
 	int getModifierCap(CustomSkillsModifierType::Type type) const;
 	int getBadgeBonus(CustomSkillsModifierType::Type type, const String& badgeKey) const;
 	const VectorMap<String, int>& getBadgeBonuses(CustomSkillsModifierType::Type type) const;
-	const String& getModifierCombatSpamLabel(CustomSkillsModifierType::Type type) const;
 
 private:
 	bool criticalChanceEnabled;
 	int criticalChanceFallbackBonus;
 	int criticalMultiplier;
 	String customSummaryColor;
-	String criticalCombatSpamLabel;
-	bool combatSpamLabelsEnabled;
 	bool rarityNamingEnabled;
 	String legendaryColor;
 	String exceptionalColor;
 	bool modifierEnabled[CustomSkillsModifierType::COUNT];
 	int modifierCaps[CustomSkillsModifierType::COUNT];
 	VectorMap<String, int> modifierBadgeBonuses[CustomSkillsModifierType::COUNT];
-	String modifierCombatSpamLabels[CustomSkillsModifierType::COUNT];
 
 	void setDefaults();
 	void load();

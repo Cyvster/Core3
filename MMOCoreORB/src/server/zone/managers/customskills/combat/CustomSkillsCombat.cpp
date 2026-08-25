@@ -18,13 +18,6 @@ int CustomSkillsCombat::applyDamage(const CombatManager* combatManager, Tangible
 		if (criticalChance > 0 && System::random(9999) < criticalChance) {
 			int criticalMultiplier = CustomSkillsModifiers::getCriticalMultiplier(creo);
 			damage = static_cast<int>((static_cast<int64>(damage) * criticalMultiplier) / 10000);
-
-			CustomSkillsConfig* config = CustomSkillsConfig::instance();
-			if (config->isCombatSpamLabelsEnabled()) {
-				const String& label = config->getCriticalCombatSpamLabel();
-				if (!label.isEmpty())
-					creo->sendCustomCombatSpam(UnicodeString(label), 11);
-			}
 		}
 
 		// Attack repeat tiers (ERR-009): sequential upgrade chain off the

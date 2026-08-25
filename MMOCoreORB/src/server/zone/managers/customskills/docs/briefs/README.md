@@ -58,7 +58,7 @@ reading only what the brief lists -- no conversation history required.
 | [`009-condense-doc-formatting.md`](009-condense-doc-formatting.md) | Condense all guides; enforce heading hierarchy, section delimiters, feature-section template, TOCs | DELIVERED |
 | [`010-combat-spam-labels-investigation-and-fix.md`](010-combat-spam-labels-investigation-and-fix.md) | Combat spam labels: same-line append fix, enable/disable switch, menu listing; removal fallback needs owner sign-off | DELIVERED |
 | [`013-delegated-broadcast-combat-spam.md`](013-delegated-broadcast-combat-spam.md) | Delegate broadcastCombatSpam to module code; same-line labels via raw-text full lines | WITHDRAWN |
-| [`014-remove-combat-spam-labels.md`](014-remove-combat-spam-labels.md) | Remove combat spam label feature entirely from code, config, and docs (owner decision) | UNCLAIMED |
+| [`014-remove-combat-spam-labels.md`](014-remove-combat-spam-labels.md) | Remove combat spam label feature entirely from code, config, and docs (owner decision) | DELIVERED |
 | [`015-implement-attack-repeat-tiers.md`](015-implement-attack-repeat-tiers.md) | Implement Double/Triple/Quad attack repeat tiers in the applyDamage delegation; resolves ERR-009 | DELIVERED |
 | [`016-defaultize-badge-overrides.md`](016-defaultize-badge-overrides.md) | Uniform badgeBonus defaults everywhere; badgeOverrides become dormant placeholders; caps re-verified | UNCLAIMED |
 | [`011-menu-config-single-source.md`](011-menu-config-single-source.md) | Menu/config single-source: eliminate duplicated badge assignments; resolve ERR-008 | DELIVERED |

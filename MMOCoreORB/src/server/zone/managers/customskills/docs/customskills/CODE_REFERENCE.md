@@ -28,6 +28,13 @@ this document references them and does not restate them.
   single reference during documentation compression
 - hy3-free (opencode/hy3-free), 08232026 -- BRIEF-005 single-source rule for
   badge-backed modifiers; noted `getCriticalChance` reads the config badge map
+- hy3-free (opencode/hy3-free), 08242026 -- BRIEF-014 doc removals (combat
+  spam label references)
+
+---
+
+**Last reconciled:** 08242026 by hy3-free (opencode/hy3-free) -- BRIEF-014
+combat-spam-label doc removals.
 
 ---
 
@@ -125,7 +132,7 @@ enum Type {
   15000 multiplier)
 - **load()**: parses `scripts/customskills/config.lua` via the `Lua` object
 - **API**: `isModifierEnabled()`, `getModifierCap()`, `getBadgeBonus()`,
-  `getBadgeBonuses()`, `getModifierCombatSpamLabel()`
+  `getBadgeBonuses()`
 - **Cache**: gameplay reads config values directly -- restart required on
   config change; missing/invalid values -> safe defaults + server-log warning
 
@@ -147,8 +154,7 @@ loadModifier(modifiers, "doubleAttackChance", DOUBLE_ATTACK_CHANCE, false, 0);
 // ... etc
 ```
 
-Generic modifier config fields: `enabled`, `badgeBonus`, `cap`, `badges[]`,
-`combatSpamLabel` (repeat-damage only).
+Generic modifier config fields: `enabled`, `badgeBonus`, `cap`, `badges[]`.
 
 ### CustomSkillsModifiers (Static API)
 
@@ -488,10 +494,6 @@ Safety requirements:
 | Unowned badge marker (`X`) | Red |
 | Modifier bonus text | `customSummaryColor` (default `00FF00`) |
 | Badge names / category text | Default client text color |
-| Combat spam labels | Native colors untouched |
-
-Development labels `(CRIT)/(DOUBLE)/(TRIPLE)/(QUAD)` are temporary
-(`combatSpamLabel` in config.lua); remove after dev.
 
 ---
 
@@ -631,7 +633,9 @@ configurable in `config.lua`.
 mastery badges at 300 bp via `DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE`
 (the ERR-005-era hardcode that survived cleanup). Removed; the config map
 is now the only source of badge values, and an empty/missing config yields
-zero bonuses rather than silent defaults.
+zero bonuses rather than silent defaults. The combat spam label feature was
+removed 08242026 by owner decision after BRIEF-010.
+-- hy3-free (opencode/hy3-free)
 
 **Badges** (all 60 at a uniform 100 bp each via `badgeBonus`; full set =
 6000 bp = cap):
@@ -683,7 +687,6 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Default** | `true` |
 | **Badge bonus (default)** | 2000 bp (20.00%) |
 | **Cap (default)** | 10000 (100%) |
-| **Combat spam label** | `(DOUBLE)` |
 | **Badges (default)** | Warren (2), Theme Parks (4) = 6 total |
 
 **Behavior**: Sequential upgrade chain start. Rolled first off the landed hit;
@@ -701,7 +704,6 @@ failed stage ends the chain.
 | **Default** | `true` |
 | **Badge bonus (default)** | 500 bp (5.00%) uniform |
 | **Cap (default)** | 8500 (85%) |
-| **Combat spam label** | `(TRIPLE)` |
 | **Badges (default)** | 12 combat masteries + 5 Hero of Tatooine POI = 17 total |
 
 **Behavior**: Rolled only after Double succeeds in the same chain; success
@@ -718,7 +720,6 @@ upgrades to 3 hits and enables the Quad roll.
 | **Default** | `true` |
 | **Badge bonus (default)** | 300 bp (3.00%) uniform |
 | **Cap (default)** | 5100 (51%) |
-| **Combat spam label** | `(QUAD)` |
 | **Badges (default)** | 12 combat masteries + 5 Hero of Tatooine POI = 17 total |
 
 **Behavior**: Rolled only after Triple succeeds in the same chain; success

@@ -7,11 +7,6 @@ customSkillsConfig = {
 	-- RGB color used for custom modifier text in SUI menus.
 	customSummaryColor = "00FF00",
 
-	-- Show combat spam labels like (CRIT) after qualifying hits. Labels are
-	-- sent as their own combat message (client limitation: a label cannot
-	-- be appended onto the native hit line).
-	combatSpamLabelsEnabled = true,
-
 	-- Rarity naming: color-only display instead of appending "(Exceptional)"/"(Legendary)" to item names.
 	-- When enabled, item names use colored text instead of suffixes, which also fixes quest turn-in
 	-- compatibility (quest systems match items by name, so suffixes break the match).
@@ -34,9 +29,6 @@ customSkillsConfig = {
 
 		-- Critical damage multiplier. 15000 = 150.00% damage.
 		multiplier = 15000,
-
-		-- Compact label sent when this effect activates.
-		combatSpamLabel = "(CRIT)",
 
 		-- 60 achievement badges: +1% (100 bp) crit chance each, declared
 		-- per badge in badgeOverrides. Full set reaches the 60% cap.
@@ -83,7 +75,6 @@ customSkillsConfig = {
 			enabled = true,
 			badgeBonus = 2000,
 			cap = 10000,
-			combatSpamLabel = "(DOUBLE)",
 			badges = {
 				"warren_compassion", "warren_hero",
 				"bdg_thm_park_jabba_badge", "bdg_thm_park_imperial_badge",
@@ -110,7 +101,6 @@ customSkillsConfig = {
 			enabled = true,
 			badgeBonus = 500,
 			cap = 8500,
-			combatSpamLabel = "(TRIPLE)",
 			badges = {
 				"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
 				"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
@@ -126,7 +116,6 @@ customSkillsConfig = {
 			enabled = true,
 			badgeBonus = 300,
 			cap = 5100,
-			combatSpamLabel = "(QUAD)",
 			badges = {
 				"combat_1hsword_master", "combat_2hsword_master", "combat_bountyhunter_master",
 				"combat_brawler_master", "combat_carbine_master", "combat_commando_master",
