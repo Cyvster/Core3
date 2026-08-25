@@ -1669,3 +1669,26 @@ no tool/inventory hopping is involved.
 `repeatAllowPractice` bool DEFAULT TRUE (practice crafts refresh the recipe;
 matches vanilla per owner directive). NO rate caps, NO anti-farming knobs --
 owner decision.
+
+## Mod Integration Gotchas (R6.9, 08252026 live-test + build lessons)
+
+CombatManager has TWO applyDamage overloads: player-vs-CreatureObject
+(:490) delegates to CustomSkillsCombat::applyDamage; player-vs-TangibleObject
+(lairs, turrets -- :377 -> :1630) does NOT. Tier/escalation logic must cover
+both paths when porting combat behavior.
+
+Vanilla hit-location flytext (showHitLocationFlyText :2936, called :1614)
+renders scale 1.0 pool colors on every hit at the same anchor as any mod
+flytext; the client stacks them and vanilla wins visually. Escalated text
+must suppress the vanilla call or render alone to be visible.
+Broadcast via defender's observers (vanilla sends attacker-only).
+
+QueueCommand result codes GENERALERROR=1 / SUCCESS=0 are static members of
+QueueCommand (commands/QueueCommand.h:60-61), not globals -- code outside a
+QueueCommand subclass must include the header and qualify
+QueueCommand::GENERALERROR.
+
+Never forward-declare IDL-generated classes (ManufactureSchematic,
+CraftingTool, ...) in the global namespace in mod headers: IDL headers
+declare them inside server::zone::objects::* namespaces; both visible in one
+TU yields ambiguous-type build errors. Include the real header instead.
