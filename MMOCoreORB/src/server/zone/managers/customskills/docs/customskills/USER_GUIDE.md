@@ -145,14 +145,14 @@ O  Lars Homestead  (+25% Movement Speed)
 
 - **What it does**: Chance for an attack to strike three times.
 - **Powered by**: All 12 combat profession masteries (Bounty Hunter counts extra), plus the 5 Hero of Tatooine quest badges.
-- **Typical maximum**: +35%.
+- **Typical maximum**: +85%.
 - **Combat spam**: `(TRIPLE)`.
 
 ### Quad Attack Chance
 
 - **What it does**: Chance for an attack to strike four times.
 - **Powered by**: Same set as Triple Attack.
-- **Typical maximum**: +50%.
+- **Typical maximum**: +51% (with the full 17-badge set).
 - **Combat spam**: `(QUAD)`.
 
 **How repeats interact**: Quad is checked first, then Triple, then Double -- only one tier triggers per hit. Repeats apply after critical damage adjustment. Armor Penetration (below) applies before the native armor comparison.
@@ -168,12 +168,15 @@ O  Lars Homestead  (+25% Movement Speed)
 ### Defense Cap Increase
 
 - **What it does**: Raises the normal 125 hard cap on primary/secondary defense calculations. Does not affect attachment/tape bonuses.
-- **Powered by**: Hero of Tatooine (5 badges), Lok dangerous (3), Dathomir (7), Yavin IV Exar Kun.
+- **Powered by**: The 5 Hero of Tatooine badges only, +20 defense points each.
+- **Typical maximum**: +100 defense points.
 
 ### SEA Cap Increase
 
 - **What it does**: Raises the wearable-attachment ("SEA"/tape) contribution cap above the native +25. Independent of Defense Cap.
-- **Powered by**: Tatooine dangerous locations (4) and the Dathomir Sarlacc.
+- **Powered by**: Tatooine dangerous sites (4) and the Dathomir Sarlacc.
+- **Typical maximum**: +100 SEA cap points.
+- **Typical maximum**: +100 SEA cap points.
 
 ### Armor Degradation Reduction
 
@@ -197,6 +200,7 @@ O  Lars Homestead  (+25% Movement Speed)
 
 - **What it does**: Extends beneficial buffs only -- medical, entertainer, food/drink, spice-up, positive Jedi/Force buffs. Does NOT extend debuffs, DoTs, states, traps, cooldowns, innates, Squad Leader, concealment, gallop, or vehicle buffs.
 - **Powered by**: Tatooine easy (3), Yavin IV Woolamander/Blueleaf (2), Science masteries (3), Social masteries (5).
+- **Typical maximum**: +325% buff duration.
 
 ### Experience Bonus
 
@@ -230,8 +234,8 @@ O  Lars Homestead  (+25% Movement Speed)
 
 ### Gathering Quantity
 
-- **What it does**: Multiplies resource quantity from foraging (flora/shellfish/lair eggs) and milking. Bonuses add together before multiplying: 1 badge = 3x yield, 2 badges = 5x. Never reduces yields, rounded down. Does not affect discrete loot (food, bait, rare items, live creatures).
-- **Powered by**: Outdoors masteries (5, boosted rate), Science masteries (3), Tatooine easy (3), Yavin IV (2).
+- **What it does**: Multiplies resource quantity from foraging (flora/shellfish/lair eggs) and milking. Every badge adds its own yield bonus (+77% to +100%) before the multiply -- full set reaches roughly 14x native yields. Never reduces yields, rounded down. Does not affect discrete loot (food, bait, rare items, live creatures).
+- **Powered by**: Outdoors masteries (5), Science masteries (3), Tatooine easy (3), Yavin IV (2) -- all at uniform rate.
 
 ## Rarity Naming
 

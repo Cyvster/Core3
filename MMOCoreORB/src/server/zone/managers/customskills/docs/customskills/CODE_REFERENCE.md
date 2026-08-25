@@ -606,7 +606,7 @@ Complete registry of all 18 modifiers: configuration conventions, units, badge a
 |----------|-------|
 | **Unit** | Basis points |
 | **Default** | `true` |
-| **Badge bonus (default)** | 0 -- there is intentionally no non-zero code-side or blanket fallback; every badge declares its own value via `badgeOverrides` |
+| **Badge bonus (default)** | 100 bp (1.00%) uniform -- all 60 badges equal, no overrides active by default |
 | **Cap (default)** | 6000 (60.00%) |
 | **Badges (default)** | 60 achievement badges (see list below) |
 | **Config key** | `criticalChance` (special table) |
@@ -742,7 +742,7 @@ upgrades to 4 hits. Highest possible tier.
 | **Default** | `true` |
 | **Badge bonus (default)** | 5 points |
 | **Cap (default)** | 0 (uncapped) |
-| **Badges (default)** | 5 POI (rabidbeast, prisonbreak, twoliars, factoryliberation, heromark) x 5, Yavin IV Exar Kun (5), Lok (3 x 5), Dathomir easy (6 x 5) = 15 total |
+| **Badges (default)** | Hero of Tatooine only: 5 POI badges x 20 points = 100 total |
 
 **Behavior**: Raises native 125 hard cap on primary/secondary defense calculations. Does not affect SEA/tape above-cap contributions.
 
@@ -950,14 +950,14 @@ is authoritative.
 
 | Modifier | Unit | Per-Badge (config) | Max Badges | Max Total (capped) |
 |----------|------|--------------------|------------|--------------------|
-| Critical Chance | bp | 100 (via badgeOverrides) | 60 | 6000 (60%) |
+| Critical Chance | bp | 100 | 60 | 6000 (60% -- exact) |
 | Critical Multiplier | bp | 1250 | 12 | 15000 bonus (300% total) |
 | Double Attack | bp | 2000 | 6 | 10000 (100%) |
-| Triple Attack | bp | 200 (BH 300) | 17 | 3500 (35%) |
-| Quad Attack | bp | 200 (BH 300) | 17 | 3500 (35%) |
+| Triple Attack | bp | 500 | 17 | 8500 (85% -- exact) |
+| Quad Attack | bp | 300 | 17 | 5100 (51% -- exact) |
 | Armor Penetration | levels | 1 | 9 | 3 (eff. max 3) |
-| Defense Cap | points | 5 | 15 | 75 |
-| SEA Cap | points | 15 | 5 | 75 |
+| Defense Cap | points | 20 | 5 (Hero of Tatooine only) | 100 pts |
+| SEA Cap | points | 20 | 5 | 100 pts |
 | Armor Degrade Red. | bp | 1250 | 8 | 10000 (100%) |
 | Weapon Degrade Red. | bp | 1250 | 8 | 10000 (100%) |
 | Movement Speed | bp | 2500 | 4 | 10000 (100%) |
@@ -967,7 +967,7 @@ is authoritative.
 | Crafting Speed | multiplier bp | 1000 | 10 | 10000 (100%) |
 | Amazing Success | bp | 500 | 10 | 5000 (50%) |
 | Amazing Results | bp | 1000 | 6 | 6000 (60%) |
-| Gathering Quantity | bp | 2500 (Outdoors 11500, Science 10000) | 13 | 100000 (1000%) |
+| Gathering Quantity | bp | 10000 | 13 | 130000 (+1300%) |
 
 ---
 
