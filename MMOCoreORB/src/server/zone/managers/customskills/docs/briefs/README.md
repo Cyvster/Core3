@@ -86,7 +86,7 @@ before claim ([R6.9], BRIEF-019).
 | [`019-enforce-discovery-capture.md`](019-enforce-discovery-capture.md) | Make R6.9 discovery capture a standing, unmissable procedure (checklist + gotcha convention) | DELIVERED |
 | [`020-apply-dense-format-reference-docs.md`](020-apply-dense-format-reference-docs.md) | Apply approved dense doc format (tight blocks, stacked no-bullet lines) to reference/lookup docs only | DELIVERED |
 | [`021-verify-admin-commands-vs-codebase.md`](021-verify-admin-commands-vs-codebase.md) | Cross-verify PDF-derived admin commands against Core3 command classes; cite file:line or mark not-on-build | DELIVERED |
-| [`022-player-commands-reference.md`](022-player-commands-reference.md) | PLAYER_COMMANDS.md: full ~3k player-command inventory + deep-dive on ~100 argumented commands | CLAIMED |
+| [`022-player-commands-reference.md`](022-player-commands-reference.md) | PLAYER_COMMANDS.md: 283-command grouped inventory + 66 verified deep-dives (39.6KB) | DELIVERED |
 | [`023-hidden-config-options.md`](023-hidden-config-options.md) | Deep dive: enumerate + document semi-hidden config.lua options (PlayerManager/JTL/PCM etc.) in swgemu/CODE_REFERENCE.md | CLAIMED |
 | [`024-privacy-scrub.md`](024-privacy-scrub.md) | Remove owner real name + local drive paths from all tracked files; add standing privacy rule | DELIVERED |
 | [`025-menu-modifier-display-and-formatting.md`](025-menu-modifier-display-and-formatting.md) | Menu: show all modifiers per badge, short names (Cri/Crit Multi/Double/Triple/Quad), fix bottom-pane gap, retry column alignment | DELIVERED |
