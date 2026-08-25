@@ -46,6 +46,19 @@ bool ConfigManager::loadConfigData() {
 		info("Did not find conf/config-local.lua", true);
 	}
 
+	File modOverridesFile("conf/mod-overrides.lua");
+
+	if (modOverridesFile.setReadOnly()) {
+		if (!lua.runFile("conf/mod-overrides.lua")) {
+			error("ConfigManager failed to parse conf/mod-overrides.lua");
+			return false;
+		}
+
+		info("Loaded conf/mod-overrides.lua", true);
+	} else {
+		info("Did not find conf/mod-overrides.lua", true);
+	}
+
 #ifdef DEBUG_CONFIGMANAGER
 	info("Loaded config file(s) in " + String::valueOf(getConfigDataAgeMs()) + "ms", true);
 #endif // DEBUG_CONFIGMANAGER

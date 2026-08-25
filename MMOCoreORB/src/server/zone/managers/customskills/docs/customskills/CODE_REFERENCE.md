@@ -1478,6 +1478,38 @@ Recommended precedence for a mod-managed conf/mod-overrides.lua: ship fully
 commented out (sparse override = operator values always win); mod-forced lines
 loaded last would otherwise beat config-local by last-write-wins.
 
+### IMPLEMENTED (BRIEF-027-IMPL, 08252026)
+
+Route A is implemented. ConfigManager.cpp loadConfigData() now runs THREE
+files in one shared lua_State, in this order:
+
+1. conf/config.lua (hard-required) -- loadConfigData() :33
+2. conf/config-local.lua (optional, File::setReadOnly guard) -- :38-47
+3. conf/mod-overrides.lua (optional, same setReadOnly pattern) -- :49-62;
+   logs "Loaded conf/mod-overrides.lua" / "Did not find
+   conf/mod-overrides.lua" at INFO.
+
+All three run BEFORE clearConfigData()/parseConfigData (:55+), inside the lua
+lifetime of loadConfigData(), so a single parse pass sees the merged Core3
+table and LAST-WRITE-WINS holds across the whole chain. processConfig()
+(ServerCore.cpp:1128-1131) re-runs loadConfigData() on hot-reload, so the
+overlay re-applies every reload too.
+
+Precedence rules:
+- Commented-out mod-overrides lines change nothing; config.lua /
+  config-local.lua operator values always win while the file stays sparse.
+- An UNCOMMENTED line in mod-overrides.lua wins over everything loaded
+  before it (both stock files), by last-write-wins.
+- To regain control, re-comment or delete the line and hot-reload; the value
+  reverts to the operator's config-local.lua setting.
+- Secrets/dead-reads/naming-trap keys are excluded from the shipped example
+  per ERR-014/BRIEF-026 policy.
+
+Shipped template: bin/conf/mod-overrides.lua.example -- fully commented,
+self-documenting (effect/type/default/dyn-vs-restart tag per option),
+~40 curated class-(b) options covering the owner seed set plus notable
+gameplay toggles. Copy to bin/conf/mod-overrides.lua to activate.
+
 ## Floating Combat Text (ShowFlyText)
 Packet: packets/object/ShowFlyText.h -- ObjectControllerMessage 0x1B/0x1BD;
 payload = long targetID, ascii stf FILE, int spacer, ascii stf ENTRY, float

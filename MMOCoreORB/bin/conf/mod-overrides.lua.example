@@ -1,0 +1,298 @@
+-- ============================================================================
+-- mod-overrides.lua -- Custom Skills mod :: SWGEMU option overlay
+-- ============================================================================
+--
+-- HOW IT WORKS
+--   ConfigManager loads conf/config.lua -> conf/config-local.lua ->
+--   conf/mod-overrides.lua into ONE shared Lua state, then does a single
+--   parse pass. Last assignment wins, so any line you UNCOMMENT here
+--   overrides both the shipped defaults and your own config-local.lua.
+--
+-- SPARSE BY DEFAULT
+--   Every line below is commented out. While everything stays commented,
+--   this file is a no-op and your operator values always win. To force a
+--   value, delete the leading "-- " from exactly that line.
+--
+-- TO REGAIN CONTROL
+--   Re-comment the line (put "-- " back at its start) or delete it, then
+--   hot-reload config (or restart). The value reverts to whatever
+--   config-local.lua / config.lua set.
+--
+-- TAGS
+--   [dyn]        -- applies immediately on config reload
+--   [dyn-cache]  -- applies on reload; cached getter auto-refreshes
+--   [restart]    -- read once at startup; restart required
+--
+-- EXCLUDED BY DESIGN: credentials/secrets (DBPass, DBSecret, APIToken,
+-- SSLKeyFile/CertFile...) are never listed here; dead-read keys and
+-- naming-trap keys (accountVictimList, DestoryOrphans) are omitted.
+-- Units: durations are ms unless noted; basis points 1000 bp = 10.00%.
+-- ============================================================================
+
+-- ---------------------------------------------------------------------------
+-- Player Manager (gameplay toggles)
+-- ---------------------------------------------------------------------------
+
+-- Galaxy-wide grouping: allow group invite across zones/planets.
+-- type: bool, default: false. [dyn]
+-- Core3.PlayerManager.GalaxyWideGrouping = true
+
+-- Advanced waypoints: enable waypoint route planning on /waypoint.
+-- type: bool, default: false. [dyn]
+-- Core3.PlayerManager.AdvancedWaypoints = true
+
+-- Wipe ham "filling" wounds on clone respawn.
+-- type: bool, default: false. [dyn]
+-- Core3.PlayerManager.WipeFillingOnClone = true
+
+-- Hide player visibility tracking entirely (reduces load; affects bounty
+-- visibility). type: bool, default: false. [restart] (cached in VisibilityManager)
+-- Core3.PlayerManager.DisableGroupVisibility = false
+
+-- Client version gate: clients reporting another version are refused.
+-- type: string, default: "20050408-18:00". [dyn]
+-- Core3.PlayerManager.ValidClientVersion = "20050408-18:00"
+
+-- ---------------------------------------------------------------------------
+-- Player Creation / JTL
+-- ---------------------------------------------------------------------------
+
+-- Max characters one account may create per galaxy.
+-- type: int, default: 10. [dyn]
+-- Core3.PlayerCreationManager.MaxCharactersPerGalaxy = 10
+
+-- Enable the new-player tutorial instance on character creation.
+-- type: bool, default: false. [dyn]
+-- Core3.PlayerCreationManager.EnableTutorial = false
+
+-- Master switch for Jump-to-Lightspeed / space travel lua (exposed to
+-- screenplays as isJtlEnabled()). type: bool, default: false. [dyn-cache]
+-- Core3.JTL.JTLEnabled = true
+
+-- ---------------------------------------------------------------------------
+-- Combat / PvP / GCW
+-- ---------------------------------------------------------------------------
+
+-- Covert/overt faction system (TEF rules, contraband scans). Player-visible
+-- change the moment it loads. Exposed to Lua as isCovertOvertSystem().
+-- type: bool, default: false. [dyn-cache]
+-- Core3.GCWManager.useCovertOvertSystem = true
+
+-- Global PvP flag for the zone (console `setpvp` also sets this).
+-- type: bool, default: false. [dyn-cache]
+-- Core3.PvpMode = false
+
+-- Broadcast PvP deaths to a chat channel.
+-- type: bool, default: false. [dyn-cache]
+-- Core3.ChatManager.PvpBroadcastChannel = false
+
+-- Allow beneficial actions (heals/buffs) on link-dead same-account targets.
+-- type: bool, default: true. [dyn]
+-- Core3.CombatManager.AllowSameAccountLinkDeadBeneficialActions = true
+
+-- ---------------------------------------------------------------------------
+-- Missions / Bounty
+-- ---------------------------------------------------------------------------
+
+-- Cooldown between bounty terminal list requests.
+-- type: int (ms), default: 1400. [dyn]
+-- Core3.MissionManager.ListRequestCooldown = 1400
+
+-- Bounty terminals hide the target's name.
+-- type: bool, default: false. [dyn]
+-- Core3.MissionManager.AnonymousBountyTerminals = false
+
+-- Max simultaneous bounty missions per Jedi hunter.
+-- type: int, default: 5. [dyn]
+-- Core3.MissionManager.MaxBountiesPerJedi = 5
+
+-- Jedi missions can target players who own private structures.
+-- type: bool, default: true. [dyn]
+-- Core3.MissionManager.PrivateStructureJediMissions = true
+
+-- How long a mission stays active before expiring.
+-- type: int (ms), default: MISSIONDURATION constant. [dyn]
+-- Core3.MissionManager.BountyExpirationTime = 7200000
+
+-- Player bounty missions count against this cooldown window.
+-- type: int (ms), default: 86400000 (24h). [dyn]
+-- Core3.MissionManager.PlayerBountyCooldownTime = 86400000
+
+-- Faction pets count as valid mission targets.
+-- type: bool, default: true. [dyn-cache]
+-- Core3.MissionManager.IncludeFactionPets = true
+
+-- ---------------------------------------------------------------------------
+-- Spawning / Regions
+-- ---------------------------------------------------------------------------
+
+-- Minimum interval between lair spawns per spawn area.
+-- type: int (ms), default: 5000. [dyn-cache]
+-- Core3.Regions.minimumLairSpawnInterval = 5000
+
+-- Minimum interval between space spawns per spawn area.
+-- type: int (ms), default: 5000. [dyn-cache]
+-- Core3.Regions.minimumSpaceSpawnInterval = 5000
+
+-- Turn off ground world spawning entirely.
+-- type: bool, default: false. [dyn-cache]
+-- Core3.Regions.DisableWorldSpawns = false
+
+-- Turn off space spawning entirely.
+-- type: bool, default: false. [dyn-cache]
+-- Core3.Regions.DisableSpaceSpawns = false
+
+-- Radius scanned around spawn areas when checking for spawns (ground).
+-- type: float, default: 64.0. [dyn-cache]
+-- Core3.Regions.spawnCheckRange = 64.0
+
+-- Radius scanned around spawn areas when checking for spawns (space).
+-- type: float, default: 1024.0. [dyn-cache]
+-- Core3.Regions.spaceSpawnCheckRange = 1024.0
+
+-- ---------------------------------------------------------------------------
+-- Structures / Housing
+-- ---------------------------------------------------------------------------
+
+-- Structure maintenance withdraws from bank (falls back to cash if empty).
+-- type: bool, default: true. [dyn]
+-- Core3.StructureMaintenanceTask.AllowBankPayments = true
+
+-- Furniture rotate command gets extra rotation modes/angles.
+-- type: bool, default: false. [dyn]
+-- Core3.StructureManager.EnhancedFurnitureRotate = false
+
+-- Delay before an evicted structure boots items to the floor.
+-- type: int (sec), default: 600 (+ random up to 3600). [dyn]
+-- Core3.StructureObject.MaintenanceBootDelay = 600
+
+-- ---------------------------------------------------------------------------
+-- Player Objects / Session
+-- ---------------------------------------------------------------------------
+
+-- Logout always treated as "safe" (no combat-logout penalties).
+-- type: bool, default: false. [dyn]
+-- Core3.PlayerObject.AlwaysSafeLogout = false
+
+-- Seconds after disconnect before a player object is cleaned up.
+-- type: int (sec), default: 180. [dyn]
+-- Core3.PlayerObject.LinkDeadDelay = 180
+
+-- Tips between same-account characters incur no fee.
+-- type: bool, default: false. [dyn]
+-- Core3.SameAccountTipsAreFree = false
+
+-- Session stats logging interval.
+-- type: int (sec), default: 1800 (clamped 300..3600 without WITH_DEV_MODE). [dyn-cache]
+-- Core3.SessionStatsSeconds = 1800
+
+-- Interval for online-player-count log lines.
+-- type: int, default: 3. [dyn]
+-- Core3.LogOnlineCount = 3
+
+-- ---------------------------------------------------------------------------
+-- Accounts / Login
+-- ---------------------------------------------------------------------------
+
+-- Show creation date instead of last-connect date on account listings.
+-- type: bool, default: false. [dyn]
+-- Core3.AccountManager.CreatedDateFirstConnect = false
+
+-- Enable in-game holocron help tickets.
+-- type: bool, default: false. [dyn]
+-- Core3.AccountManager.HolocronTicketsEnabled = false
+
+-- Accept session ids on the login server connection.
+-- type: bool, default: false. [dyn-cache]
+-- Core3.Login.EnableSessionId = false
+
+-- Login session lifetime, HH:MM format.
+-- type: string, default: "00:15". [dyn]
+-- Core3.Login.SessionDuration = "00:15"
+
+-- Message shown when automatic registration is disabled.
+-- type: string, default: "Automatic registration is currently disabled..." [dyn]
+-- Core3.RegistrationMessage = "Automatic registration is currently disabled..."
+
+-- ---------------------------------------------------------------------------
+-- AI / Debug verbosity
+-- ---------------------------------------------------------------------------
+
+-- Verbose AI behavior-tree logging.
+-- type: bool, default: false. [dyn-cache]
+-- Core3.AiAgent.Verbose = false
+
+-- Min ticks between AI console spam lines.
+-- type: int, default: 100. [dyn-cache]
+-- Core3.AiAgent.ConsoleThrottle = 100
+
+-- Dump loot attribute details to console on inspect.
+-- type: bool, default: false. [dyn-cache]
+-- Core3.LootManager.DebugAttributes = false
+
+-- Per-account client-side log level override (pass accountID getter);
+-- set per account via Core3.AccountFlags.<accountID>.Core3.ZoneServer.ClientLogLevel.
+-- type: int (-1 off .. 4 INFO), default: -1. [dyn]
+-- Core3.ZoneServer.ClientLogLevel = -1
+
+-- FRS skill maintenance XP deducted immediately rather than gradually.
+-- type: bool, default: false. [dyn]
+-- Core3.FrsManager.ImmediateMaintXpDeduction = false
+
+-- ---------------------------------------------------------------------------
+-- Transaction Log / Exports
+-- ---------------------------------------------------------------------------
+
+-- Enable transaction logging of item/object movements.
+-- type: bool, default: false. [dyn-cache]
+-- Core3.TransactionLog.Enabled = false
+
+-- Export transaction records asynchronously (worker thread).
+-- type: bool, default: false. [dyn-cache]
+-- Core3.TransactionLog.AsyncExport = false
+
+-- Extra-verbose transaction logging.
+-- type: bool, default: false. [dyn-cache]
+-- Core3.TransactionLog.Verbose = false
+
+-- Prune creature-object entries from transaction exports.
+-- type: bool, default: true. [dyn-cache]
+-- Core3.TransactionLog.PruneCreatureObjects = true
+
+-- Prune crafted-component entries from transaction exports.
+-- type: bool, default: true. [dyn-cache]
+-- Core3.TransactionLog.PruneCraftedComponents = true
+
+-- Directory for scene-object JSON exports (%Y/%m/%d/%H substitutions).
+-- type: string, default: "log/exports/%Y-%m-%d/%H/". [dyn]
+-- Core3.SceneObject.exportDir = "log/exports/%Y-%m-%d/%H/"
+
+-- Export vendor/auction item data when the item is destroyed.
+-- type: bool, default: false. [dyn]
+-- Core3.AuctionItem.ExportOnDestroy = false
+
+-- Directory for REST API exports (%Y/%m/%d/%H substitutions).
+-- type: string, default: "log/exports/api/%Y-%m-%d/%H/". [dyn]
+-- Core3.RESTServer.exportDir = "log/exports/api/%Y-%m-%d/%H/"
+
+-- ---------------------------------------------------------------------------
+-- Trade restrictions / Misc
+-- ---------------------------------------------------------------------------
+
+-- Custom message shown when a no-trade item transfer is blocked.
+-- type: string, default: "" (empty = generic message). [dyn-cache]
+-- Core3.TangibleObject.NoTradeMessage = ""
+
+-- Custom message shown when a force-no-trade item transfer is blocked.
+-- type: string, default: "". [dyn-cache]
+-- Core3.TangibleObject.ForceNoTradeMessage = ""
+
+-- Custom message shown when an ADK-bound no-trade transfer is blocked.
+-- type: string, default: "". [dyn-cache]
+-- Core3.TangibleObject.ForceNoTradeADKMessage = ""
+
+-- Enable the character-builder terminal behavior (/createNPC etc).
+-- NOTE: ObjectCommand checks this with a local default of true while the
+-- getter default is false -- uncommenting false here changes /object behavior.
+-- type: bool, default: false. [dyn]
+-- Core3.CharacterBuilderEnabled = false
