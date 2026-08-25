@@ -1352,3 +1352,34 @@ Gotchas from the inventory:
 Adding a new entry to the menu viewer (BRIEF-026): register it in the
 SWGEMU Options registry with {label, configKey, type, group, restartFlag};
 exclude secrets per ERR-014/BRIEF-026 rules.
+
+## Floating Combat Text (ShowFlyText)
+Packet: packets/object/ShowFlyText.h -- ObjectControllerMessage 0x1B/0x1BD;
+payload = long targetID, ascii stf FILE, int spacer, ascii stf ENTRY, float
+SCALE ("1.0 broadcasted, 0 none", :20), byte R/G/B, byte FLAGS hardcoded 5
+(:31; comment :25-30 lists 0x1 on-target-only, 0x2 chat?, 0x4 unknown).
+Wrapper: SceneObjectImplementation.cpp:1862 showFlyText(file,aux,r,g,b,
+isPrivate) -- public broadcasts at scale 1.0; private sends scale 0 to self.
+IDL: SceneObject.idl:904 (Lua-callable).
+Usage inventory: every caller in src uses default scale; only explicit
+scale is CombatManager::showHitLocationFlyText (:2909-2943) -- hit_head
+blue/hit_body+arms red/legs green all 1.0f, sent to attacker ONLY (:2942).
+doMiss/doCounterAttack/doBlock/doDodge white/green via wrapper
+(CombatManager.cpp:2865-2906). Buff flytext proves dynamic stf strings work
+(BuffImplementation.cpp:121,168). No flag variation anywhere in tree.
+Verdicts: SIZE YES (server float per message; slider interaction needs live
+test); COLOR YES (RGB fully server-controlled); TEXT PARTIAL (stf
+file+entry only -- no raw text/digits in packet; custom tables need client
+stf patch); POSITION NO (no offset field); EFFECTS NO (no animation field;
+client-mod territory).
+Hook point: CustomSkillsCombat::applyDamage already owns post-mitigation
+totals and is a CombatManager friend (CombatManager.h:21,24; delegation
+CombatManager.cpp:1419-1421) -- build ShowFlyText directly there for full
+scale/color control. showHitLocationFlyText is non-virtual const
+(CombatManager.h:273); replicate rather than fork.
+NOT feasible server-side: literal damage digits, positional offsets,
+shake/motion effects, resizing client-generated numeric damage flytext
+(that path is CombatSpam-driven client-side; NGE-era opcode 0x45A
+ShowCombatText absent from this tree).
+Open tests: rendered size formula (slider x float?), flag 0x2 semantics,
+whether scale 0 means private render or invisible.
