@@ -15,7 +15,7 @@ master, the master prevails.
 | Folder | Contains | Lifecycle |
 |--------|----------|-----------|
 | `rules/` | Governing documents: design master, process rules, errata protocol | Permanent; versioned alongside project |
-| `swgemu/` | Emulator-facing guides, kept separate from module content: player user guide + merged Core3 developer code reference (Part I patterns / Part II build-run-test) | Permanent; updated when emulator knowledge changes ([PROC R6.9]) |
+| `swgemu/` | Emulator-facing guides, kept separate from module content: player user guide + merged Core3 developer code reference (Part I patterns / Part II build-run-test) + operator admin-command reference (`ADMIN_COMMANDS.md`) | Permanent; updated when emulator knowledge changes ([PROC R6.9]) |
 | `customskills/` | Module-facing guides: player user guide, module code reference (with modifier/badge specification appendices), LLM contributor guide ([LLM_GUIDE.md](customskills/LLM_GUIDE.md)) | Permanent; updated when code changes ([PROC R6.6]) |
 | `tracking/` | Current objectives and task state | Living tracker; reconciliation-stamped per [PROC R6] |
 | `briefs/` | Task brief definitions (claim/deliver) | Permanent once delivered; archived periodically |

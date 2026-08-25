@@ -1,6 +1,6 @@
 # BRIEF-018 -- Document SWGEmu admin (GM) commands in a dedicated section
 
-- Status: CLAIMED
+- Status: DELIVERED
 - Created: 08242026 by hy3-free (opencode/hy3-free), owner directive.
   Owner is currently compiling/running the engine and wants a written admin
   command reference so server operators (not just developers) know how to
@@ -119,3 +119,43 @@ emulator operator guide, so it lands there -- NOT in `customskills/`.
 - If during writing you find a Core3 admin command relevant to the module
   that is NOT in table B, add it with the same fields -- but do not add
   module-specific commands that do not exist.
+
+---
+
+## Delivery Report
+
+- Executor: hy3-free (opencode/hy3-free)
+- Date: 08242026
+- Delivered: `docs/swgemu/ADMIN_COMMANDS.md` (operator-facing admin command
+  reference) + cross-links from `swgemu/CODE_REFERENCE.md` (gating-section
+  pointer) and `docs/README.md` (swgemu/ folder description).
+
+### Verification (R6.10)
+- Every command NAME verified against disk: `/grantbadge`, `/revokebadge`,
+  `/requestbadges`, `/grantskill`, `/revokeskill`, `/editstats`, `/maxstats`,
+  `/setgodmode`, `/server`, `/reload` each map to a real
+  `bin/scripts/commands/<file>.lua` (name field). No invented command names.
+- `/grantbadge` and `/revokebadge` syntax/area/-multiple behavior verified
+  directly from their C++ command classes (GrantBadgeCommand.h:26-160,
+  RevokeBadgeCommand.h:25). Key operator fact captured: badges are addressed by
+  NUMERIC ID, not the config.lua string key.
+- Gating chain, `logAdminCommand` audit, and `DumpAdminCommands` flag verified
+  from `swgemu/CODE_REFERENCE.md` (Part I, ~lines 428-459). Cross-linked rather
+  than duplicated (R6.7 -- no rule restated in two homes).
+- `/editstats`, `/setgodmode`, `/server` argument shapes verified from command
+  class token parsing; exact in-game `<param>` spellings flagged as
+  "confirm via -help" because those classes are thin shells over a shared
+  handler. This is an explicit R6.10 "unverified -- pending code check" style
+  note, not a guess presented as fact.
+
+### Acceptance criteria
+- [x] Dedicated `swgemu/ADMIN_COMMANDS.md` created (operator audience).
+- [x] Permission chain explained (god mode + ability; cross-linked to
+      CODE_REFERENCE, not restated).
+- [x] Command table grounded in real files; no invented names.
+- [x] Worked operator scenarios (grant full crit set, revoke, audit via
+      adminLog).
+- [x] Module caveat stated: module adds no admin commands of its own; config
+      changes need restart, not /reload.
+
+Signed: hy3-free (opencode/hy3-free), 08242026

@@ -458,6 +458,10 @@ point `/customskills` is a normal ability-backed command registered via
 command must follow the chain above (requiresAdmin flag + ability grant)
 and will be admin-audited automatically.
 
+> **Operator quick reference:** the *what-do-I-type* guide for these commands
+> (badge/skill/stat/server) is `ADMIN_COMMANDS.md` in this directory. It lists
+> real command syntax and worked grant/revoke/audit scenarios.
+
 ---
 
 # Part II -- Building, Running, Testing
