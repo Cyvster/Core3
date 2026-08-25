@@ -46,6 +46,11 @@ Produce a complete, code-verified admin command reference:
    moved to an appendix section -- no silent deletions.
 4. Where the PDF and code disagree, CODE WINS; note the divergence in the
    delivery report.
+5. **Player commands encountered during the sweep get documented too** (owner
+   directive): create `swgemu/PLAYER_COMMANDS.md` in the same house format for
+   any non-admin command whose inspection yields useful operator/player
+   documentation. Same evidence bar: exact syntax, description, example,
+   file:line cite.
 
 ## Method notes
 
