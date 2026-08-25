@@ -225,3 +225,26 @@ int CustomSkillsCombat::applyTanoTargetDamage(CreatureObject* attacker, WeaponOb
 
 	return damage;
 }
+
+int CustomSkillsCombat::getDefenseCap(CreatureObject* defender, int nativeCap) {
+	if (defender == nullptr)
+		return nativeCap;
+
+	const int bonus = CustomSkillsModifiers::getModifierTotal(defender, CustomSkillsModifierType::DEFENSE_CAP_INCREASE);
+	if (bonus <= 0)
+		return nativeCap;
+	return nativeCap + bonus;
+}
+
+int CustomSkillsCombat::getEffectiveArmorRating(TangibleObject* attacker, int nativeArmor) {
+	if (attacker == nullptr || nativeArmor <= 0)
+		return nativeArmor;
+
+	if (!attacker->isPlayerCreature())
+		return nativeArmor;
+
+	const int penetration = CustomSkillsModifiers::getModifierTotal(attacker->asCreatureObject(), CustomSkillsModifierType::ARMOR_PENETRATION);
+	if (penetration <= 0)
+		return nativeArmor;
+	return Math::max(0, nativeArmor - penetration);
+}
