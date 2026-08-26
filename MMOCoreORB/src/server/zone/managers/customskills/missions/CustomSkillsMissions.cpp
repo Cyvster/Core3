@@ -235,12 +235,15 @@ Vector3 CustomSkillsMissions::getMissionStartPosition(
 	while (heading < 0.f)
 		heading += 360.f;
 
+	// Placement math copied VERBATIM from cyvster2 getMissionPosition()
+	// (MissionManagerImplementation.cpp:768-777 on origin/cyvster2): proven
+	// correct on the live server. Same convention as vanilla getWorldCoordinate
+	// minus the facing term: angle + PI/2, x += cos, y += sin.
 	float rad = heading * (M_PI / 180.0f);
-	// ERR-022 follow-up: live test showed a pure 180-degree inversion
-	// (E->W, W->E, N->S, S->N), so the world axes are the opposite of the
-	// first assumption: north = +Y, east = -X.
-	float x = player->getWorldPositionX() - (sin(rad) * (float)distance);
-	float y = player->getWorldPositionY() + (cos(rad) * (float)distance);
+	float newAngle = rad + (M_PI / 2);
+
+	float x = player->getWorldPositionX() + (cos(newAngle) * (float)distance);
+	float y = player->getWorldPositionY() + (sin(newAngle) * (float)distance);
 
 	return Vector3(x, y, 0.0f);
 }
