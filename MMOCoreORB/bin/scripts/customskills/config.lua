@@ -157,26 +157,6 @@ customSkillsConfig = {
 		descriptiveTitles = true,
 	},
 
-	-- ---------------------------------------------------------------------------
-	-- training : skill trainer reach (P07, BRIEF-049)
-	-- What it does : when trainersTeachAll is enabled, EVERY skill trainer
-	--                offers the full union of all profession trees -- starter,
-	--                elite, master, and Jedi boxes included. No more hunting
-	--                for the one trainer who can teach your next box.
-	-- Why it's safe : per-skill prerequisites, XP costs, and skill-point costs
-	--                are still enforced by the engine when you try to learn.
-	--                This only widens WHICH NPC will teach you.
-	-- Fields       :
-	--   trainersTeachAll  true  = any trainer teaches any profession tree
-	--                     false = vanilla behavior (each trainer owns one tree)
-	-- Default       : true (owner approved).
-	-- REAL EXAMPLE (commented out): restore vanilla trainer behavior:
-	--
-	-- training = { trainersTeachAll = false },
-	-- ---------------------------------------------------------------------------
-	training = {
-		trainersTeachAll = true,
-	},
 
 	-- ---------------------------------------------------------------------------
 	-- structures : structure placement / ownership (BRIEF-050)
@@ -202,6 +182,50 @@ customSkillsConfig = {
 	-- ---------------------------------------------------------------------------
 	structures = {
 		accountSharedLots = true,
+	},
+
+	-- ---------------------------------------------------------------------------
+
+	-- ---------------------------------------------------------------------------
+	-- loot : loot-table QoL knobs (E02/E05)
+	-- Fields       :
+	--   creditsToTopDamager  true = NPC credit drops skip the corpse and are
+	--                        paid DIRECTLY to the top-damage player (system
+	--                        message confirms the amount). Event mobs are
+	--                        always excluded. false = vanilla corpse credits.
+	--   attachmentAutoName   true = newly looted Armor/Clothing Attachments
+	--                        are renamed "[AA] <statname>: <value>" /
+	--                        "<[CA]> <statname>: <value>" from their highest
+	--                        skill mod, so you can triage attachments without
+	--                        opening each one.
+	-- Defaults     : both true (owner approved).
+	-- REAL EXAMPLE (commented out): restore vanilla loot behavior:
+	--
+	-- loot = { creditsToTopDamager = false, attachmentAutoName = false },
+	-- ---------------------------------------------------------------------------
+	loot = {
+		creditsToTopDamager = true,
+		attachmentAutoName = true,
+	},
+
+	-- ---------------------------------------------------------------------------
+	-- surveying : survey tool reach (C06)
+	-- What it does : extends the survey tool's selectable range ladder above
+	--                the vanilla 384m cap. Tiers keep the vanilla skill gates
+	--                (surveying 20/35/55/75/100/120) and scale from 64m up to
+	--                maxRange in 64m-granular steps; sample grid grows to
+	--                6x6 points above 1024m.
+	-- Fields       :
+	--   maxRange  maximum selectable range in METERS (whole units).
+	--             Vanilla value was 384. Setting it back to 384 restores the
+	--             exact vanilla tiers (64/128/192/256/320/384 x3-5pts).
+	-- Default      : 2624 (owner approved). Accepted range: 64 - 8192.
+	-- REAL EXAMPLE (commented out): vanilla survey ranges:
+	--
+	-- surveying = { maxRange = 384 },
+	-- ---------------------------------------------------------------------------
+	surveying = {
+		maxRange = 2624,           -- meters; vanilla was 384
 	},
 
 	-- ---------------------------------------------------------------------------
