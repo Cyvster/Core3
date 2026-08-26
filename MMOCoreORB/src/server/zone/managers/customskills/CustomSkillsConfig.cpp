@@ -18,6 +18,8 @@ void CustomSkillsConfig::setDefaults() {
 		modifierBadgeBonuses[i].setAllowOverwriteInsertPlan();
 	}
 
+	trainersTeachAll = true;
+	trainersTeachEverything = false;
 	criticalChanceEnabled = true;
 	// criticalChanceFallbackBonus stays 0: badge bonuses come exclusively
 	// from config.lua (badges[] + badgeOverrides); nothing is seeded here.
@@ -279,7 +281,13 @@ void CustomSkillsConfig::load() {
 	fct.pop();
 
 	// BRIEF-043: mission terminal direction/difficulty options.
-	LuaObject missions = root.getObjectField("missions");
+		LuaObject training = root.getObjectField("training");
+	if (training.isValidTable()) {
+		trainersTeachAll = training.getBooleanField("trainersTeachAll", true);
+		trainersTeachEverything = training.getBooleanField("trainersTeachEverything", false);
+	}
+
+LuaObject missions = root.getObjectField("missions");
 	if (missions.isValidTable()) {
 		missionOptionsEnabled = missions.getBooleanField("missionOptionsEnabled", true);
 		missionDirectionEnabled = missions.getBooleanField("directionOptionEnabled", true);

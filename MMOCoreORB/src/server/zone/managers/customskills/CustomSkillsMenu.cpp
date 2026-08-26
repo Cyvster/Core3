@@ -308,6 +308,8 @@ void CustomSkillsMenu::addModOptionItems(SuiListBox* box) {
 		{"Missions: List Size",         'i', false, nullptr, &CustomSkillsConfig::getMissionListSize, nullptr},
 		{"Missions: Descriptive Titles",'b', false, &CustomSkillsConfig::isDescriptiveMissionTitlesEnabled, nullptr, nullptr},
 		{"Account-Shared Structure Lots", 'b', true, &CustomSkillsConfig::isAccountSharedLotsEnabled, nullptr, nullptr},
+		{"Trainers Teach Full Line",    'b', false, &CustomSkillsConfig::isTrainersTeachAllEnabled, nullptr, nullptr},
+		{"Trainers Teach Everything",   'b', false, &CustomSkillsConfig::isTrainersTeachEverythingEnabled, nullptr, nullptr},
 	};
 	for (const auto& o : opts) {
 		String row = String(o.label) + ": ";

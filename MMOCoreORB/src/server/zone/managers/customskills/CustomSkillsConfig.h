@@ -31,6 +31,10 @@ public:
 	int getBadgeBonus(CustomSkillsModifierType::Type type, const String& badgeKey) const;
 	const VectorMap<String, int>& getBadgeBonuses(CustomSkillsModifierType::Type type) const;
 
+	// BRIEF-051: training knobs (menu-visible; consumed by skillTrainer.lua).
+	bool isTrainersTeachAllEnabled() const { return trainersTeachAll; }
+	bool isTrainersTeachEverythingEnabled() const { return trainersTeachEverything; }
+
 	// BRIEF-043: mission terminal direction/difficulty option knobs.
 	bool isMissionOptionsEnabled() const { return missionOptionsEnabled; }
 	bool isMissionDirectionEnabled() const { return missionDirectionEnabled; }
@@ -76,6 +80,8 @@ private:
 	// BRIEF-043: mission terminal options state.
 	static const int DEFAULT_MISSION_LIST_SIZE = 3;
 	bool missionOptionsEnabled;
+	bool trainersTeachAll = true;
+	bool trainersTeachEverything = false;
 	bool missionDirectionEnabled;
 	bool missionDifficultyEnabled;
 	int missionListSize;
