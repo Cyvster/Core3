@@ -41,6 +41,17 @@ public:
 	// BRIEF-050: account-shared structure lots.
 	bool isAccountSharedLotsEnabled() const { return accountSharedLots; }
 
+	// BRIEF-046 (E02): NPC credits go straight to the top-damage player.
+	bool isCreditsToTopDamagerEnabled() const { return lootCreditsToTopDamager; }
+
+	// BRIEF-047 (E05): auto-name loot attachments "[AA]/<[CA]> <stat>: <value>".
+	bool isAttachmentAutoNameEnabled() const { return attachmentAutoName; }
+
+	// BRIEF-048 (C06): survey tool maximum selectable range, in meters.
+	// Vanilla cap is 384; tiers are generated dynamically from this value.
+	int getSurveyMaxRange() const { return surveyMaxRange; }
+	static const int DEFAULT_SURVEY_MAX_RANGE = 2624; // vanilla: 384
+
 private:
 	bool criticalChanceEnabled;
 	int criticalChanceFallbackBonus;
@@ -73,6 +84,11 @@ private:
 	// BRIEF-050: account-shared structure lots state.
 	static const bool DEFAULT_ACCOUNT_SHARED_LOTS = true;
 	bool accountSharedLots;
+
+	// BRIEF-046/047/048: loot + survey QoL state.
+	bool lootCreditsToTopDamager; // E02
+	bool attachmentAutoName;      // E05
+	int surveyMaxRange;           // C06, meters
 
 	static const int DEFAULT_FCT_SCALE_STEP_BP = 1500;
 	static const int DEFAULT_FCT_CRIT_BONUS_BP = 2500;

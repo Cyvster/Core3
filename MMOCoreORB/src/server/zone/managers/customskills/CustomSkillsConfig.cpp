@@ -49,6 +49,12 @@ void CustomSkillsConfig::setDefaults() {
 	// BRIEF-050: account-shared structure lots (owner approved default ON).
 	accountSharedLots = DEFAULT_ACCOUNT_SHARED_LOTS;
 
+	// BRIEF-046/047/048 defaults (owner approved): credits-to-player ON,
+	// attachment auto-naming ON, survey max range 2624m (vanilla 384).
+	lootCreditsToTopDamager = true; // E02
+	attachmentAutoName = true;      // E05
+	surveyMaxRange = DEFAULT_SURVEY_MAX_RANGE; // C06
+
 	descriptiveTitles = true;
 
 	modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = true;
@@ -285,6 +291,26 @@ void CustomSkillsConfig::load() {
 		accountSharedLots = structures.getBooleanField("accountSharedLots", DEFAULT_ACCOUNT_SHARED_LOTS);
 	}
 	structures.pop();
+
+	// BRIEF-046/047/048: loot + survey QoL knobs.
+	LuaObject loot = root.getObjectField("loot");
+	if (loot.isValidTable()) {
+		lootCreditsToTopDamager = loot.getBooleanField("creditsToTopDamager", true); // E02
+		attachmentAutoName = loot.getBooleanField("attachmentAutoName", true);       // E05
+	}
+	loot.pop();
+
+	// C06: surveying.maxRange, in meters. Clamp to the vanilla floor of 64
+	// (smallest vanilla tier) and a sane 8192 ceiling.
+	LuaObject surveying = root.getObjectField("surveying");
+	if (surveying.isValidTable()) {
+		int maxRange = static_cast<int>(surveying.getIntField("maxRange", DEFAULT_SURVEY_MAX_RANGE));
+		if (maxRange >= 64 && maxRange <= 8192)
+			surveyMaxRange = maxRange;
+		else
+			warning("surveying.maxRange must be between 64 and 8192 meters; using default");
+	}
+	surveying.pop();
 
 
 
