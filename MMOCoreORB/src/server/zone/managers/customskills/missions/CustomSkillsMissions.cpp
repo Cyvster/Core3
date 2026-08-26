@@ -236,8 +236,11 @@ Vector3 CustomSkillsMissions::getMissionStartPosition(
 		heading += 360.f;
 
 	float rad = heading * (M_PI / 180.0f);
-	float x = player->getWorldPositionX() + (sin(rad) * (float)distance);
-	float y = player->getWorldPositionY() - (cos(rad) * (float)distance);
+	// ERR-022 follow-up: live test showed a pure 180-degree inversion
+	// (E->W, W->E, N->S, S->N), so the world axes are the opposite of the
+	// first assumption: north = +Y, east = -X.
+	float x = player->getWorldPositionX() - (sin(rad) * (float)distance);
+	float y = player->getWorldPositionY() + (cos(rad) * (float)distance);
 
 	return Vector3(x, y, 0.0f);
 }
