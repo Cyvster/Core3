@@ -6,6 +6,7 @@
 #include "server/zone/Zone.h"
 #include "server/zone/objects/player/PlayerObject.h"
 #include "server/zone/objects/tangible/tool/SurveyTool.h"
+#include "server/zone/objects/tangible/tool/sui/SurveyToolSetRangeSuiCallback.h" // BRIEF-048 (mod hook): shared range ladder
 #include "server/zone/objects/tangible/tool/recycle/RecycleTool.h"
 #include "server/zone/objects/resource/ResourceContainer.h"
 #include "templates/params/creature/CreatureAttribute.h"
@@ -826,10 +827,12 @@ void ResourceSpawner::sendSurvey(CreatureObject* player, const String& resname) 
 	int toolRange = surveyTool->getRange(player);
 	int points = surveyTool->getPoints();
 
-	if (toolRange > 1024 || toolRange < 0)
+	// BRIEF-048 (mod hook): clamp raised from the vanilla 1024/6 caps to the
+	// configured surveying.maxRange (default 2624) and a 7x7 point ceiling.
+	if (toolRange > SurveyRangeLadder::getMaxRange() || toolRange < 0)
 		toolRange = 320;
 
-	if (points <= 0 || points > 6)
+	if (points <= 0 || points > 7)
 		points =  3;
 
 	float spacer = float(toolRange) / float(points - 1);

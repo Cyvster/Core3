@@ -50,7 +50,8 @@ int SurveyToolImplementation::handleObjectMenuSelect(CreatureObject* player, byt
 		if (selectedID == 20) { // use object
 			int range = getRange(player);
 
-			if(range <= 0 || range > 384) {
+			// BRIEF-048 (mod hook): validate against the configured max range.
+			if(range <= 0 || range > SurveyRangeLadder::getMaxRange()) {
 				sendRangeSui(player);
 				return 0;
 			}
@@ -94,23 +95,18 @@ void SurveyToolImplementation::sendRangeSui(CreatureObject* player) {
 	suiToolRangeBox->setPromptTitle("@base_player:swg");
 	suiToolRangeBox->setPromptText("@survey:select_range");
 
-	if (surveyMod >= 20)
-		suiToolRangeBox->addMenuItem("64m x 3pts", 0);
+	// BRIEF-048 (mod hook): menu options are generated from the shared tier
+	// ladder (vanilla skill gates preserved; ranges run to the configured
+	// surveying.maxRange instead of the vanilla 384m cap).
+	for (int i = 0; i < SurveyRangeLadder::TIER_COUNT; ++i) {
+		if (surveyMod >= SurveyRangeLadder::TIER_SKILLS[i]) {
+			StringBuffer label;
+			label << SurveyRangeLadder::tierRange(i) << "m x "
+				<< SurveyRangeLadder::pointsForRange(SurveyRangeLadder::tierRange(i)) << "pts";
 
-	if (surveyMod >= 35)
-		suiToolRangeBox->addMenuItem("128m x 4pts", 1);
-
-	if (surveyMod >= 55)
-		suiToolRangeBox->addMenuItem("192m x 4pts", 2);
-
-	if (surveyMod >= 75)
-		suiToolRangeBox->addMenuItem("256m x 5pts", 3);
-
-	if (surveyMod >= 100)
-		suiToolRangeBox->addMenuItem("320m x 5pts", 4);
-
-	if (surveyMod >= 120)
-		suiToolRangeBox->addMenuItem("384m x 5pts", 5);
+			suiToolRangeBox->addMenuItem(label.toString(), i);
+		}
+	}
 
 	suiToolRangeBox->setUsingObject(_this.getReferenceUnsafeStaticCast());
 	suiToolRangeBox->setCallback(new SurveyToolSetRangeSuiCallback(server->getZoneServer()));
@@ -130,34 +126,18 @@ int SurveyToolImplementation::getRange(CreatureObject* player) {
 }
 
 int SurveyToolImplementation::getSkillBasedRange(int skillLevel) {
-
-	if (skillLevel >= 120)
-		return 384;
-	else if (skillLevel >= 100)
-		return 320;
-	else if (skillLevel >= 75)
-		return 256;
-	else if (skillLevel >= 55)
-		return 192;
-	else if (skillLevel >= 35)
-		return 128;
-	else if (skillLevel >= 20)
-		return 64;
-
-	return 0;
+	// BRIEF-048 (mod hook): highest tier the skill permits, via the shared
+	// ladder. With the default config this reaches 2624m at skill 120
+	// (vanilla capped at 384m).
+	return SurveyRangeLadder::tierRange(SurveyRangeLadder::tierForSkill(skillLevel));
 }
 
 void SurveyToolImplementation::setRange(int r) {
 	range = r;  // Distance the tool checks during survey
 
-	// Set number of grid points in survey SUI 3x3 to 5x5
-	if (range >= 256) {
-		points = 5;
-	} else if (range >= 128) {
-		points = 4;
-	} else {
-		points = 3;
-	}
+	// Set number of grid points in survey SUI (BRIEF-048: shared helper,
+	// extended to 6x6 above 1024m)
+	points = SurveyRangeLadder::pointsForRange(range);
 }
 
 void SurveyToolImplementation::sendRadioactiveWarning(CreatureObject* player) {
