@@ -179,6 +179,32 @@ customSkillsConfig = {
 	},
 
 	-- ---------------------------------------------------------------------------
+	-- structures : structure placement / ownership (BRIEF-050)
+	-- What it does : ACCOUNT-SHARED LOTS. The lot pool becomes
+	--                (lots per character) x (characters on the account), shared
+	--                across ALL characters on that account. Any character can
+	--                place up to the whole pool; every character's structures
+	--                count against it. Additionally, when any character places
+	--                a structure, ALL other characters on the account are
+	--                granted ADMIN permission on it automatically.
+	-- Why you care : one character no longer blocks another from placing;
+	--                families/mules share one pool like NGE-era SWG.
+	-- Performance  : lot usage is cached per account and updated incrementally
+	--                on place/destroy/transfer -- never rescanned per query,
+	--                so this does NOT reintroduce the cyvster2 stutter.
+	-- Fields       :
+	--   accountSharedLots  true  = shared pool + auto-ADMIN for account chars
+	--                      false = vanilla behavior (10 lots, owner only)
+	-- Default       : true (owner approved).
+	-- REAL EXAMPLE (commented out): restore vanilla lots:
+	--
+	-- structures = { accountSharedLots = false },
+	-- ---------------------------------------------------------------------------
+	structures = {
+		accountSharedLots = true,
+	},
+
+	-- ---------------------------------------------------------------------------
 
 	-- ---------------------------------------------------------------------------
 	-- criticalChance : chance for a landed attack to become a CRITICAL hit
