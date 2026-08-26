@@ -16,7 +16,7 @@
 #include "server/zone/ZoneServer.h"
 #include "server/zone/objects/creature/CreatureObject.h"
 #include "server/zone/objects/player/PlayerObject.h"
-#include "server/zone/objects/scene/Vector3.h"
+#include "engine/util/u3d/Vector3.h"
 #include "server/zone/objects/player/sui/SuiWindowType.h"
 #include "server/zone/objects/player/sui/listbox/SuiListBox.h"
 #include "server/zone/objects/player/sui/SuiCallback.h"
@@ -219,7 +219,7 @@ float CustomSkillsMissions::getMissionHeading(server::zone::objects::creature::C
 // ERR-022: absolute compass placement. SWG world axes: north = -Y, east = +X.
 // heading 0=N, 90=E, 180=S, 270=W. Deviation wedge +/-5 deg (config-independent
 // constant matching cyvster2 behavior).
-server::zone::objects::scene::Vector3 CustomSkillsMissions::getMissionStartPosition(
+Vector3 CustomSkillsMissions::getMissionStartPosition(
 		server::zone::objects::creature::CreatureObject* player, int distance,
 		float fallbackHeading) {
 	float heading = fallbackHeading;
@@ -239,7 +239,7 @@ server::zone::objects::scene::Vector3 CustomSkillsMissions::getMissionStartPosit
 	float x = player->getWorldPositionX() + (sin(rad) * (float)distance);
 	float y = player->getWorldPositionY() - (cos(rad) * (float)distance);
 
-	return server::zone::objects::scene::Vector3(x, y, 0.0f);
+	return Vector3(x, y, 0.0f);
 }
 
 int CustomSkillsMissions::getMissionListSize() {

@@ -61,7 +61,7 @@ public:
 	// (0=N, 90=E...) -- vanilla getWorldCoordinate interprets the angle
 	// relative to the PLAYER'S FACING, which made chosen directions rotate
 	// as the player turned.
-	static server::zone::objects::scene::Vector3 getMissionStartPosition(
+	static Vector3 getMissionStartPosition(
 			server::zone::objects::creature::CreatureObject* player, int distance,
 			float fallbackHeading);
 
