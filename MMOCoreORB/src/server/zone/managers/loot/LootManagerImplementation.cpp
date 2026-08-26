@@ -22,6 +22,7 @@
 #include "server/zone/objects/ship/components/ShipComponent.h"
 #include "server/zone/objects/ship/ai/ShipAiAgent.h"
 #include "server/zone/managers/customskills/CustomSkillsModifiers.h"
+#include "server/zone/managers/customskills/CustomSkillsConfig.h" // BRIEF-047 (mod hook)
 
 // #define DEBUG_LOOT_MAN
 
@@ -622,6 +623,39 @@ void LootManagerImplementation::setSkillMods(TangibleObject* prototype, const Lo
 		int value = skillMods.elementAt(i).getValue();
 
 		prototype->addSkillMod(SkillModManager::WEARABLE, key, value);
+	}
+
+	// BRIEF-047 (mod hook): auto-name newly looted attachments after their
+	// highest skill mod (cyvster2 E05, cleaned: the highest mod is found
+	// FIRST and setCustomObjectName is called exactly once, instead of once
+	// per improvement inside the scan loop). Gated by
+	// customSkillsConfig.loot.attachmentAutoName.
+	if (CustomSkillsConfig::instance()->isAttachmentAutoNameEnabled()
+			&& (prototype->getGameObjectType() == SceneObjectType::ARMORATTACHMENT
+				|| prototype->getGameObjectType() == SceneObjectType::CLOTHINGATTACHMENT)) {
+		String bestMod;
+		int bestValue = 0;
+
+		for (int i = 0; i < skillMods.size(); i++) {
+			const String& key = skillMods.elementAt(i).getKey();
+			int value = skillMods.elementAt(i).getValue();
+
+			if (bestMod.isEmpty() || value > bestValue) {
+				bestMod = key;
+				bestValue = value;
+			}
+		}
+
+		if (!bestMod.isEmpty()) {
+			const char* prefix = (prototype->getGameObjectType() == SceneObjectType::ARMORATTACHMENT)
+				? "[AA] " : "<[CA]> ";
+
+			StringBuffer autoName;
+			autoName << prefix << bestMod << ": " << bestValue;
+
+			prototype->setCustomObjectName(UnicodeString(autoName.toString()), false);
+
+		}
 	}
 
 	prototype->addMagicBit(false);
