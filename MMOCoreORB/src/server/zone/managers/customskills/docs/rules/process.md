@@ -344,6 +344,7 @@ other in the SAME session as its implementation.
 | Privacy rule (handle-only, no local paths, pre-push grep) | customskills ERR-014 | ADAPTED on Alice (scrub done 08252026; llm-guide grep check pending) | 08252026 |
 | Second-party verification gate | Alice | ADOPTED here (alignment pass 1 / BRIEF-030: errata RESOLVED-PENDING-VERIFICATION convention) | 08252026 |
 | Alignment pass 2 -> Alice | customskills BRIEF-030 mirror (Alice BRIEF-067) | DELIVERED on Alice 08252026: per-push privacy grep, XPP mirror clause in authoring rules, config self-doc + doc-density standards, errata status vocabulary conformed | 08252026 |
+| Discovery-capture enforcement -> Alice | customskills BRIEF-040 | Mirror brief FILED on Alice (unclaimed; Alice busy) | 08252026 |
 
 ## Document separation (adopted from Alice brief 031, XPP 08252026)
 
