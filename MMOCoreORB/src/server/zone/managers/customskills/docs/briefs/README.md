@@ -47,6 +47,12 @@ before claim ([R6.9], BRIEF-019).
    mirror-review brief on Project Alice in the same session
    ([rules/process.md](../rules/process.md) -> Cross-Project Propagation)
    -- or note "not a policy" if purely technical.
+4. **Config-knob menu registration** (BRIEF-051): any brief that adds a new
+   server-config knob MUST either register it in the `/customskills`
+   options menu (`CustomSkillsMenu::addModOptionItems` for mod-owned knobs,
+   `addSwgemuOptionItems` for vanilla ConfigManager keys) or state in the
+   brief why it is excluded (e.g. internal-only, secret). A brief without
+   one of these two statements is incomplete.
 
 ## How delegation works
 

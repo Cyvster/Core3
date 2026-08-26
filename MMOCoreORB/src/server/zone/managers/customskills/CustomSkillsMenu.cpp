@@ -284,6 +284,51 @@ void CustomSkillsMenu::addSwgemuOptionItems(SuiListBox* box) {
 	}
 }
 
+// BRIEF-051 (mod hook): curated read-only view of mod-owned config knobs
+// (customskills/config.lua -> customSkillsConfig). Mirrors the
+// addSwgemuOptionItems pattern: static {label, type('b'/'i'/'f'), restart}
+// rows; the value is fetched through the matching getter call. Read-only v1
+// -- no toggling from the menu. Values reflect live
+// CustomSkillsConfig::instance() state.
+void CustomSkillsMenu::addModOptionItems(SuiListBox* box) {
+	CustomSkillsConfig* cfg = CustomSkillsConfig::instance();
+	struct ModOpt { const char* label; char type; bool restart;
+		bool (CustomSkillsConfig::*getB)() const;
+		int (CustomSkillsConfig::*getI)() const;
+		float (CustomSkillsConfig::*getF)() const; };
+	static const ModOpt opts[] = {
+		{"Credits To Top Damager",      'b', false, &CustomSkillsConfig::isCreditsToTopDamagerEnabled,   nullptr, nullptr},
+		{"Non-Humanoid NPC Credits",    'b', false, &CustomSkillsConfig::isLootNonHumanoidCreditsEnabled, nullptr, nullptr},
+		{"Loot Credit Multiplier",      'f', true,  nullptr, nullptr, &CustomSkillsConfig::getMenuLootCreditMultiplier},
+		{"Auto-Name Loot Attachments",  'b', false, &CustomSkillsConfig::isAttachmentAutoNameEnabled, nullptr, nullptr},
+		{"Survey Max Range (m)",        'i', true,  nullptr, &CustomSkillsConfig::getSurveyMaxRange, nullptr},
+		{"Mission Terminal Options",    'b', true,  &CustomSkillsConfig::isMissionOptionsEnabled, nullptr, nullptr},
+		{"Missions: Direction Option",  'b', false, &CustomSkillsConfig::isMissionDirectionEnabled, nullptr, nullptr},
+		{"Missions: Difficulty Option", 'b', false, &CustomSkillsConfig::isMissionDifficultyEnabled, nullptr, nullptr},
+		{"Missions: List Size",         'i', false, nullptr, &CustomSkillsConfig::getMissionListSize, nullptr},
+		{"Missions: Descriptive Titles",'b', false, &CustomSkillsConfig::isDescriptiveMissionTitlesEnabled, nullptr, nullptr},
+		{"Account-Shared Structure Lots", 'b', true, &CustomSkillsConfig::isAccountSharedLotsEnabled, nullptr, nullptr},
+	};
+	for (const auto& o : opts) {
+		String row = String(o.label) + ": ";
+		switch (o.type) {
+		case 'b':
+			row += ((cfg->*o.getB)() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED");
+			break;
+		case 'i':
+			row += String::valueOf((cfg->*o.getI)());
+			break;
+		default:
+			row += String::valueOf((cfg->*o.getF)());
+			break;
+		}
+		row += "\\#.";
+		if (o.restart)
+			row += " \\#999999(restart required)\\#.";
+		box->addMenuItem(row);
+	}
+}
+
 String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 	StringBuffer summary;
 
@@ -305,6 +350,10 @@ String CustomSkillsMenu::getPromptText(CreatureObject* player, Page page) {
 			summary << "  Default: \\#0000FF###\\#. (0000FF)" << endl;
 		} else if (page == MOD_OPTIONS) {
 			String rarityState = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
+			// BRIEF-051 (mod hook): page now lists mod config knobs (read-only).
+			summary << "\\#FFFF00--- Custom Skills Options ---\\#." << endl;
+			summary << "Mod-owned settings; edit customskills/config.lua." << endl;
+			summary << endl;
 			summary << rarityState << "\\#. Rarity Naming" << endl;
 		} else if (page == SWGEMU_OPTIONS) {
 			summary << "Live server-configurable options. Values update on config hot-reload unless marked (restart required)." << endl;
@@ -376,9 +425,12 @@ void CustomSkillsMenu::addPageItems(SuiListBox* box, CreatureObject* player, Pag
 	case SERVER_CONFIG: addCategoryItem(box, player, "Mod Options", MOD_OPTIONS, false); addCategoryItem(box, player, "SWGEMU Options", SWGEMU_OPTIONS, false); break;
 	case SWGEMU_OPTIONS: addSwgemuOptionItems(box); break;
 	case MOD_OPTIONS: {
+		// BRIEF-051 (mod hook): mod-owned config knobs now render as live
+		// rows on this page, after the Rarity Naming entry.
 		CustomSkillsConfig* config = CustomSkillsConfig::instance();
 		String status = config->isRarityNamingEnabled() ? "\\#00FF00ENABLED" : "\\#FF0000DISABLED";
 		box->addMenuItem("Rarity Naming " + status + "\\#.");
+		addModOptionItems(box);
 		break;
 	}
 	case RARITY_NAMING: {

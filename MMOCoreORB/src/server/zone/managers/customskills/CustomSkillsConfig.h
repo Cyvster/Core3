@@ -99,6 +99,12 @@ private:
 	bool isNonHumanoidCreditsEnabled() const { return lootNonHumanoidCredits; }
 	float getLootCreditMultiplier() const { return lootCreditMultiplier; }
 
+public:
+	// BRIEF-051 (mod hook): menu-visible accessors for the 046b knobs.
+	bool isLootNonHumanoidCreditsEnabled() const { return lootNonHumanoidCredits; }
+	float getMenuLootCreditMultiplier() const { return lootCreditMultiplier; }
+
+private:
 	static const int DEFAULT_FCT_SCALE_STEP_BP = 1500;
 	static const int DEFAULT_FCT_CRIT_BONUS_BP = 2500;
 

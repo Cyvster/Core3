@@ -38,6 +38,7 @@ private:
 	static int countModifier(CreatureObject* player, const char* const* keys, int count, CustomSkillsModifierType::Type type);
 	static String getPromptText(CreatureObject* player, Page page);
 	static void addSwgemuOptionItems(SuiListBox* box);
+	static void addModOptionItems(SuiListBox* box); // BRIEF-051 (mod hook)
 	static String getTitle(Page page);
 	static int countEnabledOptions();
 };

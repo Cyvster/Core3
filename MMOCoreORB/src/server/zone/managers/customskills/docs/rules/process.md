@@ -378,7 +378,9 @@ Two standing rules close the capture gaps that brief-time reminders miss:
 2. COORDINATOR DUTY: before marking a brief DELIVERED, grep its diff for new
    knowledge (packet fields, constants, call-graph facts, gotchas) and verify
    each landed in a reference doc. Undocumented discoveries bounce the
-   delivery back.
+   delivery back. Also grep for NEW CONFIG KNOBS (BRIEF-051): every added
+   config key must appear in the options-menu registry or carry an explicit
+   exclusion note in its brief.
 
 Every delivery report must also carry the [R6.9] discovery line (briefs
 README pickup protocol step 8).

@@ -1,6 +1,12 @@
 # Brief -- Add mod config options to the /customskills options menu
 
-- Status: OPEN
+- Status: DELIVERED 08252026 by ox-alpha (opencode/x-preview-f-free) --
+  mod-options rows live on Server Config > Mod Options
+  (`CustomSkillsMenu::addModOptionItems`); authoring rule 4 added to
+  briefs/README.md + coordinator grep duty extended in rules/process.md;
+  mechanics notes in CODE_REFERENCE.md "Mod Options Registry". Excluded:
+  training.trainersTeachAll (Lua-side only, no C++ getter -- documented).
+  [R6.9] discoveries: see CODE_REFERENCE.md Mod Options Registry section.
 - Created: 08252026 by ox-alpha (opencode/x-preview-f-free)
 
 ## Problem

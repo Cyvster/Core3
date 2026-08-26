@@ -1450,6 +1450,30 @@ Adding a new entry to the menu viewer (BRIEF-026): register it in the
 SWGEMU Options registry with {label, configKey, type, group, restartFlag};
 exclude secrets per ERR-014/BRIEF-026 rules.
 
+### Mod Options Registry (BRIEF-051)
+
+`CustomSkillsMenu::addModOptionItems` (CustomSkillsMenu.cpp) renders the
+mod-owned knobs on the Server Config > Mod Options page, below the Rarity
+Naming row. Same pattern as the SWGEMU viewer, but rows point at
+CustomSkillsConfig getters instead of ConfigManager keys: a static `ModOpt[]`
+table of `{label, type('b'/'i'/'f'), restart, member-getter pointers}`
+(`bool/int/float (CustomSkillsConfig::*)() const`) invoked as `(cfg->*o.get)()`.
+Read-only v1 -- no in-menu toggling. Registered knobs (08252026):
+loot.creditsToTopDamager, loot.nonHumanoidCredits, loot.creditMultiplier ('f'),
+loot.attachmentAutoName, surveying.maxRange, missions.missionOptionsEnabled /
+directionOptionEnabled / difficultyOptionEnabled / missionListSize /
+descriptiveTitles, structures.accountSharedLots. Restart flags are judgment
+calls matching each knob's load path (CustomSkillsConfig::load() runs at
+startup; Lua-side consumers like skillTrainer.lua re-read per use).
+Gotchas: CustomSkillsConfig does NOT load training.trainersTeachAll -- that
+knob is read Lua-side by skillTrainer.lua from customskills/config.lua and has
+no C++ getter; it is intentionally absent from this registry until the config
+loader owns it. The BRIEF-046b accessors (`isLootNonHumanoidCreditsEnabled`,
+`getMenuLootCreditMultiplier`) were added to CustomSkillsConfig.h as public
+menu-visible aliases because their originals are private.
+Per briefs/README.md authoring rule 4 (BRIEF-051), every new config knob must
+land here or carry an exclusion note.
+
 ## Config Overlay Mechanism (research, BRIEF-027)
 
 ConfigManager::loadConfigData() (src/conf/ConfigManager.cpp:23-93) loads
