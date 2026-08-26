@@ -698,7 +698,7 @@ int CreatureManagerImplementation::notifyDestruction(TangibleObject* destructor,
 
 					Locker topLocker(topDamager, destructedObject);
 
-					TransactionLog playerTrx(TrxCode::NPCLOOT, destructedObject, topDamager, credits, true);
+					TransactionLog playerTrx(destructedObject, topDamager, TrxCode::NPCLOOT, credits, true);
 					playerTrx.addState("destructor", destructorObjectID);
 					playerTrx.addState("topDamagerDirect", true);
 
