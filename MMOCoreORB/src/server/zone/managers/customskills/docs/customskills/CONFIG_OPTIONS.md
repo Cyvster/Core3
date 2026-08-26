@@ -380,10 +380,11 @@ Plus Lua-exposed config mirrors (read via ConfigManager, called from scripts):
 - Per-account overlay: any getter invoked with an accountID resolves
   `Core3.AccountFlags.<accountID>.<name>` first (ConfigManager.h:198-207).
 
-## 21. Mod option: customSkillsConfig.training (P07, BRIEF-049)
+## 21. Mod option: customSkillsConfig.training (P07, BRIEF-049/049b)
 | Option | Type | Default | Consumer |
 |---|---|---|---|
-| training.trainersTeachAll | bool | true | bin/scripts/screenplays/trainers/skillTrainer.lua (SkillTrainer:isTrainersTeachAllEnabled / getTrainerSkillTable) |
+| training.trainersTeachAll | bool | true | skillTrainer.lua getTrainerSkillTable -- trainer teaches own tree + all elite/master trees above its line (cyvster2 hierarchical semantics; brawler covers TKA/swordsman/pikeman/fencer, NOT smuggler) |
+| training.trainersTeachEverything | bool | false | same file -- universal union of all 36 trees from ANY trainer (overrides trainersTeachAll when true) |
 
 Read once per trainer interaction from `scripts/customskills/config.lua`
 (`customSkillsConfig.training` table). When true, every skill trainer offers
@@ -422,6 +423,8 @@ Behavior when enabled:
 | Option | Type | Default | Consumer |
 |---|---|---|---|
 | loot.creditsToTopDamager | bool | true (owner approved) | CreatureManagerImplementation.cpp death-credit block (~:687) |
+| loot.nonHumanoidCredits | bool | true (cyvster2 parity) | same gate, widened to all NPC creatures |
+| loot.creditMultiplier | float | 5.0 (cyvster2 shipped 5x; vanilla 1.0) | multiplies calculateLootCredits() result |
 | loot.attachmentAutoName | bool | true (owner approved) | LootManagerImplementation.cpp setSkillMods() |
 
 Behavior when enabled:
