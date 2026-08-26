@@ -83,9 +83,11 @@
 #include "server/ServerCore.h"
 #include "server/zone/managers/gcw/GCWManager.h"
 #include "server/zone/objects/ship/ShipObject.h"
+#include "server/zone/managers/customskills/structures/CustomSkillsStructureLots.h" // BRIEF-050 (mod hook)
 
 #ifdef WITH_SWGREALMS_API
 #include "server/login/SWGRealmsAPI.h"
+#include "server/zone/managers/customskills/structures/CustomSkillsStructureLots.h" // BRIEF-050 (mod hook)
 #endif // WITH_SWGREALMS_API
 
 void PlayerObjectImplementation::initializeTransientMembers() {
@@ -3140,6 +3142,14 @@ void PlayerObjectImplementation::deleteAllWaypoints() {
 }
 
 int PlayerObjectImplementation::getLotsRemaining() {
+	// BRIEF-050 (mod hook): account-shared lots with cached design.
+	if (CustomSkillsStructureLots::isEnabled()) {
+		int accountLots = CustomSkillsStructureLots::getAccountLotsRemaining(getObjectID());
+
+		if (accountLots >= 0)
+			return accountLots;
+	}
+
 	Locker locker(asPlayerObject());
 
 	int lotsRemaining = maximumLots;

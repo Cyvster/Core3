@@ -27,6 +27,7 @@
 #include "server/zone/objects/building/BuildingObject.h"
 #include "server/zone/objects/region/CityRegion.h"
 #include "server/zone/managers/city/CityManager.h"
+#include "server/zone/managers/customskills/structures/CustomSkillsStructureLots.h" // BRIEF-050 (mod hook)
 #include "server/zone/objects/player/sui/messagebox/SuiMessageBox.h"
 #include "server/zone/objects/player/sui/transferbox/SuiTransferBox.h"
 #include "server/zone/objects/player/sui/inputbox/SuiInputBox.h"
@@ -544,6 +545,10 @@ StructureObject* StructureManager::placeStructure(CreatureObject* creature, cons
 	ManagedReference<PlayerObject*> ghost = creature->getPlayerObject();
 	if (ghost != nullptr) {
 		ghost->addOwnedStructure(structureObject);
+
+		// BRIEF-050 (mod hook): account-shared lots + ADMIN for all account characters.
+		CustomSkillsStructureLots::recordPlace(creature->getObjectID(), structureObject->getLotSize());
+		CustomSkillsStructureLots::grantAccountAdmin(structureObject, creature->getObjectID());
 	}
 
 	if (structureObject->isTurret() || structureObject->isMinefield() || structureObject->isScanner()) {
@@ -626,6 +631,10 @@ StructureObject* StructureManager::placeCamp(CreatureObject* player, Customizati
 	campObject->setOwner(player->getObjectID());
 
 	ghost->addOwnedStructure(campObject);
+
+	// BRIEF-050 (mod hook): account-shared lots + ADMIN for all account characters.
+	CustomSkillsStructureLots::recordPlace(player->getObjectID(), campObject->getLotSize());
+	CustomSkillsStructureLots::grantAccountAdmin(campObject, player->getObjectID());
 
 	if (player->getFactionStatus() == FactionStatus::OVERT) {
 		campObject->setFaction(player->getFaction());

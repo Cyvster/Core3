@@ -17,6 +17,7 @@
 #include "server/zone/Zone.h"
 #include "server/zone/objects/area/events/CampAbandonTask.h"
 #include "server/zone/objects/area/events/CampDespawnTask.h"
+#include "server/zone/managers/customskills/structures/CustomSkillsStructureLots.h" // BRIEF-050 (mod hook)
 
 void CampSiteActiveAreaImplementation::initializeTransientMembers() {
 	ActiveAreaImplementation::initializeTransientMembers();
@@ -337,6 +338,9 @@ void CampSiteActiveAreaImplementation::assumeOwnership(CreatureObject* player) {
 
 	if (ownerGhost != nullptr) {
 		ownerGhost->removeOwnedStructure(camp);
+
+		// BRIEF-050 (mod hook): account-shared lots cache maintenance.
+		CustomSkillsStructureLots::recordRemove(ownerGhost->getObjectID(), camp->getLotSize());
 	}
 
 	clocker.release();
@@ -363,6 +367,9 @@ void CampSiteActiveAreaImplementation::assumeOwnership(CreatureObject* player) {
 	}
 
 	playerGhost->addOwnedStructure(camp);
+
+	// BRIEF-050 (mod hook): account-shared lots cache maintenance.
+	CustomSkillsStructureLots::recordPlace(playerGhost->getObjectID(), camp->getLotSize());
 
 	campOwner->registerObserver(ObserverEventType::STARTCOMBAT, campObserver);
 

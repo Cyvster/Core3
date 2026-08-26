@@ -15,6 +15,7 @@
 #include "server/zone/objects/building/BuildingObject.h"
 #include "server/zone/packets/object/PlayClientEffectObjectMessage.h"
 #include "server/zone/packets/scene/PlayClientEffectLocMessage.h"
+#include "server/zone/managers/customskills/structures/CustomSkillsStructureLots.h" // BRIEF-050 (mod hook)
 
 class DestroyStructureTask : public Task {
 protected:
@@ -114,6 +115,9 @@ public:
 			if (ghost != nullptr && ghost->isPlayerObject()) {
 				PlayerObject* playerObject = cast<PlayerObject*>(ghost.get());
 				playerObject->removeOwnedStructure(structureObject);
+
+				// BRIEF-050 (mod hook): account-shared lots cache maintenance.
+				CustomSkillsStructureLots::recordRemove(playerObject->getObjectID(), structureObject->getLotSize());
 
 				uint64 waypointID = structureObject->getWaypointID();
 

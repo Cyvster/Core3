@@ -11,6 +11,7 @@
 #include "server/zone/managers/player/PlayerManager.h"
 #include "templates/tangible/SharedStructureObjectTemplate.h"
 #include "server/zone/objects/transaction/TransactionLog.h"
+#include "server/zone/managers/customskills/structures/CustomSkillsStructureLots.h" // BRIEF-050 (mod hook)
 
 class TransferstructureCommand : public QueueCommand {
 public:
@@ -204,10 +205,16 @@ public:
 
 			ghost->removeOwnedStructure(structure);
 
+			// BRIEF-050 (mod hook): account-shared lots cache maintenance.
+			CustomSkillsStructureLots::recordRemove(ghost->getObjectID(), structure->getLotSize());
+
 			lock.release();
 		}
 
 		targetGhost->addOwnedStructure(structure);
+
+		// BRIEF-050 (mod hook): account-shared lots cache maintenance.
+		CustomSkillsStructureLots::recordPlace(targetGhost->getObjectID(), structure->getLotSize());
 
 		//Setup permissions.
 		structure->revokeAllPermissions(targetCreature->getObjectID());
