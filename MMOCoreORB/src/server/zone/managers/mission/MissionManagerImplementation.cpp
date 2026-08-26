@@ -968,7 +968,7 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 	// enabled (cyvster2 M03 titles); otherwise the vanilla title below.
 	CustomSkillsMissions::applyDescriptiveTitle(mission, diffDisplay, lairTemplateObject);
 
-	if (mission->getMissionTitle().getStringID().isEmpty())
+	if (mission->getMissionTitle()->getStringID().isEmpty())
 		mission->setMissionTitle("mission/mission_destroy_neutral" + messageDifficulty + missionType, "m" + String::valueOf(randTexts) + "t");
 
 	mission->setMissionDescription("mission/mission_destroy_neutral" +  messageDifficulty + missionType, "m" + String::valueOf(randTexts) + "d");

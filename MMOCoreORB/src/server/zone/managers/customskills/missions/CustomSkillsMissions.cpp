@@ -154,16 +154,13 @@ const CustomSkillsMissions::Choices& CustomSkillsMissions::getChoices(
 
 	std::lock_guard<std::mutex> locker(choicesMutex());
 
-	Choices** entry = choicesMap().getPointer(player->getObjectID());
-	if (entry != nullptr)
-		return **entry;
+	if (!choicesMap().contains(player->getObjectID()))
+		choicesMap().put(player->getObjectID(), new Choices());
 
-	choicesMap().put(player->getObjectID(), new Choices());
+	Choices* entry = choicesMap().get(player->getObjectID());
+	entry->load(player);
 
-	entry = choicesMap().getPointer(player->getObjectID());
-	(*entry)->load(player);
-
-	return **entry;
+	return *entry;
 }
 
 void CustomSkillsMissions::cacheChoices(server::zone::objects::creature::CreatureObject* player) {
@@ -176,10 +173,9 @@ void CustomSkillsMissions::cacheChoices(server::zone::objects::creature::Creatur
 void CustomSkillsMissions::clearChoices(uint64 playerObjectID) {
 	std::lock_guard<std::mutex> locker(choicesMutex());
 
-	Choices** entry = choicesMap().getPointer(playerObjectID);
-	if (entry != nullptr) {
-		delete *entry;
-		choicesMap().remove(playerObjectID);
+	if (choicesMap().contains(playerObjectID)) {
+		delete choicesMap().get(playerObjectID);
+		choicesMap().drop(playerObjectID);
 	}
 }
 
@@ -232,7 +228,7 @@ bool CustomSkillsMissions::shouldUseDescriptiveTitles() {
 }
 
 void CustomSkillsMissions::applyDescriptiveTitle(server::zone::objects::mission::MissionObject* mission,
-		int diffDisplay, const server::templates::mobile::LairTemplate* lairTemplate) {
+		int diffDisplay, server::templates::mobile::LairTemplate* lairTemplate) {
 	if (!shouldUseDescriptiveTitles() || mission == nullptr || lairTemplate == nullptr)
 		return;
 
@@ -273,10 +269,9 @@ void CustomSkillsMissions::persistChoice(server::zone::objects::creature::Creatu
 	// populate re-caches (defensive; normally clearChoices handles it).
 	{
 		std::lock_guard<std::mutex> locker(choicesMutex());
-		Choices** entry = choicesMap().getPointer(player->getObjectID());
-		if (entry != nullptr) {
-			delete *entry;
-			choicesMap().remove(player->getObjectID());
+		if (choicesMap().contains(player->getObjectID())) {
+			delete choicesMap().get(player->getObjectID());
+			choicesMap().drop(player->getObjectID());
 		}
 	}
 }

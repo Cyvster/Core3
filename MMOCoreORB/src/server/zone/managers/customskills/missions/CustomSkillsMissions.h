@@ -72,7 +72,7 @@ public:
 	// disabled or the lair template exposes no mobiles (falls back to the
 	// caller's vanilla title).
 	static void applyDescriptiveTitle(server::zone::objects::mission::MissionObject* mission,
-			int diffDisplay, const server::templates::mobile::LairTemplate* lairTemplate);
+			int diffDisplay, server::templates::mobile::LairTemplate* lairTemplate);
 
 	// --- per-populate choice caching (the performance fix) ------------
 
