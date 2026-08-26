@@ -228,7 +228,7 @@ bool CustomSkillsMissions::shouldUseDescriptiveTitles() {
 }
 
 void CustomSkillsMissions::applyDescriptiveTitle(server::zone::objects::mission::MissionObject* mission,
-		int diffDisplay, server::templates::mobile::LairTemplate* lairTemplate) {
+		int diffDisplay, LairTemplate* lairTemplate) {
 	if (!shouldUseDescriptiveTitles() || mission == nullptr || lairTemplate == nullptr)
 		return;
 
