@@ -65,3 +65,11 @@ Every fact learned while reading code or building -- enum scoping, which file ow
 ox-alpha (opencode/x-preview-f-free), 08242026 -- initial guide.  
 hy3-free (opencode/hy3-free), 08242026 -- BRIEF-020 dense-format pass.
 *Last reconciled 08242026 by hy3-free (opencode/hy3-free) -- BRIEF-020.*
+
+
+## Discovery capture ([R6.9])
+
+Every delivery report lists discoveries made during the task, each with the
+reference-doc cite where it was captured, or "no discoveries". Hotfixes that
+require root-cause diagnosis must capture their lesson in a reference doc in
+the same commit. See rules/process.md -> Discovery-capture enforcement.
