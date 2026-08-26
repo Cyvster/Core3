@@ -249,16 +249,26 @@ customSkillsConfig = {
 	-- Why it's safe : per-skill prerequisites, XP costs, and skill-point costs
 	--                are still enforced by the engine when you try to learn.
 	--                This only widens WHICH NPC will teach you.
+	-- What it does : when trainersTeachEverything is enabled INSTEAD, every
+	--                trainer offers the full union of ALL profession trees
+	--                (BRIEF-049 original behavior).
 	-- Fields       :
-	--   trainersTeachAll  true  = any trainer teaches any profession tree
-	--                     false = vanilla behavior (each trainer owns one tree)
-	-- Default       : true (owner approved).
+	--   trainersTeachAll        true  = each trainer teaches its own full tree
+	--                             PLUS all elite/master trees above its line
+	--                             (brawler trainer covers TKA/swordsman/pike/
+	--                             fencer; NOT smuggler). cyvster2 semantics.
+	--                           false = vanilla behavior (one tree per trainer)
+	--   trainersTeachEverything true  = any trainer teaches any profession
+	--                             tree (overrides trainersTeachAll)
+	-- Default       : trainersTeachAll = true, trainersTeachEverything = false
+	--                 (owner approved; matches cyvster2).
 	-- REAL EXAMPLE (commented out): restore vanilla trainer behavior:
 	--
 	-- training = { trainersTeachAll = false },
 	-- ---------------------------------------------------------------------------
 	training = {
 		trainersTeachAll = true,
+		trainersTeachEverything = false,
 	},
 
 	-- ---------------------------------------------------------------------------

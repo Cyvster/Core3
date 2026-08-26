@@ -3,21 +3,32 @@ includeFile("../customskills/config.lua") -- BRIEF-049 (mod hook): mod config fo
 SkillTrainer = ScreenPlay:new {}
 
 -- ============================================================================
--- BRIEF-049 (mod hook) : P07 - Skill trainers teach all professions
--- When customSkillsConfig.training.trainersTeachAll is true (default), every
--- skill trainer offers the FULL union of all profession trees (elite/master
--- boxes included) instead of only its own tree. Per-skill prerequisites, XP
--- costs, and skill-point checks still apply (enforced by the engine in
--- fulfillsSkillPrerequisitesAndXp / canLearnSkill), so this widens WHO can
--- teach, never WHAT you qualify for.
+-- BRIEF-049 (mod hook) : P07 - Skill trainers teach their full hierarchy
+-- BRIEF-049b correction: cyvster2's semantics were HIERARCHICAL, not a
+-- universal union. trainersTeachAll = true means each trainer teaches its own
+-- full profession tree PLUS every elite/master tree that grows out of its
+-- line (e.g. the brawler trainer teaches TKA, swordsman, pikeman, fencer and
+-- their masters -- but NOT smuggler). trainersTeachEverything = true gives
+-- the universal union instead (every trainer teaches everything). Per-skill
+-- prerequisites, XP costs, and skill-point checks still apply (enforced by
+-- the engine in fulfillsSkillPrerequisitesAndXp / canLearnSkill), so this
+-- widens WHO can teach, never WHAT you qualify for.
 -- ============================================================================
 
 local customskillsAllSkillsCache = nil
+local customskillsHierarchyCache = nil
 
 function SkillTrainer:isTrainersTeachAllEnabled()
 	return customSkillsConfig ~= nil
 		and customSkillsConfig.training ~= nil
 		and customSkillsConfig.training.trainersTeachAll == true
+end
+
+-- BRIEF-049b: universal mode (optional; overrides hierarchical mode).
+function SkillTrainer:isTrainersTeachEverythingEnabled()
+	return customSkillsConfig ~= nil
+		and customSkillsConfig.training ~= nil
+		and customSkillsConfig.training.trainersTeachEverything == true
 end
 
 -- Lazily built, cached union of every trainer table in trainerData.lua.
@@ -35,11 +46,71 @@ function SkillTrainer:getAllProfessionSkills()
 	return customskillsAllSkillsCache
 end
 
--- BRIEF-049 (mod hook): the skill table a trainer teaches from. Vanilla
--- behavior (own tree only) when the knob is off.
+-- BRIEF-049b: static base-trainer -> related elite/master tree mapping.
+-- Each base-class trainer teaches its own tree plus every profession tree
+-- whose root chain connects to it (vanilla prereqs: TKA/1hsword/2hsword/
+-- polearm grow from brawler's unarmed/1handmelee/2handmelee/polearm lines;
+-- carbine/rifleman/pistol from marksman; combatmedic/doctor from medic;
+-- dancer/musician from entertainer; the crafting elites from artisan).
+local trainerHierarchy = {
+	trainer_brawler = { "trainer_tka", "trainer_1hsword", "trainer_2hsword", "trainer_polearm", "trainer_unarmed" },
+	trainer_marksman = { "trainer_carbine", "trainer_rifleman", "trainer_pistol" },
+	trainer_medic = { "trainer_combatmedic", "trainer_doctor" },
+	trainer_entertainer = { "trainer_dancer", "trainer_musician" },
+	trainer_artisan = { "trainer_architect", "trainer_armorsmith", "trainer_chef", "trainer_droidengineer",
+		"trainer_tailor", "trainer_weaponsmith", "trainer_merchant" },
+	trainer_scout = { "trainer_ranger", "trainer_creaturehandler", "trainer_squadleader" },
+}
+
+-- Lazily built, cached merged skill list per trainer type for the hierarchy.
+function SkillTrainer:getHierarchySkills(trainerType)
+	if (customskillsHierarchyCache == nil) then
+		customskillsHierarchyCache = { }
+	end
+
+	local cached = customskillsHierarchyCache[trainerType]
+	if (cached ~= nil) then
+		return cached
+	end
+
+	local merged = { }
+
+	local function appendTree(treeName)
+		local tree = trainerSkills[treeName]
+		if (tree == nil) then
+			return
+		end
+		for i = 1, #tree, 1 do
+			merged[#merged + 1] = tree[i]
+		end
+	end
+
+	-- Own full tree first (as vanilla), then every connected tree.
+	appendTree(trainerType)
+
+	local related = trainerHierarchy[trainerType]
+	if (related ~= nil) then
+		for i = 1, #related, 1 do
+			appendTree(related[i])
+		end
+	end
+
+	customskillsHierarchyCache[trainerType] = merged
+
+	return merged
+end
+
+-- BRIEF-049b (mod hook): the skill table a trainer teaches from.
+--   trainersTeachEverything = true : universal union (every tree)
+--   trainersTeachAll       = true : own tree + connected elite/master trees
+--   both off                     : vanilla behavior (own tree only)
 function SkillTrainer:getTrainerSkillTable(trainerType)
-	if (self:isTrainersTeachAllEnabled()) then
+	if (self:isTrainersTeachEverythingEnabled()) then
 		return self:getAllProfessionSkills()
+	end
+
+	if (self:isTrainersTeachAllEnabled()) then
+		return self:getHierarchySkills(trainerType)
 	end
 
 	return trainerSkills[trainerType]
