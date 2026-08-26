@@ -31,6 +31,7 @@
 #include "server/zone/managers/resource/ResourceManager.h"
 #include "server/zone/packets/chat/ChatSystemMessage.h"
 #include "server/zone/objects/tangible/threat/ThreatMap.h"
+#include "server/zone/managers/customskills/CustomSkillsConfig.h" // BRIEF-046 (mod hook)
 #include "server/zone/managers/creature/LairObserver.h"
 #include "server/zone/managers/creature/DynamicSpawnObserver.h"
 #include "server/zone/objects/intangible/PetControlDevice.h"
@@ -685,11 +686,36 @@ int CreatureManagerImplementation::notifyDestruction(TangibleObject* destructor,
 			LootManager* lootManager = zoneServer->getLootManager();
 
 			if (destructedObject->isNonPlayerCreatureObject() && !destructedObject->isEventMob()) {
-				destructedObject->clearCashCredits();
-				int credits = lootManager->calculateLootCredits(destructedObject->getLevel());
-				TransactionLog trx(TrxCode::NPCLOOT, destructedObject, credits, true);
-				trx.addState("destructor", destructorObjectID);
-				destructedObject->addCashCredits(credits);
+				// BRIEF-046 (mod hook): when enabled, NPC credits skip the corpse
+				// and go straight to the top-damage player (cyvster2 E02, cleaned:
+				// null-checks the threat-map winner and keeps the event-mob
+				// exclusion; trx now logs the real credit destination).
+				CreatureObject* topDamager = copyThreatMap.getHighestDamagePlayer();
+
+				if (CustomSkillsConfig::instance()->isCreditsToTopDamagerEnabled()
+						&& topDamager != nullptr && topDamager->isPlayerCreature()) {
+					int credits = lootManager->calculateLootCredits(destructedObject->getLevel());
+
+					Locker topLocker(topDamager, destructedObject);
+
+					TransactionLog playerTrx(TrxCode::NPCLOOT, destructedObject, topDamager, credits, true);
+					playerTrx.addState("destructor", destructorObjectID);
+					playerTrx.addState("topDamagerDirect", true);
+
+					topDamager->addCashCredits(credits);
+
+					StringBuffer msg;
+					msg << "You recover " << credits << " credits from the corpse of "
+						<< destructedObject->getDisplayedName() << ".";
+					topDamager->sendSystemMessage(msg.toString());
+				} else {
+					// Vanilla path: park the credits on the corpse for looting.
+					destructedObject->clearCashCredits();
+					int credits = lootManager->calculateLootCredits(destructedObject->getLevel());
+					TransactionLog trx(TrxCode::NPCLOOT, destructedObject, credits, true);
+					trx.addState("destructor", destructorObjectID);
+					destructedObject->addCashCredits(credits);
+				}
 			}
 
 			Locker invLocker(creatureInventory, destructedObject);
