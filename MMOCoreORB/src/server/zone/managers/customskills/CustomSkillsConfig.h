@@ -102,10 +102,10 @@ private:
 	bool lootNonHumanoidCredits;
 	float lootCreditMultiplier;
 
-	bool isNonHumanoidCreditsEnabled() const { return lootNonHumanoidCredits; }
-	float getLootCreditMultiplier() const { return lootCreditMultiplier; }
 
 public:
+	bool isNonHumanoidCreditsEnabled() const { return lootNonHumanoidCredits; }
+	float getLootCreditMultiplier() const { return lootCreditMultiplier; }
 	// BRIEF-051 (mod hook): menu-visible accessors for the 046b knobs.
 	bool isLootNonHumanoidCreditsEnabled() const { return lootNonHumanoidCredits; }
 	float getMenuLootCreditMultiplier() const { return lootCreditMultiplier; }
