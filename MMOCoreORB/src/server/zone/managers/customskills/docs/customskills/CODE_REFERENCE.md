@@ -1737,3 +1737,33 @@ STAY/GUARD/PATROL (pet summon research, _044_pet_summon_design.md).
   `setOwner(...)`). Extending ADMIN to other account characters goes right
   after the addOwnedStructure call; grant by character OID even if offline
   (StructurePermissionList is persistent).
+
+## Loot + Survey QoL Ports (BRIEF-046/047/048, E02/E05/C06)
+
+Three cyvster2 ports, each config-gated via `customSkillsConfig.loot` /
+`customSkillsConfig.surveying` (defaults ON / 2624m, owner approved).
+
+**E02 credits-to-top-damager (BRIEF-046)**: CreatureManagerImplementation.cpp
+death-credit block (~:687). `copyThreatMap.getHighestDamagePlayer()` is the
+correct call site here (post-destruction copy exists); it CAN return null and
+cyvster2 never checked -- we null-check plus isPlayerCreature before paying.
+TransactionLog constructor `(TrxCode, src, dst, amount, isCash)` logs the real
+destination instead of cyvster2's corpse-only trx. Event-mob exclusion kept.
+
+**E05 attachment auto-naming (BRIEF-047)**: hook in LootManagerImplementation::
+setSkillMods() AFTER the addSkillMods loop (not createLootObject; setSkillMods
+is where mods actually land). Fixed cyvster2's smelly rename-inside-scan-loop:
+find highest mod first, one setCustomObjectName(UnicodeString, false) call.
+Attachment names live on TangibleObject customName (unicode), not StringId.
+
+**C06 survey range (BRIEF-048)**: vanilla range logic is NOT data-driven --
+hard-coded tiers in SurveyToolImplementation.cpp (sendRangeSui /
+getSkillBasedRange / setRange) plus TWO hard clamps elsewhere:
+ResourceSpawner.cpp sendResourceListForSurvey (`toolRange > 1024` -> 320,
+`points > 6` -> 3) must be raised or surveys silently clamp back. Shared
+ladder lives in SurveyToolSetRangeSuiCallback.h namespace SurveyRangeLadder
+(tierRange/tierForSkill/pointsForRange). SUI listbox row index = tier index;
+the old callback math `64*index+64` no longer matches interpolated labels.
+Ladder interpolates 64..maxRange across 6 skill-gated tiers (gates 20/35/55/
+75/100/120 preserved), floored to 64m granularity; maxRange=384 reproduces
+vanilla exactly. Sample grid: 6x6 points above 1024m.

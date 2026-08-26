@@ -416,3 +416,33 @@ Behavior when enabled:
 - Query hook: PlayerObjectImplementation::getLotsRemaining
   (PlayerObjectImplementation.cpp:3142) falls back to vanilla math if the
   account cannot be resolved or has no characters.
+
+## 23. Mod option: customSkillsConfig.loot (BRIEF-046/047, E02/E05)
+
+| Option | Type | Default | Consumer |
+|---|---|---|---|
+| loot.creditsToTopDamager | bool | true (owner approved) | CreatureManagerImplementation.cpp death-credit block (~:687) |
+| loot.attachmentAutoName | bool | true (owner approved) | LootManagerImplementation.cpp setSkillMods() |
+
+Behavior when enabled:
+- creditsToTopDamager: NPC credit drops skip the corpse and are paid directly
+  to the top-damage player (`ThreatMap::getHighestDamagePlayer`, null-checked)
+  with a system message confirming the amount. Event mobs always excluded.
+  false = vanilla corpse credits.
+- attachmentAutoName: newly looted Armor/Clothing Attachments are renamed
+  `[AA] <statname>: <value>` / `<[CA]> <statname>: <value>` from their highest
+  skill mod. Name is set exactly once after the mod scan (cyvster2 renamed
+  inside the loop). false = vanilla generic attachment names.
+
+## 24. Mod option: customSkillsConfig.surveying (BRIEF-048, C06)
+
+| Option | Type | Default | Consumer |
+|---|---|---|---|
+| surveying.maxRange | int (meters) | 2624 (owner approved; vanilla was 384) | SurveyToolImplementation.cpp + SurveyToolSetRangeSuiCallback.h + ResourceSpawner.cpp |
+
+Behavior: survey tool range tiers scale dynamically from 64m up to maxRange
+across six skill-gated tiers (gates at surveying 20/35/55/75/100/120,
+vanilla-preserved), in 64m-granular steps; sample grid is 6x6 points above
+1024m (3x3/4x4/5x5 below as vanilla). Setting maxRange = 384 restores the
+exact vanilla ladder. Accepted range 64-8192; requires server restart.
+Shared tier helpers live in `SurveyRangeLadder` (SurveyToolSetRangeSuiCallback.h).
