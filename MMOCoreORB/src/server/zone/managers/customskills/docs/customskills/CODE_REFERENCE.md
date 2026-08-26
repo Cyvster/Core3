@@ -1683,3 +1683,25 @@ Direction" / "Mission Difficulty"); no Lua screenplays in the path.
 Config: `customSkillsConfig.missions` table (missionOptionsEnabled,
 directionOptionEnabled, difficultyOptionEnabled, missionListSize default 3,
 descriptiveTitles default true).
+
+## Mission/Coordinate Gotchas (BRIEF-043, 08252026)
+
+`SceneObject::getWorldCoordinate(distance, angle)` is FACING-RELATIVE:
+SceneObjectImplementation.cpp:1583 subtracts `direction.getRadians()` from the
+angle. It answers "spawn N meters off my left shoulder", never "spawn at
+compass heading X". Absolute compass placement must compute coordinates
+directly (see `CustomSkillsMissions::getMissionStartPosition`).
+World axes: north = +Y, east = -X (verified live: first implementation with
+north=-Y produced exact 180-degree inversions on all four cardinals).
+Vanilla mission placement rejects water/boundary positions and re-rolls --
+directional missions near coastlines drift toward land; that redirect is
+vanilla behavior, not a mod bug.
+engine3 math types: `Vector3` = engine/util/u3d/Vector3.h, used unqualified
+(engine.h using-declarations). No `server/.../scene/Vector3.h` exists.
+`LairTemplate` (templates/mobile/LairTemplate.h) is GLOBAL namespace -- never
+forward-declare it inside server::templates::mobile.
+`VectorMap` has no getPointer(); use contains()/get()/drop(). engine3 has no
+system/util/HashMap.h in this tree.
+Vanilla pets self-recover when >128m from owner: pet.lua:130-132
+CheckOwnerInRange 128.0 -> PetReturn; stranding requires pathing failure or
+STAY/GUARD/PATROL (pet summon research, _044_pet_summon_design.md).
