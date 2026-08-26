@@ -45,6 +45,10 @@ void CustomSkillsConfig::setDefaults() {
 	missionDirectionEnabled = true;
 	missionDifficultyEnabled = true;
 	missionListSize = DEFAULT_MISSION_LIST_SIZE;
+
+	// BRIEF-050: account-shared structure lots (owner approved default ON).
+	accountSharedLots = DEFAULT_ACCOUNT_SHARED_LOTS;
+
 	descriptiveTitles = true;
 
 	modifierEnabled[CustomSkillsModifierType::CRITICAL_CHANCE] = true;
@@ -274,6 +278,13 @@ void CustomSkillsConfig::load() {
 		descriptiveTitles = missions.getBooleanField("descriptiveTitles", true);
 	}
 	missions.pop();
+
+	// BRIEF-050: account-shared structure lots.
+	LuaObject structures = root.getObjectField("structures");
+	if (structures.isValidTable()) {
+		accountSharedLots = structures.getBooleanField("accountSharedLots", DEFAULT_ACCOUNT_SHARED_LOTS);
+	}
+	structures.pop();
 
 
 

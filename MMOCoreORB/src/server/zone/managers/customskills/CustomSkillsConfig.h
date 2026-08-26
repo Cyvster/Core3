@@ -38,6 +38,9 @@ public:
 	int getMissionListSize() const { return missionListSize; }
 	bool isDescriptiveMissionTitlesEnabled() const { return descriptiveTitles; }
 
+	// BRIEF-050: account-shared structure lots.
+	bool isAccountSharedLotsEnabled() const { return accountSharedLots; }
+
 private:
 	bool criticalChanceEnabled;
 	int criticalChanceFallbackBonus;
@@ -66,6 +69,10 @@ private:
 	bool missionDifficultyEnabled;
 	int missionListSize;
 	bool descriptiveTitles;
+
+	// BRIEF-050: account-shared structure lots state.
+	static const bool DEFAULT_ACCOUNT_SHARED_LOTS = true;
+	bool accountSharedLots;
 
 	static const int DEFAULT_FCT_SCALE_STEP_BP = 1500;
 	static const int DEFAULT_FCT_CRIT_BONUS_BP = 2500;
