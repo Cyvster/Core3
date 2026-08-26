@@ -115,8 +115,15 @@ before claim ([R6.9], BRIEF-019).
 | [`038-mission-terminal-options-port.md`](038-mission-terminal-options-port.md) | Port mission terminal direction/difficulty options from cyvster2 into mod; research -> design -> implement; updates ledger | RESEARCH DELIVERED (design in [`_038_design.md`](_038_design.md); implementation pending owner sign-off) |
 | [`039-integrity-audit-post008.md`](039-integrity-audit-post008.md) | Integrity audit: 0 CRITICAL / 4 DEFECT / 3 SMELL / 2 DOC-MISMATCH; ERR-016..019 filed (flytext broadcast scope, backpack-blind prefill, exp snapshot dead-write) | DELIVERED |
 | [`040-discovery-capture-enforcement.md`](040-discovery-capture-enforcement.md) | R6.9 enforcement: mandatory delivery discovery line (pickup step 8), hotfix same-commit rule, coordinator grep duty; backfilled 5 leaked facts | DELIVERED |
-| [`041-repeatcraft-subcommand.md`](041-repeatcraft-subcommand.md) | Convert /repeatcraft to /customskills repeatcraft subcommand (TRE policy: no new top-level commands); add tool radial-menu repeat option; research alternate autocraft objects | CLAIMED |
+| [`041-repeatcraft-subcommand.md`](041-repeatcraft-subcommand.md) | Convert /repeatcraft to /customskills repeatcraft subcommand (TRE policy: no new top-level commands); add tool radial-menu repeat option; research alternate autocraft objects | SCRAPPED (repeat-craft removed 08252026) |
 | [`042-remediation-fct-repeatcraft.md`](042-remediation-fct-repeatcraft.md) | Remediation: FCT visibility (suppress vanilla on escalation, broadcast), lair/TANO tier support, repeat-craft hardening (ERR-017..019), subcommand+radial | DELIVERED |
+| [`043-mission-options-implementation.md`](043-mission-options-implementation.md) | Mission terminal direction/difficulty options + list size knob + descriptive titles (per _038_design) | DELIVERED |
+| [`_038_design.md`](_038_design.md) | BRIEF-038 companion: mission options research/design doc | DELIVERED (research) |
+| [`_044_pet_summon_design.md`](_044_pet_summon_design.md) | Pet range summon research/design -- vanilla already self-recovers >128m; design for opt-in summon task | RESEARCH DELIVERED |
+| [`045-declutter-command-guides.md`](045-declutter-command-guides.md) | Review command guides: classify functional vs nonfunctional, move nonfunctional to labeled bottom section | OPEN |
+| 046b credits follow-up (commit 8bb491c32e; no separate brief file) | E02 follow-up: loot.nonHumanoidCredits + loot.creditMultiplier (5.0 = cyvster2), single credit flow | DELIVERED (8bb491c32e) |
+| 049b trainer hierarchy follow-up (commit 79614b0907; no separate brief file) | P07 correction: trainersTeachAll = hierarchical (line + elites above); new trainersTeachEverything universal knob | DELIVERED (79614b0907) |
+| [`051-menu-mod-options.md`](051-menu-mod-options.md) | Register all mod config knobs in /customskills options menu; authoring rule requiring menu registration per new knob | DELIVERED |
 
 ## Notes
 
@@ -136,7 +143,7 @@ before claim ([R6.9], BRIEF-019).
 
 ---
 
-**Last reconciled:** 08252026 by ox-alpha (opencode/x-preview-f-free) --
+**Last reconciled:** 08252026 (late) by ox-alpha -- 041 -> SCRAPPED (repeat-craft removed); added rows 043-051 with true statuses; 046b/049b follow-up rows noted as commit-referenced.
 index brought current: 023/026/027/032/033/035 DELIVERED (research batch),
 034 consolidated strike DELIVERED, 029 folded into 030, missing 031 row
 added, numeric order restored. In flight: 027 impl (config overlay hook),
