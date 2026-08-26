@@ -193,19 +193,31 @@ customSkillsConfig = {
 	--                        paid DIRECTLY to the top-damage player (system
 	--                        message confirms the amount). Event mobs are
 	--                        always excluded. false = vanilla corpse credits.
+	--   nonHumanoidCredits   true = ALL NPC creatures drop credits (cyvster2's
+	--                        widened "make all mobs drop credits" gate), not
+	--                        just humanoid NPCs. false = vanilla scope
+	--                        (humanoid NPCs only).
+	--   creditMultiplier     multiplies calculated credit amounts. cyvster2
+	--                        shipped 5x (LootManagerImplementation
+	--                        "credits *= 5"); 1.0 restores vanilla amounts.
+	--                        Clamped to [0, 1000].
 	--   attachmentAutoName   true = newly looted Armor/Clothing Attachments
 	--                        are renamed "[AA] <statname>: <value>" /
 	--                        "<[CA]> <statname>: <value>" from their highest
 	--                        skill mod, so you can triage attachments without
 	--                        opening each one.
-	-- Defaults     : both true (owner approved).
+	-- Defaults     : creditsToTopDamager/nonHumanoidCredits/attachmentAutoName
+	--                true; creditMultiplier 5.0 (cyvster2 values).
 	-- REAL EXAMPLE (commented out): restore vanilla loot behavior:
 	--
-	-- loot = { creditsToTopDamager = false, attachmentAutoName = false },
+	-- loot = { creditsToTopDamager = false, attachmentAutoName = false,
+	--          nonHumanoidCredits = false, creditMultiplier = 1.0 },
 	-- ---------------------------------------------------------------------------
 	loot = {
 		creditsToTopDamager = true,
 		attachmentAutoName = true,
+		nonHumanoidCredits = true, -- cyvster2: all mobs drop credits
+		creditMultiplier = 5.0,    -- cyvster2 shipped 5x; vanilla was 1.0
 	},
 
 	-- ---------------------------------------------------------------------------

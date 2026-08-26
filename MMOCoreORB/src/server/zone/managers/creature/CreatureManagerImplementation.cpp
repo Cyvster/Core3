@@ -685,17 +685,28 @@ int CreatureManagerImplementation::notifyDestruction(TangibleObject* destructor,
 		if (creatureInventory != nullptr && player != nullptr && player->isPlayerCreature()) {
 			LootManager* lootManager = zoneServer->getLootManager();
 
-			if (destructedObject->isNonPlayerCreatureObject() && !destructedObject->isEventMob()) {
+			// BRIEF-046b: vanilla credits only apply to humanoid NPCs; when
+			// nonHumanoidCredits is on, ALL NPC creatures (non-agitor NPC
+			// creatures included) drop/redirect credits -- cyvster2's widened
+			// "make all mobs drop credits" gate.
+			bool creditScopeOk = destructedObject->isNonPlayerCreatureObject()
+				&& !destructedObject->isEventMob()
+				&& (destructedObject->isHumanoid()
+					|| CustomSkillsConfig::instance()->isNonHumanoidCreditsEnabled());
+
+			if (creditScopeOk) {
 				// BRIEF-046 (mod hook): when enabled, NPC credits skip the corpse
 				// and go straight to the top-damage player (cyvster2 E02, cleaned:
 				// null-checks the threat-map winner and keeps the event-mob
 				// exclusion; trx now logs the real credit destination).
 				CreatureObject* topDamager = copyThreatMap.getHighestDamagePlayer();
+				int credits = lootManager->calculateLootCredits(destructedObject->getLevel());
+
+				// BRIEF-046b: cyvster2 credit multiplier (default 5.0, vanilla 1.0).
+				credits = (int)(credits * CustomSkillsConfig::instance()->getLootCreditMultiplier());
 
 				if (CustomSkillsConfig::instance()->isCreditsToTopDamagerEnabled()
 						&& topDamager != nullptr && topDamager->isPlayerCreature()) {
-					int credits = lootManager->calculateLootCredits(destructedObject->getLevel());
-
 					Locker topLocker(topDamager, destructedObject);
 
 					TransactionLog playerTrx(destructedObject, topDamager, TrxCode::NPCLOOT, credits, true);
@@ -711,7 +722,6 @@ int CreatureManagerImplementation::notifyDestruction(TangibleObject* destructor,
 				} else {
 					// Vanilla path: park the credits on the corpse for looting.
 					destructedObject->clearCashCredits();
-					int credits = lootManager->calculateLootCredits(destructedObject->getLevel());
 					TransactionLog trx(TrxCode::NPCLOOT, destructedObject, credits, true);
 					trx.addState("destructor", destructorObjectID);
 					destructedObject->addCashCredits(credits);

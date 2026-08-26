@@ -7,6 +7,10 @@ CustomSkillsConfig::CustomSkillsConfig() : Logger("CustomSkillsConfig") {
 	load();
 }
 
+// BRIEF-046b: cyvster2 shipped a 5x credit multiplier (LootManagerImplementation
+// credits *= 5), so the default mirrors that rather than vanilla 1.0.
+const float CustomSkillsConfig::DEFAULT_LOOT_CREDIT_MULTIPLIER = 5.0f;
+
 void CustomSkillsConfig::setDefaults() {
 	for (int i = 0; i < CustomSkillsModifierType::COUNT; ++i) {
 		modifierEnabled[i] = false;
@@ -48,6 +52,12 @@ void CustomSkillsConfig::setDefaults() {
 
 	// BRIEF-050: account-shared structure lots (owner approved default ON).
 	accountSharedLots = DEFAULT_ACCOUNT_SHARED_LOTS;
+
+	// BRIEF-046b: non-humanoid creatures drop credits too, and amounts get
+	// the credit multiplier (cyvster2 shipped 5x; see LootManagerImplementation
+	// credits *= 5 in the original). Defaults mirror cyvster2.
+	lootNonHumanoidCredits = DEFAULT_NON_HUMANOID_CREDITS;
+	lootCreditMultiplier = DEFAULT_LOOT_CREDIT_MULTIPLIER;
 
 	// BRIEF-046/047/048 defaults (owner approved): credits-to-player ON,
 	// attachment auto-naming ON, survey max range 2624m (vanilla 384).
@@ -297,6 +307,14 @@ void CustomSkillsConfig::load() {
 	if (loot.isValidTable()) {
 		lootCreditsToTopDamager = loot.getBooleanField("creditsToTopDamager", true); // E02
 		attachmentAutoName = loot.getBooleanField("attachmentAutoName", true);       // E05
+
+		// BRIEF-046b: widened credit scope + multiplier (cyvster2 semantics).
+		lootNonHumanoidCredits = loot.getBooleanField("nonHumanoidCredits", DEFAULT_NON_HUMANOID_CREDITS);
+		float creditMultiplier = loot.getFloatField("creditMultiplier", DEFAULT_LOOT_CREDIT_MULTIPLIER);
+		if (creditMultiplier >= 0.f && creditMultiplier <= 1000.f)
+			lootCreditMultiplier = creditMultiplier;
+		else
+			warning("loot.creditMultiplier out of range [0, 1000]; using default");
 	}
 	loot.pop();
 

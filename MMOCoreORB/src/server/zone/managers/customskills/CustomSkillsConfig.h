@@ -90,6 +90,15 @@ private:
 	bool attachmentAutoName;      // E05
 	int surveyMaxRange;           // C06, meters
 
+	// BRIEF-046b: cyvster2 credit scope + multiplier state.
+	static const bool DEFAULT_NON_HUMANOID_CREDITS = true;
+	static const float DEFAULT_LOOT_CREDIT_MULTIPLIER;
+	bool lootNonHumanoidCredits;
+	float lootCreditMultiplier;
+
+	bool isNonHumanoidCreditsEnabled() const { return lootNonHumanoidCredits; }
+	float getLootCreditMultiplier() const { return lootCreditMultiplier; }
+
 	static const int DEFAULT_FCT_SCALE_STEP_BP = 1500;
 	static const int DEFAULT_FCT_CRIT_BONUS_BP = 2500;
 
