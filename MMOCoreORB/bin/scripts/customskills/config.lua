@@ -158,6 +158,27 @@ customSkillsConfig = {
 	},
 
 	-- ---------------------------------------------------------------------------
+	-- training : skill trainer reach (P07, BRIEF-049)
+	-- What it does : when trainersTeachAll is enabled, EVERY skill trainer
+	--                offers the full union of all profession trees -- starter,
+	--                elite, master, and Jedi boxes included. No more hunting
+	--                for the one trainer who can teach your next box.
+	-- Why it's safe : per-skill prerequisites, XP costs, and skill-point costs
+	--                are still enforced by the engine when you try to learn.
+	--                This only widens WHICH NPC will teach you.
+	-- Fields       :
+	--   trainersTeachAll  true  = any trainer teaches any profession tree
+	--                     false = vanilla behavior (each trainer owns one tree)
+	-- Default       : true (owner approved).
+	-- REAL EXAMPLE (commented out): restore vanilla trainer behavior:
+	--
+	-- training = { trainersTeachAll = false },
+	-- ---------------------------------------------------------------------------
+	training = {
+		trainersTeachAll = true,
+	},
+
+	-- ---------------------------------------------------------------------------
 
 	-- ---------------------------------------------------------------------------
 	-- criticalChance : chance for a landed attack to become a CRITICAL hit

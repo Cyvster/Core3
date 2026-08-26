@@ -717,3 +717,27 @@ Module install/remove: [../installation/INSTALLATION.md](../installation/INSTALL
   compass trig by hand (cyvster2's hand-rolled angle+PI/2 was wrong twice;
   fix commits 608116821c, db6b0b6c56).
   
+
+## Skill Trainer System (R6.9, P07/BRIEF-049)
+
+- Trainer skill lists are pure Lua data: `bin/scripts/screenplays/trainers/trainerData.lua`
+  defines `trainerSkills[trainerType]` -- one full tree (novice, 4x4 branches,
+  master) per trainer type; 36 tables / 774 skills total in this tree.
+- Consumers live in `bin/scripts/screenplays/trainers/skillTrainer.lua`:
+  `getTeachableSkills` (:18 pre-mod) filters the table through
+  `SkillManager:fulfillsSkillPrerequisitesAndXp` (qualified list) or
+  `fulfillsSkillPrerequisites` (info list); `hasSurpassedTrainer` and
+  `getPrerequisiteTrainerSkills` (which reads `skills[1]` as the novice line)
+  gate the conversation in `trainerConvHandler.lua`
+  (`getInitialScreen`: intro vs `no_qualify` vs `topped_out`).
+- Actual teaching is engine-side: `trainerConvHandler:handleConfirmLearnScreen`
+  calls `SkillManager:canLearnSkill(pPlayer, name, true)` then
+  `awardSkill` -- money/XP/skill-point/prereq checks are NEVER bypassed by
+  widening the trainer list.
+- P07 port pattern: do NOT edit trainerData.lua (vanilla data file). Add a
+  mod accessor (`SkillTrainer:getTrainerSkillTable`) that returns the lazily
+  built union of all tables when
+  `customSkillsConfig.training.trainersTeachAll = true`, and short-circuit
+  the two trainer-level gates (`hasSurpassedTrainer` -> false,
+  `getPrerequisiteTrainerSkills` -> nil) under the knob -- per-skill checks
+  still apply at learn time. Vanilla path untouched when knob is false.

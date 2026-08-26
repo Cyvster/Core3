@@ -379,3 +379,16 @@ Plus Lua-exposed config mirrors (read via ConfigManager, called from scripts):
   configVersion bump.
 - Per-account overlay: any getter invoked with an accountID resolves
   `Core3.AccountFlags.<accountID>.<name>` first (ConfigManager.h:198-207).
+
+## 21. Mod option: customSkillsConfig.training (P07, BRIEF-049)
+
+| Option | Type | Default | Consumer |
+|---|---|---|---|
+| training.trainersTeachAll | bool | true | bin/scripts/screenplays/trainers/skillTrainer.lua (SkillTrainer:isTrainersTeachAllEnabled / getTrainerSkillTable) |
+
+Read once per trainer interaction from `scripts/customskills/config.lua`
+(`customSkillsConfig.training` table). When true, every skill trainer offers
+the union of all 36 profession trees (774 skills, elite/master included);
+per-skill prerequisites, XP, and skill-point costs remain engine-enforced at
+learn time. Set false for vanilla one-tree-per-trainer behavior. Requires
+server restart (screenplay Lua is not hot-reloaded).
