@@ -886,9 +886,10 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 		int distance = destroyMissionBaseDistance + destroyMissionDifficultyDistanceFactor * difficultyLevel;
 		distance += System::random(destroyMissionRandomDistance) + System::random(destroyMissionDifficultyRandomDistance * difficultyLevel);
 
-		// BRIEF-043 (mod hook): chosen compass heading +/- deviation wedge,
-		// or the vanilla random heading when no direction preference is set.
-		startPos = player->getWorldCoordinate((float)distance, CustomSkillsMissions::getMissionHeading(player, (float)System::random(360)), false);
+		// BRIEF-043 (mod hook): absolute compass placement (ERR-022 fix --
+		// vanilla getWorldCoordinate interprets the angle relative to player
+		// facing, which rotated chosen directions as the player turned).
+		startPos = CustomSkillsMissions::getMissionStartPosition(player, distance, (float)System::random(360));
 
 		if (zone->isWithinBoundaries(startPos)) {
 			float height = zone->getHeight(startPos.getX(), startPos.getY());
