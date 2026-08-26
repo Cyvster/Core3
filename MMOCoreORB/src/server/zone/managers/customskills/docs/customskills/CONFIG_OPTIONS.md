@@ -381,7 +381,6 @@ Plus Lua-exposed config mirrors (read via ConfigManager, called from scripts):
   `Core3.AccountFlags.<accountID>.<name>` first (ConfigManager.h:198-207).
 
 ## 21. Mod option: customSkillsConfig.training (P07, BRIEF-049)
-
 | Option | Type | Default | Consumer |
 |---|---|---|---|
 | training.trainersTeachAll | bool | true | bin/scripts/screenplays/trainers/skillTrainer.lua (SkillTrainer:isTrainersTeachAllEnabled / getTrainerSkillTable) |
@@ -392,3 +391,28 @@ the union of all 36 profession trees (774 skills, elite/master included);
 per-skill prerequisites, XP, and skill-point costs remain engine-enforced at
 learn time. Set false for vanilla one-tree-per-trainer behavior. Requires
 server restart (screenplay Lua is not hot-reloaded).
+
+## 22. Mod option: customSkillsConfig.structures (BRIEF-050)
+
+| Option | Type | Default | Consumer |
+|---|---|---|---|
+| structures.accountSharedLots | bool | true (owner approved) | CustomSkillsStructureLots (src/server/zone/managers/customskills/structures/) |
+
+Behavior when enabled:
+- Lot pool = `maximumLots x (characters on the account, this galaxy)`, shared
+  across ALL account characters. Per-character cap still comes from the
+  querying ghost's `maximumLots`, so /adjustLotCount grants scale the pool.
+- Placement grants ADMIN on the new structure to every OTHER character OID on
+  the placer's account (placer keeps vanilla owner/ADMIN).
+- Cache: per-account `AccountLotEntry` (totalLotsUsed + perCharLots map) in
+  CustomSkillsStructureLots.cpp; mutex-guarded; built LAZY on first query per
+  account after boot (one scan of live characters' ownedStructures), then
+  updated incrementally at each ownedStructures mutation point. Never rescanned
+  per query -- this is the anti-cyvster2-stutter design (MIGRATION_LEDGER Q02).
+- Incremental maintenance points (all tagged `// BRIEF-050 (mod hook)`):
+  placeStructure + camp placement (StructureManager.cpp:546, :631),
+  DestroyStructureTask.h:118, TransferstructureCommand.h:207/:216,
+  camp adoption CampSiteActiveAreaImplementation.cpp:340/:370.
+- Query hook: PlayerObjectImplementation::getLotsRemaining
+  (PlayerObjectImplementation.cpp:3142) falls back to vanilla math if the
+  account cannot be resolved or has no characters.

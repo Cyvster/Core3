@@ -1705,3 +1705,35 @@ system/util/HashMap.h in this tree.
 Vanilla pets self-recover when >128m from owner: pet.lua:130-132
 CheckOwnerInRange 128.0 -> PetReturn; stranding requires pathing failure or
 STAY/GUARD/PATROL (pet summon research, _044_pet_summon_design.md).
+
+## Account-Shared Structure Lots (BRIEF-050, 08252026)
+
+[R6.9] Discovery captures for Q02 (account-shared lots, cached design):
+
+- **ownedStructures mutation points are exactly five** in vanilla Core3:
+  `PlayerObject::addOwnedStructure` / `removeOwnedStructure` are called from
+  StructureManager.cpp placeStructure (:546) and placeCamp (:628),
+  DestroyStructureTask.h (:116), TransferstructureCommand.h (:205/:210), and
+  camp adoption CampSiteActiveAreaImplementation.cpp (:339/:365). Any future
+  ownership feature must cover all five.
+- **Account character enumeration server-side**: `ghost->getAccount()` returns
+  the cached `Account*` (`AccountManager::getAccount(accountID)`, cached on the
+  PlayerObject at initializeAccount, PlayerObjectImplementation.cpp:168);
+  `Account::getCharacterList()` (Account.idl:176, AccountImplementation.cpp:167)
+  returns a `CharacterList` of `CharacterListEntry` with getObjectID() /
+  getGalaxyID(). First access hits MySQL (UNION of characters + characters_dirty,
+  CharacterList.h:33); afterwards it is cached on the Account object. Filter
+  entries by `ZoneServer::getGalaxyID()` -- cross-galaxy rows are present.
+- **maximumLots is per-character state**, not a constant: byte field on
+  PlayerObject (default 10), mutable via /adjustLotCount. Pool math should read
+  the querying ghost's value rather than hardcoding 10/250.
+- **Cache design that avoids the cyvster2 stutter**: lazy one-time build per
+  account on first getLotsRemaining query after boot, guarded by a Mutex, then
+  purely incremental updates at the five mutation points. Never rescan per
+  query. Implementation: customskills/structures/CustomSkillsStructureLots.{h,cpp};
+  config knob structures.accountSharedLots default true.
+- **Placement permission grant point**: vanilla grants ADMIN + owner at
+  StructureManager.cpp:541-542 (`grantPermission("ADMIN", ...)` /
+  `setOwner(...)`). Extending ADMIN to other account characters goes right
+  after the addOwnedStructure call; grant by character OID even if offline
+  (StructurePermissionList is persistent).
