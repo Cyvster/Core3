@@ -7,7 +7,7 @@
   (architecture, guardrails, seed policy) to be applied only after an
   independent second party verifies them; filer-applied entries are marked
   RESOLVED-PENDING-VERIFICATION until then. Reference:
-  `G:\Data\projects\project alice\github\alice\docs\rules\process.md`
+   Alice's process.md (policy-procedure)
   (verification/errata sections) and ERR-046/047 usage.
 
 ## Review question

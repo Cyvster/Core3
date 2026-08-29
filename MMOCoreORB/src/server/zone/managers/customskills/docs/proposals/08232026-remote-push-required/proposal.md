@@ -10,7 +10,7 @@ claimed in a brief FILE but never committed, so a parallel session could
 not see the claim, delivered the same brief independently, and the
 duplicate work had to be discarded (`git checkout`). Framework source:
 Project Alice proposal `08222026-remote-push-required`
-(`G:\Data\Projects\project alice\github\alice\docs\proposals\`, ADOPTED there).
+(`Project Alice docs/proposals/`, ADOPTED there).
 
 ---
 

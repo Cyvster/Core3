@@ -9,8 +9,8 @@
 
 ## Reference implementation
 
-Project Alice brief 041 (`G:\Data\projects\project alice\github\alice\docs\briefs\041-document-lifecycle-archives.md`,
-DELIVERED) + its landing in `alice docs/rules/process.md`. Key design:
+Project Alice brief 041 (document-lifecycle-archives, DELIVERED) + its landing in
+Alice's process.md (policy-procedure). Key design:
 
 - **Living ledgers stay small**; closed material moves verbatim to a
   permanent sibling archive. Nothing deleted, storage location changes only.

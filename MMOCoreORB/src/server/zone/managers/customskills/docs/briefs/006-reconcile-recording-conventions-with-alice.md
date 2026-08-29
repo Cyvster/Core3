@@ -13,9 +13,9 @@
 Project Alice lives outside this repository:
 
 ```
-G:\Data\Projects\project alice\                          <- workspace root
-|---- START-HERE.md                               <- Alice entry point
-`---- github\alice\                               <- Alice repository
+Project Alice (workspace root)
+|---- readme.md                               <- Alice entry point
+`---- alice\                                     <- Alice repository
     `---- docs\
         |---- llm-guide.md                        -> "How to Work Here" -> Signing
         `---- rules\process.md                    -> Contributor Recording Conventions
@@ -81,7 +81,7 @@ as a loose paraphrase. Consequences:
   ([PROC R6.7] sweep clean; grep `name/model>` and `<origin>`)
 - ERR-006 links to the clarified text; open/closed status matches reality
 - Owner-decision items listed and unanswered ones clearly marked pending
-- Project Alice repository untouched (`git -C "G:\Data\Projects\project alice\github\alice" status`
+- Project Alice repository untouched (status checked in its own checkout)
   clean before and after)
 
 ## Out of scope
@@ -140,7 +140,7 @@ Restatements found and replaced with references to process.md:
 
 1. errata.md Worker quick start item 6 (inline ISO/Central/long-format list)
 2. docs/tracking/objectives.md claim instruction line 18 (inline example)
-3. workspace-root START-HERE.md key-rules bullet (inline format string;
+3. workspace-root readme.md key-rules bullet (inline format string;
    file lives outside the repo, edited without commit)
 
 errata.md Principles #4 was found ALREADY referencing PROC R6.8 with no

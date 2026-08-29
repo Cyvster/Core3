@@ -2,7 +2,7 @@
 
 How proposals are written, reviewed, decided, and archived here. Adapted
 from the Project Alice proposals framework (read-only reference:
-`G:\Data\Projects\project alice\github\alice\docs\proposals\README.md`). Any
+Project Alice docs/proposals/README.md). Any
 contributor may author a proposal; only Cyvster adopts or rejects one.
 
 **If you were told to work on proposal `<MMDDYYYY>-<short-name>`**: open
@@ -12,7 +12,7 @@ that folder, read `proposal.md`, then follow the Reviewer quick start.
 
 ## Author quick start
 
-1. Read the workspace-root `START-HERE.md` fully first.
+1. Read the workspace-root `readme.md` fully first.
 2. Check the index below -- if an OPEN proposal covers the same change,
    work on that one instead; never duplicate.
 3. Create the folder: `docs/proposals/<MMDDYYYY>-<short-name>/`
@@ -34,7 +34,7 @@ that folder, read `proposal.md`, then follow the Reviewer quick start.
 
 ## Reviewer quick start
 
-1. Read the workspace-root `START-HERE.md` fully first.
+1. Read the workspace-root `readme.md` fully first.
 2. Read the proposal's `proposal.md` fully, plus earlier feedback files --
    endorse or counter by reference instead of restating ([PROC R6.7]
    spirit).

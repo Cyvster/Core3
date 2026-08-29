@@ -1,82 +1,51 @@
 # Task Briefs
 
-Self-contained, delegable task specifications. Any LLM can execute one by
-reading only what the brief lists -- no conversation history required.
+Self-contained, delegable task specifications. Any LLM can execute one by reading only what the brief lists -- no conversation history required.
 
-> Subordinate to [../rules/project-design.md](../rules/project-design.md).
-> Follow the pickup protocol and [../rules/process.md](../rules/process.md).
+> Subordinate to [../rules/project-design.md](../rules/project-design.md). Follow the pickup protocol and [../rules/process.md](../rules/process.md).
 
 ## Pickup protocol (for executing LLMs)
 
-1. Read the workspace-root ``START-HERE.md`` (``G:\Data\Projects\project customskills\START-HERE.md``) fully first.
+1. Read the workspace-root ``readme.md`` (project-customskills readme.md) fully first.
 2. In the index below, find the **first** brief whose Status is UNCLAIMED.
-3. Before claiming, re-read the index -- if another contributor claimed
-   while you were reading, move to the next UNCLAIMED brief instead.
-4. Claim it: set Status to CLAIMED with your signature and date in the
-   brief FILE (the file carries the signature -- see Index maintenance),
-   then commit `Claim <brief-id>` in this repository AND PUSH immediately -- an unpushed claim may be re-claimed ([PROC R6.5], R8/P2).
-5. Read the brief plus every context file it lists, then do exactly the
-   deliverables. Touch nothing outside the brief's scope.
-6. Honor [PROC R6.6] change completeness: behavior changes carry their doc
-   + package-mirror updates.
-7. Set Status DELIVERED with notes on where the work landed; push; update
-   [../tracking/objectives.md](../tracking/objectives.md) if the brief maps
-   to an objective.
-8. **[R6.9] discovery line (mandatory in every delivery report)**: list each
-   discovery made during the task with the reference-doc cite where it was
-   captured, or state "no discoveries". A delivery without this line is
-   incomplete and is returned by the coordinator ([BRIEF-040]).
-9. Problems or disputes go through [../rules/errata.md](../rules/errata.md)
-   -- never silent edits outside your scope.
-9. If no brief is UNCLAIMED, stop and report back -- do not invent work.
+3. Before claiming, re-read the index -- if another contributor claimed while you were reading, move to the next UNCLAIMED brief instead.
+4. Claim it: set Status to CLAIMED with your signature and date in the brief FILE (the file carries the signature -- see Index maintenance), then commit `Claim <brief-id>` in this repository AND PUSH immediately -- an unpushed claim may be re-claimed ([PROC R6.5], R8/P2).
+5. Read the brief plus every context file it lists, then do exactly the deliverables. Touch nothing outside the brief's scope.
+6. Honor [PROC R6.6] change completeness: behavior changes carry their doc + package-mirror updates.
+7. Set Status DELIVERED with notes on where the work landed; push; update [../tracking/objectives.md](../tracking/objectives.md) if the brief maps to an objective.
+8. **[R6.9] discovery line (mandatory in every delivery report)**: list each discovery made during the task with the reference-doc cite where it was captured, or state "no discoveries". A delivery without this line is incomplete and is returned by the coordinator ([BRIEF-040]).
+9. Problems or disputes go through [../rules/errata.md](../rules/errata.md) -- never silent edits outside your scope.
+10. If no brief is UNCLAIMED, stop and report back -- do not invent work.
 
 ## Brief authoring rules
 
 Every new brief MUST include:
 
-1. A **discovery-capture line** ([R6.9]) in its Task/Method or Deliverables:
-   which owning reference doc discovered facts land in (e.g.
-   "R6.9: SUI layout facts -> customskills/CODE_REFERENCE.md"), or an
-   explicit "no discoveries expected" note if the task is purely editorial.
-2. Discovery capture as a **Deliverables/Acceptance checkbox** whenever the
-   task touches code or server behavior -- not just a side note.
+1. A **discovery-capture line** ([R6.9]) in its Task/Method or Deliverables: which owning reference doc discovered facts land in (e.g. "R6.9: SUI layout facts -> customskills/CODE_REFERENCE.md"), or an explicit "no discoveries expected" note if the task is purely editorial.
+2. Discovery capture as a **Deliverables/Acceptance checkbox** whenever the task touches code or server behavior -- not just a side note.
 
-A brief without these is incomplete; the coordinator rejects or patches it
-before claim ([R6.9], BRIEF-019).
-3. **XPP check**: if the brief implements a policy/procedure, file the
-   mirror-review brief on Project Alice in the same session
-   ([rules/process.md](../rules/process.md) -> Cross-Project Propagation)
-   -- or note "not a policy" if purely technical.
-4. **Config-knob menu registration** (BRIEF-051): any brief that adds a new
-   server-config knob MUST either register it in the `/customskills`
-   options menu (`CustomSkillsMenu::addModOptionItems` for mod-owned knobs,
-   `addSwgemuOptionItems` for vanilla ConfigManager keys) or state in the
-   brief why it is excluded (e.g. internal-only, secret). A brief without
-   one of these two statements is incomplete.
+A brief without these is incomplete; the coordinator rejects or patches it before claim ([R6.9], BRIEF-019).
+3. **XPP check**: if the brief implements a policy/procedure, file the mirror-review brief on Project Alice in the same session ([rules/process.md](../rules/process.md) -> Cross-Project Propagation) -- or note "not a policy" if purely technical.
+4. **Config-knob menu registration** (BRIEF-051): any brief that adds a new server-config knob MUST either register it in the `/customskills` options menu (`CustomSkillsMenu::addModOptionItems` for mod-owned knobs, `addSwgemuOptionItems` for vanilla ConfigManager keys) or state in the brief why it is excluded (e.g. internal-only, secret). A brief without one of these two statements is incomplete.
 
 ## How delegation works
 
 **For Cyvster:** hand an LLM this one instruction:
 
-> Read the workspace-root START-HERE.md fully, then follow the pickup protocol
-> in docs/briefs/README.md: claim the next UNCLAIMED brief and complete it.
+> Read the workspace-root readme.md fully, then follow the pickup protocol in docs/briefs/README.md: claim the next UNCLAIMED brief and complete it.
 
 **Index maintenance:**
 
-- Append new rows at the bottom of the SINGLE table, Status UNCLAIMED.
-  Keep rows in numeric order. Numbers are never reused ([PROC R3]).
-- Index cells carry the state word only (`DELIVERED`, `UNCLAIMED`,
-  `CLAIMED`, `WITHDRAWN`) -- never a name or date. Attribution lives in
-  the brief file's signed Status line and in git history ([PROC R6.7]).
-- The brief FILE's Status line is authoritative and IS signed. If file and
-  index disagree, fix both; the file wins.
+- Append new rows at the bottom of the SINGLE table, Status UNCLAIMED. Keep rows in numeric order. Numbers are never reused ([PROC R3]).
+- Index cells carry the state word only (`DELIVERED`, `UNCLAIMED`, `CLAIMED`, `WITHDRAWN`) -- never a name or date. Attribution lives in the brief file's signed Status line and in git history ([PROC R6.7]).
+- The brief FILE's Status line is authoritative and IS signed. If file and index disagree, fix both; the file wins.
 
 ## Brief index
 
 | File | Title | Status |
 |------|-------|--------|
 | [`001-migrate-mod-into-core3.md`](001-migrate-mod-into-core3.md) | Migrate customskills-mod into the Core3 repository; dissolve dual tree | DELIVERED |
-| [`002-post-migration-doc-repair.md`](002-post-migration-doc-repair.md) | Post-migration documentation & governance repair (links, R6.5/R6.6, START-HERE) | DELIVERED |
+| [`002-post-migration-doc-repair.md`](002-post-migration-doc-repair.md) | Post-migration documentation & governance repair (links, R6.5/R6.6, readme) | DELIVERED |
 | [`003-reconcile-hooks-patch-modifier-count.md`](003-reconcile-hooks-patch-modifier-count.md) | Regenerate patch incl. H16; reconcile modifier count + menu docs | DELIVERED |
 | [`004-modifier-reference-refresh.md`](004-modifier-reference-refresh.md) | Refresh MODIFIER_REFERENCE against current config.lua (badgeOverrides, rarityNaming) | DELIVERED |
 | [`005-single-source-badge-rule.md`](005-single-source-badge-rule.md) | Document single-source-of-truth rule for badge-backed modifiers | DELIVERED |

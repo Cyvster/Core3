@@ -2,7 +2,7 @@
 
 > Subordinate to [docs/rules/project-design.md](docs/rules/project-design.md)
 > -- the master document for project rules. New contributors start with
-> the workspace-root ``START-HERE.md`` (``G:\Data\Projects\project customskills\START-HERE.md``).
+> the workspace-root ``readme.md`` (project-customskills readme.md).
 
 This directory IS the Custom Skills module, inside the Core3 repository:
 module code, its documentation (`docs/`), and the integration patch

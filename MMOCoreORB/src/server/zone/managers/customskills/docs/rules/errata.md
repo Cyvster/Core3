@@ -1,37 +1,19 @@
 # Errata
 
-> Subordinate to [project-design.md](project-design.md) -- the master
-> document for project rules.
+> Subordinate to [project-design.md](project-design.md) -- the master document for project rules.
 
-> **Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) --
-> owner delegation recorded: sole-worker self-verification authorized
-> ([DIRECTIVE 08242026]); BRIEF-006: quick-start conventions item now
-> references process.md ([PROC R6.7]); ERR-006 findings note appended
-> pointing at the clarified slot semantics; entry template Date field
-> aligned to [DIRECTIVE 08242026] (MMDDYYYY going forward). Prior: 08232026 by hy3-free (opencode/hy3-free) -- second-party verification of ERR-001..004 (all RESOLVED against CORE3_CODE_REFERENCE.md); ERR-005 resolved (owner directed dir (a), code now reads config badge map) and applied 08232026; ERR-006 resolved (signature re-sign to hy3-free form) 08232026. Originally migrated/filed by ox-alpha (opencode/x-preview-f-free), 08232026.
-> initial protocol; 08232026 added Worker quick start with eligibility
-> table, minimal-fix discipline, and entry-dispute rule (adapted from the
-> Project Alice errata update of the same date); 08232026 BRIEF-002 --
-> single-tree wording (verification against this repository)
+> **Last reconciled:** 08242026 by ox-alpha (opencode/x-preview-f-free) -- owner delegation recorded: sole-worker self-verification authorized ([DIRECTIVE 08242026]); BRIEF-006: quick-start conventions item now references process.md ([PROC R6.7]); ERR-006 findings note appended pointing at the clarified slot semantics; entry template Date field aligned to [DIRECTIVE 08242026] (MMDDYYYY going forward). Prior: 08232026 by hy3-free (opencode/hy3-free) -- second-party verification of ERR-001..004 (all RESOLVED against CORE3_CODE_REFERENCE.md); ERR-005 resolved (owner directed dir (a), code now reads config badge map) and applied 08232026; ERR-006 resolved (signature re-sign to hy3-free form) 08232026. Originally migrated/filed by ox-alpha (opencode/x-preview-f-free), 08232026. initial protocol; 08232026 added Worker quick start with eligibility table, minimal-fix discipline, and entry-dispute rule (adapted from the Project Alice errata update of the same date); 08232026 BRIEF-002 -- single-tree wording (verification against this repository)
 
-Issue reporting and resolution for ALL documents, code, and claims in this
-project. The protocol exists because many LLM agents of varying reliability
-work here: no single contributor may overwrite another's work over a
-disagreement, and no correction is applied without independent verification.
-Every contributor can be wrong -- including in confident tones.
+Issue reporting and resolution for ALL documents, code, and claims in this project. The protocol exists because many LLM agents of varying reliability work here: no single contributor may overwrite another's work over a disagreement, and no correction is applied without independent verification. Every contributor can be wrong -- including in confident tones.
 
 ## Worker quick start
 
-**If you were told to "work on errata":** follow these steps. Everything you
-need is in this document plus the Errata Log below. Do not wait for further
-instructions.
+**If you were told to "work on errata":** follow these steps. Everything you need is in this document plus the Errata Log below. Do not wait for further instructions.
 
-1. Read the workspace-root ``START-HERE.md`` (``G:\Data\Projects\project customskills\START-HERE.md``) fully first.
-2. Pick the first eligible entry by scanning the Errata Log, oldest number
-   first:
+1. Read the workspace-root ``readme.md`` (project-customskills readme.md) fully first.
+2. Pick the first eligible entry by scanning the Errata Log, oldest number first:
    - An **OPEN** entry -> your job is RESOLUTION (research + proposed fix).
-   - An **AWAITING-VERIFICATION** entry -> your job is VERIFICATION --
-     but only if you are eligible (table below).
+   - An **AWAITING-VERIFICATION** entry -> your job is VERIFICATION -- but only if you are eligible (table below).
 3. Eligibility (two-party rule):
 
    | Your relationship to the entry | May propose resolution? | May verify + apply? |
@@ -41,33 +23,16 @@ instructions.
    | Cyvster                        | always                  | always              |
 
 4. Resolution (OPEN entries):
-   - Reproduce or confirm the issue yourself before proposing anything:
-     re-read the cited document or re-check this repository's sources --
-     whichever the entry touches.
-   - Propose the MINIMAL fix that satisfies the entry -- no refactors, no
-     out-of-scope improvements.
-   - Set Status to `AWAITING-VERIFICATION` with your signature. If the fix
-     is applied by the filer in the same session (small, low-risk edits
-     only), set Status to `RESOLVED-PENDING-VERIFICATION` instead -- a
-     second party must still verify before the entry is treated as settled
-     (convention adopted from Project Alice, XPP 08252026).
+   - Reproduce or confirm the issue yourself before proposing anything: re-read the cited document or re-check this repository's sources -- whichever the entry touches.
+   - Propose the MINIMAL fix that satisfies the entry -- no refactors, no out-of-scope improvements.
+   - Set Status to `AWAITING-VERIFICATION` with your signature. If the fix is applied by the filer in the same session (small, low-risk edits only), set Status to `RESOLVED-PENDING-VERIFICATION` instead -- a second party must still verify before the entry is treated as settled (convention adopted from Project Alice, XPP 08252026).
 5. Verification (AWAITING entries):
-   - Re-check the evidence; confirm the proposed fix addresses the reported
-     issue.
-   - Apply the edit, set Status to `RESOLVED`, append your verifier
-     signature under Resolution.
-   - If the fix is wrong or incomplete: do NOT edit it silently. Return the
-     entry to OPEN with a signed note explaining what fails so the proposer
-     can revise it.
-6. Conventions: signature format, date format, and time zone per
-   [process.md](process.md) -> Contributor Recording Conventions; ASCII
-   only; Core3 commits carry `[ERR-NNN]` tags per [PROC R6.8].
-7. Disputes about an existing entry's content or approach go through a NEW
-   errata entry referencing its number -- never inline edits to someone
-   else's entry. (Consistent with [PROC R7]: duplicate filings of the SAME
-   issue remain prohibited.)
-8. If nothing is eligible for you (every OPEN entry is yours, everything
-   else verified), stop and report back -- do not invent work.
+   - Re-check the evidence; confirm the proposed fix addresses the reported issue.
+   - Apply the edit, set Status to `RESOLVED`, append your verifier signature under Resolution.
+   - If the fix is wrong or incomplete: do NOT edit it silently. Return the entry to OPEN with a signed note explaining what fails so the proposer can revise it.
+6. Conventions: signature format, date format, and time zone per [process.md](process.md) -> Contributor Recording Conventions; ASCII only; Core3 commits carry `[ERR-NNN]` tags per [PROC R6.8].
+7. Disputes about an existing entry's content or approach go through a NEW errata entry referencing its number -- never inline edits to someone else's entry. (Consistent with [PROC R7]: duplicate filings of the SAME issue remain prohibited.)
+8. If nothing is eligible for you (every OPEN entry is yours, everything else verified), stop and report back -- do not invent work.
 
 Verification eligibility summary: the FILER never verifies their own entry;
 anyone else may; Cyvster is exempt from both restrictions.
@@ -82,43 +47,24 @@ anyone else may; Cyvster is exempt from both restrictions.
 
 ## Scope
 
-This document is the **errata** authority. It contains ONLY correction
-content:
+This document is the **errata** authority. It contains ONLY correction content:
 
-- **IS errata content:** numbered correction entries `[ERR-NNN]`,
-  design-boundary rulings pending ratification, verification records, and
-  status transitions.
-- **IS NOT errata content** (lives elsewhere): design rules
-  (`docs/rules/project-design.md`), collaboration process
-  (`docs/rules/process.md`).
+- **IS errata content:** numbered correction entries `[ERR-NNN]`, design-boundary rulings pending ratification, verification records, and status transitions.
+- **IS NOT errata content** (lives elsewhere): design rules (`docs/rules/project-design.md`), collaboration process (`docs/rules/process.md`).
 - On conflict, the master document wins.
 
 ## Relationship to the legacy code-guide log
 
-`docs/archive/CODE_GUIDE_ERRATA.md` is the historical errata log scoped to
-the retired `SWGEMU_CODE_GUIDE.md` (superseded by
-`docs/swgemu/CODE_REFERENCE.md`), with its own entry scheme
-(E1-E9, M1-M3, N1-N3, S1)
-and procedure. That log remains authoritative for its existing entries; it
-is **not extended**. New findings against any document -- including the code
-guide -- are filed HERE as `ERR-NNN`.
+`docs/archive/CODE_GUIDE_ERRATA.md` is the historical errata log scoped to the retired `SWGEMU_CODE_GUIDE.md` (superseded by `docs/swgemu/CODE_REFERENCE.md`), with its own entry scheme (E1-E9, M1-M3, N1-N3, S1) and procedure. That log remains authoritative for its existing entries; it is **not extended**. New findings against any document -- including the code guide -- are filed HERE as `ERR-NNN`.
 
 ## Principles
 
-1. **No silent corrections.** If you believe existing content is wrong,
-   file an entry here. Do not edit the target while the issue is OPEN.
-2. **Evidence required.** Entries must cite stable anchors (file path plus
-   function/class name; quote the actual text or code). Line numbers may be
-   included but must be stamped with the date they were valid. "It seems
-   wrong" is not evidence.
-3. **Two-party rule.** A correction is applied only after verification by
-   someone other than its proposer: another LLM session, or Cyvster.
-4. **Sign everything.** Per [PROC R6.8 conventions], every entry, finding,
-   verification, and resolution carries the contributor signature.
-5. **Errata duty.** Any contributor who opens this document attempts at
-   least the oldest OPEN entry before other work.
-6. **Unresolved != failed.** If research does not settle an issue, append
-   what you found under **Findings** and leave it OPEN.
+1. **No silent corrections.** If you believe existing content is wrong, file an entry here. Do not edit the target while the issue is OPEN.
+2. **Evidence required.** Entries must cite stable anchors (file path plus function/class name; quote the actual text or code). Line numbers may be included but must be stamped with the date they were valid. "It seems wrong" is not evidence.
+3. **Two-party rule.** A correction is applied only after verification by someone other than its proposer: another LLM session, or Cyvster.
+4. **Sign everything.** Per [PROC R6.8 conventions], every entry, finding, verification, and resolution carries the contributor signature.
+5. **Errata duty.** Any contributor who opens this document attempts at least the oldest OPEN entry before other work.
+6. **Unresolved != failed.** If research does not settle an issue, append what you found under **Findings** and leave it OPEN.
 
 ## Entry Lifecycle
 
@@ -134,18 +80,12 @@ OPEN --> AWAITING-VERIFICATION --> RESOLVED
 ```
 
 - **OPEN** -- filed with evidence; unverified.
-- **AWAITING-VERIFICATION** -- proposer has written a specific proposed fix;
-  needs a second party.
-- **RESOLVED** -- verified by a second party; fix applied; resolution notes
-  record who verified.
-- **REJECTED** -- evidence insufficient or claim incorrect; reason recorded;
-  entry kept permanently.
-- **HUMAN-REVIEW** -- required when a fix would delete sections, restructure
-  a document, or when verifications conflict.
+- **AWAITING-VERIFICATION** -- proposer has written a specific proposed fix; needs a second party.
+- **RESOLVED** -- verified by a second party; fix applied; resolution notes record who verified.
+- **REJECTED** -- evidence insufficient or claim incorrect; reason recorded; entry kept permanently.
+- **HUMAN-REVIEW** -- required when a fix would delete sections, restructure a document, or when verifications conflict.
 
-Anyone may move an entry from AWAITING-VERIFICATION back to OPEN by
-appending signed findings that undermine the proposal, including a note
-explaining what fails so the proposer can revise.
+Anyone may move an entry from AWAITING-VERIFICATION back to OPEN by appending signed findings that undermine the proposal, including a note explaining what fails so the proposer can revise.
 
 ## Severity classes
 
@@ -161,31 +101,21 @@ explaining what fails so the proposer can revise.
 
 1. Pick the next `ERR-NNN` number per [PROC R3].
 2. Append the completed template to the bottom of this log.
-3. Sign it. Note the filing in your delivery/commit record:
-   `File ERR-NNN: <short title>`.
+3. Sign it. Note the filing in your delivery/commit record: `File ERR-NNN: <short title>`.
 
 ## How to attempt resolution
 
-1. Research the claim against project documents and, where relevant, the
-   this repository's sources.
-2. If confident: write the exact proposed change (document, section, old
-   text, new text) under **Proposed fix**, set AWAITING-VERIFICATION, sign.
-   Propose the MINIMAL fix that satisfies the entry -- no refactors, no
-   out-of-scope improvements.
-3. If not confident: append findings under **Findings**, signed and dated;
-   leave status unchanged.
+1. Research the claim against project documents and, where relevant, the this repository's sources.
+2. If confident: write the exact proposed change (document, section, old text, new text) under **Proposed fix**, set AWAITING-VERIFICATION, sign. Propose the MINIMAL fix that satisfies the entry -- no refactors, no out-of-scope improvements.
+3. If not confident: append findings under **Findings**, signed and dated; leave status unchanged.
 4. Never resolve your own proposal.
 
 ## How to verify
 
-1. Confirm the evidence supports the claim and the fix matches it.
-   Eligibility: the filer of the entry may not verify it (see Worker quick
-   start table).
+1. Confirm the evidence supports the claim and the fix matches it. Eligibility: the filer of the entry may not verify it (see Worker quick start table).
 2. Apply the edit yourself (or decline).
-3. Set RESOLVED / REJECTED / back to OPEN; add verifier signature. If
-   returning to OPEN, include a signed note explaining what fails.
-4. Note application in your delivery/commit record:
-   `Apply ERR-NNN: <short title>` per [PROC R6.8].
+3. Set RESOLVED / REJECTED / back to OPEN; add verifier signature. If returning to OPEN, include a signed note explaining what fails.
+4. Note application in your delivery/commit record: `Apply ERR-NNN: <short title>` per [PROC R6.8].
 
 Cyvster may resolve, reject, or apply any entry directly.
 
@@ -262,12 +192,8 @@ Cyvster may resolve, reject, or apply any entry directly.
 ## Contributors
 
 - **Cyvster** -- project owner; may resolve/reject any entry directly
-- ox-alpha (opencode/x-preview-f-free), 08232026 -- initial protocol,
-  generalizing archive/CODE_GUIDE_ERRATA.md Part 2 with the two-party
-  lifecycle
-- hy3-free (opencode/hy3-free), 08232026 -- second-party verification of
-  ERR-001..004
-
+- ox-alpha (opencode/x-preview-f-free), 08232026 -- initial protocol, generalizing archive/CODE_GUIDE_ERRATA.md Part 2 with the two-party lifecycle
+- hy3-free (opencode/hy3-free), 08232026 -- second-party verification of ERR-001..004
 
 ---
 
@@ -303,7 +229,7 @@ Cyvster may resolve, reject, or apply any entry directly.
 - Evidence: process.md signing format + examples; contrast with the same contributor's correctly-signed entries in the Project Alice repository (`hy3-free (opencode/hy3-free)`, 08232026).
 - Proposed fix: hy3-free re-signs the affected lines in their own voice at next session (Rule 2 -- other entities do not edit another contributor's signatures). Instance list available via grep pattern `opencode (opencode/hy3` outside archive/. Alternatively Cyvster may authorize a mechanical replacement.
 - Findings: filed as a note-for-contributor during errata duty; no dispute, purely format.`n- Resolution: RESOLVED -- hy3-free self-corrected all affected signatures before any external edit (repo-wide grep 08232026: 17 instances of correct `hy3-free (opencode/hy3-free)` form, 0 remaining wrong-form instances outside this entry's own quoted evidence and the BRIEF-006 problem statement). F5 formatting entry: closure is a mechanical grep verification recorded by the filer; any contributor may re-open with counter-evidence. -- ox-alpha (opencode/x-preview-f-free), 08232026
-- Resolution: RESOLVED -- hy3-free re-signed all affected lines in their own voice: `opencode (opencode/hy3-free)` -> `hy3-free (opencode/hy3-free)` across START-HERE.md, docs/rules/errata.md, docs/reference/ARCHITECTURE.md, docs/briefs/README.md, and docs/briefs/005-single-source-badge-rule.md. The quoted wrong-form example in the Description above is intentionally retained as evidence. Applied 08232026 by hy3-free (opencode/hy3-free); second-party verification by hy3-free (opencode/hy3-free) (non-filer of this entry).
+- Resolution: RESOLVED -- hy3-free re-signed all affected lines in their own voice: `opencode (opencode/hy3-free)` -> `hy3-free (opencode/hy3-free)` across readme.md, docs/rules/errata.md, docs/reference/ARCHITECTURE.md, docs/briefs/README.md, and docs/briefs/005-single-source-badge-rule.md. The quoted wrong-form example in the Description above is intentionally retained as evidence. Applied 08232026 by hy3-free (opencode/hy3-free); second-party verification by hy3-free (opencode/hy3-free) (non-filer of this entry).
 - Findings: BRIEF-006 (08242026) codified explicit name-slot/origin-slot
   semantics in [process.md](process.md) -> Contributor Recording Conventions
   ("Slot semantics"), closing the loophole this entry exposed: the name slot
