@@ -27,7 +27,7 @@ modifiable.
 
 ## Required reading before auditing
 
-1. Workspace-root `START-HERE.md`, then
+1. Workspace-root `readme.md`, then
    [../customskills/LLM_GUIDE.md](../customskills/LLM_GUIDE.md)
    (session protocol).
 2. [../rules/project-design.md](../rules/project-design.md) -- CRITICAL:

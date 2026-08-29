@@ -28,7 +28,7 @@ governance rules still describe a dual-tree world that no longer exists.
    - project-design.md Integration Policy: same treatment; note containment
      rule (mod files stay in module dir unless runtime requires otherwise;
      the two script locations are the sanctioned exceptions).
-2. **Workspace-root START-HERE.md**: rewrite for the new layout (no more
+2. **Workspace-root readme.md**: rewrite for the new layout (no more
    customskills-mod; paths into `Core3/MMOCoreORB/src/server/zone/managers/customskills/...`;
    keep tech-stack, reading order, sign-in). Verify every link resolves.
 3. **INSTALLATION.md** (`docs/installation/`): rewrite install/remove for
@@ -53,7 +53,7 @@ governance rules still describe a dual-tree world that no longer exists.
 - Repo-wide grep (excluding `docs/archive/` and googletest) finds ZERO live
   references to `customskills-mod`
 - Every markdown link resolves from its own file's directory (run a
-  link-check sweep; include workspace-root START-HERE.md)
+  link-check sweep; include workspace-root readme.md)
 - process.md contains no two-tree/mirror instructions
 - Stamps updated on all modified documents
 
@@ -61,7 +61,7 @@ governance rules still describe a dual-tree world that no longer exists.
 
 All eight deliverables completed in commit `49a22bd54a`: governance rewrite
 (R6.5/R6.6/containment/release conventions), master-doc Integration Policy,
-workspace START-HERE rewritten, INSTALLATION single-tree install/remove,
+workspace readme.md rewritten, INSTALLATION single-tree install/remove,
 MANIFEST header+paths, CORE3_USER_GUIDE deploy section, ARCHITECTURE layout
 note + patch-management wording, errata verification wording. Trackers:
 package-sync objective marked OBSOLETE; git-history objective RESOLVED;

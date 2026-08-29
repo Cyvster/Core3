@@ -10,16 +10,11 @@
 
 ## Classification legend
 
-- **(a)** Key already present in shipped `bin/conf/config.lua` (documented by presence;
-  comments exist for some sections).
-- **(b)** Functional but undocumented -- readable in config-local.lua, absent from the
-  shipped template. This is BRIEF-023's target set.
-- **(c)** Dead read: getter/callsite exists but no live caller reaches it (or it is
-  compile-time gated out of normal builds).
+- **(a)** Key already present in shipped `bin/conf/config.lua` (documented by presence; comments exist for some sections).
+- **(b)** Functional but undocumented -- readable in config-local.lua, absent from the shipped template. This is BRIEF-023's target set.
+- **(c)** Dead read: getter/callsite exists but no live caller reaches it (or it is compile-time gated out of normal builds).
 
-Read-behavior tags: **[startup]** read once during boot; **[dyn]** re-evaluated per call
-(ConfigManager hot-reloads on configVersion bump); **[dyn-cache]** dynamic but cached,
-auto-refreshes on configVersion bump; **[lua]** exposed to scripting.
+Read-behavior tags: **[startup]** read once during boot; **[dyn]** re-evaluated per call (ConfigManager hot-reloads on configVersion bump); **[dyn-cache]** dynamic but cached, auto-refreshes on configVersion bump; **[lua]** exposed to scripting.
 
 ---
 
@@ -34,10 +29,7 @@ auto-refreshes on configVersion bump; **[lua]** exposed to scripting.
 | Core3.PlayerCreationManager.MaxCharactersPerGalaxy | int | 10 | src/server/zone/managers/player/creation/PlayerCreationManager.cpp:321; src/server/zone/packets/zone/ClientIdMessageCallback.h:171 |
 | Core3.JTL.JTLEnabled | bool | false | src/conf/ConfigManager.h:841 (isJtlEnabled, cached); surfaced to Lua as `isJtlEnabled()` via src/server/zone/managers/director/DirectorManager.cpp:5107-5108, registered at :554 |
 
-All six exist and are live reads. All are class **(b)** (absent from shipped
-bin/conf/config.lua). None are dead.
-
----
+All six exist and are live reads. All are class **(b)** (absent from shipped bin/conf/config.lua). None are dead.
 
 ## 1. Core3 top-level (server infrastructure)
 
@@ -113,19 +105,11 @@ bin/conf/config.lua). None are dead.
 | Core3.ZoneProcessingThreads | int | 10 | ConfigManager.h:477-479 | getZoneProcessingThreads() has NO callers (zone queues are sized by Core3.Zone.ThreadsDefault/<Zone> instead) |
 | Core3.LoginProcessingThreads | int | 1 | ConfigManager.h:453-455 | getLoginProcessingThreads() has NO callers (ServerCore.cpp:813-818 starts login with only port + allowed connections) |
 
-Gotcha worth surfacing in CODE_REFERENCE.md: the last two are *documented* in shipped
-config.lua yet ignored by current code -- classic trap for operators tuning them.
+Gotcha worth surfacing in CODE_REFERENCE.md: the last two are *documented* in shipped config.lua yet ignored by current code -- classic trap for operators tuning them.
 
 ### Stale config.lua entries never read by code (inverse problem)
 
-`MakeWeb`, `WebPorts`, `WebAccessLog`, `WebErrorLog`, `WebSessionTimeout` -- legacy web
-server, no reader remains. `DeleteCharacters = 10` -- the code actually reads
-**Core3.PurgeDeletedCharacters** (ConfigManager.h:502 <- ObjectManager.cpp:1103), so the
-shipped `DeleteCharacters` key silently does nothing. That makes
-Core3.PurgeDeletedCharacters (int, minutes, default 10) class **(b)** despite looking
-documented.
-
----
+`MakeWeb`, `WebPorts`, `WebAccessLog`, `WebErrorLog`, `WebSessionTimeout` -- legacy web server, no reader remains. `DeleteCharacters = 10` -- the code actually reads **Core3.PurgeDeletedCharacters** (ConfigManager.h:502 <- ObjectManager.cpp:1103), so the shipped `DeleteCharacters` key silently does nothing. That makes Core3.PurgeDeletedCharacters (int, minutes, default 10) class **(b)** despite looking documented.
 
 ## 2. Logging / session stats extras (all class b)
 
@@ -162,8 +146,6 @@ documented.
 
 All class (b).
 
----
-
 ## 4. Core3.RESTServer.*
 
 | Option | Type | Default | Consumer file:line |
@@ -178,8 +160,6 @@ All class (b).
 
 All class (b).
 
----
-
 ## 5. Zone threading (dynamic per-zone keys)
 
 | Option | Type | Default | Consumer file:line |
@@ -191,11 +171,7 @@ All class (b).
 | Core3.ZonePortsBalancer | int | 1 (round-robin; other = random) | login/objects/Galaxy.h:125 -- NOTE: only compiled with USE_RANDOM_EXTRA_PORTS defined |
 | Core3.ZoneServer.ClientLogLevel | int (per-account overridable) | -1 (off) | zone/ZoneClientSessionImplementation.cpp:49 -- passes accountID, so Core3.AccountFlags.<accountID>.Core3.ZoneServer.ClientLogLevel overrides per account |
 
-All class (b). The `Core3.AccountFlags.<id>.<key>` overlay exists for any getter call
-that passes an accountID (ConfigManager.h:198-207, findItem ConfigManager.cpp:451-455);
-ClientLogLevel is currently the only in-tree consumer that uses it.
-
----
+All class (b). The `Core3.AccountFlags.<id>.<key>` overlay exists for any getter call that passes an accountID (ConfigManager.h:198-207, findItem ConfigManager.cpp:451-455); ClientLogLevel is currently the only in-tree consumer that uses it.
 
 ## 6. Core3.PlayerManager.* (class b -- the hidden set)
 
@@ -207,11 +183,7 @@ ClientLogLevel is currently the only in-tree consumer that uses it.
 | Core3.PlayerManager.AdvancedWaypoints | bool | false | WaypointCommand.h:18 [dyn] |
 | Core3.PlayerManager.ValidClientVersion | string | 20050408-18:00 | ClientIdMessageCallback.h:98 [dyn] |
 
-GOTCHA: PlayerManagerImplementation.cpp:6914 reads **`PlayerManager.accountVictimList`**
-(bool, false) -- *without* the `Core3.` prefix. Operators must declare it at the TOP
-LEVEL of the Core3 table as a sibling table named `PlayerManager`... which collides with
-`Core3.PlayerManager.*`. In practice the correct spelling for that one key is a
-top-level `PlayerManager.accountVictimList`; flag this naming inconsistency in docs.
+GOTCHA: PlayerManagerImplementation.cpp:6914 reads **`PlayerManager.accountVictimList`** (bool, false) -- *without* the `Core3.` prefix. Operators must declare it at the TOP LEVEL of the Core3 table as a sibling table named `PlayerManager`... which collides with `Core3.PlayerManager.*`. In practice the correct spelling for that one key is a top-level `PlayerManager.accountVictimList`; flag this naming inconsistency in docs.
 
 ## 7. Core3.PlayerCreationManager.* (class b)
 
@@ -220,14 +192,12 @@ top-level `PlayerManager.accountVictimList`; flag this naming inconsistency in d
 | Core3.PlayerCreationManager.MaxCharactersPerGalaxy | int | 10 | PlayerCreationManager.cpp:321; ClientIdMessageCallback.h:171 [dyn] |
 | Core3.PlayerCreationManager.EnableTutorial | bool | false | PlayerCreationManager.cpp:379 [dyn] |
 
-## 8. Core3.JTL.* 
+## 8. Core3.JTL.*
 
 | Option | Type | Default | Consumer file:line |
 |---|---|---|---|
 | Core3.JTL.JTLEnabled | bool | false | ConfigManager.h:841 [dyn-cache] -> DirectorManager.cpp:5108 (Lua `isJtlEnabled()`) -- class (b), master switch gating all JTL/space-travel lua |
 | Core3.JTL.LaunchFromDevice | bool | false | ConfigManager.h:854 -- class **(c)**, no consumers |
-
----
 
 ## 9. Mission / bounty (class b)
 
@@ -242,8 +212,7 @@ top-level `PlayerManager.accountVictimList`; flag this naming inconsistency in d
 | Core3.MissionManager.PlayerBountyCooldown | bool | INCONSISTENT: true at :2068,:2159,:2234 but false at :2180 | MissionManagerImplementation.cpp:2068,2159,2180,2234 [dyn] |
 | Core3.MissionManager.PlayerBountyCooldownTime | int ms | 86400000 (24h) | MissionManagerImpl.cpp:2160 [dyn] |
 
-Flag: the PlayerBountyCooldown default disagreement across four callsites in the same
-file looks like a bug magnet; worth a behavior note.
+Flag: the PlayerBountyCooldown default disagreement across four callsites in the same file looks like a bug magnet; worth a behavior note.
 
 ## 10. Combat / PvP / GCW (class b)
 
@@ -381,17 +350,13 @@ Plus Lua-exposed config mirrors (read via ConfigManager, called from scripts):
   `Core3.AccountFlags.<accountID>.<name>` first (ConfigManager.h:198-207).
 
 ## 21. Mod option: customSkillsConfig.training (P07, BRIEF-049/049b)
+
 | Option | Type | Default | Consumer |
 |---|---|---|---|
 | training.trainersTeachAll | bool | true | skillTrainer.lua getTrainerSkillTable -- trainer teaches own tree + all elite/master trees above its line (cyvster2 hierarchical semantics; brawler covers TKA/swordsman/pikeman/fencer, NOT smuggler) |
 | training.trainersTeachEverything | bool | false | same file -- universal union of all 36 trees from ANY trainer (overrides trainersTeachAll when true) |
 
-Read once per trainer interaction from `scripts/customskills/config.lua`
-(`customSkillsConfig.training` table). When true, every skill trainer offers
-the union of all 36 profession trees (774 skills, elite/master included);
-per-skill prerequisites, XP, and skill-point costs remain engine-enforced at
-learn time. Set false for vanilla one-tree-per-trainer behavior. Requires
-server restart (screenplay Lua is not hot-reloaded).
+Read once per trainer interaction from `scripts/customskills/config.lua` (`customSkillsConfig.training` table). When true, every skill trainer offers the union of all 36 profession trees (774 skills, elite/master included); per-skill prerequisites, XP, and skill-point costs remain engine-enforced at learn time. Set false for vanilla one-tree-per-trainer behavior. Requires server restart (screenplay Lua is not hot-reloaded).
 
 ## 22. Mod option: customSkillsConfig.structures (BRIEF-050)
 
@@ -400,23 +365,11 @@ server restart (screenplay Lua is not hot-reloaded).
 | structures.accountSharedLots | bool | true (owner approved) | CustomSkillsStructureLots (src/server/zone/managers/customskills/structures/) |
 
 Behavior when enabled:
-- Lot pool = `maximumLots x (characters on the account, this galaxy)`, shared
-  across ALL account characters. Per-character cap still comes from the
-  querying ghost's `maximumLots`, so /adjustLotCount grants scale the pool.
-- Placement grants ADMIN on the new structure to every OTHER character OID on
-  the placer's account (placer keeps vanilla owner/ADMIN).
-- Cache: per-account `AccountLotEntry` (totalLotsUsed + perCharLots map) in
-  CustomSkillsStructureLots.cpp; mutex-guarded; built LAZY on first query per
-  account after boot (one scan of live characters' ownedStructures), then
-  updated incrementally at each ownedStructures mutation point. Never rescanned
-  per query -- this is the anti-cyvster2-stutter design (MIGRATION_LEDGER Q02).
-- Incremental maintenance points (all tagged `// BRIEF-050 (mod hook)`):
-  placeStructure + camp placement (StructureManager.cpp:546, :631),
-  DestroyStructureTask.h:118, TransferstructureCommand.h:207/:216,
-  camp adoption CampSiteActiveAreaImplementation.cpp:340/:370.
-- Query hook: PlayerObjectImplementation::getLotsRemaining
-  (PlayerObjectImplementation.cpp:3142) falls back to vanilla math if the
-  account cannot be resolved or has no characters.
+- Lot pool = `maximumLots x (characters on the account, this galaxy)`, shared across ALL account characters. Per-character cap still comes from the querying ghost's `maximumLots`, so /adjustLotCount grants scale the pool.
+- Placement grants ADMIN on the new structure to every OTHER character OID on the placer's account (placer keeps vanilla owner/ADMIN).
+- Cache: per-account `AccountLotEntry` (totalLotsUsed + perCharLots map) in CustomSkillsStructureLots.cpp; mutex-guarded; built LAZY on first query per account after boot (one scan of live characters' ownedStructures), then updated incrementally at each ownedStructures mutation point. Never rescanned per query -- this is the anti-cyvster2-stutter design (MIGRATION_LEDGER Q02).
+- Incremental maintenance points (all tagged `// BRIEF-050 (mod hook)`): placeStructure + camp placement (StructureManager.cpp:546, :631), DestroyStructureTask.h:118, TransferstructureCommand.h:207/:216, camp adoption CampSiteActiveAreaImplementation.cpp:340/:370.
+- Query hook: PlayerObjectImplementation::getLotsRemaining (PlayerObjectImplementation.cpp:3142) falls back to vanilla math if the account cannot be resolved or has no characters.
 
 ## 23. Mod option: customSkillsConfig.loot (BRIEF-046/047, E02/E05)
 
@@ -428,14 +381,8 @@ Behavior when enabled:
 | loot.attachmentAutoName | bool | true (owner approved) | LootManagerImplementation.cpp setSkillMods() |
 
 Behavior when enabled:
-- creditsToTopDamager: NPC credit drops skip the corpse and are paid directly
-  to the top-damage player (`ThreatMap::getHighestDamagePlayer`, null-checked)
-  with a system message confirming the amount. Event mobs always excluded.
-  false = vanilla corpse credits.
-- attachmentAutoName: newly looted Armor/Clothing Attachments are renamed
-  `[AA] <statname>: <value>` / `<[CA]> <statname>: <value>` from their highest
-  skill mod. Name is set exactly once after the mod scan (cyvster2 renamed
-  inside the loop). false = vanilla generic attachment names.
+- creditsToTopDamager: NPC credit drops skip the corpse and are paid directly to the top-damage player (`ThreatMap::getHighestDamagePlayer`, null-checked) with a system message confirming the amount. Event mobs always excluded. false = vanilla corpse credits.
+- attachmentAutoName: newly looted Armor/Clothing Attachments are renamed `[AA] <statname>: <value>` / `<[CA]> <statname>: <value>` from their highest skill mod. Name is set exactly once after the mod scan (cyvster2 renamed inside the loop). false = vanilla generic attachment names.
 
 ## 24. Mod option: customSkillsConfig.surveying (BRIEF-048, C06)
 
@@ -443,9 +390,4 @@ Behavior when enabled:
 |---|---|---|---|
 | surveying.maxRange | int (meters) | 2624 (owner approved; vanilla was 384) | SurveyToolImplementation.cpp + SurveyToolSetRangeSuiCallback.h + ResourceSpawner.cpp |
 
-Behavior: survey tool range tiers scale dynamically from 64m up to maxRange
-across six skill-gated tiers (gates at surveying 20/35/55/75/100/120,
-vanilla-preserved), in 64m-granular steps; sample grid is 6x6 points above
-1024m (3x3/4x4/5x5 below as vanilla). Setting maxRange = 384 restores the
-exact vanilla ladder. Accepted range 64-8192; requires server restart.
-Shared tier helpers live in `SurveyRangeLadder` (SurveyToolSetRangeSuiCallback.h).
+Behavior: survey tool range tiers scale dynamically from 64m up to maxRange across six skill-gated tiers (gates at surveying 20/35/55/75/100/120, vanilla-preserved), in 64m-granular steps; sample grid is 6x6 points above 1024m (3x3/4x4/5x5 below as vanilla). Setting maxRange = 384 restores the exact vanilla ladder. Accepted range 64-8192; requires server restart. Shared tier helpers live in `SurveyRangeLadder` (SurveyToolSetRangeSuiCallback.h).

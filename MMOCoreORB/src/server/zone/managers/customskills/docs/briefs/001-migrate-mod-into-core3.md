@@ -59,7 +59,7 @@ Execute from `G:\Data\swgemu customskills\` (paths below relative to it):
 5. **Commit** everything in Core3 as ONE commit tagged `[BRIEF-001]`, message
    noting: docs relocated into module directory; standalone mirror dissolved;
    dev tree confirmed authoritative.
-6. Do NOT touch `START-HERE.md` at the workspace root -- its repair is
+6. Do NOT touch `readme.md` at the workspace root -- its repair is
    [BRIEF-002](002-post-migration-doc-repair.md) (it references the now-gone
    folder and would be broken until then; acceptable transient state within
    one session).

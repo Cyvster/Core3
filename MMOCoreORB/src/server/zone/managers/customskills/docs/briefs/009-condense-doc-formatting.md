@@ -51,7 +51,7 @@
 3. `docs/swgemu/USER_GUIDE.md`
 4. `docs/swgemu/CODE_REFERENCE.md` (Parts I/II)
 5. `docs/customskills/LLM_GUIDE.md`
-6. Workspace-root `START-HERE.md` (already short -- verify standard)
+6. Workspace-root `readme.md` (already short -- verify standard)
 
 ## Deliverables
 

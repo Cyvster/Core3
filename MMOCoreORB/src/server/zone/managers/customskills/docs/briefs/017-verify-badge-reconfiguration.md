@@ -28,7 +28,7 @@ Owner directives driving this state:
 
 ## Required reading
 
-Workspace-root `START-HERE.md` ->
+Workspace-root `readme.md` ->
 [customskills/LLM_GUIDE.md](customskills/LLM_GUIDE.md) ->
 [rules/process.md](rules/process.md) ->
 [rules/project-design.md](rules/project-design.md). Then this brief in

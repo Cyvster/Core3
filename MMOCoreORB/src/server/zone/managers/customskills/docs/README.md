@@ -1,20 +1,14 @@
 # Custom Skills -- Documentation Directory
 
-> Subordinate to [rules/project-design.md](rules/project-design.md) -- the
-> master document for project rules.
+> Subordinate to [rules/project-design.md](rules/project-design.md) -- the master document for project rules.
 
 ## Cross-project propagation
 
-Policies shared with Project Alice follow the XPP procedure
-([rules/process.md](rules/process.md) -> Cross-Project Propagation).
-Ledger of adoptions lives there.
+Policies shared with Project Alice follow the XPP procedure ([rules/process.md](rules/process.md) -> Cross-Project Propagation). Ledger of adoptions lives there.
 
 ## Master Document
 
-The authoritative source for all project rules and design decisions is
-[rules/project-design.md](rules/project-design.md). Every other document in
-this directory is subordinate to it. When a subdocument contradicts the
-master, the master prevails.
+The authoritative source for all project rules and design decisions is [rules/project-design.md](rules/project-design.md). Every other document in this directory is subordinate to it. When a subdocument contradicts the master, the master prevails.
 
 ## Directory Organization
 
@@ -29,14 +23,11 @@ master, the master prevails.
 | `feature-planning/` | Active feature design (Challenge Tier) | Living design docs; graduate into reference/rules or archive |
 | `archive/` | Superseded documents (historical reference only) | Frozen; never cited as current authority |
 
-Audience separation is a governing constraint (owner directive 08242026):
-emulator content stays under `swgemu/`; module content under
-`customskills/`; the two sets do not bleed into each other.
+Audience separation is a governing constraint (owner directive 08242026): emulator content stays under `swgemu/`; module content under `customskills/`; the two sets do not bleed into each other.
 
 ## Entry Point for Contributors
 
-Start with the workspace-root ``START-HERE.md``, then read
-[rules/project-design.md](rules/project-design.md).
+Start with the workspace-root ``readme.md``, then read [rules/project-design.md](rules/project-design.md).
 
 ---
 
@@ -58,18 +49,14 @@ Start with the workspace-root ``START-HERE.md``, then read
 
 ### Required reading before creating documents
 
-1. The workspace-root ``START-HERE.md``
-2. [rules/project-design.md](rules/project-design.md) -- Core Design
-   Principles [CS-1..10]
+1. The workspace-root ``readme.md``
+2. [rules/project-design.md](rules/project-design.md) -- Core Design Principles [CS-1..10]
 3. The section of the relevant existing document your change touches
 4. This file's Document Creation Rules (you are here)
 
 ### Signing
 
-Every substantive contribution is signed. Format, date standard, and time
-zone are defined in
-[rules/process.md](rules/process.md) -> Contributor Recording Conventions;
-per [PROC R6.7] this document points there rather than restating them.
+Every substantive contribution is signed. Format, date standard, and time zone are defined in [rules/process.md](rules/process.md) -> Contributor Recording Conventions; per [PROC R6.7] this document points there rather than restating them.
 
 ---
 
@@ -80,15 +67,10 @@ research not intended to become permanent documentation.
 
 ### Rules for temporary documents
 
-1. **Location:** all temporary documents go under `docs/temp/`. Never place
-   them in `rules/`, `reference/`, `tracking/`, or any permanent location.
-2. **Marking:** the filename or first line must indicate intended lifespan
-   (e.g. "draft", "scratch", "analysis").
-3. **Destruction date:** include one if known; otherwise the owner may purge
-   during periodic cleanup.
-4. **No references:** permanent documents must not cite temporary documents.
-   If information from a temp document must be preserved, copy it into the
-   appropriate permanent document first.
+1. **Location:** all temporary documents go under `docs/temp/`. Never place them in `rules/`, `reference/`, `tracking/`, or any permanent location.
+2. **Marking:** the filename or first line must indicate intended lifespan (e.g. "draft", "scratch", "analysis").
+3. **Destruction date:** include one if known; otherwise the owner may purge during periodic cleanup.
+4. **No references:** permanent documents must not cite temporary documents. If information from a temp document must be preserved, copy it into the appropriate permanent document first.
 
 ---
 
@@ -107,7 +89,7 @@ research not intended to become permanent documentation.
 
 | File | Purpose |
 |------|---------|
-| workspace-root `START-HERE.md` | Contributor entry point, required reading order, code tour |
+| workspace-root `readme.md` | Contributor entry point, required reading order, code tour |
 | `../README.md` | Module summary and directory roles |
 | `../MANIFEST.md` | Every module-owned file + integration points (living tracker) |
 | `installation/INSTALLATION.md` | Canonical install/configure/verify/remove guide (the archived `integration/INSTALL.md` was its duplicate) |
@@ -119,19 +101,8 @@ research not intended to become permanent documentation.
 
 ## Contributing to Documentation
 
-- Keep audience separation clear: swgemu/ = emulator players + Core3
-  developers; customskills/ = module players, developers, and LLMs;
-  installation = admins; rules = governing authority. The two guide sets
-  stay self-contained (owner directive 08242026).
+- Keep audience separation clear: swgemu/ = emulator players + Core3 developers; customskills/ = module players, developers, and LLMs; installation = admins; rules = governing authority. The two guide sets stay self-contained (owner directive 08242026).
 - Update the relevant guide when changing behavior ([PROC R6.6]).
-- Record newly discovered toolchain/environment facts in their owning
-  reference document same-session ([PROC R6.9]).
-- Prefer consolidating into the existing reference documents over
-  creating new ones; archive rather than delete (preserves history) and
-  update links that pointed to archived docs.
-- **Update `swgemu/CODE_REFERENCE.md`** when discovering new Core3
-  patterns useful for future researchers, and its Part II when
-  build/test/deploy operations change ([PROC R6.9] capture applies).
-  Factual errors in either are filed via [rules/errata.md](rules/errata.md);
-  the historical log for the retired SWGEMU_CODE_GUIDE lives in
-  [archive/CODE_GUIDE_ERRATA.md](archive/CODE_GUIDE_ERRATA.md).
+- Record newly discovered toolchain/environment facts in their owning reference document same-session ([PROC R6.9]).
+- Prefer consolidating into the existing reference documents over creating new ones; archive rather than delete (preserves history) and update links that pointed to archived docs.
+- **Update `swgemu/CODE_REFERENCE.md`** when discovering new Core3 patterns useful for future researchers, and its Part II when build/test/deploy operations change ([PROC R6.9] capture applies). Factual errors in either are filed via [rules/errata.md](rules/errata.md); the historical log for the retired SWGEMU_CODE_GUIDE lives in [archive/CODE_GUIDE_ERRATA.md](archive/CODE_GUIDE_ERRATA.md).

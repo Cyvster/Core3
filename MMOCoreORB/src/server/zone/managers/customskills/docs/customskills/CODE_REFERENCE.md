@@ -16,22 +16,9 @@ this document references them and does not restate them.
 
 **Factual corrections** go through [../rules/errata.md](../rules/errata.md).
 
-
 ## Contributors
 
-**Nemotron 3.5 Lightning Free (AI)** -- initial creation of predecessor
- documents (ARCHITECTURE.md, IMPLEMENTATION_GUIDE.md, MENU_SYSTEM.md)  
-ox-alpha (opencode/x-preview-f-free), 08232026 -- consolidation into a
- single reference during documentation compression  
-hy3-free (opencode/hy3-free), 08232026 -- BRIEF-005 single-source rule for
- badge-backed modifiers; noted `getCriticalChance` reads the config badge map  
-hy3-free (opencode/hy3-free), 08242026 -- BRIEF-014 doc removals (combat
- spam label references)  
-
-
-**Last reconciled:** 08242026 by hy3-free (opencode/hy3-free) -- BRIEF-014
-combat-spam-label doc removals.
-
+**Nemotron 3.5 Lightning Free (AI)** -- initial creation of predecessor documents (ARCHITECTURE.md, IMPLEMENTATION_GUIDE.md, MENU_SYSTEM.md); ox-alpha (opencode/x-preview-f-free), 08232026 -- consolidation into a single reference during documentation compression; hy3-free (opencode/hy3-free), 08232026 -- BRIEF-005 single-source rule for badge-backed modifiers; noted `getCriticalChance` reads the config badge map; hy3-free (opencode/hy3-free), 08242026 -- BRIEF-014 doc removals (combat spam label references). **Last reconciled:** 08242026 by hy3-free (opencode/hy3-free) -- BRIEF-014 combat-spam-label doc removals.
 
 ## Physical Layout
 
@@ -99,7 +86,6 @@ containment rule).
              `------------------`
 ```
 
-
 ## Core Classes
 
 ### CustomSkillsModifierType.h
@@ -129,15 +115,10 @@ public:
 ### CustomSkillsConfig (Singleton + Logger)
 
 **Lifecycle**: constructed once at startup -> `setDefaults()` -> `load()`
-  
-**Defaults**: all modifiers disabled; Critical Chance enabled (300 bp/badge,
- 15000 multiplier)  
+**Defaults**: all modifiers disabled; Critical Chance enabled (300 bp/badge, 15000 multiplier)
 **load()**: parses `scripts/customskills/config.lua` via the `Lua` object
-  
-**API**: `isModifierEnabled()`, `getModifierCap()`, `getBadgeBonus()`,
- `getBadgeBonuses()`  
-**Cache**: gameplay reads config values directly -- restart required on
- config change; missing/invalid values -> safe defaults + server-log warning  
+**API**: `isModifierEnabled()`, `getModifierCap()`, `getBadgeBonus()`, `getBadgeBonuses()`
+**Cache**: gameplay reads config values directly -- restart required on config change; missing/invalid values -> safe defaults + server-log warning
 
 ```cpp
 // CustomSkillsConfig::load()
@@ -162,19 +143,12 @@ Generic modifier config fields: `enabled`, `badgeBonus`, `cap`, `badges[]`.
 ### CustomSkillsModifiers (Static API)
 
 **Central authority** -- all modifier queries route here ([CS-3])
-  
-**Badge aggregation**: iterates config's badge map per modifier, checks
- `PlayerObject::hasBadge()`  
-**Caps**: applies `config->getModifierCap(type)` if > 0 (0 = uncapped),
- after aggregation  
-**Single source of truth ([CS-3])**: every badge-driven value -- gameplay
- hooks AND the SUI menu -- resolves from `CustomSkillsConfig::getBadgeBonuses(type)` / `getModifierTotal()`. C++ must never hardcode a modifier's badge key list or per-badge rates; doing so re-creates the ERR-005 (combat/menu divergence) failure.  
-**Combat helpers**: `isCriticalChanceEnabled()`, `getCriticalChance()`
- (reads the config badge map -- same source as the menu; no hardcoded badge list), `getCriticalMultiplier()`  
-**Formatting**: `formatPercent(bp)`, `colorizeCriticalText()`,
- `formatModifierBonus(type, value)`  
-**Badge change notification**: `notifyBadgeAwarded(player)` refreshes
- visible skill mods & run speed  
+**Badge aggregation**: iterates config's badge map per modifier, checks `PlayerObject::hasBadge()`
+**Caps**: applies `config->getModifierCap(type)` if > 0 (0 = uncapped), after aggregation
+**Single source of truth ([CS-3])**: every badge-driven value -- gameplay hooks AND the SUI menu -- resolves from `CustomSkillsConfig::getBadgeBonuses(type)` / `getModifierTotal()`. C++ must never hardcode a modifier's badge key list or per-badge rates; doing so re-creates the ERR-005 (combat/menu divergence) failure.
+**Combat helpers**: `isCriticalChanceEnabled()`, `getCriticalChance()` (reads the config badge map -- same source as the menu; no hardcoded badge list), `getCriticalMultiplier()`
+**Formatting**: `formatPercent(bp)`, `colorizeCriticalText()`, `formatModifierBonus(type, value)`
+**Badge change notification**: `notifyBadgeAwarded(player)` refreshes visible skill mods & run speed  
 
 
 ## Hook Inventory (H01-H16)
@@ -321,14 +295,10 @@ creatures) is never duplicated.
 
 ## SUI Menu System
 
-**C++ owned** (`CustomSkillsMenu`, `CustomSkillsSuiCallback`) -- not a Lua
- screenplay. Rationale: avoids Lua as a second calculation path; queries the same typed API as gameplay hooks ([CS-3])  
-**Entry**: `CustomSkillsCommand` -> Lua bridge `CustomSkills:openMenu(pPlayer)`
- -> C++ menu creation  
-**Character-scoped**: SUI page stored in the invoking character's
- PlayerObject SUI map ([CS-7])  
+**C++ owned** (`CustomSkillsMenu`, `CustomSkillsSuiCallback`) -- not a Lua screenplay. Rationale: avoids Lua as a second calculation path; queries the same typed API as gameplay hooks ([CS-3])
+**Entry**: `CustomSkillsCommand` -> Lua bridge `CustomSkills:openMenu(pPlayer)` -> C++ menu creation
+**Character-scoped**: SUI page stored in the invoking character's PlayerObject SUI map ([CS-7])
 **Multi-window**: multiple `/customskills` windows supported simultaneously
-  
 **Bonus count helper**: `CustomSkillsMenu::countOwnedBonuses(player,
  CustomSkillsModifierType::Type)` walks `config.lua` badge keys for a modifier (via `CustomSkillsConfig::getBadgeBonuses(type)`) and counts how many the player actually owns (used by `getAcquiredCount` and `addBonusItems`). Both helpers are declared in `CustomSkillsMenu.h`; the enum arg is the **class**- scoped `CustomSkillsModifierType::Type` (see gotcha above).  
 **Per-category modifier total**: `CustomSkillsMenu::countModifier(player,
@@ -346,16 +316,11 @@ Server Config
 
 The top-level menu has three entries:
 
-**Badges** -- browse badges by category, with per-badge option to set as
- favorite or inspect its detail page.  
-**Bonuses** -- browse accumulated bonuses grouped by Combat, Utility, and
- Crafting (see Modifier Hierarchy). Only non-zero totals are shown.  
-**Server Config** -- server-side toggle state, including the Rarity Naming
- detail page (see below).  
+**Badges** -- browse badges by category, with per-badge option to set as favorite or inspect its detail page.
+**Bonuses** -- browse accumulated bonuses grouped by Combat, Utility, and Crafting (see Modifier Hierarchy). Only non-zero totals are shown.
+**Server Config** -- server-side toggle state, including the Rarity Naming detail page (see below).
 
-Accumulated Bonuses shows only non-zero totals from acquired badges -- never
-total-possible values. Disabled modifiers are omitted from the active summary
-(or shown inactive per config).
+Accumulated Bonuses shows only non-zero totals from acquired badges -- never total-possible values. Disabled modifiers are omitted from the active summary (or shown inactive per config).
 
 ### Modifier Hierarchy
 
@@ -478,14 +443,10 @@ service -- the menu never independently adds display strings ([CS-3]).
 Stock `Script.listBox` limitation: server event fires on button submit, not
 row-selection change. Single-click navigation/right-click Back/double-click
 reliability require client-side modifications (deferred).
-
 Safety requirements:
-Validate `pPlayer` is a player creature in every entry point; validate ghost
- before reading character data  
-Treat cancel, missing args, negative rows, unknown actions as no-op
-  
-Store stable action IDs in SUI row data (never dispatch on display text);
- explicit action table only  
+- Validate `pPlayer` is a player creature in every entry point; validate ghost before reading character data
+- Treat cancel, missing args, negative rows, unknown actions as no-op
+- Store stable action IDs in SUI row data (never dispatch on display text); explicit action table only
 
 ### Color Scheme
 
@@ -499,26 +460,16 @@ Store stable action IDs in SUI row data (never dispatch on display text);
 
 ## Adding a New Modifier (Authoritative Checklist)
 
-(1) **Enum**: add to `CustomSkillsModifierType.h` (before `COUNT`)
-  
-(2) **Name**: add to `CustomSkillsModifiers::getModifierName()`
-  
-(3) **Formatting**: add to `formatModifierBonus()` (bp vs whole units)
-  
-(4) **Defaults**: add in `CustomSkillsConfig::setDefaults()`
-  
-(5) **Config loader**: add `loadModifier()` call in `CustomSkillsConfig::load()`
-  
-(6) **Service**: create a new service class or extend an existing one
-  
-(7) **Hook(s)**: add Core3 delegation per the hook inventory; update
- `integration/core3-hooks.patch`  
-(8) **Badge assignments**: update `config.lua` (+ Appendix B for new
- badges); respect master-doc exclusions (pilot/JTL, admin/event)  
-(9) **Menu**: add category/page in `CustomSkillsMenu` and the SUI section above
-  
-(10) **Docs** ([PROC R6.6]): CODE_REFERENCE.md Appendix A entry, MANIFEST.md,
- INSTALLATION.md config reference if schema changed  
+1. **Enum**: add to `CustomSkillsModifierType.h` (before `COUNT`)
+2. **Name**: add to `CustomSkillsModifiers::getModifierName()`
+3. **Formatting**: add to `formatModifierBonus()` (bp vs whole units)
+4. **Defaults**: add in `CustomSkillsConfig::setDefaults()`
+5. **Config loader**: add `loadModifier()` call in `CustomSkillsConfig::load()`
+6. **Service**: create a new service class or extend an existing one
+7. **Hook(s)**: add Core3 delegation per the hook inventory; update `integration/core3-hooks.patch`
+8. **Badge assignments**: update `config.lua` (+ Appendix B for new badges); respect master-doc exclusions (pilot/JTL, admin/event)
+9. **Menu**: add category/page in `CustomSkillsMenu` and the SUI section above
+10. **Docs** ([PROC R6.6]): CODE_REFERENCE.md Appendix A entry, MANIFEST.md, INSTALLATION.md config reference if schema changed
 
 
 ## Patch Management
@@ -545,9 +496,7 @@ No hot reload: config is cached; restart after any `config.lua` change.
 
 ## Testing & Verification Matrix
 
-Platform capabilities (unit-test suite, `testScreenPlays`, database
-requirements): [CORE3_USER_GUIDE.md](CORE3_USER_GUIDE.md). The matrix below
-defines behavioral checks for this module:
+Platform capabilities (unit-test suite, `testScreenPlays`, database requirements): [CORE3_USER_GUIDE.md](CORE3_USER_GUIDE.md). The matrix below defines behavioral checks for this module:
 
 | Test | Description |
 |------|-------------|
@@ -572,8 +521,6 @@ Per-modifier focused tests:
 | Amazing Results | Assembly (all attrs) vs experimentation (selected row); ceiling raise |
 | SEA Cap | Server calc = client visible; badge gain/loss refreshes visible |
 | Forage/Milk | Round down; never below native; discrete loot unaffected |
-
-
 ## Debugging Tips
 
 | Symptom | Check |
@@ -590,23 +537,15 @@ Core3-level gotchas: [CORE3_CODE_REFERENCE.md](CORE3_CODE_REFERENCE.md).
 ##Appendix A -- Modifier Specification
 
 Complete registry of all 18 modifiers: configuration conventions, units, badge assignments, caps, and gameplay behavior. Tables document the SHIPPED DEFAULTS; a given server's config.lua is the authoritative source of its live values.
-
 ## Configuration Conventions
 
-**Percentages**: Basis points (100 = 1.00%)
-  
-**Multipliers**: Basis points (10000 = 1.00x)
-  
-**Whole units**: Armor Penetration (levels), Defense Cap/SEA Cap (points)
-  
-**Caps**: 0 = uncapped; applied after badge aggregation
-  
-**Shipped defaults**: the module ships with all 18 modifiers enabled and full badge assignments. The tables below document these defaults -- they are not live values. A server owner can change anything (enabled flags, badge lists, caps, badgeBonus values); on any given server, its config.lua is the single authoritative source of live values.
-  
-**Uniform badgeBonus (default convention)**: each modifier uses ONE `badgeBonus` value applied uniformly to every badge in its `badges` list. The shipped defaults carry ZERO active `badgeOverrides`. To customize a single badge, an owner uncomments the inactive `badgeOverrides` placeholder block under that modifier (loaded by `CustomSkillsConfig::loadBadgeOverrides` from `CustomSkillsConfig::load()`), where each `{ "badgeKey", value }` entry REPLACES the uniform `badgeBonus` for that one badge -- it never stacks with it. A badge listed in `badges` but absent from an active `badgeOverrides` uses the modifier's `badgeBonus`.
-  
-**rarityNaming**: a server-config section (`enabled`, `legendaryColor`,
- `exceptionalColor`, six-character RGB hex) that switches item naming to color-only text instead of `(Exceptional)`/`(Legendary)` suffixes (see hook H16 (Part I)). Configured independently of the badge modifiers.  
+- **Percentages**: Basis points (100 = 1.00%)
+- **Multipliers**: Basis points (10000 = 1.00x)
+- **Whole units**: Armor Penetration (levels), Defense Cap/SEA Cap (points)
+- **Caps**: 0 = uncapped; applied after badge aggregation
+- **Shipped defaults**: the module ships with all 18 modifiers enabled and full badge assignments. The tables below document these defaults -- they are not live values. A server owner can change anything (enabled flags, badge lists, caps, badgeBonus values); on any given server, its config.lua is the single authoritative source of live values.
+- **Uniform badgeBonus (default convention)**: each modifier uses ONE `badgeBonus` value applied uniformly to every badge in its `badges` list. The shipped defaults carry ZERO active `badgeOverrides`. To customize a single badge, an owner uncomments the inactive `badgeOverrides` placeholder block under that modifier (loaded by `CustomSkillsConfig::loadBadgeOverrides` from `CustomSkillsConfig::load()`), where each `{ "badgeKey", value }` entry REPLACES the uniform `badgeBonus` for that one badge -- it never stacks with it. A badge listed in `badges` but absent from an active `badgeOverrides` uses the modifier's `badgeBonus`.
+- **rarityNaming**: a server-config section (`enabled`, `legendaryColor`, `exceptionalColor`, six-character RGB hex) that switches item naming to color-only text instead of `(Exceptional)`/`(Legendary)` suffixes (see hook H16 (Part I)). Configured independently of the badge modifiers.
 
 
 ## Offense
@@ -622,12 +561,7 @@ Complete registry of all 18 modifiers: configuration conventions, units, badge a
 | **Badges (default)** | 60 achievement badges (see list below) |
 | **Config key** | `criticalChance` (special table) |
 
-**Behavior**: Chance for a landed attack to become a custom critical hit.
-Checked before repeat-damage tiers. Both the combat roll
-(`CustomSkillsCombat::applyDamage`) and the SUI menu read this value from the
-config badge map (`CustomSkillsConfig::getBadgeBonuses(CRITICAL_CHANCE)` /
-`getModifierTotal`) -- a single source of truth ([CS-3]); it is fully
-configurable in `config.lua`.
+**Behavior**: Chance for a landed attack to become a custom critical hit. Checked before repeat-damage tiers. Both the combat roll (`CustomSkillsCombat::applyDamage`) and the SUI menu read this value from the config badge map (`CustomSkillsConfig::getBadgeBonuses(CRITICAL_CHANCE)` / `getModifierTotal`) -- a single source of truth ([CS-3]); it is fully configurable in `config.lua`.
 
 **History**: before BRIEF-007 the C++ constructor seeded the 12 combat
 mastery badges at 300 bp via `DEFAULT_CRITICAL_CHANCE_PER_COMBAT_BADGE`
@@ -666,15 +600,11 @@ removed 08242026 by owner decision after BRIEF-010.
 | **Cap (default)** | 15000 bp (150% on top of the 150% base = 300% max) |
 | **Badges (default)** | 7 accumulation milestones + 5 exploration milestones = 12 total |
 
-**Behavior**: Badge-driven damage multiplier applied on custom critical hits
-(promoted from a `criticalChance.multiplier` sub-key to a standalone modifier
-in commit c832b1c263). Stacks additively with the base:
+**Behavior**: Badge-driven damage multiplier applied on custom critical hits (promoted from a `criticalChance.multiplier` sub-key to a standalone modifier in commit c832b1c263). Stacks additively with the base:
 ```
 critDamage = preArmorDamage x (baseMultiplier + badgeBonusTotal) / 10000
 ```
-with `baseMultiplier = criticalChance.multiplier` (default 15000 = 150%);
-current bonus cap 15000 -> 300% maximum crit damage
-(Part I hook H01).
+with `baseMultiplier = criticalChance.multiplier` (default 15000 = 150%); current bonus cap 15000 -> 300% maximum crit damage (Part I hook H01).
 
 
 ### Double Attack Chance (`DOUBLE_ATTACK_CHANCE`)
@@ -687,17 +617,8 @@ current bonus cap 15000 -> 300% maximum crit damage
 | **Cap (default)** | 10000 (100%) |
 | **Badges (default)** | Warren (2), Theme Parks (4) = 6 total |
 
-**Behavior**: Sequential upgrade chain start. Rolled first off the landed hit;
-success upgrades the attack to tier 2 and enables the Triple roll. First
-failed stage ends the chain.
-**Consolidated strike (BRIEF-034)**: tiers no longer apply N hits. The tier
-multiplies the finalized damage ONCE (`damage *= repeats`) and
-`applyVanillaDamage` runs a single time — one bigger hit, same total as the
-old repeat chain by design. Armor mitigation is IDENTICAL either way: every
-mitigation stage is a multiplicative percentage (force armor :2502, PSG
-:2562, standard armor :2591, NPC armor :2475), and percentages commute with
-the tier multiplier — verified CombatManager.cpp getArmorReduction chain. Escalated strikes get tiered
-flytext + `xN` chat tag (see "Consolidated Strike Presentation").
+**Behavior**: Sequential upgrade chain start. Rolled first off the landed hit; success upgrades the attack to tier 2 and enables the Triple roll. First failed stage ends the chain.
+**Consolidated strike (BRIEF-034)**: tiers no longer apply N hits. The tier multiplies the finalized damage ONCE (`damage *= repeats`) and `applyVanillaDamage` runs a single time -- one bigger hit, same total as the old repeat chain by design. Armor mitigation is IDENTICAL either way: every mitigation stage is a multiplicative percentage (force armor :2502, PSG :2562, standard armor :2591, NPC armor :2475), and percentages commute with the tier multiplier -- verified CombatManager.cpp getArmorReduction chain. Escalated strikes get tiered flytext + `xN` chat tag (see "Consolidated Strike Presentation").
 **Implemented**: yes (BRIEF-015; delivery reworked BRIEF-034).
 
 
@@ -711,11 +632,8 @@ flytext + `xN` chat tag (see "Consolidated Strike Presentation").
 | **Cap (default)** | 8500 (85%) |
 | **Badges (default)** | 12 combat masteries + 5 Hero of Tatooine POI = 17 total |
 
-**Behavior**: Rolled only after Double succeeds in the same chain; success
-upgrades to tier 3 and enables the Quad roll. Delivered as a consolidated
-strike (damage x3, single application — BRIEF-034).
+**Behavior**: Rolled only after Double succeeds in the same chain; success upgrades to tier 3 and enables the Quad roll. Delivered as a consolidated strike (damage x3, single application -- BRIEF-034).
 **Implemented**: yes (BRIEF-015; delivery reworked BRIEF-034).
-
 
 ### Quad Attack Chance (`QUAD_ATTACK_CHANCE`)
 
@@ -727,11 +645,8 @@ strike (damage x3, single application — BRIEF-034).
 | **Cap (default)** | 5100 (51%) |
 | **Badges (default)** | 12 combat masteries + 5 Hero of Tatooine POI = 17 total |
 
-**Behavior**: Rolled only after Triple succeeds in the same chain; success
-upgrades to tier 4 (highest). Delivered as a consolidated strike
-(damage x4, single application — BRIEF-034).
+**Behavior**: Rolled only after Triple succeeds in the same chain; success upgrades to tier 4 (highest). Delivered as a consolidated strike (damage x4, single application -- BRIEF-034).
 **Implemented**: yes (BRIEF-015; delivery reworked BRIEF-034).
-
 
 ### Consolidated Strike Presentation (`consolidatedStrike`, BRIEF-034)
 
@@ -846,10 +761,8 @@ Condition loss amount unchanged on successful roll.
 | **Badges (default)** | Tatooine easy (3), Yavin IV Woolamander/Blueleaf (2), Science masteries (3), Social masteries (5) = 13 total |
 
 **Behavior**: Increases initial duration of eligible buff families only:
-**Included**: Medical, Performance, Food/Drink, Spice-up, positive Jedi/Force
-  
-**Excluded**: Negative buffs, spice downers, debuffs, states, traps, DoTs, cooldown/control markers, skill-item, innate, Squad Leader, concealment, gallop, vehicle buffs
-  
+- **Included**: Medical, Performance, Food/Drink, Spice-up, positive Jedi/Force
+- **Excluded**: Negative buffs, spice downers, debuffs, states, traps, DoTs, cooldown/control markers, skill-item, innate, Squad Leader, concealment, gallop, vehicle buffs
 
 Explicit renewals (H12B) apply current bonus to new native duration. DB reload/internal reschedule preserves stored duration (no re-multiplication).
 
@@ -868,9 +781,7 @@ Explicit renewals (H12B) apply current bonus to new native duration. DB reload/i
 ```
 finalXP = base x species x buff x local x global x customMultiplier
 ```
-Does not affect: XP deductions, conversion costs, `applyModifiers == false` awards.
-Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x total).
-
+Does not affect: XP deductions, conversion costs, `applyModifiers == false` awards. Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x total).
 
 ### Practice Mode Experience Bonus (`PRACTICE_EXPERIENCE_BONUS`)
 
@@ -883,15 +794,10 @@ Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x tota
 | **Badges (default)** | Tatooine easy (3 x 10000), Yavin IV Woolamander/Blueleaf (2 x 10000), Social mastery (5 x 10000) = 10 total |
 
 **Behavior**: Applies when `createItem == false` (practice mode). Order:
-(1) Base crafting XP
-  
-(2) Core3 native 5% practice increase
-  
-(3) Custom practice bonus (multiplies)
-  
-(4) General Experience Bonus (H07) via central award path
-  
-
+1. Base crafting XP
+2. Core3 native 5% practice increase
+3. Custom practice bonus (multiplies)
+4. General Experience Bonus (H07) via central award path
 
 ## Crafting
 
@@ -906,11 +812,8 @@ Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x tota
 | **Badges (default)** | Crafting mastery (9 x 1000), Doctor mastery (1000) = 10 total |
 
 **Behavior**:
-**Personal**: `nativeDuration / multiplier`, clamp >=1s. Uses crafter's current bonus.
-  
-**Factory**: Snapshots **activator's** multiplier at run start. Persists across logout/restart. Badge changes mid-run don't affect current run. Stop/restart to recapture.
-  
-
+- **Personal**: `nativeDuration / multiplier`, clamp >=1s. Uses crafter's current bonus.
+- **Factory**: Snapshots **activator's** multiplier at run start. Persists across logout/restart. Badge changes mid-run don't affect current run. Stop/restart to recapture.
 
 ### Crafting Amazing Success Chance (`AMAZING_SUCCESS_CHANCE`)
 
@@ -940,15 +843,11 @@ Composes multiplicatively: 100 XP x 2x server x 5x character = 1000 XP (10x tota
 enhanced = nativeResult + ((schematicCap - nativeResult) x strength / 10000)
 ```
 Raises resource-derived ceiling only enough to retain enhanced value.
-**Assembly**: All applicable initial attributes
-  
-**Experimentation**: Selected row only
-  
-**Non-amazing**: Fully resource-limited (unchanged)
-  
-0% = native Core3 behavior; 100% = poor resources can yield perfect attributes
-  
+- **Assembly**: All applicable initial attributes
+- **Experimentation**: Selected row only
+- **Non-amazing**: Fully resource-limited (unchanged)
 
+0% = native Core3 behavior; 100% = poor resources can yield perfect attributes
 
 ## Gathering
 
@@ -1034,12 +933,8 @@ Complete badge catalog from badge_map.iff: inventory, menu organization, eligibi
 | **Total** | | **140** | **124** | **16** |
 
 Indices: contiguous 0-139, no duplicates
-  
 Columns: index, stable key, music, client category, show flag, type
-  
 **Always use stable keys** -- never hard-code indices (fragile across TRE changes)
-  
-
 
 ## Exact Key Inventory
 
@@ -1272,7 +1167,6 @@ Badges
     Death Star (1)          -> EXCLUDED
 ```
 
-
 ## Eligibility for Bonuses
 
 | Status | Count | Badges |
@@ -1333,14 +1227,12 @@ event_project_dead_eye_1
 | Hidden + enabled in config | Still shown in `/customskills` modifier breakdown (so totals stay explained) |
 | Visibility != ownership | `show` flag is metadata only; does not determine if badge is owned |
 
-
 ## Badge-to-Modifier Assignments (menu grouping in Part I; gameplay assignments below)
 
 ### Milestone Badges (12) -- +12.5% Crit Multiplier, +1% Crit Chance each
-`count_5` through `count_125` (7)
-  
-`bdg_exp_10/20/30/40/45_badges` (5)
-  
+
+- `count_5` through `count_125` (7)
+- `bdg_exp_10/20/30/40/45_badges` (5)
 
 ### Exploration Planets (45)
 
@@ -1402,6 +1294,7 @@ const Badge* badge = badgeList->get(badgeKey);  // stable key -> index
 if (badge && ghost->hasBadge(badge->getIndex()))
     total += bonus;
 ```
+
 ## Client Category Mapping (Reference)
 
 | Client Category | Core3 Types Included | Records |
@@ -1417,25 +1310,11 @@ if (badge && ghost->hasBadge(badge->getIndex()))
 
 ## SWGEMU Options Viewer (BRIEF-026)
 
-`CustomSkillsMenu::appendSwgemuOptions` (CustomSkillsMenu.cpp) renders a
-curated read-only list of ~20 notable Core3 options on the
-Server Config > SWGEMU Options page. Registry is a static `SwgemuOpt[]`
-table in that function: `{label, configKey, type('b'/'i'/'s'), restart}`.
-To add an option: append a row (defaults come from CONFIG_OPTIONS.md);
-secrets/credentials are excluded by policy -- never add DBPass, DBSecret,
-APIToken, or similar. Bools render green ENABLED / red DISABLED; rows with
-restart=true show a gray "(restart required)" suffix. Values are read live
-via ConfigManager::instance() getters, so [dyn] options reflect hot-reloads.
+`CustomSkillsMenu::appendSwgemuOptions` (CustomSkillsMenu.cpp) renders a curated read-only list of ~20 notable Core3 options on the Server Config > SWGEMU Options page. Registry is a static `SwgemuOpt[]` table in that function: `{label, configKey, type('b'/'i'/'s'), restart}`. To add an option: append a row (defaults come from CONFIG_OPTIONS.md); secrets/credentials are excluded by policy -- never add DBPass, DBSecret, APIToken, or similar. Bools render green ENABLED / red DISABLED; rows with restart=true show a gray "(restart required)" suffix. Values are read live via ConfigManager::instance() getters, so [dyn] options reflect hot-reloads.
 
 ## Hidden Config Options (server-configurable, undocumented keys)
 
-Full inventory of every option ConfigManager reads lives in
-[CONFIG_OPTIONS.md](CONFIG_OPTIONS.md) (BRIEF-023): 159 keys with type,
-default, consumer file:line, and read-behavior tags ([startup] vs [dyn]
-hot-reload). Highlights: the owner seed set (PlayerManager
-DisableGroupVisibility/WipeFillingOnClone/GalaxyWideGrouping/AdvancedWaypoints,
-PlayerCreationManager.MaxCharactersPerGalaxy, JTL.JTLEnabled) are all live
-reads absent from shipped config.lua.
+Full inventory of every option ConfigManager reads lives in [CONFIG_OPTIONS.md](CONFIG_OPTIONS.md) (BRIEF-023): 159 keys with type, default, consumer file:line, and read-behavior tags ([startup] vs [dyn] hot-reload). Highlights: the owner seed set (PlayerManager DisableGroupVisibility/WipeFillingOnClone/GalaxyWideGrouping/AdvancedWaypoints, PlayerCreationManager.MaxCharactersPerGalaxy, JTL.JTLEnabled) are all live reads absent from shipped config.lua.
 
 Gotchas from the inventory:
 - `PlayerManager.accountVictimList` is read WITHOUT the `Core3.` prefix
@@ -1476,291 +1355,105 @@ land here or carry an exclusion note.
 
 ## Config Overlay Mechanism (research, BRIEF-027)
 
-ConfigManager::loadConfigData() (src/conf/ConfigManager.cpp:23-93) loads
-exactly TWO lua files into ONE shared lua_State: conf/config.lua
-(hard-required, :33) then optional conf/config-local.lua (:38-47, loaded only
-if present). No third/include file exists in stock code. Merge rule is
-LAST-ASSIGNMENT-WINS: both chunks mutate the same global `Core3` table before
-a single parse pass (`clearConfigData()` at :55 wipes the map;
-parseConfigData("Core3") at :60 flattens it to dotted keys). Every key replace
-bumps configVersion (updateItem, :640), which auto-refreshes all cached
-getters (ConfigManager.h:278-355 pattern). Hot-reload re-runs loadConfigData()
-in full -- ServerCore::processConfig() at ServerCore.cpp:1128-1131 -- so any
-additional file loaded there re-applies on every reload too. A mod overlay
-file therefore needs only a `File::setReadOnly()` + `lua.runFile()` block
-mirroring :38-47; Lua screenplays CANNOT set ConfigManager keys at runtime
-(DirectorManager registers read mirrors only: isJtlEnabled()
-DirectorManager.cpp:5107-5108, isCovertOvertSystem() :5016 -- no setter
-binding). The mod's own CustomSkillsConfig::load() uses a private throwaway
-Lua state (CustomSkillsConfig.cpp:110-127) and cannot reach the config state.
-Recommended precedence for a mod-managed conf/mod-overrides.lua: ship fully
-commented out (sparse override = operator values always win); mod-forced lines
-loaded last would otherwise beat config-local by last-write-wins.
+ConfigManager::loadConfigData() (src/conf/ConfigManager.cpp:23-93) loads exactly TWO lua files into ONE shared lua_State: conf/config.lua (hard-required, :33) then optional conf/config-local.lua (:38-47, loaded only if present). No third/include file exists in stock code. Merge rule is LAST-ASSIGNMENT-WINS: both chunks mutate the same global `Core3` table before a single parse pass (`clearConfigData()` at :55 wipes the map; parseConfigData("Core3") at :60 flattens it to dotted keys). Every key replace bumps configVersion (updateItem, :640), which auto-refreshes all cached getters (ConfigManager.h:278-355 pattern). Hot-reload re-runs loadConfigData() in full -- ServerCore::processConfig() at ServerCore.cpp:1128-1131 -- so any additional file loaded there re-applies on every reload too. A mod overlay file therefore needs only a `File::setReadOnly()` + `lua.runFile()` block mirroring :38-47; Lua screenplays CANNOT set ConfigManager keys at runtime (DirectorManager registers read mirrors only: isJtlEnabled() DirectorManager.cpp:5107-5108, isCovertOvertSystem() :5016 -- no setter binding). The mod's own CustomSkillsConfig::load() uses a private throwaway Lua state (CustomSkillsConfig.cpp:110-127) and cannot reach the config state. Recommended precedence for a mod-managed conf/mod-overrides.lua: ship fully commented out (sparse override = operator values always win); mod-forced lines loaded last would otherwise beat config-local by last-write-wins.
 
 ### IMPLEMENTED (BRIEF-027-IMPL, 08252026)
 
-Route A is implemented. ConfigManager.cpp loadConfigData() now runs THREE
-files in one shared lua_State, in this order:
+Route A is implemented. ConfigManager.cpp loadConfigData() now runs THREE files in one shared lua_State, in this order:
 
 1. conf/config.lua (hard-required) -- loadConfigData() :33
 2. conf/config-local.lua (optional, File::setReadOnly guard) -- :38-47
-3. conf/mod-overrides.lua (optional, same setReadOnly pattern) -- :49-62;
-   logs "Loaded conf/mod-overrides.lua" / "Did not find
-   conf/mod-overrides.lua" at INFO.
+3. conf/mod-overrides.lua (optional, same setReadOnly pattern) -- :49-62; logs "Loaded conf/mod-overrides.lua" / "Did not find conf/mod-overrides.lua" at INFO.
 
-All three run BEFORE clearConfigData()/parseConfigData (:55+), inside the lua
-lifetime of loadConfigData(), so a single parse pass sees the merged Core3
-table and LAST-WRITE-WINS holds across the whole chain. processConfig()
-(ServerCore.cpp:1128-1131) re-runs loadConfigData() on hot-reload, so the
-overlay re-applies every reload too.
+All three run BEFORE clearConfigData()/parseConfigData (:55+), inside the lua lifetime of loadConfigData(), so a single parse pass sees the merged Core3 table and LAST-WRITE-WINS holds across the whole chain. processConfig() (ServerCore.cpp:1128-1131) re-runs loadConfigData() on hot-reload, so the overlay re-applies every reload too.
 
 Precedence rules:
-- Commented-out mod-overrides lines change nothing; config.lua /
-  config-local.lua operator values always win while the file stays sparse.
-- An UNCOMMENTED line in mod-overrides.lua wins over everything loaded
-  before it (both stock files), by last-write-wins.
-- To regain control, re-comment or delete the line and hot-reload; the value
-  reverts to the operator's config-local.lua setting.
-- Secrets/dead-reads/naming-trap keys are excluded from the shipped example
-  per ERR-014/BRIEF-026 policy.
+- Commented-out mod-overrides lines change nothing; config.lua / config-local.lua operator values always win while the file stays sparse.
+- An UNCOMMENTED line in mod-overrides.lua wins over everything loaded before it (both stock files), by last-write-wins.
+- To regain control, re-comment or delete the line and hot-reload; the value reverts to the operator's config-local.lua setting.
+- Secrets/dead-reads/naming-trap keys are excluded from the shipped example per ERR-014/BRIEF-026 policy.
 
-Shipped template: bin/conf/mod-overrides.lua.example -- fully commented,
-self-documenting (effect/type/default/dyn-vs-restart tag per option),
-~40 curated class-(b) options covering the owner seed set plus notable
-gameplay toggles. Copy to bin/conf/mod-overrides.lua to activate.
+Shipped template: bin/conf/mod-overrides.lua.example -- fully commented, self-documenting (effect/type/default/dyn-vs-restart tag per option), ~40 curated class-(b) options covering the owner seed set plus notable gameplay toggles. Copy to bin/conf/mod-overrides.lua to activate.
 
 ## Floating Combat Text (ShowFlyText)
-Packet: packets/object/ShowFlyText.h -- ObjectControllerMessage 0x1B/0x1BD;
-payload = long targetID, ascii stf FILE, int spacer, ascii stf ENTRY, float
-SCALE ("1.0 broadcasted, 0 none", :20), byte R/G/B, byte FLAGS hardcoded 5
-(:31; comment :25-30 lists 0x1 on-target-only, 0x2 chat?, 0x4 unknown).
-Wrapper: SceneObjectImplementation.cpp:1862 showFlyText(file,aux,r,g,b,
-isPrivate) -- public broadcasts at scale 1.0; private sends scale 0 to self.
-IDL: SceneObject.idl:904 (Lua-callable).
-Usage inventory: every caller in src uses default scale; only explicit
-scale is CombatManager::showHitLocationFlyText (:2909-2943) -- hit_head
-blue/hit_body+arms red/legs green all 1.0f, sent to attacker ONLY (:2942).
-doMiss/doCounterAttack/doBlock/doDodge white/green via wrapper
-(CombatManager.cpp:2865-2906). Buff flytext proves dynamic stf strings work
-(BuffImplementation.cpp:121,168). No flag variation anywhere in tree.
-Verdicts: SIZE YES (server float per message; slider interaction needs live
-test); COLOR YES (RGB fully server-controlled); TEXT PARTIAL (stf
-file+entry only -- no raw text/digits in packet; custom tables need client
-stf patch); POSITION NO (no offset field); EFFECTS NO (no animation field;
-client-mod territory).
-Hook point: CustomSkillsCombat::applyDamage already owns post-mitigation
-totals and is a CombatManager friend (CombatManager.h:21,24; delegation
-CombatManager.cpp:1419-1421) -- build ShowFlyText directly there for full
-scale/color control. showHitLocationFlyText is non-virtual const
-(CombatManager.h:273); replicate rather than fork.
-NOT feasible server-side: literal damage digits, positional offsets,
-shake/motion effects, resizing client-generated numeric damage flytext
-(that path is CombatSpam-driven client-side; NGE-era opcode 0x45A
-ShowCombatText absent from this tree).
-Open tests: rendered size formula (slider x float?), flag 0x2 semantics,
-whether scale 0 means private render or invisible.
+
+Packet: packets/object/ShowFlyText.h -- ObjectControllerMessage 0x1B/0x1BD; payload = long targetID, ascii stf FILE, int spacer, ascii stf ENTRY, float SCALE ("1.0 broadcasted, 0 none", :20), byte R/G/B, byte FLAGS hardcoded 5 (:31; comment :25-30 lists 0x1 on-target-only, 0x2 chat?, 0x4 unknown). Wrapper: SceneObjectImplementation.cpp:1862 showFlyText(file,aux,r,g,b,isPrivate) -- public broadcasts at scale 1.0; private sends scale 0 to self. IDL: SceneObject.idl:904 (Lua-callable). Usage inventory: every caller in src uses default scale; only explicit scale is CombatManager::showHitLocationFlyText (:2909-2943) -- hit_head blue/hit_body+arms red/legs green all 1.0f, sent to attacker ONLY (:2942). doMiss/doCounterAttack/doBlock/doDodge white/green via wrapper (CombatManager.cpp:2865-2906). Buff flytext proves dynamic stf strings work (BuffImplementation.cpp:121,168). No flag variation anywhere in tree. Verdicts: SIZE YES (server float per message; slider interaction needs live test); COLOR YES (RGB fully server-controlled); TEXT PARTIAL (stf file+entry only -- no raw text/digits in packet; custom tables need client stf patch); POSITION NO (no offset field); EFFECTS NO (no animation field; client-mod territory). Hook point: CustomSkillsCombat::applyDamage already owns post-mitigation totals and is a CombatManager friend (CombatManager.h:21,24; delegation CombatManager.cpp:1419-1421) -- build ShowFlyText directly there for full scale/color control. showHitLocationFlyText is non-virtual const (CombatManager.h:273); replicate rather than fork. NOT feasible server-side: literal damage digits, positional offsets, shake/motion effects, resizing client-generated numeric damage flytext (that path is CombatSpam-driven client-side; NGE-era opcode 0x45A ShowCombatText absent from this tree). Open tests: rendered size formula (slider x float?), flag 0x2 semantics, whether scale 0 means private render or invisible.
 
 ## Menu Performance Profile (R6.9, BRIEF-033)
 
-Per-open cost of CustomSkillsMenu::open (CustomSkillsMenu.cpp:49) -- modeled,
-not profiled; full model in docs/briefs/_033_findings.md.
+Per-open cost of CustomSkillsMenu::open (CustomSkillsMenu.cpp:49) -- modeled, not profiled; full model in docs/briefs/_033_findings.md.
 
-Call graph: CustomSkillsCommand.h:30 -> open() -> getPromptText
-(CustomSkillsMenu.cpp:288; 18 summary lines via 18x getModifierTotal, or 20
-live ConfigManager reads on the SWGEMU_OPTIONS page via appendSwgemuOptions
-:242-286) -> addPageItems (:363). Leaf badge rows do 1 BadgeList::get +
-1 hasBadge + 1 StringIdManager lookup (:76) + an 18-type VectorMap scan per
-row (:83-87); bonus pages add a 17-type cross-modifier re-scan per row
-(:175-181). generateMessage serializes every row into one SuiCreatePageMessage
-(SuiListBoxImplementation.cpp:14); each row deploys one SuiListBoxMenuItem
-(:102-105).
+Call graph: CustomSkillsCommand.h:30 -> open() -> getPromptText (CustomSkillsMenu.cpp:288; 18 summary lines via 18x getModifierTotal, or 20 live ConfigManager reads on the SWGEMU_OPTIONS page via appendSwgemuOptions :242-286) -> addPageItems (:363). Leaf badge rows do 1 BadgeList::get + 1 hasBadge + 1 StringIdManager lookup (:76) + an 18-type VectorMap scan per row (:83-87); bonus pages add a 17-type cross-modifier re-scan per row (:175-181). generateMessage serializes every row into one SuiCreatePageMessage (SuiListBoxImplementation.cpp:14); each row deploys one SuiListBoxMenuItem (:102-105).
 
-Costs: ConfigManager get* = ReadLocker + hash find (~150-400 ns;
-ConfigManager.cpp:479-499, shared readers don't contend). BadgeList::get ~100 ns.
-StringId lookup ~0.5-2 us. No DB hits and no Lua per open -- badges are in-memory
-(hasBadge), bonuses pre-parsed once at startup (CustomSkillsConfig.cpp:110).
+Costs: ConfigManager get* = ReadLocker + hash find (~150-400 ns; ConfigManager.cpp:479-499, shared readers don't contend). BadgeList::get ~100 ns. StringId lookup ~0.5-2 us. No DB hits and no Lua per open -- badges are in-memory (hasBadge), bonuses pre-parsed once at startup (CustomSkillsConfig.cpp:110).
 
 Headline numbers:
-- Typical open (<=12 rows): ~60-150 us server CPU; worst page (SWGEMU options)
-  ~80-180 us. Whole-tree hypothetical (140 badge rows counted at
-  CustomSkillsMenu.cpp:16-42): ~1.5-3 ms.
-- One menu open ~= 2-4 unobserved melee swings (CombatManager::doCombatAction
-  CombatManager.cpp:213 runs accuracy/mitigation + CombatAction broadcast to all
-  nearby observers, :284-285/:693-721), ~= 0.5-1 swing in a crowded fight.
-- 1000 simultaneous opens ~= 100-150 ms total CPU across the task worker pool;
-  NEGLIGIBLE. Menu work shares workers with combat ticks but would need
-  >10k opens/sec to threaten starvation.
+- Typical open (<=12 rows): ~60-150 us server CPU; worst page (SWGEMU options) ~80-180 us. Whole-tree hypothetical (140 badge rows counted at CustomSkillsMenu.cpp:16-42): ~1.5-3 ms.
+- One menu open ~= 2-4 unobserved melee swings (CombatManager::doCombatAction CombatManager.cpp:213 runs accuracy/mitigation + CombatAction broadcast to all nearby observers, :284-285/:693-721), ~= 0.5-1 swing in a crowded fight.
+- 1000 simultaneous opens ~= 100-150 ms total CPU across the task worker pool; NEGLIGIBLE. Menu work shares workers with combat ticks but would need >10k opens/sec to threaten starvation.
 
-Scaling cliffs (500/1000/1500 rows): server build time stays trivial (~20 ms
-at 1500); the FIRST cliff is client-side listbox rendering around 1000-1500
-rows in one SUI page -- SuiListBoxImplementation imposes no row cap, so the
-server ships it intact and the client chokes. Keep pages lazy/paged (already
-true) with a soft cap ~250 rows/page if content grows.
+Scaling cliffs (500/1000/1500 rows): server build time stays trivial (~20 ms at 1500); the FIRST cliff is client-side listbox rendering around 1000-1500 rows in one SUI page -- SuiListBoxImplementation imposes no row cap, so the server ships it intact and the client chokes. Keep pages lazy/paged (already true) with a soft cap ~250 rows/page if content grows.
 
 ## Crafting Session Lifecycle (R6.9, BRIEF-035)
 
 Durable facts about inventory-tool crafting (research only; no code changed).
 
-**Objects**: one `CraftingSession`
-(`objects/player/sessions/crafting/CraftingSessionImplementation.cpp`) per
-craft, created by `requestcraftingsession` (RequestCraftingSessionCommand.h:120).
-Tool states: READY/WORKING/FINISHED (CraftingTool.idl:41-43); tool holds max
-one prototype (CraftingToolImplementation.cpp:56).
+**Objects**: one `CraftingSession` (`objects/player/sessions/crafting/CraftingSessionImplementation.cpp`) per craft, created by `requestcraftingsession` (RequestCraftingSessionCommand.h:120). Tool states: READY/WORKING/FINISHED (CraftingTool.idl:41-43); tool holds max one prototype (CraftingToolImplementation.cpp:56).
 
-**State machine** (`state` field): 1 = schematic list -> 2 = resource screen
-(`selectDraftSchematic`) -> 3/4 = assembly done w/ or w/o experimentation
-(`initialAssembly`, station + exp-rows/factory check at :841) -> 5 =
-customization done (`customization()` :1330) -> 6 final. Every transition is a
-client queue command / ObjectController packet (0x106 experiment, 0x107/0x108
-ingredient add/remove, 0x15A customization; registered ZonePacketHandler.cpp:207-210;
-stage commands NextCraftingStage/CreatePrototype/SelectDraftSchematic).
+**State machine** (`state` field): 1 = schematic list -> 2 = resource screen (`selectDraftSchematic`) -> 3/4 = assembly done w/ or w/o experimentation (`initialAssembly`, station + exp-rows/factory check at :841) -> 5 = customization done (`customization()` :1330) -> 6 final. Every transition is a client queue command / ObjectController packet (0x106 experiment, 0x107/0x108 ingredient add/remove, 0x15A customization; registered ZonePacketHandler.cpp:207-210; stage commands NextCraftingStage/CreatePrototype/SelectDraftSchematic).
 
-**Session end is unconditional**: `createPrototype()` (:1372) awards XP,
-schedules `CreateObjectTask` (timer = complexity*2 through
-CustomSkillsCrafting::getPersonalCraftingDuration), then always calls
-`cancelSession()` (:1415). Resources are consumed at assembly and never
-recovered on success (:952; critical failure re-slots via
-`synchronizedUIListen` :959). `CreateObjectTask` transfers the prototype to
-inventory and sets tool READY, or parks it FINISHED if inventory full.
+**Session end is unconditional**: `createPrototype()` (:1372) awards XP, schedules `CreateObjectTask` (timer = complexity*2 through CustomSkillsCrafting::getPersonalCraftingDuration), then always calls `cancelSession()` (:1415). Resources are consumed at assembly and never recovered on success (:952; critical failure re-slots via `synchronizedUIListen` :959). `CreateObjectTask` transfers the prototype to inventory and sets tool READY, or parks it FINISHED if inventory full.
 
-**Repeat-craft implication**: sessions are strictly one-shot; "repeat" must be
-an assisted pre-fill of a fresh session (snapshot draft-schematic CRC +
-per-slot resource names + exp row/point pairs + customization data), not a
-server-side loop. Factory mass-production precedent:
-FactoryObjectImplementation::createNewObject() loops on persisted
-ManufactureSchematic + stored prototype with manufactureLimit countdown.
-Practice XP is xp*1.05 with identical resource cost -- repeats don't change
-XP-per-resource ratio but do remove inter-craft time when Crafting Speed is
-stacked (clamp >=1s), so auto-repeat should exclude practice mode.
+**Repeat-craft implication**: sessions are strictly one-shot; "repeat" must be an assisted pre-fill of a fresh session (snapshot draft-schematic CRC + per-slot resource names + exp row/point pairs + customization data), not a server-side loop. Factory mass-production precedent: FactoryObjectImplementation::createNewObject() loops on persisted ManufactureSchematic + stored prototype with manufactureLimit countdown. Practice XP is xp*1.05 with identical resource cost -- repeats don't change XP-per-resource ratio but do remove inter-craft time when Crafting Speed is stacked (clamp >=1s), so auto-repeat should exclude practice mode.
 
 ## Repeat-Craft (REMOVED)
 
-Feature removed 08252026 by owner decision: client constraints (one-shot
-sessions, per-char client CRC enumeration, client-side last-craft memory)
-made a robust implementation impossible without client modification.
-Vanilla already re-opens the tool on the last-crafted schematic. History:
-BRIEF-036/041/042 + ERR-020/021.
+Feature removed 08252026 by owner decision: client constraints (one-shot sessions, per-char client CRC enumeration, client-side last-craft memory) made a robust implementation impossible without client modification. Vanilla already re-opens the tool on the last-crafted schematic. History: BRIEF-036/041/042 + ERR-020/021.
+
 ## CombatManager Integration Surface (BRIEF-042, R6.9)
 
-Core3 files touched by the mod's combat features -- keep this list current
-when the surface changes:
+Core3 files touched by the mod's combat features -- keep this list current when the surface changes:
 
-`CombatManager.h/.cpp`: transient member `suppressHitLocationFlyText`
-(CombatManager.h:231, setter :251). CustomSkillsCombat sets it around an
-escalated strike's applyVanillaDamage call; showHitLocationFlyText (:1613)
-skips rendering when set, so the escalated flytext is the ONLY hit-location
-text for that hit. Base hits unaffected (flag false -> vanilla renders).
+`CombatManager.h/.cpp`: transient member `suppressHitLocationFlyText` (CombatManager.h:231, setter :251). CustomSkillsCombat sets it around an escalated strike's applyVanillaDamage call; showHitLocationFlyText (:1613) skips rendering when set, so the escalated flytext is the ONLY hit-location text for that hit. Base hits unaffected (flag false -> vanilla renders).
 
-New delegation: `CustomSkillsCombat::applyTanoTargetDamage` handles
-player-vs-TangibleObject (lairs, turrets) via the applyDamage(CreatureObject*
-attacker, TangibleObject* defender...) overload at CombatManager.cpp:1630 --
-previously that path had NO mod hook, which is why Double/Triple/Quad and
-crits did not work vs lairs. Crit + tier chain + consolidated multiplier +
-tiered FCT all live there now.
+New delegation: `CustomSkillsCombat::applyTanoTargetDamage` handles player-vs-TangibleObject (lairs, turrets) via the applyDamage(CreatureObject* attacker, TangibleObject* defender...) overload at CombatManager.cpp:1630 -- previously that path had NO mod hook, which is why Double/Triple/Quad and crits did not work vs lairs. Crit + tier chain + consolidated multiplier + tiered FCT all live there now.
 
-Escalated flytext broadcasts to the defender's observers
-(`defender->broadcastMessage`) matching vanilla's audience; chat tag remains
-attacker-only by design.
+Escalated flytext broadcasts to the defender's observers (`defender->broadcastMessage`) matching vanilla's audience; chat tag remains attacker-only by design.
 
 ## Mod Integration Gotchas (R6.9, 08252026 live-test + build lessons)
 
-CombatManager has TWO applyDamage overloads: player-vs-CreatureObject
-(:490) delegates to CustomSkillsCombat::applyDamage; player-vs-TangibleObject
-(lairs, turrets -- :377 -> :1630) does NOT. Tier/escalation logic must cover
-both paths when porting combat behavior.
+CombatManager has TWO applyDamage overloads: player-vs-CreatureObject (:490) delegates to CustomSkillsCombat::applyDamage; player-vs-TangibleObject (lairs, turrets -- :377 -> :1630) does NOT. Tier/escalation logic must cover both paths when porting combat behavior.
 
-Vanilla hit-location flytext (showHitLocationFlyText :2936, called :1614)
-renders scale 1.0 pool colors on every hit at the same anchor as any mod
-flytext; the client stacks them and vanilla wins visually. Escalated text
-must suppress the vanilla call or render alone to be visible.
-Broadcast via defender's observers (vanilla sends attacker-only).
+Vanilla hit-location flytext (showHitLocationFlyText :2936, called :1614) renders scale 1.0 pool colors on every hit at the same anchor as any mod flytext; the client stacks them and vanilla wins visually. Escalated text must suppress the vanilla call or render alone to be visible. Broadcast via defender's observers (vanilla sends attacker-only).
 
-QueueCommand result codes GENERALERROR=1 / SUCCESS=0 are static members of
-QueueCommand (commands/QueueCommand.h:60-61), not globals -- code outside a
-QueueCommand subclass must include the header and qualify
-QueueCommand::GENERALERROR.
+QueueCommand result codes GENERALERROR=1 / SUCCESS=0 are static members of QueueCommand (commands/QueueCommand.h:60-61), not globals -- code outside a QueueCommand subclass must include the header and qualify QueueCommand::GENERALERROR.
 
-Never forward-declare IDL-generated classes (ManufactureSchematic,
-CraftingTool, ...) in the global namespace in mod headers: IDL headers
-declare them inside server::zone::objects::* namespaces; both visible in one
-TU yields ambiguous-type build errors. Include the real header instead.
+Never forward-declare IDL-generated classes (ManufactureSchematic, CraftingTool, ...) in the global namespace in mod headers: IDL headers declare them inside server::zone::objects::* namespaces; both visible in one TU yields ambiguous-type build errors. Include the real header instead.
+
 ## Mission Terminal Options (BRIEF-043)
 
-`CustomSkillsMissions` (customskills/missions/) implements per-player mission
-direction and difficulty choices, ported from cyvster2 with performance and
-safety fixes. Delegation-only: MissionManagerImplementation.cpp carries five
-1-7 line `// BRIEF-043 (mod hook)` sites; all logic is mod-side.
+`CustomSkillsMissions` (customskills/missions/) implements per-player mission direction and difficulty choices, ported from cyvster2 with performance and safety fixes. Delegation-only: MissionManagerImplementation.cpp carries five 1-7 line `// BRIEF-043 (mod hook)` sites; all logic is mod-side.
 
-Hooks: choice cache around populateMissionList (cacheChoices/clearChoices --
-choices read ONCE per list, never per-mission: the cyvster2 stutter fix);
-difficulty display override; lair-spawn playerLevel override; heading wedge
-(+/-5 deg) fed to vanilla getWorldCoordinate for destroy placement;
-mission-list cap from config; descriptive "CL<n> Destroy the <mobile>" titles.
+Hooks: choice cache around populateMissionList (cacheChoices/clearChoices -- choices read ONCE per list, never per-mission: the cyvster2 stutter fix); difficulty display override; lair-spawn playerLevel override; heading wedge (+/-5 deg) fed to vanilla getWorldCoordinate for destroy placement; mission-list cap from config; descriptive "CL<n> Destroy the <mobile>" titles.
 
-Persistence: ScreenPlayData keys `mission_level_choice/levelChoice` and
-`mission_direction_choice/directionChoice` -- identical to cyvster2 so
-returning players keep their settings. Unset values are guarded (cyvster2
-crashed on empty strings here).
+Persistence: ScreenPlayData keys `mission_level_choice/levelChoice` and `mission_direction_choice/directionChoice` -- identical to cyvster2 so returning players keep their settings. Unset values are guarded (cyvster2 crashed on empty strings here).
 
-UI: two pure-C++ SuiListBoxes from terminal radials 112/113 ("Mission
-Direction" / "Mission Difficulty"); no Lua screenplays in the path.
-Config: `customSkillsConfig.missions` table (missionOptionsEnabled,
-directionOptionEnabled, difficultyOptionEnabled, missionListSize default 3,
-descriptiveTitles default true).
+UI: two pure-C++ SuiListBoxes from terminal radials 112/113 ("Mission Direction" / "Mission Difficulty"); no Lua screenplays in the path. Config: `customSkillsConfig.missions` table (missionOptionsEnabled, directionOptionEnabled, difficultyOptionEnabled, missionListSize default 3, descriptiveTitles default true).
 
 ## Mission/Coordinate Gotchas (BRIEF-043, 08252026)
 
-`SceneObject::getWorldCoordinate(distance, angle)` is FACING-RELATIVE:
-SceneObjectImplementation.cpp:1583 subtracts `direction.getRadians()` from the
-angle. It answers "spawn N meters off my left shoulder", never "spawn at
-compass heading X". Absolute compass placement must compute coordinates
-directly (see `CustomSkillsMissions::getMissionStartPosition`).
-World axes: north = +Y, east = -X (verified live: first implementation with
-north=-Y produced exact 180-degree inversions on all four cardinals).
-Vanilla mission placement rejects water/boundary positions and re-rolls --
-directional missions near coastlines drift toward land; that redirect is
-vanilla behavior, not a mod bug.
-engine3 math types: `Vector3` = engine/util/u3d/Vector3.h, used unqualified
-(engine.h using-declarations). No `server/.../scene/Vector3.h` exists.
-`LairTemplate` (templates/mobile/LairTemplate.h) is GLOBAL namespace -- never
-forward-declare it inside server::templates::mobile.
-`VectorMap` has no getPointer(); use contains()/get()/drop(). engine3 has no
-system/util/HashMap.h in this tree.
-Vanilla pets self-recover when >128m from owner: pet.lua:130-132
-CheckOwnerInRange 128.0 -> PetReturn; stranding requires pathing failure or
-STAY/GUARD/PATROL (pet summon research, _044_pet_summon_design.md).
+`SceneObject::getWorldCoordinate(distance, angle)` is FACING-RELATIVE: SceneObjectImplementation.cpp:1583 subtracts `direction.getRadians()` from the angle. It answers "spawn N meters off my left shoulder", never "spawn at compass heading X". Absolute compass placement must compute coordinates directly (see `CustomSkillsMissions::getMissionStartPosition`). World axes: north = +Y, east = -X (verified live: first implementation with north=-Y produced exact 180-degree inversions on all four cardinals). Vanilla mission placement rejects water/boundary positions and re-rolls -- directional missions near coastlines drift toward land; that redirect is vanilla behavior, not a mod bug.
+engine3 math types: `Vector3` = engine/util/u3d/Vector3.h, used unqualified (engine.h using-declarations). No `server/.../scene/Vector3.h` exists. `LairTemplate` (templates/mobile/LairTemplate.h) is GLOBAL namespace -- never forward-declare it inside server::templates::mobile. `VectorMap` has no getPointer(); use contains()/get()/drop(). engine3 has no system/util/HashMap.h in this tree. Vanilla pets self-recover when >128m from owner: pet.lua:130-132 CheckOwnerInRange 128.0 -> PetReturn; stranding requires pathing failure or STAY/GUARD/PATROL (pet summon research, _044_pet_summon_design.md).
 
 ## Account-Shared Structure Lots (BRIEF-050, 08252026)
 
 [R6.9] Discovery captures for Q02 (account-shared lots, cached design):
 
-- **ownedStructures mutation points are exactly five** in vanilla Core3:
-  `PlayerObject::addOwnedStructure` / `removeOwnedStructure` are called from
-  StructureManager.cpp placeStructure (:546) and placeCamp (:628),
-  DestroyStructureTask.h (:116), TransferstructureCommand.h (:205/:210), and
-  camp adoption CampSiteActiveAreaImplementation.cpp (:339/:365). Any future
-  ownership feature must cover all five.
-- **Account character enumeration server-side**: `ghost->getAccount()` returns
-  the cached `Account*` (`AccountManager::getAccount(accountID)`, cached on the
-  PlayerObject at initializeAccount, PlayerObjectImplementation.cpp:168);
-  `Account::getCharacterList()` (Account.idl:176, AccountImplementation.cpp:167)
-  returns a `CharacterList` of `CharacterListEntry` with getObjectID() /
-  getGalaxyID(). First access hits MySQL (UNION of characters + characters_dirty,
-  CharacterList.h:33); afterwards it is cached on the Account object. Filter
-  entries by `ZoneServer::getGalaxyID()` -- cross-galaxy rows are present.
-- **maximumLots is per-character state**, not a constant: byte field on
-  PlayerObject (default 10), mutable via /adjustLotCount. Pool math should read
-  the querying ghost's value rather than hardcoding 10/250.
-- **Cache design that avoids the cyvster2 stutter**: lazy one-time build per
-  account on first getLotsRemaining query after boot, guarded by a Mutex, then
-  purely incremental updates at the five mutation points. Never rescan per
-  query. Implementation: customskills/structures/CustomSkillsStructureLots.{h,cpp};
-  config knob structures.accountSharedLots default true.
-- **Placement permission grant point**: vanilla grants ADMIN + owner at
-  StructureManager.cpp:541-542 (`grantPermission("ADMIN", ...)` /
-  `setOwner(...)`). Extending ADMIN to other account characters goes right
-  after the addOwnedStructure call; grant by character OID even if offline
-  (StructurePermissionList is persistent).
+- **ownedStructures mutation points are exactly five** in vanilla Core3: `PlayerObject::addOwnedStructure` / `removeOwnedStructure` are called from StructureManager.cpp placeStructure (:546) and placeCamp (:628), DestroyStructureTask.h (:116), TransferstructureCommand.h (:205/:210), and camp adoption CampSiteActiveAreaImplementation.cpp (:339/:365). Any future ownership feature must cover all five.
+- **Account character enumeration server-side**: `ghost->getAccount()` returns the cached `Account*` (`AccountManager::getAccount(accountID)`, cached on the PlayerObject at initializeAccount, PlayerObjectImplementation.cpp:168); `Account::getCharacterList()` (Account.idl:176, AccountImplementation.cpp:167) returns a `CharacterList` of `CharacterListEntry` with getObjectID() / getGalaxyID(). First access hits MySQL (UNION of characters + characters_dirty, CharacterList.h:33); afterwards it is cached on the Account object. Filter entries by `ZoneServer::getGalaxyID()` -- cross-galaxy rows are present.
+- **maximumLots is per-character state**, not a constant: byte field on PlayerObject (default 10), mutable via /adjustLotCount. Pool math should read the querying ghost's value rather than hardcoding 10/250.
+- **Cache design that avoids the cyvster2 stutter**: lazy one-time build per account on first getLotsRemaining query after boot, guarded by a Mutex, then purely incremental updates at the five mutation points. Never rescan per query. Implementation: customskills/structures/CustomSkillsStructureLots.{h,cpp}; config knob structures.accountSharedLots default true.
+- **Placement permission grant point**: vanilla grants ADMIN + owner at StructureManager.cpp:541-542 (`grantPermission("ADMIN", ...)` / `setOwner(...)`). Extending ADMIN to other account characters goes right after the addOwnedStructure call; grant by character OID even if offline (StructurePermissionList is persistent).
 
 ## Loot + Survey QoL Ports (BRIEF-046/047/048, E02/E05/C06)
 
